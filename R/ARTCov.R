@@ -11,7 +11,7 @@
 #'
 #' @return data.frame
 #'
-#' @import foreign, dplyr
+#' @import foreign, dplyr, epitools
 #'
 #' @export
 #' 

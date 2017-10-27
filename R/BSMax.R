@@ -2,12 +2,14 @@
 ## Project: All
 ## Author: AV / Created: 12Aug2017 
 
-BSMax <- function() {
+BSMax <- function(
+  inFile = file.path(Sys.getenv("USERPROFILE"), 
+    "Documents/AC_Data/Derived/Demography/2016",
+    "RD02-01_ACDIS_Demography.csv"),
+  outFile="MaxBSIntID.csv") {
 
-  filepath <- file.path(Sys.getenv("USERPROFILE"), 
-    "Documents/AC_Data/Derived/Demography/2016")
     
-  dem <- tbl_df(read_tsv(file.path(filepath, "RD02-01_ACDIS_Demography.csv"))) %>% 
+  dem <- tbl_df(read_tsv(inFile)) %>% 
     select(BSIntID, IIntID, Year=ExpYear, Episode, ExpDays) %>% 
     arrange(IIntID, Episode)
 
@@ -28,5 +30,6 @@ BSMax <- function() {
   maxBS <- group_by(maxBS, IIntID, Year) %>% 
     filter(row_number()==1)
 
-  write_csv(maxBS, file.path(filepath, "MaxBSIntID.csv"))
+  write_csv(maxBS, file.path(outFile))
+  return(maxBS)
 }

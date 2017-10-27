@@ -25,23 +25,25 @@ setArgs <- function(
   inFiles=NULL,
   Years=c(2004:2015),
   Sex="All",
-  Age=c(15, 54),
+  Age=list(Mal=c(15, 54), Fem=c(15, 49)),
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=5, 
+  Seed=NULL,
   printout=FALSE) {
 
   out <- list(
     inFiles=inFiles,
     Years=Years,
+    Sex=Sex,
     Age=Age,
     AgeCat=AgeCat,
-    Sex=Sex,
-    FemCode=
-      switch(Sex, Male=0, Female=1, All=c(0, 1)),
+    FemCode=switch(Sex,
+      Mal=0,Fem=1,All=c(0, 1)),
     ResRule=ResRule,
+    nSimulations=nSimulations,
     Seed=Seed,
-    printout=printout,
+    printout=printout
   )
   return(out)
 }
