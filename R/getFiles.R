@@ -1,7 +1,3 @@
-## Description: Set File paths for AHRI
-## Project: ahri
-## Author: AV / Created: 27Oct2017 
-
 #' @title getFiles
 #' 
 #' @description  get/set file paths to AHRI data 
@@ -14,8 +10,8 @@
 #' inFiles <- getFiles()
 
 getFiles <- function(
-  root=file.path(Sys.getenv("USERPROFILE"),
-    "Documents/AC_Data")) {
+  root=file.path(
+    Sys.getenv("USERPROFILE"), "Documents/AC_Data")) {
 
   file_ls <- list(
     demfile="Derived/Demography/2016/RD02-01_ACDIS_Demography.csv",

@@ -3,7 +3,7 @@ Title: AHRI functions
 Version: 0.0.0.9000
 Authors@R: person("Alain", "Vandormael", email = "vando026@umn.edu", role = c("aut", "cre"))
 Description: Functions for working with AHRI data
-Depends: R (>= 3.4.2), epitools, dplyr, foreign, readr
+Depends: R (>= 3.4.2), epitools, dplyr, foreign, readr, survival
 License: NA
 Encoding: UTF-8
 LazyData: true
