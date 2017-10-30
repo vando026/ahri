@@ -55,7 +55,3 @@ getHIV <- function(Args) {
   if (Args$printout==TRUE) print(table(hiv$Female))
   hiv 
 }
-# Args <- setArgs(inFiles, Age=list(Mal=c(15, 30), Fem=c(30, 45)))
-# yy=getHIV(Args)
-# table(yy$Female)
-# tapply(yy$AgeAtVisit, yy$Female, summary)
