@@ -62,6 +62,7 @@ imputeRandomPoint <- function(dat, Args) {
 #' @examples
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)
+#' sdat <- rename(sdat, sero_date=s1)
 #' censorData(rtdat, sdat, Args)
 
 censorData <- function(
@@ -70,7 +71,7 @@ censorData <- function(
   dat <- left_join(dat, sdat, by="IIntID")
 
   dat <- mutate(dat, 
-    obs_end=ifelse(sero_event==1, s1, late_neg))
+    obs_end=ifelse(sero_event==1, sero_date, late_neg))
 
   # testInterval(dat)
 
