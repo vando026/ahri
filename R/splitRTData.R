@@ -9,7 +9,9 @@
 #'
 #' @return data.frame
 #'
-#' @import dplyr, survival
+#' @import dplyr
+#' 
+#' @importFrom survival survSplit Surv
 #'
 #' @examples 
 #' hiv <- getHIV(Args)
@@ -30,7 +32,7 @@ splitRTData <- function(dat,
 
   # Now split episodes
   yr_cut <- ndate(Args)
-  dat <- survival::survSplit(
+  dat <- survSplit(
     Surv(time=obs_start, time2=obs_end, event=sero_event) ~ .,
     data=dat, 
     start="obs_start",

@@ -1,13 +1,7 @@
 #' @title getIncidence
 #' 
-#' @description Calculates the crude and adjusted incidence for \code{n} simulations.
+#' @description Calculates the crude and adjusted incidence.
 #' 
-#' @param hiv dataset from \code{\link{getHIV()}}. 
-#' 
-#' @param rtdat dataset from \code{\link{getRTData()}}. 
-#' 
-#' @param sdat imputed serodates from \code{\link{imputeRandomPoint()}}.
-#'
 #' @param Args takes list from \code{\link{setArgs()}}.
 #'
 #' @return data.frame
@@ -19,8 +13,6 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   sdat  <- imputeRandomPoint(rtdat)
-  edat  <- censorData(rtdat, sdat)
-  adat  <- getAgeData(edat)
   wdat <- aggregate(as.formula(
     paste('IIntID ~ ', Args$LHS)),
     data=hiv, length)

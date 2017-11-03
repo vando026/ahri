@@ -14,6 +14,10 @@
 #'
 #' @param byVars string characters to age and sex adjustment
 #'
+#' @param Seed set the seed
+#'
+#' @param nSimulations number of simulations to perform
+#'
 #' @param ResRule proportion of time spent in DSA, greater than >
 #'
 #' @param printout print out results 

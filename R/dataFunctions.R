@@ -4,7 +4,11 @@
 #' 
 #' @param dat Dataset of year episodes.
 #'
+#' @param Args takes an Args list from \code{\link{setArgs()}}. 
+#'
 #' @return data.frame
+#'
+#' @import dplyr
 #'
 #' @examples
 #' rtdata <- getRTData(hiv)

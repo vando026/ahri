@@ -1,35 +1,37 @@
-## Description: Function to make ART coverage
-## Project: ahri
-## Author: AV / Created: 27Oct2017 
-
-
 #' @title ARTCov
 #' 
-#' @description  Calculate ART coverage for AHRI data
+#' @description  Calculate ART coverage for AHRI data.
 #' 
-#' @param Args Requires a list with inFiles=artemis_data_path, see \code{\link{setArgs}}.
+#' @param Args Requires a list with inFiles=artemis_data_path, see \code{\link{setArgs}}
+#'
+#' @param cutoff value between 1 and 12, if ART initiation is after this value then no ART
+#' usage for that entire year
+#' 
+#' @param calcBy string variable to calc the estimates by
+#' 
+#' @param fmt format to percentage and round to two decimal places
 #'
 #' @return data.frame
 #'
-#' @import foreign, dplyr, epitools
-#'
-#' @export
+#' @import dplyr
 #' 
-#' @examples
-#' Args <- setArgs(inFiles="ARTemis.dta")
-#' Cov <- ARTCov(Args)
+#' @importFrom epitools binom.exact
+#' 
+#' @export
 
 
+ARTCov <- function(
+  Args, calcBy="Year", cutoff=9, fmt=FALSE) {
 
-ARTCov <- function(Args) {
+  art <- tbl_df(foreign::read.dta(Args$inFiles$artemis)) %>% 
+    select(IIntID=IIntId, DateOfInitiation)
+  art <- filter(art, !duplicated(IIntID))
+  art <- filter(art, !is.na(DateOfInitiation))
+  art <- mutate(art, 
+    YearART = as.numeric(format(DateOfInitiation, "%Y")),
+    MonthART = as.numeric(format(DateOfInitiation, "%m")))
 
-  art <- tbl_df(read.dta(Args$inFiles$artemis)) %>% 
-    select(IIntID=IIntId, DateOfInitiation) %>% 
-    mutate(YearART = format(DateOfInitiation, "%Y"),
-    MonthART = as.numeric(format(DateOfInitiation, "%m"))) %>% 
-    filter(!duplicated(IIntID))
-
-  hdat <- acdat(Args)
+  hdat <- getHIV(Args)
   hpos <- filter(hdat, HIVResult==1) %>% 
     select(IIntID, Year, Female, AgeCat, HIVResult) 
 
@@ -38,36 +40,21 @@ ARTCov <- function(Args) {
   adat <- arrange(adat, IIntID, Year) 
 
   adat <- group_by(adat, IIntID) %>% 
-    mutate(OnART = ifelse(Year >= YearART, 1, 0),
-    OnART = ifelse(is.na(OnART), 0, OnART))
+    mutate(OnARTYear = ifelse(Year >= YearART, 1, 0))
+  adat <- mutate(adat, OnARTYear = ifelse(is.na(OnARTYear), 0, OnARTYear))
 
   # Ok if month of Init is after September, dont assign OnART to that year
-  adat <- mutate(adat, OnART1 =
-    ifelse((YearART==Year) & MonthART>=9 & !is.na(MonthART), 0, OnART))
+  adat <- mutate(adat, OnART =
+    ifelse((YearART==Year) & MonthART>=9 & !is.na(MonthART), 0, OnARTYear))
 
-  getCI <- function(x, Round=2) {
-    pbar = mean(x)
-    N = length(x)
-    SE = sqrt(pbar*(1-pbar)/N)
-    E =  qnorm(1-(0.05/2))*SE 
-    CI = pbar + c(-E, E)  
-    out <- round(c(pbar, CI)*100, Round)
-    out
-  }
-
-  getEst <- function(dat, F1) {
-    out <- aggregate(as.formula(F1), data=dat, 
-      FUN=getCI, simplify=TRUE)
-    out <- do.call(data.frame, out)
-    names(out) <- c("Group", "est", "lb", "ub")
-    out
-  }
-
-
-  # Get overall ART coverage
-  AllART <- getEst(dat=adat, F1="OnART1 ~Year")
-  FemART <- getEst(dat=adat[adat$Female==1, ], F1="OnART1 ~Year")
-  MalART <- getEst(dat=adat[adat$Female==0, ], F1="OnART1 ~Year")
-  return(list(All=AllART, Males=MalART, Females=FemART))
+  sdat <- group_by(adat, Year) %>% 
+    summarize(ARTCount=sum(OnART),
+    N=(sum(HIVResult)))
+  sdat <- split(sdat, sdat[calcBy])
+  sdat <- lapply(sdat, function(x) binom.exact(x$ARTCount, x$N))
+  sdat <- do.call('rbind', sdat)
+  if (fmt==TRUE) 
+    sdat[c(3:5)] <- lapply(sdat[c(3:5)], function(x) round(x*100,2))
+  sdat     
 }
 

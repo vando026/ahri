@@ -4,9 +4,6 @@
 #' 
 #' @param dat dataset from \code{\link{getRTData()}}. 
 #'
-#' @param Args takes list from \code{\link{setArgs()}}, need seed and nSimulation
-#' arguments specifically.
-#'
 #' @return data.frame
 #'
 #' @import dplyr
@@ -23,19 +20,21 @@ imputeMidPoint <- function(dat) {
 #' @title imputeRandomPoint
 #' 
 #' @description  Impute random seroconversion date(s) within the censored interval. Needs
-#' \code{Args$seed} and \code{Args$nSimulations}.
+#' \code{Args$Seed} and \code{Args$nSimulations}.
 #' 
 #' @param dat dataset from \code{\link{getRTData()}}. 
 #'
-#' @param Args takes list from \code{\link{setArgs()}}.
+#' @param Args takes list from \code{\link{setArgs()}}, need seed and nSimulation
+#' arguments specifically.
 #'
 #' @return data.frame
 #'
 #' @import dplyr
 
-imputeRandomPoint <- function(dat, Args) {
+imputeRandomPoint <- function(dat,
+  Args=eval.parent(quote(Args))) {
   dat <- filter(dat, is.finite(early_pos))
-  set.seed(Args$seed)
+  set.seed(Args$Seed)
   mat <- with(dat, mapply(runif, Args$nSimulations,
     late_neg+1, early_pos, SIMPLIFY=FALSE))
   mat <- data.frame(do.call("rbind", mat))
@@ -57,7 +56,9 @@ imputeRandomPoint <- function(dat, Args) {
 #'
 #' @return data.frame
 #'
-#' @import dplyr, survival
+#' @import dplyr
+#' 
+#' @importFrom survival survSplit Surv
 #'
 #' @examples
 #' rtdat <- getRTData(hiv)
@@ -66,7 +67,8 @@ imputeRandomPoint <- function(dat, Args) {
 #' censorData(rtdat, sdat, Args)
 
 censorData <- function(
-  dat=NULL, sdat=NULL, Args) {
+  dat=NULL, sdat=NULL, 
+  Args=eval.parent(quote(Args))) {
   # Bring in imputed days
   dat <- left_join(dat, sdat, by="IIntID")
 

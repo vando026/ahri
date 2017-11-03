@@ -28,6 +28,8 @@ getIncData <- function(edat, LHS="Year") {
 #'
 #' @return data.frame
 #'
+#' @importFrom epitools ageadjust.direct
+#'
 #' @examples 
 #' byVars = c("Year", "Female", "AgeCat")
 #' LHS1 = paste(byVars, collapse='+')
@@ -54,14 +56,14 @@ calcIncidence <- function(dat, calcBy="Year") {
 #' 
 #' @param sdat dataset from \code{\link{imputeRandomPoint()}}.
 #'
-#' @param args takes list from \code{\link{setargs()}}
+#' @param wdat dataset of weights.
+#'
+#' @param Args takes list from \code{\link{setargs()}}.
 #'
 #' @param i the ith column to use as serodates, taken from
 #' \code{\link{imputeRandomPoint()}}.
 #'
 #' @return data.frame
-#'
-#' @import dplyr
 #'
 
 doIncData <- function(rtdat, sdat, wdat, Args, i) {

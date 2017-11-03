@@ -1,6 +1,17 @@
-## Description: Get the BS that ID spent most time in for the year
-## Project: All
-## Author: AV / Created: 12Aug2017 
+#' @title BSMax
+#' 
+#' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
+#' 
+#' @param inFile file path to import Demography dataset.
+#' 
+#' @param outFile file path to write dataset.
+#'
+#' @return data.frame
+#'
+#' @import dplyr
+#'
+#' @examples 
+#' hiv <- getIncData(edat)
 
 BSMax <- function(
   inFile = file.path(Sys.getenv("USERPROFILE"), 
@@ -8,8 +19,7 @@ BSMax <- function(
     "RD02-01_ACDIS_Demography.csv"),
   outFile="MaxBSIntID.csv") {
 
-    
-  dem <- tbl_df(read_tsv(inFile)) %>% 
+  dem <- tbl_df(readr::read_tsv(inFile)) %>% 
     select(BSIntID, IIntID, Year=ExpYear, Episode, ExpDays) %>% 
     arrange(IIntID, Episode)
 

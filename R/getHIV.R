@@ -1,18 +1,13 @@
 #' @title getHIV
 #' 
-#' @description  get all valid HIV tests from surveillance
+#' @description  get all valid test results from HIV surveillance.
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param Args requires Args, see \code{\link{setArgs}}
 #'
 #' @return data.frame
 #'
-#' @import dplyr, readr
-#'
-#' @export
-#' 
-#' @examples
-#' Args <- setArgs(inFiles="ARTemis.dta")
-#' HIV <- getHIV(Args)
+#' @import dplyr 
+#' @import readr 
 
 getHIV <- function(Args) {
 
