@@ -47,7 +47,8 @@ calcTrend <- function(
   Formula="HIVResult ~ Year + Female + AgeCat",
   stpopVar="IIntID", calcBy="Year",
   mergeVars=c("Female", "AgeCat"),
-  binom=FALSE, fmt=TRUE) {
+  binom=FALSE, fmt=TRUE, ...) {
+
   Input <- word(Formula, 1)
   adat <- do.call('data.frame', 
     aggregate(as.formula(Formula), data=dat,

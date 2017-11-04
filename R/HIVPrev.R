@@ -26,18 +26,28 @@
 #' @importFrom epitools binom.exact
 #' 
 #' @export
+#'
+#' @examples
+#' Args <- setArgs(inFiles, 
+#'   Age=list(Mal=c(15, 54), Fem=c(15, 49)),
+#'   AgeCat=c(15, 25, 55), 
+#'   Sex="Fem", Years=c(2005:2016))
+#' 
+#' # Calculate HIV prevalence using Census 2011 weights
+#' wdat <- read.csv("C:/Users/avandormael/Documents/AC_Data/Derived/Other/Census2011AgeSex.csv", comment="#")
+#' wdat <- mutate(wdat, Index = ifelse(row_number()<=2, 0, 1)) %>%
+#'   group_by(Index) %>% summarize(Ratio=sum(SexRatio))
+#' wdat <- data.frame(cbind(wdat,  AgeCat=c("[15,25)", "[25,55)")))
+#' HIVPrev(Args, wdat, stpopVar="Ratio", Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
 
 HIVPrev <- function(
-  Args, dat, wdat=NULL, 
+  Args, wdat=NULL, 
   Formula="HIVResult ~ Year + Female + AgeCat",
   stpopVar="IIntID", calcBy="Year",
   mergeVars=c("Female", "AgeCat"),
-  binom=FALSE, fmt=TRUE) {
-  #
+  binom=FALSE, fmt=TRUE, ...) {
+   
   hiv=getHIV(Args)
-  calcTrend(hiv, wdat=wdat, Formula=Formula,
-    stpopVar=stpopVar, calcBy=calcBy, 
-    mergeVars=mergeVars, binom=binom,
-    fmt=fmt)
+  calcTrend(hiv, wdat, Formula, ...)
 }
 

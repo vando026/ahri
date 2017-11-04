@@ -21,7 +21,11 @@
 
 
 ARTCov <- function(
-  Args, calcBy="Year", cutoff=9, fmt=FALSE) {
+  Args, wdat=NULL, 
+  Formula="OnART ~ Year + Female + AgeCat",
+  stpopVar="IIntID", calcBy="Year",
+  mergeVars=c("Female", "AgeCat"),
+  binom=FALSE, cutoff=9, fmt=TRUE) {
 
   art <- tbl_df(foreign::read.dta(Args$inFiles$artemis)) %>% 
     select(IIntID=IIntId, DateOfInitiation)
@@ -43,18 +47,17 @@ ARTCov <- function(
     mutate(OnARTYear = ifelse(Year >= YearART, 1, 0))
   adat <- mutate(adat, OnARTYear = ifelse(is.na(OnARTYear), 0, OnARTYear))
 
-  # Ok if month of Init is after September, dont assign OnART to that year
+  # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
     ifelse((YearART==Year) & MonthART>=9 & !is.na(MonthART), 0, OnARTYear))
 
-  sdat <- group_by(adat, Year) %>% 
-    summarize(ARTCount=sum(OnART),
-    N=(sum(HIVResult)))
-  sdat <- split(sdat, sdat[calcBy])
-  sdat <- lapply(sdat, function(x) binom.exact(x$ARTCount, x$N))
-  sdat <- do.call('rbind', sdat)
-  if (fmt==TRUE) 
-    sdat[c(3:5)] <- lapply(sdat[c(3:5)], function(x) round(x*100,2))
+  browser()
+  do.call('calcTrend', append(list(dat=adat), formals(ARTCov)))
+  sdat <- calcTrend(adat, wdat=wdat, Formula=Formula,
+    mergeVar=mergeVar, calcBy=calcBy, stpopVar=stpopVar)
+
+calcTrend(Args, wdat, stpopVar="Total", Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
+
   sdat     
 }
 
