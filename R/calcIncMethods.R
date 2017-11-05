@@ -1,21 +1,14 @@
-#' @title getIncData
+#' @title aggregateInc
 #' 
 #' @description Gets the aggregated sero_event counts and total person-years.
 #' 
-#' @param edat dataset from \code{\link{censorData()}}. 
+#' @param dat dataset from \code{\link{censorData()}}. 
 #' 
-#' @param LHS Takes lefthand side of formula for aggregation.
-#'
 #' @return data.frame
-#'
-#' @examples 
-#' hiv <- getIncData(edat)
 
-getIncData <- function(edat, LHS="Year") {
-  inc <- aggregate(as.formula(paste(
-    "cbind(sero_event, pyears=Time/365.25) ~ ",
-    LHS)), data=edat, FUN=sum)
-  inc
+aggregateInc <- function(dat) {
+  aggregate(cbind(sero_event, pyears=Time/365.25) ~ 
+    Year+AgeCat+Female, data=dat, FUN=sum)
 }
 
 #' @title calcIncidence
@@ -39,18 +32,18 @@ getIncData <- function(edat, LHS="Year") {
 #' wdat <- merge(idat, wdat, by=byVars)
 #' calcIncidence(wdat, calcBy="Year")
 
-calcIncidence <- function(dat, calcBy="Year") { 
+calcInc <- function(dat, wdat, calcBy="Year") { 
+  dat <- merge(dat, wdat, by="AgeCat")
   dat <- split(dat, dat[calcBy])
   dat <- sapply(dat, function(x) ageadjust.direct(
-    x[,"sero_event"],x[,"pyears"],stdpop=x[, "IIntID"]))
+    x["sero_event"],x["pyears"],stdpop=x["Total"]))
   dat <- data.frame(t(dat)*100)
   dat
 }
 
-
 #' @title doIncData
 #' 
-#' @description Function to calculate the incidence rate for \code{nSimulations}.
+#' @description pulls in all the data to calculate the incidence rate for \code{nSimulations}.
 #' 
 #' @param rtdat dataset from \code{\link{getRTData()}}. 
 #' 
@@ -72,10 +65,7 @@ doIncData <- function(rtdat, sdat, wdat, Args, i) {
     names(sdates) <- c("IIntID", "sero_date")
     edat <- censorData(rtdat, sdates, Args) 
     adat <- getAgeData(edat, Args)
-    idat <- getIncData(adat, LHS=Args$LHS)
-    dat <- merge(idat, wdat, by=Args$byVars)
+    idat <- aggregateInc(adat)
     dat
 }
-
-
 

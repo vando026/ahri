@@ -13,18 +13,20 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   sdat  <- imputeRandomPoint(rtdat)
-  wdat <- aggregate(as.formula(
-    paste('IIntID ~ ', Args$LHS)),
-    data=hiv, length)
+
+  wdat_AC <- aggregate(list(Total=hiv$IIntID),
+    list(AgeCat=hiv$AgeCat), FUN=length)
+  wdat_KZN <- getWeights(Args)
+  wdat <- getWeights(Args)
 
   dat <- lapply(seq(Args$nSimulations),
-    function(i) doIncData(rtdat, sdat, wdat, Args, i))
+    function(i) doIncData(rtdat, sdat, Args, i))
 
   Year <- lapply(dat, 
-    function(x) calcIncidence(x, calcBy="Year"))
+    function(x) calcIncidence(x, wdat, calcBy="Year"))
 
   Age <- lapply(dat, 
-    function(x) calcIncidence(x, calcBy="AgeCat"))
+    function(x) calcIncidence(x, wdat, calcBy="AgeCat"))
   
   if (Args$nSimulations==1) 
     return(list(Year, Age))

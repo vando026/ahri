@@ -25,7 +25,8 @@ getFiles <- function(
     bsafile="BS_Area.Rdata",
     parfile="PartnerDat.Rdata",
     prvfile="HIV_Prev_Aug21.csv",
-    artfile="Results_ART_Aug18.xlsx"
+    artfile="Results_ART_Aug18.xlsx",
+    kznwght="Derived/Other/StatsSA_2015_AgeSexKZN.csv"
   )
   file_ls <- lapply(file_ls, function(x) file.path(root, x))
   return(file_ls)

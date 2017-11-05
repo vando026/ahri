@@ -1,8 +1,33 @@
+#' @title getART
+#' 
+#' @description  get ARTemis data, mainly for calculating ART coverage
+#' 
+#' @param inFile path to data which is typically set using \code{\link{inFiles}}
+#'
+#' @return data.frame
+#'
+#' @import dplyr
+#' 
+#' @export
+
+getART <- function(
+  inFile=Args$inFiles$artemis) {
+  art <- tbl_df(foreign::read.dta(inFile)) %>% 
+    rename(IIntID=IIntId)
+  art <- filter(art, !duplicated(IIntID))
+  art
+}
+
 #' @title ARTCov
 #' 
-#' @description  Calculate ART coverage for AHRI data.
+#' @description  Calculate ART coverage for AHRI data. ART coverage can only be calculated
+#' up to 2012, so new arguments need to be set.
 #' 
-#' @param Args Requires a list with inFiles=artemis_data_path, see \code{\link{setArgs}}
+#' @param Args  see \code{\link{setArgs}}
+#'
+#' @param art data from \code{\link{getART}}
+#'
+#' @param wdat weight data 
 #'
 #' @param cutoff value between 1 and 12, if ART initiation is after this value then no ART
 #' usage for that entire year
@@ -27,37 +52,30 @@ ARTCov <- function(
   mergeVars=c("Female", "AgeCat"),
   binom=FALSE, cutoff=9, fmt=TRUE) {
 
-  art <- tbl_df(foreign::read.dta(Args$inFiles$artemis)) %>% 
-    select(IIntID=IIntId, DateOfInitiation)
-  art <- filter(art, !duplicated(IIntID))
-  art <- filter(art, !is.na(DateOfInitiation))
-  art <- mutate(art, 
-    YearART = as.numeric(format(DateOfInitiation, "%Y")),
-    MonthART = as.numeric(format(DateOfInitiation, "%m")))
-
+  # Get HIV data 
   hdat <- getHIV(Args)
   hpos <- filter(hdat, HIVResult==1) %>% 
     select(IIntID, Year, Female, AgeCat, HIVResult) 
 
+  art <- getART(Args$inFiles$artemis)
+  art <- select(art, IIntID, DateOfInitiation)
+  art <- filter(art, !is.na(DateOfInitiation)) 
+  art <- mutate(art, 
+    YearART = as.numeric(format(DateOfInitiation, "%Y")),
+    MonthART = as.numeric(format(DateOfInitiation, "%m")))
+
   # Merge with ART data
   adat <- left_join(hpos, art, by="IIntID")
   adat <- arrange(adat, IIntID, Year) 
-
   adat <- group_by(adat, IIntID) %>% 
     mutate(OnARTYear = ifelse(Year >= YearART, 1, 0))
   adat <- mutate(adat, OnARTYear = ifelse(is.na(OnARTYear), 0, OnARTYear))
-
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
     ifelse((YearART==Year) & MonthART>=9 & !is.na(MonthART), 0, OnARTYear))
 
-  browser()
-  do.call('calcTrend', append(list(dat=adat), formals(ARTCov)))
   sdat <- calcTrend(adat, wdat=wdat, Formula=Formula,
-    mergeVar=mergeVar, calcBy=calcBy, stpopVar=stpopVar)
-
-calcTrend(Args, wdat, stpopVar="Total", Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
-
-  sdat     
+    mergeVars=mergeVars, calcBy=calcBy, binom=binom, fmt=fmt)
+  sdat 
 }
 

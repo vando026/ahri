@@ -3,6 +3,7 @@
 export(ARTCov)
 export(HIVPrev)
 export(calcTrend)
+export(getART)
 import(dplyr)
 import(readr)
 importFrom(epitools,ageadjust.direct)

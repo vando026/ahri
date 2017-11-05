@@ -42,12 +42,12 @@
 
 HIVPrev <- function(
   Args, wdat=NULL, 
-  Formula="HIVResult ~ Year + Female + AgeCat",
-  stpopVar="IIntID", calcBy="Year",
-  mergeVars=c("Female", "AgeCat"),
+  Formula="HIVResult ~ Year + AgeCat",
+  calcBy="Year", mergeVars=c("AgeCat"),
   binom=FALSE, fmt=TRUE, ...) {
    
   hiv=getHIV(Args)
-  calcTrend(hiv, wdat, Formula, ...)
+  calcTrend(hiv, wdat=wdat, Formula=Formula, 
+    calcBy=calcBy, mergeVars=mergeVars, binom=binom, fmt=fmt)
 }
 

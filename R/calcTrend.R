@@ -1,4 +1,4 @@
-#' @title splitRTData
+#' @title calcTrend
 #' 
 #' @description  Multipurpose function to calc trends  over time.
 #' 
@@ -44,9 +44,8 @@
 
 calcTrend <- function(
   dat, wdat=NULL, 
-  Formula="HIVResult ~ Year + Female + AgeCat",
-  stpopVar="IIntID", calcBy="Year",
-  mergeVars=c("Female", "AgeCat"),
+  Formula="HIVResult ~ Year + AgeCat",
+  calcBy="Year", mergeVars=c("AgeCat"),
   binom=FALSE, fmt=TRUE, ...) {
 
   Input <- word(Formula, 1)
@@ -58,7 +57,7 @@ calcTrend <- function(
   adat <- split(adat, adat[calcBy])
   Count <- paste0(Input, '.Count')
   Total <- paste0(Input, '.Total')
-  stpopVar <- ifelse(!is.null(wdat), stpopVar, Total)
+  stpopVar <- ifelse(!is.null(wdat), "Total", Total)
   if (binom==FALSE) {
     adat <- lapply(adat, function(x) 
       ageadjust.direct(x[Count], x[Total], 
@@ -71,5 +70,36 @@ calcTrend <- function(
   adat <- do.call("rbind", adat)
   if (fmt==TRUE) 
     adat <- round(adat*100, 2)
-  return(adat)
+  data.frame(adat)
 }
+
+
+#' @title getWeights
+#' 
+#' @description get the KZN population weights from StatSA 2015: 
+#' https://www.statssa.gov.za/publications/P0302/P03022015.pdf (Table 15)				
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}
+
+getWeights <- function(Args) {
+  wdat <- read.csv(Args$inFiles$kznwght, header=TRUE, comment="#")
+  wdat$AgeCat <- cut(wdat$Index, breaks=Args$AgeCat, 
+    labels=NULL, right=FALSE)
+  mw <- wdat[wdat$Index >= Args$Age$Mal[1] & wdat$Index <= Args$Age$Mal[2],
+    c("AgeCat", "Mal") ]
+  fw <- wdat[wdat$Index >= Args$Age$Fem[1] & wdat$Index <= Args$Age$Fem[2],
+    c("AgeCat", "Fem")]
+  aw <- wdat[, c("AgeCat", "All")] 
+  ldat <- list(Fem=fw, Mal=mw, All=aw)
+  ldat <- lapply(ldat, function(x)
+    aggregate(x[, 2], by=list(x[, 1]), FUN=sum))
+  dat <- data.frame(ldat[Args$Sex])
+  colnames(dat) <- c("AgeCat", "Total")
+  dat
+}
+
+
+
+
+
+
