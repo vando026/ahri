@@ -2,9 +2,9 @@
 #' 
 #' @description  gets Age in a given surveillance year
 #' 
-#' @param dat Dataset of year episodes.
+#' @param dat dataset for which age is needed at a given episode.
 #'
-#' @param Args takes an Args list from \code{\link{setArgs()}}. 
+#' @param Args takes a list from \code{\link{setArgs}}. 
 #'
 #' @return data.frame
 #'
@@ -38,6 +38,5 @@ getAgeData <- function(dat,
   adat <- filter(adat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
     !(Female==1 & Age > Args$Age[["Fem"]][2]))
 
-  adat <- select(adat, -DateOfBirth)
-  adat
+  adat[, !(names(adat) %in% "DateOfBirth")] 
 }

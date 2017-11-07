@@ -1,31 +1,34 @@
 #' @title setFiles
 #' 
-#' @description  set the arguments 
+#' @description  Set the arguments for functions. 
 #' 
-#' @param inFiles list of files to pass to function
+#' @param inFiles list of files to pass to function.
 #' 
-#' @param Years numeric vector of years 
+#' @param Years numeric vector of years.
 #'
-#' @param Sex character of "All", "Fem", "Mal"
+#' @param Sex character of "All", "Fem", "Mal".
 #'
-#' @param Age numeric vector of ages
+#' @param Age numeric vector of ages.
 #'
-#' @param AgeCat numeric vector of age categories
+#' @param AgeCat numeric vector of age categories.
 #'
-#' @param byVars string characters to age and sex adjustment
+#' @param byVars string characters to age and sex adjustment.
 #'
-#' @param Seed set the seed
+#' @param Seed set the random seed.
 #'
-#' @param nSimulations number of simulations to perform
+#' @param nSimulations number of simulations to perform.
 #'
-#' @param ResRule proportion of time spent in DSA, greater than >
+#' @param ResRule proportion of time spent in DSA, greater than >.
 #'
-#' @param printout print out results 
+#' @param aname root name to associate with output or filenames.
+#'
+#' @param printout print out results.
 #'
 #' @return list
 #'
 #' @examples
-#' Args <- setArgs(inFiles="ARTemis.dta", Years=c(2004:2015))
+#' inFiles <- getFiles()
+#' Args <- setArgs(inFiles, Years=c(2004:2015), Sex="Mal")
 
 setArgs <- function( 
   inFiles=NULL,
@@ -37,6 +40,7 @@ setArgs <- function(
   nSimulations=5, 
   byVars=c("Year"),
   Seed=NULL,
+  aname='filename',
   printout=FALSE) {
 
   out <- list(

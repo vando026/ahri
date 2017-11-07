@@ -16,11 +16,10 @@
 #' @examples 
 #' hiv <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' sdat <- splitRTdat(rtdat)
+#' sdat <- splitRTData(rtdat)
 
 splitRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
-  # Make obs_end
 
   dat <- mutate(dat, obs_end = 
     ifelse(sero_event==1, early_pos, late_neg))
@@ -46,8 +45,8 @@ splitRTData <- function(dat,
     obs_end, obs_start0, units="days")+1)*0.00273790700698851, 2))
 
   dat <- mutate(dat, Year=as.integer(format(obs_start, "%Y")))
-  dat <- select(dat, IIntID, Female, Time, sero_event, Year, obs_start, obs_end)
-
+  dat <- dat[, c("IIntID", "Female", "Time", "sero_event", 
+    "Year", "obs_start", "obs_end")]
   tbl_df(dat)
 }
 

@@ -2,7 +2,7 @@
 #' 
 #' @description Calculates the crude and adjusted incidence.
 #' 
-#' @param Args takes list from \code{\link{setArgs()}}.
+#' @param Args takes list from \code{\link{setArgs}}.
 #'
 #' @return data.frame
 #'
@@ -13,30 +13,26 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   sdat  <- imputeRandomPoint(rtdat)
-
-  wdat_AC <- aggregate(list(Total=hiv$IIntID),
-    list(AgeCat=hiv$AgeCat), FUN=length)
-  wdat_KZN <- getWeights(Args)
-  wdat <- getWeights(Args)
+  wdat <- getWeightsKZN(Args)
 
   dat <- lapply(seq(Args$nSimulations),
     function(i) doIncData(rtdat, sdat, Args, i))
 
   Year <- lapply(dat, 
-    function(x) calcIncidence(x, wdat, calcBy="Year"))
+    function(x) calcInc(x, wdat, calcBy="Year"))
 
   Age <- lapply(dat, 
-    function(x) calcIncidence(x, wdat, calcBy="AgeCat"))
+    function(x) calcInc(x, wdat, calcBy="AgeCat"))
   
   if (Args$nSimulations==1) 
     return(list(Year, Age))
 
-  est_year <- getInc(Year)
-  est_age <- getInc(Age)
+  est_year <- getRate(Year)
+  est_age <- getRate(Age)
   lapply(c(est_year, est_age), sumEst)
 }
 
-getInc <- function(dat) {
+getRate <- function(dat) {
   nm  =c("crude.rate", "adj.rate")
   out <- lapply(nm, function(x) {
     out <- lapply(dat, `[`, x)
