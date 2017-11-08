@@ -9,11 +9,9 @@
 #' @import dplyr
 
 imputeMidPoint <- function(dat) {
-  dat <- filter(dat, is.finite(early_pos))
-  dat <-  mutate(dat, s1 = 
-    (as.numeric(late_neg) + as.numeric(early_pos))/2,
-    s1 = as.Date(s1, origin='1970-01-01')) %>% 
-    select(IIntID, s1)
+  dat$sero_date <-  
+    (as.numeric(dat$late_neg) + as.numeric(dat$early_pos))/2
+  dat$sero_date <- as.Date(dat$sero_date, origin='1970-01-01') 
   dat
 }
 
@@ -24,23 +22,17 @@ imputeMidPoint <- function(dat) {
 #' 
 #' @param dat dataset from \code{\link{getRTData()}}. 
 #'
-#' @param Args takes list from \code{\link{setArgs()}}, need seed and nSimulation
-#' arguments specifically.
-#'
 #' @return data.frame
 #'
 #' @import dplyr
 
-imputeRandomPoint <- function(dat,
-  Args=eval.parent(quote(Args))) {
-  dat <- filter(dat, is.finite(early_pos))
-  set.seed(Args$Seed)
-  mat <- with(dat, mapply(runif, Args$nSimulations,
-    late_neg+1, early_pos, SIMPLIFY=FALSE))
-  mat <- data.frame(do.call("rbind", mat))
-  mat[] <- lapply(mat, as.Date, origin='1970-01-01')
-  colnames(mat) <- paste0("s", seq(ncol(mat)))
-  tbl_df(cbind(dat[, "IIntID"], mat))
+imputeRandomPoint <- function(dat) {
+  pdat <- dat[is.finite(dat$early_pos), ]
+  sdat <- mapply(runif, 1, pdat$late_neg + 1, pdat$early_pos)
+  sdat <- cbind(IIntID=pdat["IIntID"], sero_date=sdat)
+  dat <- merge(dat, sdat, by="IIntID", all.x=TRUE)
+  dat$sero_date <- as.Date(dat$sero_date, origin = "1970-01-01")
+  dat
 }
 
 #' @title censorData
@@ -48,9 +40,7 @@ imputeRandomPoint <- function(dat,
 #' @description Censor the data into year episodes at the imputed date or latest
 #' HIV-negative date. 
 #' 
-#' @param dat dataset from \code{\link{getRTData()}}. 
-#'
-#' @param sdat dataset from \code{\link{imputeMethod()}}. 
+#' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
 #'
 #' @param Args takes list from \code{\link{setArgs()}}.
 #'
@@ -67,16 +57,13 @@ imputeRandomPoint <- function(dat,
 #' censorData(rtdat, sdat, Args)
 
 censorData <- function(
-  dat=NULL, sdat=NULL, 
+  dat=NULL, 
   Args=eval.parent(quote(Args))) {
-  # Bring in imputed days
-  dat <- left_join(dat, sdat, by="IIntID")
 
   dat <- mutate(dat, 
     obs_end=ifelse(sero_event==1, sero_date, late_neg))
 
   # testInterval(dat)
-
   # Split into episodes
   edat <- survSplit(Surv(
     time=as.integer(obs_start), 

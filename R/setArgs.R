@@ -12,8 +12,6 @@
 #'
 #' @param AgeCat numeric vector of age categories.
 #'
-#' @param byVars string characters to age and sex adjustment.
-#'
 #' @param Seed set the random seed.
 #'
 #' @param nSimulations number of simulations to perform.
@@ -38,7 +36,6 @@ setArgs <- function(
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=5, 
-  byVars=c("Year"),
   Seed=NULL,
   imputeMethod=imputeRandomPoint,
   aname='filename',
@@ -52,8 +49,6 @@ setArgs <- function(
     AgeCat=AgeCat,
     FemCode=switch(Sex,
       Mal=0,Fem=1,All=c(0, 1)),
-    byVars=byVars,
-    LHS=paste(byVars, collapse='+'),
     ResRule=ResRule,
     nSimulations=nSimulations,
     imputeMethod=imputeMethod,
