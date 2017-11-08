@@ -40,6 +40,7 @@ setArgs <- function(
   nSimulations=5, 
   byVars=c("Year"),
   Seed=NULL,
+  imputeMethod=imputeRandomPoint,
   aname='filename',
   printout=FALSE) {
 
@@ -55,6 +56,7 @@ setArgs <- function(
     LHS=paste(byVars, collapse='+'),
     ResRule=ResRule,
     nSimulations=nSimulations,
+    imputeMethod=imputeMethod,
     Seed=Seed,
     printout=printout
   )

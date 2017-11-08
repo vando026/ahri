@@ -12,7 +12,7 @@ getIncidence <- function(Args) {
 
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  sdat  <- imputeRandomPoint(rtdat)
+  sdat  <- imputeMethod(rtdat)
   wdat <- getWeightsKZN(Args)
 
   dat <- lapply(seq(Args$nSimulations),
