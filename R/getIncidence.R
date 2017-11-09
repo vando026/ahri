@@ -40,7 +40,7 @@ doIncData <- function(rtdat, Args) {
 #' 
 #' @param dat Dataset from \code{\link{aggregateInc}}.
 #' 
-#' @param wdat Dataset of weights from \code\link{getWeightsKZN}}.
+#' @param wdat Dataset of weights from \code{\link{getWeightsKZN}}.
 #' 
 #' @param calcBy Results by Year, Age, or Sex.
 #'
@@ -112,8 +112,27 @@ getIncidence <- function(Args) {
   if (Args$nSimulations==1) 
     return(list(Year=Year, Age=Age))
 
-  est_year <- getRate(Year)
-  est_age <- getRate(Age)
-  lapply(c(est_year, est_age), sumEst)
+  est_year <- lapply(getRate(Year), sumEst)
+  est_age <- lapply(getRate(Age), sumEst)
+  list(Year=est_year, Age=est_age)
 }
 
+
+
+#' @title smoothInc
+#' 
+#' @description get smoothes incidence estimates.
+#' 
+#' @param dat takes dataset from \code{\link{getIncidence}}.
+#'
+#' @param bwidth bandwith for \code{ksmooth} function. 
+#'
+#' @return data.frame
+
+smoothInc <- function(dat, bwidth=1) {
+  dat <- as.data.frame(dat)
+  Year <- as.integer(rownames(dat))
+  ks <-  ksmooth(Year, dat$rate,
+    "normal", bandwidth = bwidth)
+  ks
+}

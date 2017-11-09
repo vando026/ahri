@@ -2,22 +2,23 @@
 #' 
 #' @description  Multipurpose function to calc trends  over time.
 #' 
-#' @param dat dataset from \code{\link{getRTData()}} 
+#' @param dat dataset for computing trends. 
 #'
-#' @param wdat dataset of standard population weights
+#' @param wdat standard population weights from \code{\link{getWeightsKZN}}.
 #'
 #' @param Formula string argument for aggregate function; terms and operators must be
 #' separated by white space
 #'
 #' @param stpopVar name of standard population column in \code{wdat}
 #'
-#' @param mergeVars variables with which to merge \code{dat} and \code{wdat} datasets
+#' @param mergeVars variables with which to merge \code{dat} and \code{wdat} datasets,
+#' typically \code{AgeCat} variable. 
 #'
-#' @param calcBy variable(s) to calc the trend by
+#' @param calcBy variable(s) to calc the trend by.
 #'
-#' @param binom use binomial exact formula to calculate CIs: TRUE/FALSE
+#' @param binom use binomial exact formula to calculate CIs: TRUE/FALSE.
 #'
-#' @param fmt convert to percentage and round: TRUE/FALSE
+#' @param fmt convert to percentage and round: TRUE/FALSE.
 #'
 #' @return data.frame
 #'
@@ -30,17 +31,13 @@
 #' @examples
 #' inFiles <- getFiles()
 #' Args <- setArgs(inFiles, 
-#'   Age=list(Mal=c(15, 54), Fem=c(15, 49)),
 #'   AgeCat=c(15, 25, 55), 
-#'   Sex="Fem", Years=c(2005:2016))
+#'   Sex="Fem")
 #' hiv=getHIV(Args)
 #' 
-#' # Calculate HIV prevalence using Census 2011 weights
-#' wdat <- read.csv("C:/Users/avandormael/Documents/AC_Data/Derived/Other/Census2011AgeSex.csv", comment="#")
-#' wdat <- mutate(wdat, Index = ifelse(row_number()<=2, 0, 1)) %>%
-#'   group_by(Index) %>% summarize(Ratio=sum(SexRatio))
-#' wdat <- data.frame(cbind(wdat,  AgeCat=c("[15,25)", "[25,55)")))
-#' calcTrend(hiv, wdat, stpopVar="Ratio", Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
+#' # Calculate HIV prevalence using KZN 2015 weights
+#' wdat <- getWeightsKZN(inFiles$kznwght)
+#' calcTrend(hiv, wdat, Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
 
 calcTrend <- function(
   dat, wdat=NULL, 

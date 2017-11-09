@@ -71,13 +71,13 @@ getVLData <- function(Args) {
 
 getPVLData <- function(cvl, Args) {
 
-  wdat <- getHIV(Args)
+  hiv <- getHIV(Args)
   ind <- read_csv(Args$inFiles$indfile, 
     col_types=cols_only(IIntID="i", DateOfBirth="D"))
 
   # We need to ensure that the HIV- added is proprtional to HIV+ by age and sex for each year
   Vars <- c("Year", "Female", "AgeCat")
-  Pr <- calcTrend(wdat, Formula="HIVResult ~ Year + Female + AgeCat", 
+  Pr <- calcTrend(hiv, Formula="HIVResult ~ Year + Female + AgeCat", 
     calcBy=Vars, fmt=FALSE)
 
   MergeName <- data.frame(do.call("rbind", strsplit(rownames(Pr), "[.]")))
@@ -95,7 +95,7 @@ getPVLData <- function(cvl, Args) {
   SampN <- SampN[, c("Year", "Female", "AgeCat", "Y")]
 
   # We sample from the HIV- in surveillance
-  hiv_neg0 <- filter(wdat, HIVResult==0)
+  hiv_neg0 <- filter(hiv, HIVResult==0)
 
   # Indiv cant be in both pos and neg datasets
   set.seed(12399)
@@ -112,7 +112,6 @@ getPVLData <- function(cvl, Args) {
   hiv_neg <- left_join(hiv_neg, ind, by="IIntID")
   hiv_neg <- mutate(hiv_neg, Age = 
     Year - as.numeric(format(DateOfBirth, "%Y")))
-  hiv_neg$Age[is.na(hiv_neg$Age)]  <- round(mean(hiv_neg$Age, na.rm=TRUE))
   hiv_neg <- hiv_neg[, !(names(hiv_neg) %in% c("DateOfBirth"))]
 
   pvl <- rbind(cvl, hiv_neg)
@@ -125,24 +124,6 @@ getPVLData <- function(cvl, Args) {
   # Must have max three measures
   stopifnot(max(pvl$Count)<=3)
 
-  # Is current measure neg and previous pos
-  pvl <- group_by(pvl, IIntID) %>% 
-    mutate(Lag1 = HIVResult - lag(HIVResult, 1)) 
-  table(pvl$Lag1)
-  subset(pvl, Lag1==-1)
-
-  # Is current measure neg and previous 2 pos
-  pvl <- group_by(pvl, IIntID) %>% 
-    mutate(Lag2 = HIVResult - lag(HIVResult, 2)) 
-  table(pvl$Lag2)
-  subset(pvl, Lag2==-1)
-
-  # Now drop these from data. 
-  pvl <- subset(pvl, is.na(Lag1) | Lag1 %in% c(0, 1))
-  pvl <- subset(pvl, is.na(Lag2) | Lag2 %in% c(0, 1))
-  pvl <- select(pvl, -matches("Count|Lag")) %>%
-    ungroup(pvl)
-
   pvl
 }
 
@@ -150,6 +131,8 @@ getPVLData <- function(cvl, Args) {
 setDiffData <- function(hdat, cdat, SampN, Args) {
   hiv_neg1 <- data.frame(IIntID=integer(), Year=integer(),
      Female=numeric(), AgeCat=factor(), HIVResult=numeric())
+  # dont include anyone from cvl in HIV negs
+  hdat <- hdat[!(hdat$IIntID %in% cdat$IIntID), ]
   agelab <- attributes(hdat$AgeCat)$levels
   for (yr in c(2011, 2013, 2014)) {
     for (fem in c(0,1)) {
@@ -158,9 +141,6 @@ setDiffData <- function(hdat, cdat, SampN, Args) {
         hdat0 <- subset(hdat, Year==yr & AgeCat==age & Female==fem)
         cdat0 <- subset(cdat, Year==yr & AgeCat==age & Female==fem)
         Samp0 <- subset(SampN, Year==yr & AgeCat==age & Female==fem)
-        Keep <- setdiff(hdat0$IIntID, cdat0$IIntID)
-        hdat0 <- hdat0[hdat0$IIntID %in% Keep, ]
-        # Remove any duplicates
         hdat0 <- hdat0[!duplicated(hdat0$IIntID), ]
         nids <- length(unique(hdat0$IIntID))
         ndat <- mkDat(Samp0)
@@ -174,7 +154,7 @@ setDiffData <- function(hdat, cdat, SampN, Args) {
         }
         if (Args$printout==TRUE) {
           cat(rep("-", 20), "\n")
-          cat(paste(yr, ":  sample was", distinct(hdat0$IIntID)[2], femlabel, age,  "\n"))
+          cat(paste(yr, ":  sample was", length(unique(hdat0$IIntID)), femlabel, age,  "\n"))
           cat(paste(yr, ": weight HIV-", nrow(out), femlabel, age, "\n"))
         }
         hiv_neg1 <- rbind(hiv_neg1, out)

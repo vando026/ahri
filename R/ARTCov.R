@@ -23,14 +23,14 @@ getART <- function(
 #' @description  Calculate ART coverage for AHRI data. ART coverage can only be calculated
 #' up to 2012, so new arguments need to be set.
 #' 
-#' @param Args  see \code{\link{setArgs}}
+#' @param Args  arguments from \code{\link{setArgs}}.
 #'
-#' @param art data from \code{\link{getART}}
-#'
-#' @param wdat weight data 
+#' @param wdat weights, most likely from \code{\link{getWeightsKZN}}.
 #'
 #' @param cutoff value between 1 and 12, if ART initiation is after this value then no ART
 #' usage for that entire year
+#' 
+#' @param stpopVar name of var from \code{wdat} with weights. 
 #' 
 #' @param calcBy string variable to calc the estimates by
 #' 
@@ -48,8 +48,8 @@ getART <- function(
 ARTCov <- function(
   Args, wdat=NULL, 
   Formula="OnART ~ Year + Female + AgeCat",
-  stpopVar="IIntID", calcBy="Year",
-  mergeVars=c("Female", "AgeCat"),
+  stpopVar="Total", calcBy=c("Year", "Female"),
+  mergeVars="AgeCat",
   binom=FALSE, cutoff=9, fmt=TRUE) {
 
   # Get HIV data 

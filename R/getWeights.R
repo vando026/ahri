@@ -17,7 +17,7 @@ getWeightsKZN <- function(Args) {
   ldat <- list(Fem=fw, Mal=mw, All=aw)
   ldat <- lapply(ldat, function(x)
     aggregate(x[, 2], by=list(x[, 1]), FUN=sum))
-  dat <- data.frame(ldat[Args$Sex])
-  colnames(dat) <- c("AgeCat", "Total")
-  dat
+  ldat <- data.frame(ldat[Args$Sex])
+  colnames(ldat) <- c("AgeCat", "Total")
+  ldat
 }
