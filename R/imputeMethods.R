@@ -76,7 +76,8 @@ censorData <- function(
 
   vars <- c("obs_start", "obs_end")
   edat[vars] <- lapply(edat[vars], as.Date, origin="1970-01-01")
-  edat <- mutate(edat, Time = difftime(obs_end, obs_start, units='days'),
+  edat <- mutate(edat, 
+    Time = difftime(obs_end, obs_start, units='days'),
     Year=as.integer(format(obs_start, "%Y")))
   tbl_df(edat)
 }

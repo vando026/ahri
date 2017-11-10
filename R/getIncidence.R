@@ -65,9 +65,20 @@ calcInc <- function(dat, wdat, calcBy="Year") {
   dat
 }
 
+getAgg <- function(dat, calcBy="Year") {
+  dat <- lapply(dat, function(x)
+    aggregate(x[, c("sero_event", "pyears")], 
+      by=list(x[, calcBy]), FUN=sum))
+  sero <- lapply(dat, `[`, "sero_event")
+  sero <- do.call("cbind", sero)
+  pyears <- lapply(dat, `[`, "pyears")
+  pyears <- do.call("cbind", pyears)
+  list(sero=sero, pyears=pyears)
+}
+
 # used in getIncidence
 getRate <- function(dat) {
-  nm  =c("crude.rate", "adj.rate")
+  nm <- c("crude.rate", "adj.rate")
   out <- lapply(nm, function(x) {
     out <- lapply(dat, `[`, x)
     do.call('cbind', out)})
@@ -80,7 +91,7 @@ sumEst <- function(x) {
     rate <- apply(x, 1, mean)
     lower <- apply(x, 1, quantile, 0.025)
     upper <- apply(x, 1, quantile, 0.975)
-    cbind(rate, lower, upper)
+    data.frame(cbind(rate, lower, upper))
 }
 
 #' @title getIncidence
@@ -97,7 +108,7 @@ getIncidence <- function(Args) {
 
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  wdat <- getWeightsKZN(Args)
+  wdat <- getWeights(Args)
 
   set.seed(Args$Seed)
   dat <- lapply(seq(Args$nSimulations),
@@ -110,14 +121,15 @@ getIncidence <- function(Args) {
     function(x) calcInc(x, wdat, calcBy="AgeCat"))
   
   if (Args$nSimulations==1) 
-    return(list(Year=Year, Age=Age))
+    return(list(dat=dat, Year=Year, Age=Age))
 
+  dat_year <- lapply(getAgg(dat, calcBy="Year"), sumEst)
+  dat_age <- lapply(getAgg(dat, calcBy="AgeCat"), sumEst)
   est_year <- lapply(getRate(Year), sumEst)
   est_age <- lapply(getRate(Age), sumEst)
-  list(Year=est_year, Age=est_age)
+  list(YearD=dat_year, AgeD=dat_age,
+    Year=est_year, Age=est_age)
 }
-
-
 
 #' @title smoothInc
 #' 

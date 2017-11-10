@@ -29,7 +29,7 @@
 #' Args <- setArgs(inFiles, Years=c(2004:2015), Sex="Mal")
 
 setArgs <- function( 
-  inFiles=NULL,
+  inFiles=getFiles(),
   Years=c(2004:2015),
   Sex="All",
   Age=setAge(),
@@ -52,6 +52,7 @@ setArgs <- function(
     ResRule=ResRule,
     nSimulations=nSimulations,
     imputeMethod=imputeMethod,
+    aname=aname,
     Seed=Seed,
     printout=printout
   )

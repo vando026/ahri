@@ -27,7 +27,8 @@ getFiles <- function(
     prvfile="HIV_Prev_Aug21.csv",
     artfile="Results_ART_Aug18.xlsx",
     pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta",
-    kznwght="Derived/Other/StatsSA_2015_AgeSexKZN.csv"
+    kznwght="Derived/Other/StatsSA_2015_AgeSexKZN.csv",
+    ahriwgt="Derived/Other/Weights_AHRI_2015.csv"
   )
   file_ls <- lapply(file_ls, function(x) file.path(root, x))
   return(file_ls)
