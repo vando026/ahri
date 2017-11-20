@@ -30,7 +30,7 @@ splitRTData <- function(dat,
   dat[vars] <- lapply(dat[vars], as.numeric)
 
   # Now split episodes
-  yr_cut <- ndate(Args)
+  yr_cut <- ndate(Args$Years)
   dat <- survSplit(
     Surv(time=obs_start, time2=obs_end, event=sero_event) ~ .,
     data=dat, 

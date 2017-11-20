@@ -27,8 +27,8 @@ getART <- function(
 #'
 #' @param wdat weights, most likely from \code{\link{getWeightsKZN}}.
 #'
-#' @param cutoff value between 1 and 12, if ART initiation is after this value then no ART
-#' usage for that entire year
+#' @param cutoff value from 1 and 12, if ART initiation is after this value then no ART
+#' usage for that entire year. Use cutoff=12 to ignore this argument.
 #' 
 #' @param stpopVar name of var from \code{wdat} with weights. 
 #' 
@@ -63,6 +63,7 @@ ARTCov <- function(
   art <- mutate(art, 
     YearART = as.numeric(format(DateOfInitiation, "%Y")),
     MonthART = as.numeric(format(DateOfInitiation, "%m")))
+  art <- filter(art, YearART %in% Args$Years)
 
   # Merge with ART data
   adat <- left_join(hpos, art, by="IIntID")
@@ -72,7 +73,7 @@ ARTCov <- function(
   adat <- mutate(adat, OnARTYear = ifelse(is.na(OnARTYear), 0, OnARTYear))
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
-    ifelse((YearART==Year) & MonthART>=9 & !is.na(MonthART), 0, OnARTYear))
+    ifelse((YearART==Year) & MonthART > cutoff & !is.na(MonthART), 0, OnARTYear))
 
   sdat <- calcTrend(adat, wdat=wdat, Formula=Formula,
     mergeVars=mergeVars, calcBy=calcBy, binom=binom, fmt=fmt)

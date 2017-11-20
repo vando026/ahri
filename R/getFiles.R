@@ -11,24 +11,24 @@
 
 getFiles <- function(
   root=file.path(
-    Sys.getenv("USERPROFILE"), "Documents/AC_Data")) {
+    Sys.getenv("USERPROFILE"), "Documents/AC_Data/Derived")) {
 
   file_ls <- list(
-    demfile="Derived/Demography/2016/RD02-01_ACDIS_Demography.csv",
-    indfile="Derived/Individuals/2016/RD01-01_ACDIS_Individuals.csv",
-    hivfile="Derived/HIVSurveillance/2016/RD05-99_ACDIS_HIV_All.csv",
-    hsefile="Derived/HSE/HSE2009_2012.dta",
-    wghfile="Derived/WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
-    mghfile="Derived/WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
-    artemis="Derived/ARTemis/ARTemisAll2013A.dta",
+    demfile="Demography/2016/RD02-01_ACDIS_Demography.csv",
+    indfile="Individuals/2016/RD01-01_ACDIS_Individuals.csv",
+    hivfile="HIVSurveillance/2016/RD05-99_ACDIS_HIV_All.csv",
+    hsefile="HSE/HSE2009_2012.dta",
+    wghfile="WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
+    mghfile="WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
+    artemis="ARTemis/ARTemisAll2013A.dta",
     bsmfile="Other/MaxBSIntID.csv",
     bsafile="BS_Area.Rdata",
     parfile="PartnerDat.Rdata",
     prvfile="HIV_Prev_Aug21.csv",
     artfile="Results_ART_Aug18.xlsx",
     pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta",
-    kznwght="Derived/Other/StatsSA_2015_AgeSexKZN.csv",
-    ahriwgt="Derived/Other/Weights_AHRI_2015.csv"
+    kznwght="Other/StatsSA_2015_AgeSexKZN.csv",
+    ahriwgt="Other/Weights_AHRI_2015.csv"
   )
   file_ls <- lapply(file_ls, function(x) file.path(root, x))
   return(file_ls)
