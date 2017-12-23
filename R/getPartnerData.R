@@ -94,6 +94,12 @@ makePartnerData <- function(dat,
     ungroup(out)
 
   # Replace missing values
+  propImpute <- function(Var) {
+    Impute <- sample(Var[!is.na(Var)], 
+      length(Var), replace=TRUE)
+    Out <- ifelse(is.na(Var), Impute, Var)
+    Out
+  }
   out <- mutate(out, 
     Married=propImpute(Married),
     Partner1=propImpute(Partner1),

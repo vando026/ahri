@@ -17,8 +17,7 @@ getCircumcisionData <- function(
   names(cdat)[names(cdat)=="IIntId"] <- "IIntID"
   cdat <- cdat[cdat$IsCircumcised %in% c(1,2), ]
   cdat$IsCircumcised <- 
-    ifelse(cdat$IsCircumcised==1, 1, 
-    ifelse(cdat$IsCircumcised==2, 0, NA))
+    ifelse(cdat$IsCircumcised==1, 1, 0)
   cdat$Year <- as.integer(format(cdat$VisitDate, "%Y"))
   cdat[, !(names(cdat) %in% "VisitDate")]
 }

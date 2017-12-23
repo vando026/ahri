@@ -56,8 +56,9 @@ doIncData <- function(rtdat, Args) {
 #' calcInc(inc, wdat)
 
 calcInc <- function(dat, wdat, calcBy="Year") { 
-  dat <- merge(dat, wdat, by="AgeCat")
+  # dat <- merge(dat, wdat, by="AgeCat")
   dat$AgeCat <- factor(dat$AgeCat)
+  dat$Total <- 1 #remove, only for test
   dat <- split(dat, dat[calcBy])
   dat <- sapply(dat, function(x) ageadjust.direct(
     x["sero_event"],x["pyears"],stdpop=x["Total"]))
@@ -65,33 +66,72 @@ calcInc <- function(dat, wdat, calcBy="Year") {
   dat
 }
 
-getAgg <- function(dat, calcBy="Year") {
-  dat <- lapply(dat, function(x)
-    aggregate(x[, c("sero_event", "pyears")], 
-      by=list(x[, calcBy]), FUN=sum))
-  sero <- lapply(dat, `[`, "sero_event")
-  sero <- do.call("cbind", sero)
-  pyears <- lapply(dat, `[`, "pyears")
-  pyears <- do.call("cbind", pyears)
-  list(sero=sero, pyears=pyears)
-}
-
-# used in getIncidence
-getRate <- function(dat) {
-  nm <- c("crude.rate", "adj.rate")
-  out <- lapply(nm, function(x) {
-    out <- lapply(dat, `[`, x)
-    do.call('cbind', out)})
-  names(out) <- nm
+sumEst <- function(dat, name) {
+  dat <- lapply(dat, `[`, name)
+  out <- do.call("cbind", dat)
+  out <- data.frame(t(apply(out, MARGIN=1, 
+    FUN=quantile, probs=c(0.5, 0.025, 0.975))))
+  names(out) <- c("rate", "lower", "upper")
   out
 }
 
-# used in getIncidence
-sumEst <- function(x) {
-    rate <- apply(x, 1, mean)
-    lower <- apply(x, 1, quantile, 0.025)
-    upper <- apply(x, 1, quantile, 0.975)
-    data.frame(cbind(rate, lower, upper))
+getAggData <- function(dat, calcBy="Year") {
+  dat <- lapply(dat, function(x)
+    aggregate(x[, c("sero_event", "pyears")], 
+      by=list(x[, calcBy]), FUN=sum))
+  sero <- sumEst(dat, "sero_event")
+  pyears <- sumEst(dat, "pyears")
+  list(sero=sero, pyears=pyears)
+}
+
+getRate <- function(dat) {
+  crude <- sumEst(dat, "crude.rate")
+  adj <- sumEst(dat, "adj.rate")
+  list(crude.rate=crude, adj.rate=adj)
+}
+
+#' @title getEstimates
+#' 
+#' @description Once dates are imputed get the estimates.
+#' 
+#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
+#'
+#' @param Args takes list from \code{\link{setArgs}}.
+#'
+#' @return data.frame
+#'
+#' @import dplyr
+#'
+#' @examples
+#' getIncidence <- function(Args) {
+#'   hiv   <- getHIV(Args)
+#'   rtdat <- getRTData(hiv)
+#'   set.seed(Args$Seed)
+#'   dat <- lapply(seq(Args$nSimulations),
+#'     function(i) doIncData(rtdat, Args))
+#'   out <- getEstimates(dat, Args) 
+#'   out
+#' }
+
+getEstimates <- function(dat, Args) {
+
+  # wdat <- getWeights(Args)
+  wdat <- 1
+  Year <- lapply(dat, 
+    function(x) calcInc(x, wdat, calcBy="Year"))
+
+  Age <- lapply(dat, 
+    function(x) calcInc(x, wdat, calcBy="AgeCat"))
+  
+  if (Args$nSimulations==1) 
+    return(list(dat=dat, Year=Year, Age=Age))
+
+  dat_year <- getAggData(dat, calcBy="Year")
+  dat_age <- getAggData(dat, calcBy="AgeCat")
+  est_year <- getRate(Year)
+  est_age <- getRate(Age)
+  list(YearD=dat_year, AgeD=dat_age,
+    Year=est_year, Age=est_age)
 }
 
 #' @title getIncidence
@@ -105,30 +145,13 @@ sumEst <- function(x) {
 #' @import dplyr
 
 getIncidence <- function(Args) {
-
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  wdat <- getWeights(Args)
-
   set.seed(Args$Seed)
   dat <- lapply(seq(Args$nSimulations),
     function(i) doIncData(rtdat, Args))
-
-  Year <- lapply(dat, 
-    function(x) calcInc(x, wdat, calcBy="Year"))
-
-  Age <- lapply(dat, 
-    function(x) calcInc(x, wdat, calcBy="AgeCat"))
-  
-  if (Args$nSimulations==1) 
-    return(list(dat=dat, Year=Year, Age=Age))
-
-  dat_year <- lapply(getAgg(dat, calcBy="Year"), sumEst)
-  dat_age <- lapply(getAgg(dat, calcBy="AgeCat"), sumEst)
-  est_year <- lapply(getRate(Year), sumEst)
-  est_age <- lapply(getRate(Age), sumEst)
-  list(YearD=dat_year, AgeD=dat_age,
-    Year=est_year, Age=est_age)
+  out <- getEstimates(dat, Args) 
+  out
 }
 
 #' @title smoothInc
@@ -147,4 +170,34 @@ smoothInc <- function(dat, bwidth=1) {
   ks <-  ksmooth(Year, dat$rate,
     "normal", bandwidth = bwidth)
   ks
+}
+
+#' @title incTab
+#' 
+#' @description Make table for excel.
+#' 
+#' @param obj takes dataset. 
+#'
+#' @param age Do for age or year.
+#'
+#' @return data.frame
+
+incTab <- function(obj, Age=FALSE) {
+  if (Age==FALSE)
+    with(obj, cbind(YearD$sero, YearD$pyears, Year$adj.rate))
+  else
+    with(obj, cbind(AgeD$sero, AgeD$pyears, Age$adj.rate))
+}
+
+#' @title saveInc
+#' 
+#' @description Save to .Rdata file.
+#' 
+#' @param obj takes object. 
+#'
+#' @param out File path to write. 
+
+saveInc <- function(obj, out=output) {
+  save(obj, file=file.path(output, 
+    paste0(deparse(substitute(obj)), ".Rdata")))
 }

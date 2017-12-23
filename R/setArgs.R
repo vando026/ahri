@@ -1,4 +1,4 @@
-#' @title setFiles
+#' @title setArgs
 #' 
 #' @description  Set the arguments for functions. 
 #' 
@@ -8,7 +8,7 @@
 #'
 #' @param Sex character of "All", "Fem", "Mal".
 #'
-#' @param Age numeric vector of ages.
+#' @param Age list of ages as in \code{list(Fem=c(15, 49)}.
 #'
 #' @param AgeCat numeric vector of age categories.
 #'
@@ -20,13 +20,18 @@
 #'
 #' @param aname root name to associate with output or filenames.
 #'
+#' @param imputeMethod select either \code{imputeRandomPoint} or \code{imputeMidPoint}.
+#'
 #' @param printout print out results.
+#'
+#' @param MoreArgs a list, which adds more arguments if needed.
 #'
 #' @return list
 #'
 #' @examples
 #' inFiles <- getFiles()
 #' Args <- setArgs(inFiles, Years=c(2004:2015), Sex="Mal")
+#' Args <- setArgs(inFiles, Years=c(2004:2015), MoreArgs=list(knots=2))
 
 setArgs <- function( 
   inFiles=getFiles(),
@@ -39,7 +44,8 @@ setArgs <- function(
   Seed=300500,
   imputeMethod=imputeRandomPoint,
   aname='filename',
-  printout=FALSE) {
+  printout=FALSE,
+  MoreArgs=NULL) {
 
   out <- list(
     inFiles=inFiles,
@@ -56,6 +62,8 @@ setArgs <- function(
     Seed=Seed,
     printout=printout
   )
+  if (!is.null(MoreArgs))
+    out <- append(out, MoreArgs)
   return(out)
 }
 
@@ -68,3 +76,5 @@ setAge <- function(newList=NULL) {
     return(defList)
   modifyList(defList, newList)
 }
+
+
