@@ -1,6 +1,7 @@
 #' @title aggregateInc
 #' 
-#' @description Gets the aggregated sero_event counts and total person-years.
+#' @description Gets the aggregated sero_event counts and total person-years by Year, Age,
+#' and sex.
 #' 
 #' @param dat dataset from \code{\link{censorData}}. 
 #' 
@@ -40,8 +41,6 @@ doIncData <- function(rtdat, Args) {
 #' 
 #' @param dat Dataset from \code{\link{aggregateInc}}.
 #' 
-#' @param wdat Dataset of weights from \code{\link{getWeightsKZN}}.
-#' 
 #' @param calcBy Results by Year, Age, or Sex.
 #'
 #' @return data.frame
@@ -55,10 +54,11 @@ doIncData <- function(rtdat, Args) {
 #' wdat <- getWeightsKZN() 
 #' calcInc(inc, wdat)
 
-calcInc <- function(dat, wdat, calcBy="Year") { 
+calcInc <- function(dat, Args, calcBy="Year") { 
+  # wdat <- getWeights(Args)
   # dat <- merge(dat, wdat, by="AgeCat")
-  dat$AgeCat <- factor(dat$AgeCat)
   dat$Total <- 1 #remove, only for test
+  dat$AgeCat <- factor(dat$AgeCat)
   dat <- split(dat, dat[calcBy])
   dat <- sapply(dat, function(x) ageadjust.direct(
     x["sero_event"],x["pyears"],stdpop=x["Total"]))
@@ -97,6 +97,8 @@ getRate <- function(dat) {
 #' @param dat takes dataset from a function (i.e., \code{doIncData}.)
 #'
 #' @param Args takes list from \code{\link{setArgs}}.
+#' 
+#' @param By calculate by Year or AgeCat.
 #'
 #' @return data.frame
 #'
@@ -113,25 +115,16 @@ getRate <- function(dat) {
 #'   out
 #' }
 
-getEstimates <- function(dat, Args) {
+getEstimates <- function(dat, Args, By='Year') {
 
-  # wdat <- getWeights(Args)
-  wdat <- 1
-  Year <- lapply(dat, 
-    function(x) calcInc(x, wdat, calcBy="Year"))
+  ldat <- lapply(dat, 
+    function(x) calcInc(x, Args, calcBy=By))
 
-  Age <- lapply(dat, 
-    function(x) calcInc(x, wdat, calcBy="AgeCat"))
-  
-  if (Args$nSimulations==1) 
-    return(list(dat=dat, Year=Year, Age=Age))
+  if (Args$nSimulations==1) return(ldat)
 
-  dat_year <- getAggData(dat, calcBy="Year")
-  dat_age <- getAggData(dat, calcBy="AgeCat")
-  est_year <- getRate(Year)
-  est_age <- getRate(Age)
-  list(YearD=dat_year, AgeD=dat_age,
-    Year=est_year, Age=est_age)
+  aggdat <- getAggData(dat, calcBy=By)
+  estdat <- getRate(ldat)
+  list(Agg=aggdat, Est=estdat)
 }
 
 #' @title getIncidence
@@ -150,13 +143,14 @@ getIncidence <- function(Args) {
   set.seed(Args$Seed)
   dat <- lapply(seq(Args$nSimulations),
     function(i) doIncData(rtdat, Args))
-  out <- getEstimates(dat, Args) 
-  out
+  Year <- getEstimates(dat, Args) 
+  Age <- getEstimates(dat, Args, By='AgeCat') 
+  list(Year=Year, Age=Age)
 }
 
 #' @title smoothInc
 #' 
-#' @description get smoothes incidence estimates.
+#' @description get smoothed incidence estimates.
 #' 
 #' @param dat takes dataset from \code{\link{getIncidence}}.
 #'
@@ -184,9 +178,9 @@ smoothInc <- function(dat, bwidth=1) {
 
 incTab <- function(obj, Age=FALSE) {
   if (Age==FALSE)
-    with(obj, cbind(YearD$sero, YearD$pyears, Year$adj.rate))
+    with(obj, cbind(Year$Agg$sero, Year$Agg$pyears, Year$Est$adj.rate))
   else
-    with(obj, cbind(AgeD$sero, AgeD$pyears, Age$adj.rate))
+    with(obj, cbind(Age$Agg$sero, Age$Agg$pyears, Age$Est$adj.rate))
 }
 
 #' @title saveInc
