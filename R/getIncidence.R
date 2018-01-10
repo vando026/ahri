@@ -51,13 +51,11 @@ doIncData <- function(rtdat, Args) {
 #' edat <- censorData(rtdat,Args)
 #' adat <- getAgeData(edat, Args)
 #' inc <- aggregateInc(adat)
-#' wdat <- getWeightsKZN() 
-#' calcInc(inc, wdat)
+#' calcInc(inc, Args)
 
 calcInc <- function(dat, Args, calcBy="Year") { 
-  # wdat <- getWeights(Args)
-  # dat <- merge(dat, wdat, by="AgeCat")
-  dat$Total <- 1 #remove, only for test
+  wdat <- getWeights(Args)
+  dat <- merge(dat, wdat, by="AgeCat")
   dat$AgeCat <- factor(dat$AgeCat)
   dat <- split(dat, dat[calcBy])
   dat <- sapply(dat, function(x) ageadjust.direct(
@@ -157,6 +155,8 @@ getIncidence <- function(Args) {
 #' @param bwidth bandwith for \code{ksmooth} function. 
 #'
 #' @return data.frame
+#' @examples
+#' smoothInc(dat$Year$Est$adj.rate)
 
 smoothInc <- function(dat, bwidth=1) {
   dat <- as.data.frame(dat)
