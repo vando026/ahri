@@ -21,7 +21,7 @@ getHIV <- function(Args) {
       AgeAtVisit="i"))
 
   hiv <- filter(hiv, Sex %in% c(1,2))
-  hiv <- mutate(hiv, Female=ifelse(Sex==2, 1, 0))
+  hiv <- mutate(hiv, Female=as.integer(ifelse(Sex==2, 1, 0)))
   hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
    select(-Sex) %>% arrange(IIntID, VisitDate)
 

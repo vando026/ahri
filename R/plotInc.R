@@ -6,12 +6,11 @@
 
 plotKSInc <- function(
   inc1, inc2=NULL, inc3=NULL, 
-  ylim1=c(0, 7), bwidth=c(2,2),
-  gcolor="grey50", TIFF=TRUE,
   Colors=c("grey60", "grey70", NULL),
+  bwidth=c(2,2, NULL), ylim1=c(0, 7), 
+  gcolor="grey50", TIFF=TRUE,
   Legend=c("Males", "Females", NULL),
   title="", fname="year_plot") {
-
 
   if(TIFF==TRUE) {
     tiff(file.path(output, paste0(fname, ".tiff")),
@@ -29,57 +28,27 @@ plotKSInc <- function(
     labs <- x 
   }
 
-  y <-  inc1[, "rate"]
-  ub <- inc1[, "lower"]
-  lb <- inc1[, "upper"]
-
-  plot(x, y, type='n',
-    pch=4, bty="n",
-    ylim=ylim1,
-    main=title,
-    cex.axis=1.0,
-    cex.lab=1.0,
+  plot(x, inc1[, "rate"], type='n',
+    pch=4, bty="n", xaxt='n',
+    ylim=ylim1, main=title,
+    cex.axis=1.0, cex.lab=1.0,
     xlab="Year", font.lab=2,
-    ylab="Incidence Rate per 100 person-years",
-    xaxt='n')
+    ylab="Incidence Rate per 100 person-years")
   axis(side = 1, at=labs, labels=labs, cex.axis=1.0)
 
-  ub_ks <- ksmooth(x, ub, "normal", bandwidth = bwidth[1])
-  lb_ks <- ksmooth(x, lb, "normal", bandwidth = bwidth[1])
-  polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
-    col=Colors[1], border=Colors[1])
-  points(x, y, pch=4, col=gcolor, cex=0.5)
-  lines(ksmooth(x, y,
-    "normal", bandwidth = bwidth[1]), 
-    lwd=1, lty=1, col=gcolor)
-
-  if(!is.null(inc2)) {
-    y2 <-  inc2[, "rate"]
-    ub2 <- inc2[, "lower"]
-    lb2 <- inc2[, "upper"]
-    ub_ks <- ksmooth(x, ub2, "normal", bandwidth = bwidth[2])
-    lb_ks <- ksmooth(x, lb2, "normal", bandwidth = bwidth[2])
+  renderInc <- function(dat, Colors, bwidth) {
+    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
+    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth), 
+      lwd=1, lty=1, col=gcolor)
+    ub_ks <- ksmooth(x, dat[, "upper"], "normal", bandwidth = bwidth[1])
+    lb_ks <- ksmooth(x, dat[, "lower"], "normal", bandwidth = bwidth[1])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
-          col=Colors[2], border=Colors[2])
-    points(x, y2, pch=4, col=gcolor, cex=0.5)
-    lines(ksmooth(x, y2,
-        "normal", bandwidth = bwidth[2]), 
-        lwd=1, lty=1, col=gcolor)
+      col=Colors, border=Colors)
   }
 
-  if (!is.null(inc3)) {
-    y3 <-  inc3[, "rate"]
-    ub3 <- inc3[, "lower"]
-    lb3 <- inc3[, "upper"]
-    ub_ks3 <- ksmooth(x, ub3, "normal", bandwidth = bwidth)
-    lb_ks3 <- ksmooth(x, ub3, "normal", bandwidth = bwidth)
-    polygon(c(ub_ks3$x, rev(ub_ks3$x)), c(ub_ks3$y, rev(lb_ks3$y)), 
-          col=Colors[3], border=Colors[3])
-    points(x, y3, pch=4, col=gcolor, cex=0.5)
-    lines(ksmooth(x, inc3[, "rate"],
-        "normal", bandwidth = bwidth), 
-        lwd=1, lty=1, col=gcolor)
-  }
+  renderInc(inc1, Colors[1], bwidth[1])
+  if(!is.null(inc2)) renderInc(inc2, Colors[2], bwidth[2])
+  if(!is.null(inc3)) renderInc(inc3, Colors[3], bwidth[3])
 
   legend("top", Legend,
     lwd=12, lty=1, col=Colors,

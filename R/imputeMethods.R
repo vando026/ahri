@@ -17,8 +17,7 @@ imputeMidPoint <- function(dat) {
 
 #' @title imputeRandomPoint
 #' 
-#' @description  Impute random seroconversion date(s) within the censored interval. Needs
-#' \code{Args$Seed} and \code{Args$nSimulations}.
+#' @description  Impute random seroconversion date(s) within the censored interval.
 #' 
 #' @param dat dataset from \code{\link{getRTData()}}. 
 #'

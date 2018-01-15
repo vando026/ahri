@@ -53,9 +53,8 @@ doIncData <- function(rtdat, Args) {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
-calcInc <- function(dat, Args, calcBy="Year") { 
-  wdat <- getWeights(Args)
-  dat <- merge(dat, wdat, by="AgeCat")
+calcInc <- function(dat, wdat, Args, calcBy="Year") { 
+  dat <- merge(dat, wdat, by=c("Year", "AgeCat"))
   dat$AgeCat <- factor(dat$AgeCat)
   dat <- split(dat, dat[calcBy])
   dat <- sapply(dat, function(x) ageadjust.direct(
@@ -115,8 +114,11 @@ getRate <- function(dat) {
 
 getEstimates <- function(dat, Args, By='Year') {
 
+  # Calc weights once here
+  wdat <- getWeights(Args)
+  # For each iteration of dat, merge weight and calc inc
   ldat <- lapply(dat, 
-    function(x) calcInc(x, Args, calcBy=By))
+    function(x) calcInc(x, wdat, Args, calcBy=By))
 
   if (Args$nSimulations==1) return(ldat)
 
@@ -178,7 +180,7 @@ smoothInc <- function(dat, bwidth=1) {
 
 incTab <- function(obj, Age=FALSE) {
   if (Age==FALSE)
-    with(obj, cbind(Year$Agg$sero, Year$Agg$pyears, Year$Est$adj.rate))
+    with(obj, cbind(Year$Agg$sero, Year$Agg$pyears, Year$Est$crude.rate, Year$Est$adj.rate))
   else
     with(obj, cbind(Age$Agg$sero, Age$Agg$pyears, Age$Est$adj.rate))
 }
