@@ -63,28 +63,39 @@ calcInc <- function(dat, wdat, Args, calcBy="Year") {
   dat
 }
 
-sumEst <- function(dat, name) {
+
+sumEst_qtile <- function(out) {
+  out <- sapply(c(0.5, 0.025, 0.975),
+    function(x) apply(out, MARGIN=1, FUN=quantile, x))
+  colnames(out) <- c("rate", "lower", "upper")
+  data.frame(out)
+}
+
+sumEst_sd <- function(out) {
+  out <- sapply(c(mean, sd),
+    function(x) apply(out, MARGIN=1, FUN=x))
+  colnames(out) <- c("rate", "sd")
+  data.frame(out)
+}
+
+sumEst <- function(dat, name, Args) {
   dat <- lapply(dat, `[`, name)
   out <- do.call("cbind", dat)
-  out <- data.frame(t(apply(out, MARGIN=1, 
-    FUN=quantile, probs=c(0.5, 0.025, 0.975))))
-  names(out) <- c("rate", "lower", "upper")
-  out
+  Args$sumEstRule(out)
 }
 
-getAggData <- function(dat, calcBy="Year") {
+getAggData <- function(dat, Args, calcBy="Year") {
+  nm <- c("sero_event", "pyears")
   dat <- lapply(dat, function(x)
-    aggregate(x[, c("sero_event", "pyears")], 
-      by=list(x[, calcBy]), FUN=sum))
-  sero <- sumEst(dat, "sero_event")
-  pyears <- sumEst(dat, "pyears")
-  list(sero=sero, pyears=pyears)
+    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
+  lapply(setNames(nm, nm), 
+    function(x) sumEst(dat, x, Args))
 }
 
-getRate <- function(dat) {
-  crude <- sumEst(dat, "crude.rate")
-  adj <- sumEst(dat, "adj.rate")
-  list(crude.rate=crude, adj.rate=adj)
+getRate <- function(dat, Args) {
+  nm <- c("crude.rate", "adj.rate")
+  lapply(setNames(nm, nm),
+    function(x) sumEst(dat, x, Args)) 
 }
 
 #' @title getEstimates
@@ -122,8 +133,8 @@ getEstimates <- function(dat, Args, By='Year') {
 
   if (Args$nSimulations==1) return(ldat)
 
-  aggdat <- getAggData(dat, calcBy=By)
-  estdat <- getRate(ldat)
+  aggdat <- getAggData(dat, Args, calcBy=By)
+  estdat <- getRate(ldat, Args)
   list(Agg=aggdat, Est=estdat)
 }
 

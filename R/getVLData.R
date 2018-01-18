@@ -39,6 +39,7 @@ getVLData <- function(Args) {
   cvl_valid <- filter(cvl_valid, ViralLoad<2e7 | is.na(ViralLoad))
 
   # Now replace undetectable with 0--1550
+  old <- .Random.seed
   set.seed(20000)
   cvl <- mutate(cvl_valid, Random = round(runif(nrow(cvl_valid), 1, 1549)))
   cvl <- mutate(cvl, ViralLoad = ifelse(is.na(ViralLoad), Random, ViralLoad)) 
@@ -51,6 +52,7 @@ getVLData <- function(Args) {
       labels=NULL, right=FALSE),
     HIVResult=1)
 
+  .Random.seed <<- old
   cvl[, c("IIntID", "Year", "Female", "Age", "AgeCat", "HIVResult",
     "ViralLoad", "log10VL", "VLDetect", "VLSuppress")]
 }
@@ -98,6 +100,7 @@ getPVLData <- function(cvl, Args) {
   hiv_neg0 <- filter(hiv, HIVResult==0)
 
   # Indiv cant be in both pos and neg datasets
+  old <- .Random.seed
   set.seed(12399)
   hiv_neg <- setDiffData(hiv_neg0, cvl, SampN, Args) 
 
@@ -123,7 +126,7 @@ getPVLData <- function(cvl, Args) {
     Female=as.integer(Female))
   # Must have max three measures
   stopifnot(max(pvl$Count)<=3)
-
+  .Random.seed <<- old
   pvl
 }
 

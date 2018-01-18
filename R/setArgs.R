@@ -20,6 +20,9 @@
 #'
 #' @param aname root name to associate with output or filenames.
 #'
+#' @param sumEstRule rule to get summary for estimates, can be sumEst_qtile or sumEst_sd
+#' for the 95% quantiles and emperical standard deviation respectively. 
+#'
 #' @param imputeMethod select either \code{imputeRandomPoint} or \code{imputeMidPoint}.
 #'
 #' @param printout print out results.
@@ -43,6 +46,7 @@ setArgs <- function(
   nSimulations=5, 
   Seed=300500,
   imputeMethod=imputeRandomPoint,
+  sumEstRule=sumEst_qtile,
   aname='filename',
   printout=FALSE,
   MoreArgs=NULL) {
@@ -58,6 +62,7 @@ setArgs <- function(
     ResRule=ResRule,
     nSimulations=nSimulations,
     imputeMethod=imputeMethod,
+    sumEstRule=sumEstRule,
     aname=aname,
     Seed=Seed,
     printout=printout

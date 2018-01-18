@@ -22,13 +22,10 @@ getFiles <- function(
     mghfile="WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
     artemis="ARTemis/ARTemisAll2013A.dta",
     bsmfile="Other/MaxBSIntID.csv",
-    bsafile="BS_Area.Rdata",
+    bsafile="Other/BS_Area.Rdata",
     parfile="Other/PartnerDat.Rdata",
     prvfile="Other/HIV_Prev_Aug21.csv",
-    artfile="Results_ART_Aug18.xlsx",
-    pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta",
-    kznwght="Other/StatsSA_2015_AgeSexKZN.csv",
-    ahriwgt="Other/Weights_AHRI_2015.csv"
+    pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta"
   )
   file_ls <- lapply(file_ls, function(x) file.path(root, x))
   return(file_ls)
