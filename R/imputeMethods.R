@@ -34,6 +34,22 @@ imputeRandomPoint <- function(dat) {
   dat
 }
 
+#' @title imputeEndPoint
+#' 
+#' @description  Impute a end-point seroconversion date within the censored interval.
+#' 
+#' @param dat dataset from \code{\link{getRTData()}}. 
+#'
+#' @return data.frame
+#'
+#' @import dplyr
+
+imputeEndPoint <- function(dat) {
+  dat$sero_date <- dat$early_pos
+  dat
+}
+
+
 #' @title censorData
 #' 
 #' @description Censor the data into year episodes at the imputed date or latest
@@ -80,3 +96,4 @@ censorData <- function(
     Year=as.integer(format(obs_start, "%Y")))
   tbl_df(edat)
 }
+

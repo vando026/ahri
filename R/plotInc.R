@@ -31,19 +31,19 @@ plotKSInc <- function(
   plot(x, inc1[, "rate"], type='n',
     pch=4, bty="n", xaxt='n',
     ylim=ylim1, main=title,
-    cex.axis=1.0, cex.lab=1.0,
+    cex.axis=1.1, cex.lab=1.2,
     xlab="Year", font.lab=2,
     ylab="Incidence Rate per 100 person-years")
-  axis(side = 1, at=labs, labels=labs, cex.axis=1.0)
+  axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
 
   renderInc <- function(dat, Colors, bwidth) {
-    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
-    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth), 
-      lwd=1, lty=1, col=gcolor)
     ub_ks <- ksmooth(x, dat[, "upper"], "normal", bandwidth = bwidth[1])
     lb_ks <- ksmooth(x, dat[, "lower"], "normal", bandwidth = bwidth[1])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
       col=Colors, border=Colors)
+    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
+    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth), 
+      lwd=1, lty=1, col=gcolor)
   }
 
   renderInc(inc1, Colors[1], bwidth[1])

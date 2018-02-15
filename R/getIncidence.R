@@ -131,7 +131,8 @@ getEstimates <- function(dat, Args, By='Year') {
   ldat <- lapply(dat, 
     function(x) calcInc(x, wdat, Args, calcBy=By))
 
-  if (Args$nSimulations==1) return(ldat)
+  if (Args$nSimulations==1) 
+    return(as.data.frame(ldat))
 
   aggdat <- getAggData(dat, Args, calcBy=By)
   estdat <- getRate(ldat, Args)
@@ -173,10 +174,10 @@ getIncidence <- function(Args) {
 
 smoothInc <- function(dat, bwidth=1) {
   dat <- as.data.frame(dat)
-  Year <- as.integer(rownames(dat))
-  ks <-  ksmooth(Year, dat$rate,
+  ksmooth(
+    as.integer(rownames(dat)),
+    dat[, grep("rate", colnames(dat))],
     "normal", bandwidth = bwidth)
-  ks
 }
 
 #' @title incTab
@@ -189,11 +190,13 @@ smoothInc <- function(dat, bwidth=1) {
 #'
 #' @return data.frame
 
-incTab <- function(obj, Age=FALSE) {
+incTab <- function(root="", Age=FALSE) {
   if (Age==FALSE)
-    with(obj, cbind(Year$Agg$sero, Year$Agg$pyears, Year$Est$crude.rate, Year$Est$adj.rate))
+    with(get(root, envir=globalenv()),
+      cbind(Agg$sero, Agg$pyears, Est$crude.rate, Est$adj.rate))
   else
-    with(obj, cbind(Age$Agg$sero, Age$Agg$pyears, Age$Est$adj.rate))
+    with(get(root, envir=globalenv()),
+      cbind(Agg$sero, Agg$pyears, Est$adj.rate))
 }
 
 #' @title saveInc
