@@ -53,13 +53,41 @@ doIncData <- function(rtdat, Args) {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
+
+gammaCI <- function(x) {
+  epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
+}
+
+
+#' @title poissonCI
+#' 
+#' @description Calculates CIs and Standard errors following formula in Boyle and Parkin, 
+#' (https://www.iarc.fr/en/publications/pdfs-online/epi/sp95/sp95-chap11.pdf) on page 137. 
+#' 
+#' @return data.frame
+
+poissonCI <- function(x) {
+  ry <- 100
+  # Calculate age specific rates
+  x$crude <- with(x, (sero_event/pyears))
+  crude.rate <- with(x, sum(sero_event)/sum(pyears)) * ry
+  adj.rate <- sum(with(x, crude * (Total/sum(Total)))) * ry
+  # Calculate adjusted SE
+  numer <- with(x, sum((crude*ry*(Total^2)*ry)/pyears))
+  denom <- (sum(x$Total))^2
+  adj.se <- sqrt(numer/denom)
+  ci <- adj.rate + c(-1, 1) * qnorm(0.05/2, lower=FALSE) * adj.se
+  c(crude.rate=crude.rate, adj.rate=adj.rate, 
+    lci=ci[1], uci=ci[2], se=adj.se)
+}
+
+
 calcInc <- function(dat, wdat, Args, calcBy="Year") { 
   dat <- merge(dat, wdat, by=c("Year", "AgeCat"))
   dat$AgeCat <- factor(dat$AgeCat)
   dat <- split(dat, dat[calcBy])
-  dat <- sapply(dat, function(x) ageadjust.direct(
-    x["sero_event"],x["pyears"],stdpop=x["Total"]))
-  dat <- data.frame(t(dat)*100)
+  dat <- sapply(dat, Args$ciMethod)
+  dat <- data.frame(t(dat))
   dat
 }
 
@@ -78,7 +106,21 @@ sumEst_sd <- function(out) {
   data.frame(out)
 }
 
-sumEst <- function(dat, name, Args) {
+
+#' @title sumEst_possion
+#' 
+#' @description Calculates estimates following formula given in P. Allison Missing Data
+#' book, pg 30, in '~/Dropbox/Textbooks/Statistics'.
+#' 
+#' @return data.frame
+
+sumEst_poisson <- function(x,
+  Args=eval.parent(quote(Args))) {
+  M <- Args$nSimulations
+  M
+}
+
+sumEst <- function(dat, name) {
   dat <- lapply(dat, `[`, name)
   out <- do.call("cbind", dat)
   Args$sumEstRule(out)
@@ -116,7 +158,6 @@ getRate <- function(dat, Args) {
 #' getIncidence <- function(Args) {
 #'   hiv   <- getHIV(Args)
 #'   rtdat <- getRTData(hiv)
-#'   set.seed(Args$Seed)
 #'   dat <- lapply(seq(Args$nSimulations),
 #'     function(i) doIncData(rtdat, Args))
 #'   out <- getEstimates(dat, Args) 
@@ -152,7 +193,6 @@ getEstimates <- function(dat, Args, By='Year') {
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  set.seed(Args$Seed)
   dat <- lapply(seq(Args$nSimulations),
     function(i) doIncData(rtdat, Args))
   Year <- getEstimates(dat, Args) 
