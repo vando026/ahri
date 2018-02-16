@@ -31,12 +31,19 @@ doIncData <- function(rtdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- censorData(dat, Args) 
   adat <- getAgeData(edat, Args)
-  idat <- aggregateInc(adat)
-  idat
+  aggregateInc(adat)
 }
 
 gammaCI <- function(x) {
   epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
+}
+
+doSIEst <- function(x) {
+  x <- data.frame(x)
+  z <- qnorm(0.05/2, lower=FALSE)
+  x$lci <- x$rate - z * x$se
+  x$uci <- x$rate + z * x$se
+  x
 }
 
 
@@ -64,6 +71,7 @@ getAdjRate <- function(x, crude=FALSE) {
 #' @description Calculates crude incidence rate and standard errors following work of Ulm, 1990, AJE.
 #' 
 #' @return data.frame
+
 getCrudeRate <- function(x) {
   ry <- 100
   rate <- with(x, sum(sero_event)/sum(pyears)) * ry
@@ -98,34 +106,35 @@ calcInc <- function(dat, wdat, Args,
   data.frame(t(dat))
 }
 
-#' @title getMIStError
+#' @title doMIEst
 #' 
 #' @description Calculates the standard errors for multiple imputation following formula given in P. Allison Missing Data
 #' book, pg 30, in '~/Dropbox/Textbooks/Statistics'.
 #' 
 #' @return data.frame
 
-getMIStError <- function(dat, calcBy=Args$Years) {
+doMIEst <- function(dat) {
   
   getError <- function(x,
     Args=eval.parent(quote(Args))) {
     x <- as.data.frame(x)
     M <- Args$nSimulations
     var1 <- sum(x$se^2)/M
-    var2 <- with(x, sum((adj.rate - mean(adj.rate))^2))
-    se <- sqrt(var1 + (1+(1/M)) * (1/(M-1) * var2))
-    est <- mean(x$adj.rate)
+    var2 <- with(x, sum((rate - mean(rate))^2))
+    se <- sqrt(var1 + ((1+(1/M)) * (1/(M-1) * var2)))
+    est <- mean(x$rate)
     ci <- est + c(-1, 1) * qnorm(0.05/2, lower=FALSE) * se
     c(rate=est, se=se, lci=ci[1], uci=ci[2])
   }
 
-  collect <- lapply(seq(calcBy),
+  # Group data by year
+  nm <- rownames(dat[[1]])
+  collect <- lapply(seq(nm),
     function(y) lapply(dat, function(x) x[y, ]))
   bind <- lapply(collect, function(x) do.call("rbind", x))
-  keep <- lapply(bind, `[`, c("adj.rate", "se"))
-  out <- lapply(keep, getError)
+  out <- lapply(bind, getError)
   out <- do.call("rbind", out)
-  rownames(out) <- calcBy
+  rownames(out) <- nm
   out
 }
 
@@ -137,9 +146,12 @@ getAggData <- function(dat, Args, calcBy="Year") {
   nm <- c("sero_event", "pyears")
   dat <- lapply(dat, function(x)
     aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
-  dat <- lapply(nm, function(x) getDat(dat, x))
-  dat <- lapply(dat, function(x) apply(x, MARGIN=1, mean))
-  do.call("cbind", dat)
+  adat <- lapply(nm, function(x) getDat(dat, x))
+  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
+  out <- do.call("cbind", adat)
+  colnames(out) <- nm
+  rownames(out) <- dat[[1]]$Group.1
+  out
 }
 
 #' @title getEstimates
@@ -168,18 +180,29 @@ getAggData <- function(dat, Args, calcBy="Year") {
 
 getEstimates <- function(dat, Args, By='Year') {
 
+  # Get events and pyears by year 
+  aggdat <- getAggData(dat, Args, calcBy=By)
   # Calc weights once here
   wdat <- getWeights(Args)
   # For each iteration of dat, merge weight and calc inc
-  ldat <- lapply(dat, 
-    function(x) calcInc(x, wdat, Args, calcBy=By))
+  crate <- lapply(dat, 
+    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
+  arate <- lapply(dat, 
+    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
 
-  if (Args$nSimulations==1) 
-    return(as.data.frame(ldat))
-
-  aggdat <- getAggData(dat, Args, calcBy=By)
-  estdat <- getMIStError(ldat)
-  list(Agg=aggdat, Est=estdat)
+  getEst <- function(fun) {
+      list(AggDat = aggdat, 
+        CrudeRate = fun(crate),
+        AdjRate = fun(arate))
+  }
+  
+  if (Args$nSimulations==1) {
+  # For mid- or end-point imputation
+    getEst(doSIEst)
+  } else {
+  # For random-point imputation
+    getEst(doMIEst) 
+  }
 }
 
 #' @title getIncidence
