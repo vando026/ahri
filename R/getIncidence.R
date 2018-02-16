@@ -47,15 +47,12 @@ gammaCI <- function(x) {
 #' @return data.frame
 
 getAdjRate <- function(x, crude=FALSE) {
-  ry <- 100
-  # Calculate age specific rates
-  x$rate <- with(x, (sero_event/pyears))
-  adj.rate <- sum(with(x, rate * (Total/sum(Total)))) * ry
-  # Calculate adjusted SE
-  numer <- with(x, sum((rate*ry*(Total^2)*ry)/pyears))
-  denom <- (sum(x$Total))^2
-  adj.se <- sqrt(numer/denom)
-  c(rate=adj.rate, se=adj.se)
+  stdwt <- with(x, Total/sum(Total))
+  rate <- with(x, sero_event/pyears)
+  dsr <- sum(stdwt * rate)
+  dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
+  wm <- max(stdwt/x$pyears)
+  c(dsr=dsr, dsr.var=dsr.var, wm=wm)
 }
 
 #' @title getCrudeRate
@@ -65,8 +62,7 @@ getAdjRate <- function(x, crude=FALSE) {
 #' @return data.frame
 
 getCrudeRate <- function(x) {
-  ry <- 100
-  rate <- with(x, sum(sero_event)/sum(pyears)) * ry
+  rate <- with(x, sum(sero_event)/sum(pyears)) 
   se <- rate/sqrt(sum(x$sero_event))
   c(rate=rate, se=se)
 }
@@ -126,15 +122,18 @@ getAggData <- function(dat, Args, calcBy="Year") {
 doMIEst <- function(dat, 
   Args=eval.parent(quote(Args))) {
   
-  getError <- function(x, M=Args$nSimulations) {
+  getCI <- function(x, M=Args$nSimulations) {
     x <- as.data.frame(x)
-    # M <- Args$nSimulations
-    var1 <- sum(x$se^2)/M
-    var2 <- with(x, sum((rate - mean(rate))^2))
-    se <- sqrt(var1 + ((1+(1/M)) * (1/(M-1) * var2)))
-    est <- mean(x$rate)
-    ci <- est + c(-1, 1) * qnorm(0.05/2, lower=FALSE) * se
-    c(rate=est, se=se, lci=ci[1], uci=ci[2])
+    var1 <- sum(x$dsr.var)/M
+    var2 <- with(x, sum((dsr - mean(dsr))^2))
+    dsr.var <- var1 + ((1+(1/M)) * (1/(M-1) * var2)) 
+    dsr <- mean(x$dsr)
+    wm <- mean(x$wm)
+    gamma.lci <- qgamma(0.05/2, shape = (dsr^2)/dsr.var, 
+      scale = dsr.var/dsr)
+    gamma.uci <- qgamma(1 - 0.05/2, shape = ((dsr + wm)^2)/(dsr.var + wm^2),
+      scale = (dsr.var + wm^2)/(dsr + wm))
+    c(rate = dsr, lci = gamma.lci, uci = gamma.uci)*100
   }
 
   # Group data by year
@@ -142,7 +141,7 @@ doMIEst <- function(dat,
   collect <- lapply(seq(nm),
     function(y) lapply(dat, function(x) x[y, ]))
   bind <- lapply(collect, function(x) do.call("rbind", x))
-  out <- lapply(bind, getError)
+  out <- lapply(bind, getCI)
   out <- do.call("rbind", out)
   rownames(out) <- nm
   out
@@ -195,14 +194,14 @@ getEstimates <- function(dat, Args, By='Year') {
   # Calc weights once here
   wdat <- getWeights(Args)
   # For each iteration of dat, merge weight and calc inc
-  crate <- lapply(dat, 
-    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
+  # crate <- lapply(dat, 
+    # function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
   arate <- lapply(dat, 
     function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
 
   getEst <- function(fun) {
       list(AggDat = aggdat, 
-        CrudeRate = fun(crate),
+        # CrudeRate = fun(crate),
         AdjRate = fun(arate))
   }
   
