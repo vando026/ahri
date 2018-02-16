@@ -38,14 +38,6 @@ gammaCI <- function(x) {
   epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
 }
 
-doSIEst <- function(x) {
-  x <- data.frame(x)
-  z <- qnorm(0.05/2, lower=FALSE)
-  x$lci <- x$rate - z * x$se
-  x$uci <- x$rate + z * x$se
-  x
-}
-
 
 #' @title getAdjRate
 #' 
@@ -106,6 +98,24 @@ calcInc <- function(dat, wdat, Args,
   data.frame(t(dat))
 }
 
+
+getAggData <- function(dat, Args, calcBy="Year") {
+  getDat <- function(dat, name) {
+    dat <- lapply(dat, `[`, name)
+    do.call("cbind", dat)
+  }
+  nm <- c("sero_event", "pyears")
+  dat <- lapply(dat, function(x)
+    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
+  adat <- lapply(nm, function(x) getDat(dat, x))
+  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
+  out <- do.call("cbind", adat)
+  colnames(out) <- nm
+  rownames(out) <- dat[[1]]$Group.1
+  out
+}
+
+
 #' @title doMIEst
 #' 
 #' @description Calculates the standard errors for multiple imputation following formula given in P. Allison Missing Data
@@ -138,21 +148,21 @@ doMIEst <- function(dat) {
   out
 }
 
-getAggData <- function(dat, Args, calcBy="Year") {
-  getDat <- function(dat, name) {
-    dat <- lapply(dat, `[`, name)
-    do.call("cbind", dat)
-  }
-  nm <- c("sero_event", "pyears")
-  dat <- lapply(dat, function(x)
-    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
-  adat <- lapply(nm, function(x) getDat(dat, x))
-  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
-  out <- do.call("cbind", adat)
-  colnames(out) <- nm
-  rownames(out) <- dat[[1]]$Group.1
-  out
+#' @title doSIEst
+#' 
+#' @description Calculates the standard errors for single imputation such as mid-point or
+#' end-point.
+#' 
+#' @return data.frame
+
+doSIEst <- function(x) {
+  x <- data.frame(x)
+  z <- qnorm(0.05/2, lower=FALSE)
+  x$lci <- x$rate - z * x$se
+  x$uci <- x$rate + z * x$se
+  x
 }
+
 
 #' @title getEstimates
 #' 
