@@ -123,12 +123,12 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' 
 #' @return data.frame
 
-doMIEst <- function(dat) {
+doMIEst <- function(dat, 
+  Args=eval.parent(quote(Args))) {
   
-  getError <- function(x,
-    Args=eval.parent(quote(Args))) {
+  getError <- function(x, M=Args$nSimulations) {
     x <- as.data.frame(x)
-    M <- Args$nSimulations
+    # M <- Args$nSimulations
     var1 <- sum(x$se^2)/M
     var2 <- with(x, sum((rate - mean(rate))^2))
     se <- sqrt(var1 + ((1+(1/M)) * (1/(M-1) * var2)))
