@@ -37,8 +37,8 @@ plotKSInc <- function(
   axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
 
   renderInc <- function(dat, Colors, bwidth) {
-    ub_ks <- ksmooth(x, dat[, "upper"], "normal", bandwidth = bwidth[1])
-    lb_ks <- ksmooth(x, dat[, "lower"], "normal", bandwidth = bwidth[1])
+    ub_ks <- ksmooth(x, dat[, "uci"], "normal", bandwidth = bwidth[1])
+    lb_ks <- ksmooth(x, dat[, "lci"], "normal", bandwidth = bwidth[1])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
       col=Colors, border=Colors)
     points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)

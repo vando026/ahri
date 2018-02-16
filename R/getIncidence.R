@@ -265,13 +265,8 @@ smoothInc <- function(dat, bwidth=1) {
 #'
 #' @return data.frame
 
-incTab <- function(root="", Age=FALSE) {
-  if (Age==FALSE)
-    with(get(root, envir=globalenv()),
-      cbind(Agg$sero, Agg$pyears, Est$crude.rate, Est$adj.rate))
-  else
-    with(get(root, envir=globalenv()),
-      cbind(Agg$sero, Agg$pyears, Est$adj.rate))
+incTab <- function(obj) {
+  with(obj, cbind(AggDat, CrudeRate, AdjRate))
 }
 
 #' @title saveInc
