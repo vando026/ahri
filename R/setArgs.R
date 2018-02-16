@@ -12,16 +12,11 @@
 #'
 #' @param AgeCat numeric vector of age categories.
 #'
-#' @param Seed set the random seed.
-#'
 #' @param nSimulations number of simulations to perform.
 #'
 #' @param ResRule proportion of time spent in DSA, greater than >.
 #'
 #' @param aname root name to associate with output or filenames.
-#'
-#' @param sumEstRule rule to get summary for estimates, can be sumEst_qtile or sumEst_sd
-#' for the 95% quantiles and emperical standard deviation respectively. 
 #'
 #' @param imputeMethod select either \code{imputeRandomPoint} or \code{imputeMidPoint}.
 #'
@@ -44,10 +39,7 @@ setArgs <- function(
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=5, 
-  Seed=300500,
   imputeMethod=imputeRandomPoint,
-  ciMethod=poissonCI,
-  sumEstRule=sumEst_qtile,
   aname='filename',
   printout=FALSE,
   MoreArgs=NULL) {
@@ -63,10 +55,7 @@ setArgs <- function(
     ResRule=ResRule,
     nSimulations=nSimulations,
     imputeMethod=imputeMethod,
-    ciMethod=ciMethod,
-    sumEstRule=sumEstRule,
     aname=aname,
-    Seed=Seed,
     printout=printout
   )
   if (!is.null(MoreArgs))

@@ -35,6 +35,42 @@ doIncData <- function(rtdat, Args) {
   idat
 }
 
+gammaCI <- function(x) {
+  epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
+}
+
+
+#' @title getAdjRate
+#' 
+#' @description Calculates adjusted incidence rate and standard errors following formula in Boyle and Parkin, 
+#' (https://www.iarc.fr/en/publications/pdfs-online/epi/sp95/sp95-chap11.pdf) on page 137.
+#' 
+#' @return data.frame
+
+getAdjRate <- function(x, crude=FALSE) {
+  ry <- 100
+  # Calculate age specific rates
+  x$rate <- with(x, (sero_event/pyears))
+  adj.rate <- sum(with(x, rate * (Total/sum(Total)))) * ry
+  # Calculate adjusted SE
+  numer <- with(x, sum((rate*ry*(Total^2)*ry)/pyears))
+  denom <- (sum(x$Total))^2
+  adj.se <- sqrt(numer/denom)
+  c(rate=adj.rate, se=adj.se)
+}
+
+#' @title getCrudeRate
+#' 
+#' @description Calculates crude incidence rate and standard errors following work of Ulm, 1990, AJE.
+#' 
+#' @return data.frame
+getCrudeRate <- function(x) {
+  ry <- 100
+  rate <- with(x, sum(sero_event)/sum(pyears)) * ry
+  se <- rate/sqrt(sum(x$sero_event))
+  c(rate=rate, se=se)
+}
+
 #' @title calcInc
 #' 
 #' @description Calculates the crude and adjusted incidence.
@@ -53,91 +89,57 @@ doIncData <- function(rtdat, Args) {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
-
-gammaCI <- function(x) {
-  epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
-}
-
-
-#' @title poissonCI
-#' 
-#' @description Calculates CIs and Standard errors following formula in Boyle and Parkin, 
-#' (https://www.iarc.fr/en/publications/pdfs-online/epi/sp95/sp95-chap11.pdf) on page 137. 
-#' 
-#' @return data.frame
-
-poissonCI <- function(x) {
-  ry <- 100
-  # Calculate age specific rates
-  x$crude <- with(x, (sero_event/pyears))
-  crude.rate <- with(x, sum(sero_event)/sum(pyears)) * ry
-  adj.rate <- sum(with(x, crude * (Total/sum(Total)))) * ry
-  # Calculate adjusted SE
-  numer <- with(x, sum((crude*ry*(Total^2)*ry)/pyears))
-  denom <- (sum(x$Total))^2
-  adj.se <- sqrt(numer/denom)
-  ci <- adj.rate + c(-1, 1) * qnorm(0.05/2, lower=FALSE) * adj.se
-  c(crude.rate=crude.rate, adj.rate=adj.rate, 
-    lci=ci[1], uci=ci[2], se=adj.se)
-}
-
-
-calcInc <- function(dat, wdat, Args, calcBy="Year") { 
+calcInc <- function(dat, wdat, Args, 
+  calcBy="Year", fun=getAdjRate) { 
   dat <- merge(dat, wdat, by=c("Year", "AgeCat"))
   dat$AgeCat <- factor(dat$AgeCat)
   dat <- split(dat, dat[calcBy])
-  dat <- sapply(dat, Args$ciMethod)
-  dat <- data.frame(t(dat))
-  dat
+  dat <- sapply(dat, fun)
+  data.frame(t(dat))
 }
 
-
-sumEst_qtile <- function(out) {
-  out <- sapply(c(0.5, 0.025, 0.975),
-    function(x) apply(out, MARGIN=1, FUN=quantile, x))
-  colnames(out) <- c("rate", "lower", "upper")
-  data.frame(out)
-}
-
-sumEst_sd <- function(out) {
-  out <- sapply(c(mean, sd),
-    function(x) apply(out, MARGIN=1, FUN=x))
-  colnames(out) <- c("rate", "sd")
-  data.frame(out)
-}
-
-
-#' @title sumEst_possion
+#' @title getMIStError
 #' 
-#' @description Calculates estimates following formula given in P. Allison Missing Data
+#' @description Calculates the standard errors for multiple imputation following formula given in P. Allison Missing Data
 #' book, pg 30, in '~/Dropbox/Textbooks/Statistics'.
 #' 
 #' @return data.frame
 
-sumEst_poisson <- function(x,
-  Args=eval.parent(quote(Args))) {
-  M <- Args$nSimulations
-  M
-}
+getMIStError <- function(dat, calcBy=Args$Years) {
+  
+  getError <- function(x,
+    Args=eval.parent(quote(Args))) {
+    x <- as.data.frame(x)
+    M <- Args$nSimulations
+    var1 <- sum(x$se^2)/M
+    var2 <- with(x, sum((adj.rate - mean(adj.rate))^2))
+    se <- sqrt(var1 + (1+(1/M)) * (1/(M-1) * var2))
+    est <- mean(x$adj.rate)
+    ci <- est + c(-1, 1) * qnorm(0.05/2, lower=FALSE) * se
+    c(rate=est, se=se, lci=ci[1], uci=ci[2])
+  }
 
-sumEst <- function(dat, name) {
-  dat <- lapply(dat, `[`, name)
-  out <- do.call("cbind", dat)
-  Args$sumEstRule(out)
+  collect <- lapply(seq(calcBy),
+    function(y) lapply(dat, function(x) x[y, ]))
+  bind <- lapply(collect, function(x) do.call("rbind", x))
+  keep <- lapply(bind, `[`, c("adj.rate", "se"))
+  out <- lapply(keep, getError)
+  out <- do.call("rbind", out)
+  rownames(out) <- calcBy
+  out
 }
 
 getAggData <- function(dat, Args, calcBy="Year") {
+  getDat <- function(dat, name) {
+    dat <- lapply(dat, `[`, name)
+    do.call("cbind", dat)
+  }
   nm <- c("sero_event", "pyears")
   dat <- lapply(dat, function(x)
     aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
-  lapply(setNames(nm, nm), 
-    function(x) sumEst(dat, x, Args))
-}
-
-getRate <- function(dat, Args) {
-  nm <- c("crude.rate", "adj.rate")
-  lapply(setNames(nm, nm),
-    function(x) sumEst(dat, x, Args)) 
+  dat <- lapply(nm, function(x) getDat(dat, x))
+  dat <- lapply(dat, function(x) apply(x, MARGIN=1, mean))
+  do.call("cbind", dat)
 }
 
 #' @title getEstimates
@@ -176,7 +178,7 @@ getEstimates <- function(dat, Args, By='Year') {
     return(as.data.frame(ldat))
 
   aggdat <- getAggData(dat, Args, calcBy=By)
-  estdat <- getRate(ldat, Args)
+  estdat <- getMIStError(ldat)
   list(Agg=aggdat, Est=estdat)
 }
 
