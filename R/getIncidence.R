@@ -37,7 +37,8 @@ getIncData <- function(rtdat, wdat, Args) {
   dat
 }
 
-getAggData <- function(dat, Args, calcBy="Year") {
+getAggData <- function(dat, Args, 
+  calcBy=eval.parent(quote(By))) {
   getDat <- function(dat, name) {
     dat <- lapply(dat, `[`, name)
     do.call("cbind", dat)
@@ -124,7 +125,8 @@ getAdjMI <- function(dat) {
 #' 
 #' @return data.frame
 
-getEstMI  <- function(dat, fun, calcBy="Year") {
+getEstMI  <- function(dat, fun,
+  calcBy=eval.parent(quote(By))) {
 
   getCI <- function(x, M=Args$nSimulations) {
     x <- as.data.frame(x)
@@ -162,25 +164,29 @@ getEstMI  <- function(dat, fun, calcBy="Year") {
 #' 
 #' @return data.frame
 
-getEstSI <- function(obj) {
-  crude <- function(x) {
-    with(x, pois.exact(sum(sero_event), 
-      sum(pyears))[3:5] * 100)
-  }
-  adj <- function(x) {
-    as.data.frame(t(with(x, 
-      ageadjust.direct(sero_event, pyears,
-        stdpop=Total)[2:4] * 100)))
-  }
-  fmt <- function(dat, fun) {
-    out <- lapply(dat, fun)
+getEstSI <- function(dat, fun,
+    calcBy=eval.parent(quote(By))) {
+    out <- calcInc(dat, fun, calcBy=calcBy)
     out <- do.call("rbind", out)
     names(out) <- c("rate", "lci", "uci")
     out
+}
+
+getAdjSI <- function(x) {
+  getEst <- function(x) {
+  as.data.frame(t(with(x, 
+    ageadjust.direct(sero_event, pyears,
+      stdpop=Total)[2:4] * 100)))
   }
-  out <- lapply(c(crude, adj), function(fun) fmt(obj, fun))
-  names(out) <- c("CrudeRate", "AdjRate") 
-  out
+  lapply(x, getEst)
+}
+
+getCrudeSI <- function(x) {
+  getEst <- function(x) {
+    with(x, pois.exact(sum(sero_event), 
+      sum(pyears))[3:5] * 100)
+ }
+  lapply(x, getEst)
 }
 
 #' @title getEstimates
@@ -210,16 +216,16 @@ getEstSI <- function(obj) {
 getEstimates <- function(dat, Args, By="Year") {
 
   # Get events and pyears by year 
-  aggdat <- getAggData(dat, Args, calcBy=By)
+  aggdat <- getAggData(dat, Args)
 
   if (Args$nSimulations==1) {
-    estSI <- calcInc(dat, getEstSI, calcBy=By)
-    list(AggDat = aggdat, Est = estSI)
+    crude <- getEstSI(dat, getCrudeSI)
+    adj <- getEstSI(dat, getAdjSI)
   } else {
-    crudeMI <- getEstMI(dat, getCrudeMI, calcBy=By)
-    adjMI <- getEstMI(dat, getAdjMI, calcBy=By)
-    list(AggDat = aggdat, CrudeRate = crudeMI, AdjRate = adjMI)
+    crude <- getEstMI(dat, getCrudeMI)
+    adj <- getEstMI(dat, getAdjMI)
   }
+  list(AggDat = aggdat, CrudeRate = crude, AdjRate = adj)
 }
 
 #' @title getIncidence
