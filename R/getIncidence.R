@@ -72,7 +72,11 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
-
+calcInc <- function(dat, fun, calcBy="Year") {
+  dat <- data.frame(dat)
+  dat <- split(dat, dat[calcBy])
+  fun(dat)
+}
 
 #' @title getAdjRate
 #' 
@@ -81,14 +85,6 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' 
 #' @return data.frame
 
-getAdjMI <- function(x) {
-  stdwt <- with(x, Total/sum(Total))
-  rate <- with(x, sero_event/pyears)
-  dsr <- sum(stdwt * rate)
-  dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
-  wm <- max(stdwt/x$pyears)
-  c(dsr=dsr, dsr.var=dsr.var, wm=wm)
-}
 
 #' @title getCrudeRate
 #' 
@@ -96,13 +92,8 @@ getAdjMI <- function(x) {
 #' 
 #' @return data.frame
 
-getCrudeMI <- function(x) {
-  sero <- sum(x$sero_event)
-  pyears <- sum(x$pyears)
-  dsr <- sero/pyears
-  dsr.var <- sero/pyears^2
-  c(dsr=dsr, dsr.var=dsr.var)
-}
+
+
 
 #' @title doMIEst
 #' 
@@ -111,9 +102,47 @@ getCrudeMI <- function(x) {
 #' 
 #' @return data.frame
 
-getEstMI <- function(dat, 
+getCrudeMI <- function(dat, 
   Args=eval.parent(quote(Args))) {
   
+getEst <- function(dat) {
+  crude <- function(x) {
+    sero <- sum(x$sero_event)
+    pyears <- sum(x$pyears)
+    dsr <- sero/pyears
+    dsr.var <- sero/pyears^2
+    c(dsr=dsr, dsr.var=dsr.var)
+  }
+  t(sapply(dat, crude))
+}
+
+  # Group data by year
+  nm <- rownames(dat[[1]])
+  collect <- lapply(seq(nm),
+    function(y) lapply(dat, function(x) x[y, ]))
+  bind <- lapply(collect, function(x) do.call("rbind", x))
+  out <- lapply(bind, getCI)
+  out <- do.call("rbind", out)
+  rownames(out) <- nm
+  out
+}
+
+getAdjMI  <- function(dat, Args, calcBy="Year") {
+
+  # Get the est and vars
+  getEst <- function(dat) {
+    adj <- function(x) {
+      stdwt <- with(x, Total/sum(Total))
+      rate <- with(x, sero_event/pyears)
+      dsr <- sum(stdwt * rate)
+      dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
+      wm <- max(stdwt/x$pyears)
+      c(dsr=dsr, dsr.var=dsr.var, wm=wm)
+    }
+    t(sapply(dat, adj))
+  }
+
+  # calculate MI vars
   getCI <- function(x, M=Args$nSimulations) {
     x <- as.data.frame(x)
     var1 <- sum(x$dsr.var)/M
@@ -128,33 +157,21 @@ getEstMI <- function(dat,
     c(rate = dsr, lci = gamma.lci, uci = gamma.uci)*100
   }
 
+  # Get estimates for each iteration
+  dat <- lapply(dat, 
+    function(x) calcInc(x, getEst, calcBy=calcBy))
+
   # Group data by year
   nm <- rownames(dat[[1]])
   collect <- lapply(seq(nm),
     function(y) lapply(dat, function(x) x[y, ]))
   bind <- lapply(collect, function(x) do.call("rbind", x))
+  # Calculate overal mean and var
   out <- lapply(bind, getCI)
   out <- do.call("rbind", out)
   rownames(out) <- nm
   out
 }
-
-
-calcIncMI  <- function() {
-
-  
-
-
-
-}
-
-
-
-
-
-
-
-
 
 #' @title getEstSI
 #' 
@@ -165,11 +182,13 @@ calcIncMI  <- function() {
 
 getEstSI <- function(obj) {
   crude <- function(x) {
-    with(x, pois.exact(sum(sero_event), sum(pyears))[3:5] * 100)
+    with(x, pois.exact(sum(sero_event), 
+      sum(pyears))[3:5] * 100)
   }
   adj <- function(x) {
     as.data.frame(t(with(x, 
-      ageadjust.direct(sero_event, pyears, stdpop=Total)[2:4] * 100)))
+      ageadjust.direct(sero_event, pyears,
+        stdpop=Total)[2:4] * 100)))
   }
   fmt <- function(dat, fun) {
     out <- lapply(dat, fun)
@@ -181,13 +200,6 @@ getEstSI <- function(obj) {
   names(out) <- c("CrudeRate", "AdjRate") 
   out
 }
-
-calcIncSI <- function(dat, calcBy="Year", fun) {
-  dat <- data.frame(dat)
-  dat <- split(dat, dat[calcBy])
-  fun(dat)
-}
-
 
 #' @title getEstimates
 #' 
@@ -219,12 +231,12 @@ getEstimates <- function(dat, Args, By="Year") {
   aggdat <- getAggData(dat, Args, calcBy=By)
 
   if (Args$nSimulations==1) {
-    Est <- calcIncSI(dat, calcBy=By, getEstSI)
-    return(list(AggDat = aggdat, Est = Est))
+    estSI <- calcInc(dat, getEstSI, calcBy=By,)
+    return(list(AggDat = aggdat, Est = estSI))
   }
 
-  # rate <- lapply(dat, 
-  # function(x) calcInc(x, , Args, calcBy=By, fun=getCrudeRate))
+  adjMI <- getAdjMI(dat, Args, calcBy=By)
+  adjMI
 
 }
 
