@@ -93,7 +93,28 @@ calcInc <- function(dat, fun, calcBy="Year") {
 #' @return data.frame
 
 
+getCrudeMI <- function(dat) {
+  crude <- function(x) {
+    sero <- sum(x$sero_event)
+    pyears <- sum(x$pyears)
+    dsr <- sero/pyears
+    dsr.var <- sero/pyears^2
+    c(dsr=dsr, dsr.var=dsr.var, wm=0)
+  }
+  t(sapply(dat, crude))
+}
 
+getAdjMI <- function(dat) {
+  adj <- function(x) {
+    stdwt <- with(x, Total/sum(Total))
+    rate <- with(x, sero_event/pyears)
+    dsr <- sum(stdwt * rate)
+    dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
+    wm <- max(stdwt/x$pyears)
+    c(dsr=dsr, dsr.var=dsr.var, wm=wm)
+  }
+  t(sapply(dat, adj))
+}
 
 #' @title doMIEst
 #' 
@@ -102,47 +123,8 @@ calcInc <- function(dat, fun, calcBy="Year") {
 #' 
 #' @return data.frame
 
-getCrudeMI <- function(dat, 
-  Args=eval.parent(quote(Args))) {
-  
-getEst <- function(dat) {
-  crude <- function(x) {
-    sero <- sum(x$sero_event)
-    pyears <- sum(x$pyears)
-    dsr <- sero/pyears
-    dsr.var <- sero/pyears^2
-    c(dsr=dsr, dsr.var=dsr.var)
-  }
-  t(sapply(dat, crude))
-}
+getEstMI  <- function(dat, fun, calcBy="Year") {
 
-  # Group data by year
-  nm <- rownames(dat[[1]])
-  collect <- lapply(seq(nm),
-    function(y) lapply(dat, function(x) x[y, ]))
-  bind <- lapply(collect, function(x) do.call("rbind", x))
-  out <- lapply(bind, getCI)
-  out <- do.call("rbind", out)
-  rownames(out) <- nm
-  out
-}
-
-getAdjMI  <- function(dat, Args, calcBy="Year") {
-
-  # Get the est and vars
-  getEst <- function(dat) {
-    adj <- function(x) {
-      stdwt <- with(x, Total/sum(Total))
-      rate <- with(x, sero_event/pyears)
-      dsr <- sum(stdwt * rate)
-      dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
-      wm <- max(stdwt/x$pyears)
-      c(dsr=dsr, dsr.var=dsr.var, wm=wm)
-    }
-    t(sapply(dat, adj))
-  }
-
-  # calculate MI vars
   getCI <- function(x, M=Args$nSimulations) {
     x <- as.data.frame(x)
     var1 <- sum(x$dsr.var)/M
@@ -157,16 +139,15 @@ getAdjMI  <- function(dat, Args, calcBy="Year") {
     c(rate = dsr, lci = gamma.lci, uci = gamma.uci)*100
   }
 
-  # Get estimates for each iteration
+  # Get rate and vars by iteration
   dat <- lapply(dat, 
-    function(x) calcInc(x, getEst, calcBy=calcBy))
+    function(x) calcInc(x, fun, calcBy=calcBy))
 
   # Group data by year
   nm <- rownames(dat[[1]])
   collect <- lapply(seq(nm),
     function(y) lapply(dat, function(x) x[y, ]))
   bind <- lapply(collect, function(x) do.call("rbind", x))
-  # Calculate overal mean and var
   out <- lapply(bind, getCI)
   out <- do.call("rbind", out)
   rownames(out) <- nm
@@ -235,7 +216,9 @@ getEstimates <- function(dat, Args, By="Year") {
     return(list(AggDat = aggdat, Est = estSI))
   }
 
-  adjMI <- getAdjMI(dat, Args, calcBy=By)
+  crudeMI <- getEstMI(dat, getCrudeMI, calcBy=By)
+  adjMI <- getEstMI(dat, getAdjMI, calcBy=By)
+  crudeMI
   adjMI
 
 }
