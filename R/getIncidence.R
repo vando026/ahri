@@ -60,6 +60,8 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' 
 #' @param dat Dataset from \code{\link{aggregateInc}}.
 #' 
+#' @param fun Function to use for calculations
+#' 
 #' @param calcBy Results by Year, Age, or Sex.
 #'
 #' @return data.frame
@@ -70,7 +72,7 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' edat <- censorData(rtdat,Args)
 #' adat <- getAgeData(edat, Args)
 #' inc <- aggregateInc(adat)
-#' calcInc(inc, Args)
+#' calcInc(inc, getCrudeMI, calcBy="Year")
 
 calcInc <- function(dat, fun, calcBy="Year") {
   dat <- data.frame(dat)
@@ -78,20 +80,12 @@ calcInc <- function(dat, fun, calcBy="Year") {
   fun(dat)
 }
 
-#' @title getAdjRate
+#' @title getCrudeMI
 #' 
 #' @description Calculates the rate and var according to code in
 #' epitools::ageadjust.direct
 #' 
 #' @return data.frame
-
-
-#' @title getCrudeRate
-#' 
-#' @description Calculates crude incidence rate and standard errors following work of Ulm, 1990, AJE.
-#' 
-#' @return data.frame
-
 
 getCrudeMI <- function(dat) {
   crude <- function(x) {
@@ -103,6 +97,13 @@ getCrudeMI <- function(dat) {
   }
   t(sapply(dat, crude))
 }
+
+#' @title getAdjMI
+#' 
+#' @description Calculates the rate and var according to code in
+#' epitools::ageadjust.direct
+#' 
+#' @return data.frame
 
 getAdjMI <- function(dat) {
   adj <- function(x) {
@@ -116,7 +117,7 @@ getAdjMI <- function(dat) {
   t(sapply(dat, adj))
 }
 
-#' @title doMIEst
+#' @title getEstMI
 #' 
 #' @description Calculates the standard errors for multiple imputation following formula given in P. Allison Missing Data
 #' book, pg 30, in '~/Dropbox/Textbooks/Statistics'.
@@ -212,38 +213,14 @@ getEstimates <- function(dat, Args, By="Year") {
   aggdat <- getAggData(dat, Args, calcBy=By)
 
   if (Args$nSimulations==1) {
-    estSI <- calcInc(dat, getEstSI, calcBy=By,)
-    return(list(AggDat = aggdat, Est = estSI))
+    estSI <- calcInc(dat, getEstSI, calcBy=By)
+    list(AggDat = aggdat, Est = estSI)
+  } else {
+    crudeMI <- getEstMI(dat, getCrudeMI, calcBy=By)
+    adjMI <- getEstMI(dat, getAdjMI, calcBy=By)
+    list(AggDat = aggdat, CrudeRate = crudeMI, AdjRate = adjMI)
   }
-
-  crudeMI <- getEstMI(dat, getCrudeMI, calcBy=By)
-  adjMI <- getEstMI(dat, getAdjMI, calcBy=By)
-  crudeMI
-  adjMI
-
 }
-
-# For each iteration of dat, merge weight and calc inc
-# crate <- lapply(dat, 
-# function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
-# arate <- lapply(dat, 
-# function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
-
-# getEst <- function(fun) {
-#     list(AggDat = aggdat, 
-#       CrudeRate = fun(crate, crude=TRUE),
-#       AdjRate = fun(arate, crude=FALSE))
-# }
-
-# if (Args$nSimulations==1) {
-# For mid- or end-point imputation
-# getEst(doSIEst)
-# } else {
-# For random-point imputation
-# getEst(doMIEst) 
-# }
-
-
 
 #' @title getIncidence
 #' 
@@ -265,6 +242,11 @@ getIncidence <- function(Args) {
   Age <- getEstimates(dat, Args, By='AgeCat') 
   list(Year=Year, Age=Age)
 }
+
+
+###############################################################################################
+######################################## Misc Inc Funs ########################################
+###############################################################################################
 
 #' @title smoothInc
 #' 
