@@ -27,44 +27,22 @@ aggregateInc <- function(dat) {
 #'
 #' @return data.frame
 
-doIncData <- function(rtdat, Args) {
-  dat <- Args$imputeMethod(rtdat)
-  edat <- censorData(dat, Args) 
+doImpute <- function(rtdat, wdat, 
+  calcBy, Args) {
+  idat <- Args$imputeMethod(rtdat)
+  edat <- censorData(idat, Args) 
   adat <- getAgeData(edat, Args)
-  aggregateInc(adat)
+  adat <- aggregateInc(adat)
+  dat <- merge(adat, wdat, by=c("Year", "AgeCat"))
+  dat$AgeCat <- factor(dat$AgeCat)
+  dat <- split(dat, dat[calcBy])
+  dat
 }
 
-gammaCI <- function(x) {
-  epitools::ageadjust.direct(x["sero_event"],x["pyears"],stdpop=x["Total"]) * 100
-}
+getAgeDat <- doImpute(rtdat, wdat, calcBy="AgeCat", Args)
 
-
-#' @title getAdjRate
-#' 
-#' @description Calculates adjusted incidence rate and standard errors following formula in Boyle and Parkin, 
-#' (https://www.iarc.fr/en/publications/pdfs-online/epi/sp95/sp95-chap11.pdf) on page 137.
-#' 
-#' @return data.frame
-
-getAdjRate <- function(x, crude=FALSE) {
-  stdwt <- with(x, Total/sum(Total))
-  rate <- with(x, sero_event/pyears)
-  dsr <- sum(stdwt * rate)
-  dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
-  wm <- max(stdwt/x$pyears)
-  c(dsr=dsr, dsr.var=dsr.var, wm=wm)
-}
-
-#' @title getCrudeRate
-#' 
-#' @description Calculates crude incidence rate and standard errors following work of Ulm, 1990, AJE.
-#' 
-#' @return data.frame
-
-getCrudeRate <- function(x) {
-  rate <- with(x, sum(sero_event)/sum(pyears)) 
-  se <- rate/sqrt(sum(x$sero_event))
-  c(rate=rate, se=se)
+getYearDat <- function() {
+  doImpute(rtdat, wdat, calcBy="Year", Args)
 }
 
 #' @title calcInc
@@ -85,16 +63,6 @@ getCrudeRate <- function(x) {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
-calcInc <- function(dat, wdat, Args, 
-  calcBy="Year", fun=getAdjRate) { 
-  dat <- merge(dat, wdat, by=c("Year", "AgeCat"))
-  dat$AgeCat <- factor(dat$AgeCat)
-  dat <- split(dat, dat[calcBy])
-  dat <- sapply(dat, fun)
-  data.frame(t(dat))
-}
-
-
 getAggData <- function(dat, Args, calcBy="Year") {
   getDat <- function(dat, name) {
     dat <- lapply(dat, `[`, name)
@@ -111,6 +79,35 @@ getAggData <- function(dat, Args, calcBy="Year") {
   out
 }
 
+#' @title getAdjRate
+#' 
+#' @description Calculates the rate and var according to code in
+#' epitools::ageadjust.direct
+#' 
+#' @return data.frame
+
+getAdjMI <- function(x) {
+  stdwt <- with(x, Total/sum(Total))
+  rate <- with(x, sero_event/pyears)
+  dsr <- sum(stdwt * rate)
+  dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
+  wm <- max(stdwt/x$pyears)
+  c(dsr=dsr, dsr.var=dsr.var, wm=wm)
+}
+
+#' @title getCrudeRate
+#' 
+#' @description Calculates crude incidence rate and standard errors following work of Ulm, 1990, AJE.
+#' 
+#' @return data.frame
+
+getCrudeMI <- function(x) {
+  sero <- sum(x$sero_event)
+  pyears <- sum(x$pyears)
+  dsr <- sero/pyears
+  dsr.var <- sero/pyears^2
+  c(dsr=dsr, dsr.var=dsr.var)
+}
 
 #' @title doMIEst
 #' 
@@ -119,7 +116,7 @@ getAggData <- function(dat, Args, calcBy="Year") {
 #' 
 #' @return data.frame
 
-doMIEst <- function(dat, 
+doEstMI <- function(dat, 
   Args=eval.parent(quote(Args))) {
   
   getCI <- function(x, M=Args$nSimulations) {
@@ -149,21 +146,38 @@ doMIEst <- function(dat,
 
 #' @title doSIEst
 #' 
-#' @description Calculates the standard errors for single imputation such as mid-point or
+#' @description Calculates the rate and confidence intervals for single imputation such as mid-point or
 #' end-point.
 #' 
 #' @return data.frame
 
-doSIEst <- function(x) {
-  x <- data.frame(x)
-  z <- qnorm(0.05/2, lower=FALSE)
-  x$lci <- x$rate - z * x$se
-  x$uci <- x$rate + z * x$se
-  x
+doEstSI <- function(dat) {
+  out <- lapply(c(getCrudeSI, getAdjSI), 
+    function(f) calcInc(dat, f))
+  names(out) <- c("CrudeRate", "AdjRate") 
+  out
+}
+
+getCrudeSI = function(x) {
+  out <- with(x, pois.exact(sum(sero_event), sum(pyears)))[3:5]
+  names(out) <- c("rate", "lci", "uci")
+  out *100
+}
+
+getAdjSI <- function(x) {
+  out <- with(x,
+    ageadjust.direct(sero_event, pyears, stdpop=Total))[2:4]
+  names(out) <- c("rate", "lci", "uci")
+  out * 100
+}
+
+calcInc <- function(dat, fun) {
+  dat <- sapply(dat, fun)
+  data.frame(t(dat)) 
 }
 
 
-#' @title getEstimates
+#' @title getEst 
 #' 
 #' @description Once dates are imputed get the estimates.
 #' 
@@ -194,15 +208,15 @@ getEstimates <- function(dat, Args, By='Year') {
   # Calc weights once here
   wdat <- getWeights(Args)
   # For each iteration of dat, merge weight and calc inc
-  # crate <- lapply(dat, 
-    # function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
+  crate <- lapply(dat, 
+    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
   arate <- lapply(dat, 
     function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
 
   getEst <- function(fun) {
       list(AggDat = aggdat, 
-        # CrudeRate = fun(crate),
-        AdjRate = fun(arate))
+        CrudeRate = fun(crate, crude=TRUE),
+        AdjRate = fun(arate, crude=FALSE))
   }
   
   if (Args$nSimulations==1) {
@@ -225,10 +239,11 @@ getEstimates <- function(dat, Args, By='Year') {
 #' @import dplyr
 
 getIncidence <- function(Args) {
+  wdat <- getWeights(Args)
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   dat <- lapply(seq(Args$nSimulations),
-    function(i) doIncData(rtdat, Args))
+    function(i) doImpute(rtdat, wdat, Args))
   Year <- getEstimates(dat, Args) 
   Age <- getEstimates(dat, Args, By='AgeCat') 
   list(Year=Year, Age=Age)
