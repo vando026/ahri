@@ -27,23 +27,32 @@ aggregateInc <- function(dat) {
 #'
 #' @return data.frame
 
-doImpute <- function(rtdat, wdat, 
-  calcBy, Args) {
+getIncData <- function(rtdat, wdat, Args) {
   idat <- Args$imputeMethod(rtdat)
   edat <- censorData(idat, Args) 
   adat <- getAgeData(edat, Args)
   adat <- aggregateInc(adat)
   dat <- merge(adat, wdat, by=c("Year", "AgeCat"))
   dat$AgeCat <- factor(dat$AgeCat)
-  dat <- split(dat, dat[calcBy])
   dat
 }
 
-getAgeDat <- doImpute(rtdat, wdat, calcBy="AgeCat", Args)
-
-getYearDat <- function() {
-  doImpute(rtdat, wdat, calcBy="Year", Args)
+getAggData <- function(dat, Args, calcBy="Year") {
+  getDat <- function(dat, name) {
+    dat <- lapply(dat, `[`, name)
+    do.call("cbind", dat)
+  }
+  nm <- c("sero_event", "pyears")
+  dat <- lapply(dat, function(x)
+    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
+  adat <- lapply(nm, function(x) getDat(dat, x))
+  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
+  out <- do.call("cbind", adat)
+  colnames(out) <- nm
+  rownames(out) <- dat[[1]]$Group.1
+  out
 }
+
 
 #' @title calcInc
 #' 
@@ -63,21 +72,7 @@ getYearDat <- function() {
 #' inc <- aggregateInc(adat)
 #' calcInc(inc, Args)
 
-getAggData <- function(dat, Args, calcBy="Year") {
-  getDat <- function(dat, name) {
-    dat <- lapply(dat, `[`, name)
-    do.call("cbind", dat)
-  }
-  nm <- c("sero_event", "pyears")
-  dat <- lapply(dat, function(x)
-    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
-  adat <- lapply(nm, function(x) getDat(dat, x))
-  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
-  out <- do.call("cbind", adat)
-  colnames(out) <- nm
-  rownames(out) <- dat[[1]]$Group.1
-  out
-}
+
 
 #' @title getAdjRate
 #' 
@@ -116,7 +111,7 @@ getCrudeMI <- function(x) {
 #' 
 #' @return data.frame
 
-doEstMI <- function(dat, 
+getEstMI <- function(dat, 
   Args=eval.parent(quote(Args))) {
   
   getCI <- function(x, M=Args$nSimulations) {
@@ -144,40 +139,57 @@ doEstMI <- function(dat,
   out
 }
 
-#' @title doSIEst
+
+calcIncMI  <- function() {
+
+  
+
+
+
+}
+
+
+
+
+
+
+
+
+
+#' @title getEstSI
 #' 
 #' @description Calculates the rate and confidence intervals for single imputation such as mid-point or
 #' end-point.
 #' 
 #' @return data.frame
 
-doEstSI <- function(dat) {
-  out <- lapply(c(getCrudeSI, getAdjSI), 
-    function(f) calcInc(dat, f))
+getEstSI <- function(obj) {
+  crude <- function(x) {
+    with(x, pois.exact(sum(sero_event), sum(pyears))[3:5] * 100)
+  }
+  adj <- function(x) {
+    as.data.frame(t(with(x, 
+      ageadjust.direct(sero_event, pyears, stdpop=Total)[2:4] * 100)))
+  }
+  fmt <- function(dat, fun) {
+    out <- lapply(dat, fun)
+    out <- do.call("rbind", out)
+    names(out) <- c("rate", "lci", "uci")
+    out
+  }
+  out <- lapply(c(crude, adj), function(fun) fmt(obj, fun))
   names(out) <- c("CrudeRate", "AdjRate") 
   out
 }
 
-getCrudeSI = function(x) {
-  out <- with(x, pois.exact(sum(sero_event), sum(pyears)))[3:5]
-  names(out) <- c("rate", "lci", "uci")
-  out *100
-}
-
-getAdjSI <- function(x) {
-  out <- with(x,
-    ageadjust.direct(sero_event, pyears, stdpop=Total))[2:4]
-  names(out) <- c("rate", "lci", "uci")
-  out * 100
-}
-
-calcInc <- function(dat, fun) {
-  dat <- sapply(dat, fun)
-  data.frame(t(dat)) 
+calcIncSI <- function(dat, calcBy="Year", fun) {
+  dat <- data.frame(dat)
+  dat <- split(dat, dat[calcBy])
+  fun(dat)
 }
 
 
-#' @title getEst 
+#' @title getEstimates
 #' 
 #' @description Once dates are imputed get the estimates.
 #' 
@@ -201,32 +213,42 @@ calcInc <- function(dat, fun) {
 #'   out
 #' }
 
-getEstimates <- function(dat, Args, By='Year') {
+getEstimates <- function(dat, Args, By="Year") {
 
   # Get events and pyears by year 
   aggdat <- getAggData(dat, Args, calcBy=By)
-  # Calc weights once here
-  wdat <- getWeights(Args)
-  # For each iteration of dat, merge weight and calc inc
-  crate <- lapply(dat, 
-    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
-  arate <- lapply(dat, 
-    function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
 
-  getEst <- function(fun) {
-      list(AggDat = aggdat, 
-        CrudeRate = fun(crate, crude=TRUE),
-        AdjRate = fun(arate, crude=FALSE))
-  }
-  
   if (Args$nSimulations==1) {
-  # For mid- or end-point imputation
-    getEst(doSIEst)
-  } else {
-  # For random-point imputation
-    getEst(doMIEst) 
+    Est <- calcIncSI(dat, calcBy=By, getEstSI)
+    return(list(AggDat = aggdat, Est = Est))
   }
+
+  # rate <- lapply(dat, 
+  # function(x) calcInc(x, , Args, calcBy=By, fun=getCrudeRate))
+
 }
+
+# For each iteration of dat, merge weight and calc inc
+# crate <- lapply(dat, 
+# function(x) calcInc(x, wdat, Args, calcBy=By, fun=getCrudeRate))
+# arate <- lapply(dat, 
+# function(x) calcInc(x, wdat, Args, calcBy=By, fun=getAdjRate))
+
+# getEst <- function(fun) {
+#     list(AggDat = aggdat, 
+#       CrudeRate = fun(crate, crude=TRUE),
+#       AdjRate = fun(arate, crude=FALSE))
+# }
+
+# if (Args$nSimulations==1) {
+# For mid- or end-point imputation
+# getEst(doSIEst)
+# } else {
+# For random-point imputation
+# getEst(doMIEst) 
+# }
+
+
 
 #' @title getIncidence
 #' 
@@ -243,7 +265,7 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   dat <- lapply(seq(Args$nSimulations),
-    function(i) doImpute(rtdat, wdat, Args))
+    function(i) getIncData(rtdat, wdat, Args))
   Year <- getEstimates(dat, Args) 
   Age <- getEstimates(dat, Args, By='AgeCat') 
   list(Year=Year, Age=Age)
