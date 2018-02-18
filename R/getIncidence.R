@@ -126,6 +126,7 @@ getAdjMI <- function(dat) {
 #' @return data.frame
 
 getEstMI  <- function(dat, fun,
+  Args=eval.parent(quote(Args)), 
   calcBy=eval.parent(quote(By))) {
 
   getCI <- function(x, M=Args$nSimulations) {
