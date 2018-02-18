@@ -78,7 +78,7 @@ plotIncAge <- function(
   if(TIFF==TRUE) {
     tiff(file.path(output, paste0(fname, ".tiff")),
       units="in", width=5.0, height=5, pointsize=8, 
-      res=200, type="cairo")
+      res=300, type="cairo")
   }
 
   Fem <- data.frame(age_fem,
@@ -96,7 +96,7 @@ plotIncAge <- function(
 
   with(Sex,
     plotrix::plotCI(Grp, y=rate, 
-    ui=upper, li=lower, 
+    ui=uci, li=lci, 
     ylab="Incidence rate per 100 person-years", 
     xlab="Age Group", font.lab=2,
     xaxt="n", bty="n", 
