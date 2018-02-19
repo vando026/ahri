@@ -99,18 +99,19 @@ plotIncAge <- function(
     ui=uci, li=lci, 
     ylab="Incidence rate per 100 person-years", 
     xlab="Age Group", font.lab=2,
+    cex.axis=1.2, cex.lab=1.3,
     xaxt="n", bty="n", 
-    ylim=c(0, ceiling(max(rate))), 
+    ylim=c(0, ceiling(max(uci))), 
     pt.bg=scols, col=scols,
     lwd=2, cex=0.6, pch=21))
     axis(side=1, at = seq(length(labs)), 
-      labels = labs)
+      labels = labs, cex.axis=1.2, cex.lab=1.3)
 
   legend("top", 
     c("Males", "Females"),
     lwd=10, lty=1, col=Colors,
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
-    cex=1.0)
+    cex=1.25)
 
   if (TIFF==TRUE) dev.off() 
 }
