@@ -34,8 +34,7 @@
 setArgs <- function( 
   inFiles=getFiles(),
   Years=c(2004:2015),
-  Sex="All",
-  Age=setAge(),
+  Age=list(All=c(15, 54)),
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=500, 
@@ -44,11 +43,14 @@ setArgs <- function(
   printout=FALSE,
   MoreArgs=NULL) {
 
+  Sex <- ifelse(setequal(names(Age), c("Mal", "Fem")), 
+    "All", names(Age))
+
   out <- list(
     inFiles=inFiles,
     Years=Years,
     Sex=Sex,
-    Age=setAge(Age),
+    Age=Age,
     AgeCat=AgeCat,
     FemCode=switch(Sex,
       Mal=0,Fem=1,All=c(0, 1)),

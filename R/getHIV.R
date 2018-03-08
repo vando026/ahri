@@ -29,11 +29,22 @@ getHIV <- function(Args) {
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y"))) %>%
     filter(Year %in% Args$Years)
 
-  hiv <- filter(hiv, !(Female==0 & AgeAtVisit < Args$Age[["Mal"]][1]) &
-    !(Female==0 & AgeAtVisit > Args$Age[["Mal"]][2]))
-  hiv <- filter(hiv, !(Female==1 & AgeAtVisit < Args$Age[["Fem"]][1]) &
-    !(Female==1 & AgeAtVisit > Args$Age[["Fem"]][2]))
+  # Filter by age
+  if ("All" %in% names(Args$Age)) {
+    hiv <- filter(hiv, !(AgeAtVisit < Args$Age[["All"]][1]) &
+      !(AgeAtVisit > Args$Age[["All"]][2]))
+  } 
+  if ("Mal" %in% names(Args$Age)) {
+    hiv <- filter(hiv, !(Female==0 & AgeAtVisit < Args$Age[["Mal"]][1]) &
+      !(Female==0 & AgeAtVisit > Args$Age[["Mal"]][2]))
+  } 
+  if ("Fem" %in% names(Args$Age)) {
+    hiv <- filter(hiv, !(Female==1 & AgeAtVisit < Args$Age[["Fem"]][1]) &
+      !(Female==1 & AgeAtVisit > Args$Age[["Fem"]][2]))
+    print("me")
+  }
 
+  # Keep sex
   hiv <- filter(hiv, Female %in% Args$FemCode)
 
   # Only deal with valid test results
