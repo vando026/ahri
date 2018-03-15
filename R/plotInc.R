@@ -14,7 +14,7 @@ plotKSInc <- function(
 
   if(TIFF==TRUE) {
     tiff(file.path(output, paste0(fname, ".tiff")),
-      units="in", width=5.0, height=5.0, pointsize=10, 
+      units="in", width=5.0, height=5.0, pointsize=9, 
       res=200, type="cairo")
   }
 
@@ -31,7 +31,7 @@ plotKSInc <- function(
   plot(x, inc1[, "rate"], type='n',
     pch=4, bty="n", xaxt='n',
     ylim=ylim1, main=title,
-    cex.axis=1.1, cex.lab=1.3,
+    cex.axis=1.1, cex.lab=1.2,
     xlab="Year", font.lab=2,
     ylab="Incidence Rate per 100 person-years")
   axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
@@ -54,7 +54,7 @@ plotKSInc <- function(
     lwd=12, lty=1, col=Colors,
     ncol=length(Legend), 
     bty="n", pt.lwd=6, xpd=TRUE,
-    cex=1.3)
+    cex=1.1)
 
   if(TIFF==TRUE) dev.off()
 }
@@ -74,12 +74,12 @@ plotIncAge <- function(
   Colors=c("grey50", "grey80"),
   fname='age_plot', TIFF=TRUE) {
 
-  par(mar=c(4.0,4.5,0.8,0.5))
   if(TIFF==TRUE) {
     tiff(file.path(output, paste0(fname, ".tiff")),
       units="in", width=5.0, height=5, pointsize=8, 
       res=200, type="cairo")
   }
+  par(mar=c(4.0,4.5,0.8,0.5))
 
   Fem <- data.frame(age_fem,
     Grp=seq(nrow(age_fem))+0.15,
@@ -99,7 +99,7 @@ plotIncAge <- function(
     ui=uci, li=lci, 
     ylab="Incidence rate per 100 person-years", 
     xlab="Age Group", font.lab=2,
-    cex.axis=1.2, cex.lab=1.5,
+    cex.axis=1.2, cex.lab=1.3,
     xaxt="n", bty="n", 
     ylim=c(0, max(uci)+0.7), 
     pt.bg=scols, col=scols,
@@ -111,7 +111,7 @@ plotIncAge <- function(
     c("Men", "Women"),
     lwd=10, lty=1, col=Colors,
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
-    cex=1.6)
+    cex=1.2)
 
   if (TIFF==TRUE) dev.off() 
 }

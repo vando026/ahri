@@ -43,7 +43,8 @@ setArgs <- function(
   printout=FALSE,
   MoreArgs=NULL) {
 
-  Sex <- ifelse(setequal(names(Age), c("Mal", "Fem")), 
+  Sex <- ifelse(
+    setequal(names(Age), c("Mal", "Fem")), 
     "All", names(Age))
 
   out <- list(
@@ -64,15 +65,4 @@ setArgs <- function(
     out <- append(out, MoreArgs)
   return(out)
 }
-
-setAge <- function(newList=NULL) {
-  defList=list(
-    Fem=c(15, 49), 
-    Mal=c(15, 54),
-    All=c(15, 54))
-  if (is.null(newList)) 
-    return(defList)
-  modifyList(defList, newList)
-}
-
 
