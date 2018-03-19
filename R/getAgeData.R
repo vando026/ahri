@@ -33,10 +33,18 @@ getAgeData <- function(dat,
     cut(Age, breaks=Args$AgeCat, 
     labels=NULL, right=FALSE))
 
-  adat <- filter(adat, !(Female==0 & Age < Args$Age[["Mal"]][1]) &
-    !(Female==0 & Age > Args$Age[["Mal"]][2]))
-  adat <- filter(adat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
-    !(Female==1 & Age > Args$Age[["Fem"]][2]))
+  if ("All" %in% names(Args$Age)) {
+    adat <- filter(adat, !(Age < Args$Age[["All"]][1]) &
+      !(Age > Args$Age[["All"]][2]))
+  } 
+  if ("Mal" %in% names(Args$Age)) {
+    adat <- filter(adat, !(Female==0 & Age < Args$Age[["Mal"]][1]) &
+      !(Female==0 & Age > Args$Age[["Mal"]][2]))
+  }
+  if ("Fem" %in% names(Args$Age)) {
+    adat <- filter(adat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
+      !(Female==1 & Age > Args$Age[["Fem"]][2]))
+  }
 
   adat[, !(names(adat) %in% "DateOfBirth")] 
 }

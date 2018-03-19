@@ -41,7 +41,6 @@ getHIV <- function(Args) {
   if ("Fem" %in% names(Args$Age)) {
     hiv <- filter(hiv, !(Female==1 & AgeAtVisit < Args$Age[["Fem"]][1]) &
       !(Female==1 & AgeAtVisit > Args$Age[["Fem"]][2]))
-    print("me")
   }
 
   # Keep sex
