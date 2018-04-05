@@ -2,6 +2,7 @@
 
 export(ARTCov)
 export(HIVPrev)
+export(IntCensParse)
 export(calcTrend)
 export(getART)
 import(dplyr)
