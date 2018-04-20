@@ -51,3 +51,68 @@ IntCensParse <- function(file=NULL) {
   lout <- list(sdat=sdat, edat=edat, cdat=cmat, aic=aic)
   lout
 }
+
+#' @title getIntCens
+#' 
+#' @description  wrapper for IntCens fuction
+#' 
+#' @param aname name of input file
+#' 
+#' @param RHS variables
+#'
+#' @param out_name name of output file
+#'
+#' @import IntCens
+#' 
+#' @export
+#'
+
+getIntCens <- function(aname, RHS, out_name=NULL) {
+  if (is.null(out_name)) out_name <- paste0(aname, '_out')
+  unireg(input = file.path(derived, paste0(aname,".txt")), 
+    output = file.path(derived, paste0(out_name, ".txt")), 
+    model = paste0("(TimeOrigin, sero_event) = ", RHS), 
+    r = 0, subject_id = "IIntID")
+}
+
+#' @title uniRegTab
+#' 
+#' @description  wrapper for IntCens fuction
+#' 
+#' @param input name of input file
+#' 
+#' @param output name of output file
+#'
+#' @param RHS variables
+#'
+#' @import IntCens
+#' 
+#' @export
+#'
+
+uniRegTab <- function(input, output,  RHS) {
+  fin <- file.path(derived, paste0(input, ".txt"))
+  fout <- file.path(derived, paste0(output, "_uni_out.txt"))
+  fname <- file.path(derived, paste0(output, "_unireg1.txt"))
+
+  # Run unireg for each var
+  icount=1
+  for(vari in RHS) {
+    unireg(input = fin, output = fout, 
+      model = paste0("(TimeOrigin, sero_event) = ", vari),
+      r = 0, subject_id = "IIntID")
+    # Parse results
+    results <- IntCensParse(file=fout)
+    res <- results$edat
+    print(res)
+    if(icount==1) {
+      write.table(res, fname, row.names=FALSE,
+        col.names=TRUE)
+    } else {
+      write.table(res, fname, row.names=FALSE,
+        append=TRUE, col.names=FALSE)
+    }
+    icount  <- icount + 1
+  }
+}
+
