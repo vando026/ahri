@@ -3,12 +3,12 @@
 #' @description Gets the aggregated sero_event counts and total person-years by Year, Age,
 #' and sex.
 #' 
-#' @param dat dataset from \code{\link{censorData}}. 
+#' @param dat dataset from \code{\link{splitImputeData}}. 
 #' 
 #' @return data.frame
 #'
 #' @examples
-#' edat <- censorData(rtdat, Args)
+#' edat <- splitImputeData(rtdat, Args)
 #' adat <- getAgeData(edat, Args)
 #' inc <- aggregateInc(adat)
 
@@ -17,7 +17,7 @@ aggregateInc <- function(dat) {
     Year+AgeCat+Female, data=dat, FUN=sum)
 }
 
-#' @title doIncData
+#' @title getIncData
 #' 
 #' @description Function used to prepare the data for \code{\link{getIncidence}}.
 #' 
@@ -29,7 +29,7 @@ aggregateInc <- function(dat) {
 
 getIncData <- function(rtdat, wdat, Args) {
   idat <- Args$imputeMethod(rtdat)
-  edat <- censorData(idat, Args) 
+  edat <- splitImputeData(idat, Args$Years) 
   adat <- getAgeData(edat, Args)
   adat <- aggregateInc(adat)
   dat <- merge(adat, wdat, by=c("Year", "AgeCat"))

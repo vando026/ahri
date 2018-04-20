@@ -49,10 +49,9 @@ imputeEndPoint <- function(dat) {
   dat
 }
 
-
-#' @title censorData
+#' @title splitImputeData
 #' 
-#' @description Censor the data into year episodes at the imputed date or latest
+#' @description Split the data into year episodes at the imputed date or latest
 #' HIV-negative date. 
 #' 
 #' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
@@ -69,11 +68,10 @@ imputeEndPoint <- function(dat) {
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)
 #' sdat <- rename(sdat, sero_date=s1)
-#' censorData(rtdat, sdat, Args)
+#' splitImputeData(sdat, splitYears=Args$Years)
 
-censorData <- function(
-  dat=NULL, 
-  Args=eval.parent(quote(Args))) {
+splitImputeData <- function(
+  dat=NULL, splitYears=NULL) {
 
   dat <- mutate(dat, 
     obs_end=ifelse(sero_event==1, sero_date, late_neg))
@@ -87,7 +85,7 @@ censorData <- function(
     data=dat,
     start="obs_start",
     end="obs_end",
-    cut=ndate(Args$Years))
+    cut=ndate(splitYears))
 
   vars <- c("obs_start", "obs_end")
   edat[vars] <- lapply(edat[vars], as.Date, origin="1970-01-01")

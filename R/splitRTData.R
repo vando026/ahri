@@ -5,7 +5,12 @@
 #' 
 #' @param dat dataset from \code{\link{getRTData()}}. 
 #'
-#' @param Args takes list from \code{\link{setArgs()}}. 
+#' @param splitYears  vector of values to split by
+#'
+#' @param Origin a date value (eg "2014-01-01") which is used to create a variable Time
+#' from origin 
+#'
+#' @param Scale specify a time scale
 #'
 #' @return data.frame
 #'
@@ -18,35 +23,37 @@
 #' rtdat <- getRTData(hiv)
 #' sdat <- splitRTData(rtdat)
 
-splitRTData <- function(dat, 
-  Args=eval.parent(quote(Args))) {
+splitRTData <- function(
+  dat, splitYears=c(2004:2015),
+  Origin="", Scale=1) {
 
   dat <- mutate(dat, obs_end = 
     ifelse(sero_event==1, early_pos, late_neg))
-  dat$obs_start0 <- dat$obs_start
 
-  # Make numeric for sursplit
-  vars <- c("obs_start", "obs_end")
+  # Make numeric for survplit
+  dat$obs_start0 <- dat$obs_start
+  dat$date_origin <- as.numeric(Origin)
+  vars <- c("obs_start",  "obs_end", "obs_start0")
   dat[vars] <- lapply(dat[vars], as.numeric)
 
   # Now split episodes
-  yr_cut <- ndate(Args$Years)
+  yr_cut <- ndate(splitYears)
   dat <- survSplit(
     Surv(time=obs_start, time2=obs_end, event=sero_event) ~ .,
     data=dat, 
     start="obs_start",
     cut=yr_cut)
 
+  # Calculate time since early.neg exposure
+  Date0 <- as.numeric(Origin)
+  dat <- mutate(dat,
+    TimeExp = (obs_start - obs_start0)/Scale,
+    TimeOrigin = (obs_end - date_origin)/Scale)
+
   # Reformat back to time var for difftime
-  dat[vars] <- lapply(dat[vars], as.Date, origin="1970-01-01")
-
-  # Calculate time since exposure, early.neg
-  dat <- mutate(dat, Time =  round(as.numeric(difftime(
-    obs_end, obs_start0, units="days")+1)*0.00273790700698851, 2))
-
+  dat[vars[1:2]] <- lapply(dat[vars[1:2]], as.Date, origin="1970-01-01")
   dat <- mutate(dat, Year=as.integer(format(obs_start, "%Y")))
-  dat <- dat[, c("IIntID", "Female", "Time", "sero_event", 
-    "Year", "obs_start", "obs_end")]
+  dat <- dat[, !(names(dat) %in% c("obs_start0", "date_origin"))]
   tbl_df(dat)
 }
 
