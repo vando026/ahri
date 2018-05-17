@@ -67,9 +67,9 @@ IntCensParse <- function(file=NULL) {
 #' @export
 #'
 
-getIntCens <- function(aname, RHS, out_name=NULL) {
-  if (is.null(out_name)) out_name <- paste0(aname, '_out')
-  unireg(input = file.path(derived, paste0(aname,".txt")), 
+getIntCens <- function(input, RHS, out_name=NULL) {
+  if (is.null(out_name)) out_name <- paste0(input, '_out')
+  unireg(input = file.path(derived, paste0(input,".txt")), 
     output = file.path(derived, paste0(out_name, ".txt")), 
     model = paste0("(TimeOrigin, sero_event) = ", RHS), 
     r = 0, subject_id = "IIntID")
