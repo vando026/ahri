@@ -264,6 +264,9 @@ getIncidence <- function(Args) {
 #' @param bwidth bandwith for \code{ksmooth} function. 
 #'
 #' @return data.frame
+#'
+#' @export
+#'
 #' @examples
 #' smoothInc(dat$Year$Est$adj.rate)
 
