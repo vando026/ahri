@@ -26,6 +26,8 @@
 #' 
 #' @importFrom epitools binom.exact ageadjust.direct
 #' 
+#' @importFrom stringr word
+#' 
 #' @export
 #' 
 #' @examples
