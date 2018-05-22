@@ -87,7 +87,7 @@ UniReg <- function(InFile, OutFile, Model, ID,
     OutFile <- paste("--out", OutFile)
     Model <- paste("--model", shQuote(Model))
     ID <- paste("--subject_id", ID)
-    Sep <- paste('--sep', shQuote(" "))
+    Sep <- paste("--sep", shQuote(" "))
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
