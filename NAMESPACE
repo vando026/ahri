@@ -3,6 +3,7 @@
 export(ARTCov)
 export(HIVPrev)
 export(IntCensParse)
+export(UniReg)
 export(calcTrend)
 export(getART)
 export(smoothInc)

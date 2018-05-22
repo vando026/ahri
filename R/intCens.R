@@ -52,3 +52,38 @@ IntCensParse <- function(file=NULL) {
   lout
 }
 
+
+#' @title UniReg
+#' 
+#' @description  wrapper for IntCens fuction
+#' 
+#' @param InFile txt file to be input
+#' 
+#' @param OutFile txt file to be output
+#' 
+#' @param Model equation to be given
+#'
+#' @param ID name of subject ID
+#'
+#' @export
+
+UniReg <- function(InFile, OutFile, Model, ID, 
+  iter=1000, cthresh=0.001, r=0.0) {
+  browser()
+  if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
+    unireg(
+      input = InFile, output = OutFile,
+      model = Model, subject_id = ID, r = r)
+  } else {
+    xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
+    InFile <- paste("--in", InFile)
+    OutFile <- paste("--out", OutFile)
+    Model <- paste("--model", shQuote(Model))
+    ID <- paste("--subject_id", ID)
+    Sep <- paste('--sep', shQuote(" "))
+    R <- paste("--r", r)
+    iter <- paste("--max_itr", iter)
+    cthresh <- paste("--convergence_threshold", cthresh)
+    shell(paste(xpath, InFile, OutFile, Model, ID, Sep, iter, R, cthresh, collapse=" "))
+  }
+}
