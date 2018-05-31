@@ -268,14 +268,11 @@ getIncidence <- function(Args) {
 #' @export
 #'
 #' @examples
-#' smoothInc(dat$Year$Est$adj.rate)
+#' smoothInc(dat, x="time", y="rate")
 
-smoothInc <- function(dat, var="rate", bwidth=1) {
+smoothInc <- function(dat, x="time", y="rate", bwidth=1) {
   dat <- as.data.frame(dat)
-  ksmooth(
-    as.integer(rownames(dat)),
-    dat[, grep(var, colnames(dat))],
-    "normal", bandwidth = bwidth)
+  with(dat, ksmooth(x,  y, "normal", bandwidth = bwidth))
 }
 
 #' @title incTab
