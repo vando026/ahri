@@ -32,7 +32,7 @@ splitRTData <- function(
 
   # Make numeric for survplit
   dat$obs_start0 <- dat$obs_start
-  dat$date_origin <- as.numeric(Origin)
+  date_origin <- as.numeric(Origin)
   vars <- c("obs_start",  "obs_end", "obs_start0")
   dat[vars] <- lapply(dat[vars], as.numeric)
 
@@ -45,7 +45,6 @@ splitRTData <- function(
     cut=yr_cut)
 
   # Calculate time since early.neg exposure
-  Date0 <- as.numeric(Origin)
   dat <- mutate(dat,
     TimeExp = (obs_start - obs_start0)/Scale,
     TimeOrigin = (obs_end - date_origin)/Scale)

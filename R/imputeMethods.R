@@ -87,8 +87,8 @@ splitImputeData <- function(
     end="obs_end",
     cut=ndate(splitYears))
 
-  vars <- c("obs_start", "obs_end")
   edat[vars] <- lapply(edat[vars], as.Date, origin="1970-01-01")
+  vars <- c("obs_start", "obs_end")
   edat <- mutate(edat, 
     Time = difftime(obs_end, obs_start, units='days'),
     Year=as.integer(format(obs_start, "%Y")))
