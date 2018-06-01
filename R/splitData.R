@@ -28,8 +28,8 @@ splitData <- function(
       as.numeric(as.Date(paste0(x, "-01-01"))))
   }
 
+  dat$obs_start0 <- dat$obs_start
   if (svar=="sero_date") {
-    dat$obs_start0 <- dat$obs_start
     dat <- mutate(dat, obs_end=ifelse(sero_event==1, sero_date, late_neg))
   } else {
     dat <- mutate(dat, obs_end=ifelse(sero_event==1, early_pos, late_neg))
@@ -48,12 +48,11 @@ splitData <- function(
   vars <- c("obs_start", "obs_end")
   edat[vars] <- lapply(edat[vars], as.Date)
 
-  if (svar=="sero_date") {
-    edat <- mutate(edat, 
-      Time = as.numeric(difftime(obs_end, obs_start0, units='days')))
-  } else {
+  if (svar=="sero_date") { # this is needed for IntCens var
     edat <- mutate(edat, 
       Time = as.numeric(difftime(obs_end, obs_start, units='days')))
+  } else { # this is needed for IncCalc
+    edat <- mutate(edat, Time = obs_end - obs_start0)
   }
   edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
   tbl_df(edat)
