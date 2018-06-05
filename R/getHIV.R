@@ -8,6 +8,8 @@
 #'
 #' @import dplyr 
 #' @import readr 
+#'
+#' @export 
 
 getHIV <- function(Args) {
 

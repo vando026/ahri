@@ -21,7 +21,8 @@
 #' splitData(sdat, splitYears=Args$Years)
 
 splitData <- function(
-  dat=NULL, svar="sero_date", splitYears=NULL) {
+  dat=NULL,  splitYears=NULL,
+  svar="sero_date", len_drop=NULL) {
 
   ndate <- function(Years) {
     sapply(Years, function(x)
@@ -31,7 +32,7 @@ splitData <- function(
   dat$obs_start0 <- dat$obs_start
   if (svar=="sero_date") {
     dat <- mutate(dat, obs_end=ifelse(sero_event==1, sero_date, late_neg))
-  } else {
+  } else if (svar=="early_pos") {
     dat <- mutate(dat, obs_end=ifelse(sero_event==1, early_pos, late_neg))
   }
 
@@ -51,9 +52,16 @@ splitData <- function(
   if (svar=="sero_date") { # this is needed for IntCens var
     edat <- mutate(edat, 
       Time = as.numeric(difftime(obs_end, obs_start, units='days')))
-  } else { # this is needed for IncCalc
-    edat <- mutate(edat, Time = obs_end - obs_start0)
+  } else if (svar=="early_pos") { # this is needed for IncCalc
+    edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
   }
   edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
+
+  if (!is.null(len_drop)) {
+    edat <- transform(edat, 
+      len=as.numeric((early_pos - late_neg)/365))
+    edat <- subset(edat, len<=len_drop | is.infinite(len), select=-c(len))
+    print(sprintf("CI lengths > %s dropped", len_drop))
+  }
   tbl_df(edat)
 }
