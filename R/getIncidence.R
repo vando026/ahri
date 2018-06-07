@@ -208,6 +208,8 @@ getCrudeSI <- function(x) {
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 #'
 #' @examples
@@ -243,6 +245,8 @@ getEstimates <- function(dat, Args, By="Year") {
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 
 getIncidence <- function(Args) {

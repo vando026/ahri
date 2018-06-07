@@ -2,9 +2,9 @@
 #' 
 #' @description Get weights for age and sex adjustement. 
 #' 
-#' @export
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @export
 
 getWeights <- function(Args) {
   dat <- getHIV(Args)

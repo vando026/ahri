@@ -6,6 +6,8 @@
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 #' @import readr
 
@@ -71,6 +73,8 @@ getPartnerData <- function(
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 #' @import zoo
 
