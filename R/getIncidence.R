@@ -7,6 +7,8 @@
 #' 
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @examples
 #' edat <- splitImputeData(rtdat, Args)
 #' adat <- getAgeData(edat, Args)
@@ -25,6 +27,8 @@ aggregateInc <- function(dat) {
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
 #'
+#' @export
+#' 
 #' @return data.frame
 
 getIncData <- function(rtdat, wdat, Args) {
@@ -69,6 +73,8 @@ getAggData <- function(dat, Args,
 #'
 #' @importFrom epitools ageadjust.direct
 #'
+#' @export
+#' 
 #' @examples
 #' edat <- censorData(rtdat,Args)
 #' adat <- getAgeData(edat, Args)

@@ -10,6 +10,8 @@
 #'
 #' @import dplyr
 #'
+#' @export
+#' 
 #' @examples
 #' rtdata <- getRTData(hiv)
 #' sdat <- splitRTData(rtdata)
@@ -59,6 +61,8 @@ getAgeData <- function(dat,
 #'
 #' @import dplyr
 #'
+#' @export
+#' 
 #' @examples
 #' adat <- getAgeData(sdata)
 #' adat <- makeAgeVars(adat)

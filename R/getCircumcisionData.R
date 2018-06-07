@@ -5,6 +5,8 @@
 #' 
 #' @param inFile arguments from \code{\link{setArgs}} to pass to \code{getHIV} function
 #' 
+#' @export
+#' 
 #' @importFrom readr read_csv cols_only
 
 getCircumcisionData <- function(
@@ -31,6 +33,8 @@ getCircumcisionData <- function(
 #' @param cdat circumcision dataset.
 #' 
 #' @param mergeBy merge by IIntID or IIntID/Year.
+#' 
+#' @export
 #' 
 #' @importFrom zoo na.locf  
 #' @import dplyr

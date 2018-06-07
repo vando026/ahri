@@ -2,6 +2,8 @@
 #' 
 #' @description Get weights for age and sex adjustement. 
 #' 
+#' @export
+#' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 
 getWeights <- function(Args) {

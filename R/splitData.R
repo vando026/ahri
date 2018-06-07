@@ -14,6 +14,8 @@
 #' 
 #' @importFrom survival survSplit Surv
 #'
+#' @export
+#'
 #' @examples
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)

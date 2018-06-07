@@ -6,6 +6,8 @@
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 
 imputeMidPoint <- function(dat) {
@@ -23,6 +25,8 @@ imputeMidPoint <- function(dat) {
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 
 imputeRandomPoint <- function(dat) {
@@ -42,56 +46,12 @@ imputeRandomPoint <- function(dat) {
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @import dplyr
 
 imputeEndPoint <- function(dat) {
   dat$sero_date <- dat$early_pos
   dat
-}
-
-#' @title splitImputeData
-#' 
-#' @description Split the data into year episodes at the imputed date or latest
-#' HIV-negative date. 
-#' 
-#' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
-#'
-#' @param Args takes list from \code{\link{setArgs()}}.
-#'
-#' @return data.frame
-#'
-#' @import dplyr
-#' 
-#' @importFrom survival survSplit Surv
-#'
-#' @examples
-#' rtdat <- getRTData(hiv)
-#' sdat <- imputeMidPoint(rtdat)
-#' sdat <- rename(sdat, sero_date=s1)
-#' splitImputeData(sdat, splitYears=Args$Years)
-
-splitImputeData <- function(
-  dat=NULL, splitYears=NULL) {
-
-  dat <- mutate(dat, 
-    obs_end=ifelse(sero_event==1, sero_date, late_neg))
-
-  # testInterval(dat)
-  # Split into episodes
-  edat <- survSplit(Surv(
-    time=as.integer(obs_start), 
-    time2=as.integer(obs_end), 
-    event=sero_event) ~ . , 
-    data=dat,
-    start="obs_start",
-    end="obs_end",
-    cut=ndate(splitYears))
-
-  edat[vars] <- lapply(edat[vars], as.Date, origin="1970-01-01")
-  vars <- c("obs_start", "obs_end")
-  edat <- mutate(edat, 
-    Time = difftime(obs_end, obs_start, units='days'),
-    Year=as.integer(format(obs_start, "%Y")))
-  tbl_df(edat)
 }
 

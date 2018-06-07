@@ -6,6 +6,8 @@
 #'
 #' @return data.frame
 #'
+#' @export
+#' 
 #' @importFrom readr read_tsv cols_only
 #'
 #' @importFrom dplyr tbl_df
