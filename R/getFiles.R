@@ -6,6 +6,8 @@
 #'
 #' @return list
 #'
+#' @export
+#'
 #' @examples 
 #' inFiles <- getFiles()
 
