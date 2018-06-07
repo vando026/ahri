@@ -17,13 +17,8 @@
 #' sdat <- splitRTData(rtdata)
 #' adat <- getAgeData(sdata)
 
-getAgeData <- function(dat, 
+getAgeData <- function(dat, idat,
   Args=eval.parent(quote(Args))) {
-
-  idat <- read_csv(Args$inFiles$indfile, 
-    col_types=cols_only(
-      IIntID="i", DateOfBirth="D"))
-  idat <- filter(idat, !duplicated(IIntID))
 
   adat <- left_join(dat, idat, by="IIntID")
   adat <- filter(adat, !is.na(DateOfBirth)) %>%

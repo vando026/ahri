@@ -6,9 +6,7 @@
 #' 
 #' @param Years numeric vector of years.
 #'
-#' @param Sex character of "All", "Fem", "Mal".
-#'
-#' @param Age list of ages as in \code{list(Fem=c(15, 49)}.
+#' @param Age list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.
 #'
 #' @param AgeCat numeric vector of age categories.
 #'

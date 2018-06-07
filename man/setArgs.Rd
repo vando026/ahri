@@ -14,7 +14,7 @@ setArgs(inFiles = getFiles(), Years = c(2004:2015), Age = list(All = c(15,
 
 \item{Years}{numeric vector of years.}
 
-\item{Age}{list of ages as in \code{list(Fem=c(15, 49)}.}
+\item{Age}{list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.}
 
 \item{AgeCat}{numeric vector of age categories.}
 
@@ -29,8 +29,6 @@ setArgs(inFiles = getFiles(), Years = c(2004:2015), Age = list(All = c(15,
 \item{printout}{print out results.}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
-
-\item{Sex}{character of "All", "Fem", "Mal".}
 }
 \value{
 list

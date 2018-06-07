@@ -4,7 +4,7 @@
 \alias{getAgeData}
 \title{getAgeData}
 \usage{
-getAgeData(dat, Args = eval.parent(quote(Args)))
+getAgeData(dat, idat, Args = eval.parent(quote(Args)))
 }
 \arguments{
 \item{dat}{dataset for which age is needed at a given episode.}

@@ -41,6 +41,5 @@ Args <- setArgs(inFiles,
 hiv=getHIV(Args)
 
 # Calculate HIV prevalence using KZN 2015 weights
-wdat <- getWeightsKZN(inFiles$kznwght)
 calcTrend(hiv, wdat, Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
 }

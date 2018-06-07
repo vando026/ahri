@@ -4,10 +4,12 @@
 \alias{getIncidence}
 \title{getIncidence}
 \usage{
-getIncidence(Args)
+getIncidence(Args, wdat)
 }
 \arguments{
-\item{Args}{takes list from \code{\link{setArgs}}.}
+\item{Args}{takes list from \code{\link{setArgs}}}
+
+\item{wdat}{data.frame of weights from \code{\link{getWeights}}}
 }
 \value{
 data.frame

@@ -225,7 +225,7 @@ getCrudeSI <- function(x) {
 getEstimates <- function(dat, Args, By="Year") {
 
   # Get events and pyears by year 
-  aggdat <- getAggData(dat, Args)
+  aggdat <- getAggData(dat, Args, calcBy=By)
 
   if (Args$nSimulations==1) {
     crude <- getEstSI(dat, getCrudeSI)
@@ -241,7 +241,9 @@ getEstimates <- function(dat, Args, By="Year") {
 #' 
 #' @description Calculates the crude and adjusted incidence.
 #' 
-#' @param Args takes list from \code{\link{setArgs}}.
+#' @param Args takes list from \code{\link{setArgs}}
+#'
+#' @param wdat data.frame of weights from \code{\link{getWeights}}
 #'
 #' @return data.frame
 #'
@@ -249,8 +251,7 @@ getEstimates <- function(dat, Args, By="Year") {
 #' 
 #' @import dplyr
 
-getIncidence <- function(Args) {
-  wdat <- getWeights(Args)
+getIncidence <- function(Args, wdat) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   dat <- lapply(seq(Args$nSimulations),
