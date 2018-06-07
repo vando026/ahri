@@ -10,9 +10,11 @@
 #'
 #' @import dplyr
 #'
+#' @export
+#'
 #' @examples 
 #' hiv <- getHIV(Args)
-#' rtdat <- repeatTesters(hiv)
+#' rtdat <- getRTData(hiv)
 
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
