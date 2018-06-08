@@ -25,19 +25,12 @@
 
 splitData <- function(
   dat=NULL,  splitYears=NULL,
-  svar="sero_date", len_drop=NULL) {
+  svar="sero_date") {
 
   ndate <- function(Years) {
     sapply(Years, function(x)
       as.numeric(as.Date(paste0(x, "-01-01"))))
   }
-
-  # if (!is.null(len_drop)) {
-  #   edat <- transform(edat, 
-  #     len=as.numeric((early_pos - late_neg)/365))
-  #   edat <- subset(edat, len<=len_drop | is.infinite(len), select=-c(len))
-  #   print(sprintf("CI lengths > %s dropped", len_drop))
-  # }
 
   dat$obs_start0 <- dat$obs_start
   if (svar=="sero_date") {
@@ -63,9 +56,8 @@ splitData <- function(
     edat <- mutate(edat, 
       Time = as.numeric(difftime(obs_end, obs_start, units='days')))
   } else if (svar=="early_pos") { # this is needed for IncCalc
-    edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
+   edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
   }
   edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
-
   tbl_df(edat)
 }
