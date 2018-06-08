@@ -32,6 +32,13 @@ splitData <- function(
       as.numeric(as.Date(paste0(x, "-01-01"))))
   }
 
+  # if (!is.null(len_drop)) {
+  #   edat <- transform(edat, 
+  #     len=as.numeric((early_pos - late_neg)/365))
+  #   edat <- subset(edat, len<=len_drop | is.infinite(len), select=-c(len))
+  #   print(sprintf("CI lengths > %s dropped", len_drop))
+  # }
+
   dat$obs_start0 <- dat$obs_start
   if (svar=="sero_date") {
     dat <- mutate(dat, obs_end=ifelse(sero_event==1, sero_date, late_neg))
@@ -60,11 +67,5 @@ splitData <- function(
   }
   edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
 
-  if (!is.null(len_drop)) {
-    edat <- transform(edat, 
-      len=as.numeric((early_pos - late_neg)/365))
-    edat <- subset(edat, len<=len_drop | is.infinite(len), select=-c(len))
-    print(sprintf("CI lengths > %s dropped", len_drop))
-  }
   tbl_df(edat)
 }
