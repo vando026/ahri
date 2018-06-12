@@ -4,8 +4,7 @@
 \alias{splitData}
 \title{splitData}
 \usage{
-splitData(dat = NULL, splitYears = NULL, svar = "sero_date",
-  len_drop = NULL)
+splitData(dat = NULL, splitYears = NULL, svar = "sero_date")
 }
 \arguments{
 \item{dat}{dataset from imputation method, eg \code{\link{imputeRandomPoint()}}.}

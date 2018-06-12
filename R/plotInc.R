@@ -3,6 +3,8 @@
 #' @description  Plot HIV incidence.
 #' 
 #' @param dat dataset from \code{\link{getIncidence()}}. 
+#' 
+#' @export
 
 plotKSInc <- function(
   inc1, inc2=NULL, inc3=NULL, 
