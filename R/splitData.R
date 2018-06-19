@@ -7,7 +7,7 @@
 #' @param svar varname to create obs_end variable. Can either split at early_pos or at
 #' sero_date 
 #'
-#' @param years to split
+#' @param splitYears years to split
 #'
 #' @return data.frame
 #'
@@ -21,7 +21,7 @@
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)
 #' sdat <- rename(sdat, sero_date=s1)
-#' splitData(sdat, splitYears=Args$Years)
+#' splitData(sdat, splitYears=Args$Years, svar=sero_date)
 
 splitData <- function(
   dat=NULL,  splitYears=NULL,

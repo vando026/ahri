@@ -30,9 +30,21 @@ imputeMidPoint <- function(dat) {
 #' @import dplyr
 
 imputeRandomPoint <- function(dat) {
-  pdat <- dat[is.finite(dat$early_pos), ]
-  sdat <- mapply(runif, 1, pdat$late_neg + 1, pdat$early_pos)
-  sdat <- cbind(IIntID=pdat["IIntID"], sero_date=sdat)
+  idat <- split(dat, as.factor(dat$IIntID))
+  Fun1 <- function(idat) {
+    if (is.infinite(idat$early_pos)) {
+      with(idat, cbind(IIntID, sero_date=NA))
+    } else {
+      if (idat$early_pos - idat$late_neg <= 1) {
+        rpoint <- idat$early_pos 
+      } else {
+        rpoint <- sample((idat$late_neg + 1):idat$early_pos, 1)
+        with(idat, cbind(IIntID, sero_date=rpoint)) 
+      }
+    }
+  }
+  sdat <- lapply(idat, Fun1)
+  sdat <- data.frame(do.call("rbind", sdat ))
   dat <- merge(dat, sdat, by="IIntID", all.x=TRUE)
   dat$sero_date <- as.Date(dat$sero_date, origin = "1970-01-01")
   dat

@@ -4,6 +4,8 @@
 #' 
 #' @param dat dataset for which age is needed at a given episode.
 #'
+#' @param idat individuals dataset from \code{\link{getFiles}}.
+#'
 #' @param Args takes a list from \code{\link{setArgs}}. 
 #'
 #' @return data.frame
@@ -15,7 +17,7 @@
 #' @examples
 #' rtdata <- getRTData(hiv)
 #' sdat <- splitRTData(rtdata)
-#' adat <- getAgeData(sdata)
+#' adat <- getAgeData(sdata, idat)
 
 getAgeData <- function(dat, idat,
   Args=eval.parent(quote(Args))) {

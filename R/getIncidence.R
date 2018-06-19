@@ -3,14 +3,14 @@
 #' @description Gets the aggregated sero_event counts and total person-years by Year, Age,
 #' and sex.
 #' 
-#' @param dat dataset from \code{\link{splitImputeData}}. 
+#' @param dat dataset from \code{\link{splitData}}. 
 #' 
 #' @return data.frame
 #'
 #' @export
 #' 
 #' @examples
-#' edat <- splitImputeData(rtdat, Args)
+#' edat <- splitData(rtdat, Args)
 #' adat <- getAgeData(edat, Args)
 #' inc <- aggregateInc(adat)
 
@@ -31,10 +31,11 @@ aggregateInc <- function(dat) {
 #' 
 #' @return data.frame
 
-getIncData <- function(rtdat, wdat, Args) {
-  idat <- Args$imputeMethod(rtdat)
-  edat <- splitImputeData(idat, Args$Years) 
-  adat <- getAgeData(edat, Args)
+getIncData <- function(rtdat, wdat, idat, Args) {
+  dat <- Args$imputeMethod(rtdat)
+  edat <- splitData(dat,
+    splitYears=Args$Years, svar="sero_date") 
+  adat <- getAgeData(edat, idat,  Args)
   adat <- aggregateInc(adat)
   dat <- merge(adat, wdat, by=c("Year", "AgeCat"))
   dat$AgeCat <- factor(dat$AgeCat)
@@ -245,17 +246,21 @@ getEstimates <- function(dat, Args, By="Year") {
 #'
 #' @param wdat data.frame of weights from \code{\link{getWeights}}
 #'
+#' @param idat Individuals dataset of birthdates from \code{\link{getIndDat}}.
+#'
 #' @return data.frame
 #'
 #' @export
 #' 
 #' @import dplyr
 
-getIncidence <- function(Args, wdat) {
+getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
+  idat <- getIndDat(Args)
+  wdat <- getWeights(Args)
   dat <- lapply(seq(Args$nSimulations),
-    function(i) getIncData(rtdat, wdat, Args))
+    function(i) getIncData(rtdat, wdat, idat, Args))
   Year <- getEstimates(dat, Args) 
   Age <- getEstimates(dat, Args, By='AgeCat') 
   list(Year=Year, Age=Age)

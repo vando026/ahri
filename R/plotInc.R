@@ -10,12 +10,13 @@ plotKSInc <- function(
   inc1, inc2=NULL, inc3=NULL, 
   Colors=c("grey60", "grey70", NULL),
   bwidth=c(2,2, NULL), ylim1=c(0, 7), 
-  gcolor="grey50", TIFF=TRUE,
+  gcolor="grey50", gfun=png,
   Legend=c("Men", "Women", NULL),
   title="", fname="year_plot") {
 
-  if(TIFF==TRUE) {
-    tiff(file.path(output, paste0(fname, ".tiff")),
+  if(!is.null(gfun)) {
+    gfun(file.path(output,
+      paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.0, height=5.0, pointsize=9, 
       res=200, type="cairo")
   }
@@ -54,13 +55,15 @@ plotKSInc <- function(
   if(!is.null(inc2)) renderInc(inc2, Colors[2], bwidth[2])
   if(!is.null(inc3)) renderInc(inc3, Colors[3], bwidth[3])
 
-  legend("top", Legend,
-    lwd=12, lty=1, col=Colors,
-    ncol=length(Legend), 
-    bty="n", pt.lwd=6, xpd=TRUE,
-    cex=1.1)
-
-  if(TIFF==TRUE) dev.off()
+  if (!is.null(Legend)) {
+    legend("top", Legend,
+      lwd=ifelse(is.null(inc2), 0, 12), 
+      lty=1, col=Colors,
+      ncol=length(Legend), 
+      bty="n", pt.lwd=6, xpd=TRUE,
+      cex=1.1)
+  }
+  if(!is.null(gfun)) dev.off()
 }
 
 #' @title plotIncAge
@@ -70,6 +73,8 @@ plotKSInc <- function(
 #' @param dat dataset from \code{\link{getIncidence()}}. 
 #' 
 #' @importFrom plotrix plotCI 
+#' 
+#' @export  
 
 
 # You need to add integer var to plot for CI
