@@ -4,7 +4,7 @@
 \alias{getIncData}
 \title{getIncData}
 \usage{
-getIncData(rtdat, wdat, Args)
+getIncData(rtdat, wdat, idat, Args)
 }
 \arguments{
 \item{rtdat}{dataset from \code{\link{getRTData}}.}

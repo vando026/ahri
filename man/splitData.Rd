@@ -9,10 +9,10 @@ splitData(dat = NULL, splitYears = NULL, svar = "sero_date")
 \arguments{
 \item{dat}{dataset from imputation method, eg \code{\link{imputeRandomPoint()}}.}
 
+\item{splitYears}{years to split}
+
 \item{svar}{varname to create obs_end variable. Can either split at early_pos or at
 sero_date}
-
-\item{years}{to split}
 }
 \value{
 data.frame
@@ -24,5 +24,5 @@ Split the data into year episodes at svar
 rtdat <- getRTData(hiv)
 sdat <- imputeMidPoint(rtdat)
 sdat <- rename(sdat, sero_date=s1)
-splitData(sdat, splitYears=Args$Years)
+splitData(sdat, splitYears=Args$Years, svar=sero_date)
 }
