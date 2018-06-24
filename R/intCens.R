@@ -76,7 +76,7 @@ IntCensParse <- function(file=NULL) {
 
 
 UniReg <- function(InFile, OutFile, Model, ID, 
-  iter=1000, cthresh=0.001, r=0.0) {
+  iter=1000, cthresh=0.001, r=0.0, printout=FALSE) {
   if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
     unireg(
       input = InFile, output = OutFile,
@@ -91,6 +91,7 @@ UniReg <- function(InFile, OutFile, Model, ID,
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
-    shell(paste(xpath, InFile, OutFile, Model, ID, Sep, iter, R, cthresh, collapse=" "))
+    system(paste(xpath, InFile, OutFile, Model, ID, Sep, iter, R, cthresh, collapse=" "),
+      show.output.on.console=printout)
   }
 }
