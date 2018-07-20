@@ -5,9 +5,9 @@
 \title{plotKSInc}
 \usage{
 plotKSInc(inc1, inc2 = NULL, inc3 = NULL, Colors = c("grey60", "grey70",
-  NULL), bwidth = c(2, 2, NULL), ylim1 = c(0, 7), gcolor = "grey50",
-  gfun = png, Legend = c("Men", "Women", NULL), title = "",
-  fname = "year_plot")
+  NULL), bwidth = list(inc1 = c(2, 2), inc2 = c(2, 2), inc3 = NULL),
+  ylim1 = c(0, 7), gcolor = "grey50", gfun = png, Legend = c("Men",
+  "Women", NULL), title = "", fname = "year_plot")
 }
 \arguments{
 \item{dat}{dataset from \code{\link{getIncidence()}}.}

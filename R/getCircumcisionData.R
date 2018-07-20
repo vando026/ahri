@@ -15,6 +15,7 @@ getCircumcisionData <- function(
     col_types=cols_only(
       IIntId="i",
       VisitDate="D",
+      AgeAtVisit="i",
       IsCircumcised="i"))
   names(cdat)[names(cdat)=="IIntId"] <- "IIntID"
   cdat <- cdat[cdat$IsCircumcised %in% c(1,2), ]

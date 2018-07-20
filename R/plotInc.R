@@ -9,7 +9,8 @@
 plotKSInc <- function(
   inc1, inc2=NULL, inc3=NULL, 
   Colors=c("grey60", "grey70", NULL),
-  bwidth=c(2,2, NULL), ylim1=c(0, 7), 
+  bwidth=list(inc1=c(2,2), inc2=c(2,2), inc3=NULL),
+  ylim1=c(0, 7), 
   gcolor="grey50", gfun=png,
   Legend=c("Men", "Women", NULL),
   title="", fname="year_plot") {
@@ -42,18 +43,18 @@ plotKSInc <- function(
   renderInc <- function(dat, Colors, bwidth) {
     uci <- dat[, "uci"]; lci <- dat[, "lci"]
     lci[is.na(lci)] <- 0
-    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[1])
-    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth[1])
+    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[2])
+    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth[2])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
       col=Colors, border=Colors)
     points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
-    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth), 
+    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth[1]), 
       lwd=1, lty=1, col=gcolor)
   }
 
-  renderInc(inc1, Colors[1], bwidth[1])
-  if(!is.null(inc2)) renderInc(inc2, Colors[2], bwidth[2])
-  if(!is.null(inc3)) renderInc(inc3, Colors[3], bwidth[3])
+  renderInc(inc1, Colors[1], bwidth[[1]])
+  if(!is.null(inc2)) renderInc(inc2, Colors[2], bwidth[[2]])
+  if(!is.null(inc3)) renderInc(inc3, Colors[3], bwidth[[3]])
 
   if (!is.null(Legend)) {
     legend("top", Legend,

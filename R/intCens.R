@@ -75,23 +75,30 @@ IntCensParse <- function(file=NULL) {
 #' ID = "id")
 
 
-UniReg <- function(InFile, OutFile, Model, ID, 
-  iter=1000, cthresh=0.001, r=0.0, printout=FALSE) {
+UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
+  iter=1000, cthresh=0.001, r=0.0, printout=FALSE, stout=TRUE) {
   if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
     unireg(
       input = InFile, output = OutFile,
       model = Model, subject_id = ID, r = r)
   } else {
-    xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
+    if (Sys.getenv("R_PLATFORM")=="x86_64-pc-linux-gnu") {
+      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg")
+    } else {
+      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
+    }
     InFile <- paste("--in", InFile)
     OutFile <- paste("--out", OutFile)
     Model <- paste("--model", shQuote(Model))
-    ID <- paste("--subject_id", ID)
+    ID <- ifelse(is.null(ID), "", paste("--subject_id", ID))
     Sep <- paste("--sep", shQuote(" "))
+    inf <- paste("--inf_char", inf)
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
-    system(paste(xpath, InFile, OutFile, Model, ID, Sep, iter, R, cthresh, collapse=" "),
-      show.output.on.console=printout)
+    system(
+      paste(xpath, InFile, OutFile, Model, ID, Sep, iter, R, inf, cthresh, collapse=" "), 
+      ignore.stdout=TRUE)
+      # show.output.on.console=FALSE)
   }
 }
