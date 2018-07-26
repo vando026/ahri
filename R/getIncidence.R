@@ -255,7 +255,9 @@ getEstimates <- function(dat, Args, By="Year") {
 #' @import dplyr
 
 getIncidence <- function(Args) {
+  debugonce(getHIV)
   hiv   <- getHIV(Args)
+  debugonce(getHIV)
   rtdat <- getRTData(hiv)
   idat <- getIndDat(Args)
   wdat <- getWeights(Args)
