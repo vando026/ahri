@@ -25,8 +25,8 @@ getDemographyData <- function(
       ExpDays="i",
       Area="i",
       InMigrEx="i",
-      OutMigrEx="i"))
-
+      OutMigrEx="i",
+      Died="i"))
   names(dem)[names(dem)=="ExpYear"] <- "Year"
   dem$InDSA <- ifelse(!is.na(dem$BSIntID), 1, 0)
   dem <- dem[dem$Sex %in% c(1, 2), ]
