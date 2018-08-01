@@ -98,7 +98,6 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     cthresh <- paste("--convergence_threshold", cthresh)
     system(command=paste(xpath, InFile, OutFile, Model, 
       ID, Sep, iter, R, inf, cthresh, collapse=" "),
-      ignore.stdout=ign_stout)
-      # show.output.on.console=FALSE)
+      ignore.stdout=ign_stout, show.output.on.console=ign_stout)
   }
 }
