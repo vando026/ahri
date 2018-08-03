@@ -77,16 +77,6 @@ IntCensParse <- function(file=NULL) {
 
 UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
   iter=1000, cthresh=0.001, r=0.0, printout=FALSE, ign_stout=TRUE) {
-  if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
-    unireg(
-      input = InFile, output = OutFile,
-      model = Model, subject_id = ID, r = r)
-  } else {
-    if (Sys.getenv("R_PLATFORM")=="x86_64-pc-linux-gnu") {
-      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg")
-    } else {
-      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
-    }
     InFile <- paste("--in", InFile)
     OutFile <- paste("--out", OutFile)
     Model <- paste("--model", shQuote(Model))
@@ -96,8 +86,15 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
-    system(command=paste(xpath, InFile, OutFile, Model, 
-      ID, Sep, iter, R, inf, cthresh, collapse=" "),
-      ignore.stdout=ign_stout, show.output.on.console=ign_stout)
-  }
+    if (Sys.getenv("OS") == "Windows_NT") {
+      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
+      system(command=paste(xpath, InFile, OutFile, Model, 
+        ID, Sep, iter, R, inf, cthresh, collapse=" "),
+        show.output.on.console=ign_stout)
+    } else {
+      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg")
+      system(command=paste(xpath, InFile, OutFile, Model, 
+        ID, Sep, iter, R, inf, cthresh, collapse=" "),
+        ignore.stdout=ign_stout)
+    }
 }

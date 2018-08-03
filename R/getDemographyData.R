@@ -18,14 +18,15 @@ getDemographyData <- function(
     col_types=cols_only(
       BSIntID="i",
       IIntID="i",
-      ObservationStart="T",
-      ObservationEnd="T",
+      ObservationStart="D",
+      ObservationEnd="D",
       Sex="i",
       ExpYear="i",
       ExpDays="i",
       Area="i",
       InMigrEx="i",
       OutMigrEx="i",
+      HIVPositive="i",
       Died="i"))
   names(dem)[names(dem)=="ExpYear"] <- "Year"
   dem$InDSA <- ifelse(!is.na(dem$BSIntID), 1, 0)
