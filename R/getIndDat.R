@@ -2,7 +2,7 @@
 #' 
 #' @description  Pull in Individuals dataset
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param infile requires Args, see \code{\link{setArgs}}
 #'
 #' @return data.frame
 #'
@@ -10,8 +10,8 @@
 #'
 #' @export 
 
-getIndDat <- function(Args) {
-  idat <- read_csv(Args$inFiles$indfile, 
+getIndDat <- function(inFile=Args$inFiles$indfile) {
+  idat <- read_csv(inFile,
     col_types=cols_only(
       IIntID="i", DateOfBirth="D"))
   idat <- subset(idat, !duplicated(IIntID))

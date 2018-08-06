@@ -257,7 +257,7 @@ getEstimates <- function(dat, Args, By="Year") {
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  idat <- getIndDat(Args)
+  idat <- getIndDat(Args$inFiles$indfile)
   wdat <- getWeights(Args)
   dat <- lapply(seq(Args$nSimulations),
     function(i) getIncData(rtdat, wdat, idat, Args))
