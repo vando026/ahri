@@ -13,8 +13,7 @@
 
 getFiles <- function(
   root=file.path(
-    Sys.getenv("USERPROFILE"), "Documents/AC_Data/Derived")) {
-
+    Sys.getenv("HOME"), "Documents/AC_Data/Derived")) {
   file_ls <- list(
     demfile="Demography/2016/RD02-01_ACDIS_Demography.csv",
     indfile="Individuals/2016/RD01-01_ACDIS_Individuals.csv",
