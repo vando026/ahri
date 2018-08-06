@@ -90,7 +90,7 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
       xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),
-        show.output.on.console=ign_stout)
+        show.output.on.console=printout)
     } else {
       xpath <- file.path(.libPaths()[1], "IntCens2", "unireg")
       system(command=paste(xpath, InFile, OutFile, Model, 
