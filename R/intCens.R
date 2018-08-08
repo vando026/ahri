@@ -4,13 +4,11 @@
 #' 
 #' @param File File path to output
 #'
-#' @importFrom epitools binom.exact
-#' 
 #' @export
 #'
 IntCensParse <- function(File=NULL) {
 
-  # browser()
+  browser()
   # Set temp folder
   # tmp <- ifelse(Sys.getenv("R_PLATFORM")!="", 
     # tempdir(), Sys.getenv("TEMP"))
@@ -39,7 +37,7 @@ IntCensParse <- function(File=NULL) {
   evars <- emat[, 1]
   emat <- emat[, -1]
   emat <- apply(emat, 2, as.numeric)
-  emat <- data.frame(cbind(evars, emat))
+  emat <- data.frame(evars, emat, stringsAsFactors=FALSE)
   colnames(emat) <-  unlist(strsplit(out[Cov_ln], " "))
 
   # write.table(emat, file=file.path(tmp, "emat.txt"), quote=FALSE, 
@@ -65,8 +63,7 @@ IntCensParse <- function(File=NULL) {
   # lhood <- regmatches(str1, gregexpr("-?\\d+(\\.\\d+)?", str1))
   # aic <- 2*nrow(cmat) - 2*as.numeric(lhood)
 
-  lout <- list(sdat=surv_dat, edat=emat)
-  lout
+  list(sdat=surv_dat, edat=emat)
 }
 
 
