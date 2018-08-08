@@ -8,7 +8,6 @@
 #'
 IntCensParse <- function(File=NULL) {
 
-  browser()
   # Set temp folder
   # tmp <- ifelse(Sys.getenv("R_PLATFORM")!="", 
     # tempdir(), Sys.getenv("TEMP"))
