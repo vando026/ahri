@@ -59,7 +59,6 @@ IntCensParse <- function(File=NULL) {
   # lhood <- regmatches(str1, gregexpr("-?\\d+(\\.\\d+)?", str1))
   # aic <- 2*nrow(cmat) - 2*as.numeric(lhood)
 
-  print(list(sdat=surv_dat, edat=emat))
   list(sdat=surv_dat, edat=emat)
 }
 
