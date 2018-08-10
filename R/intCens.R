@@ -32,11 +32,8 @@ IntCensParse <- function(File=NULL) {
   Cov_ln2 <- grep("[Co]?[vV]ariance", out)-1
   emat <- out[(Cov_ln+1):Cov_ln2] 
   emat <- strsplit(emat, " ")
-  emat <- do.call(rbind, emat)
-  evars <- emat[, 1]
-  emat <- emat[, -1]
-  emat <- apply(emat, 2, as.numeric)
-  emat <- data.frame(evars, emat, stringsAsFactors=FALSE)
+  emat <- data.frame(do.call(rbind, emat), stringsAsFactors=FALSE)
+  emat[, -1] <- apply(emat[, -1], 2, as.numeric)
   colnames(emat) <-  unlist(strsplit(out[Cov_ln], " "))
 
   # write.table(emat, file=file.path(tmp, "emat.txt"), quote=FALSE, 
@@ -62,6 +59,7 @@ IntCensParse <- function(File=NULL) {
   # lhood <- regmatches(str1, gregexpr("-?\\d+(\\.\\d+)?", str1))
   # aic <- 2*nrow(cmat) - 2*as.numeric(lhood)
 
+  print(list(sdat=surv_dat, edat=emat))
   list(sdat=surv_dat, edat=emat)
 }
 
