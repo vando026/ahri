@@ -38,31 +38,17 @@ setArgs <- function(
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=500, 
-  imputeMethod=imputeRandomPoint,
+  imputeMethod=NULL,
   aname='filename',
   printout=FALSE,
   MoreArgs=NULL) {
-
+  #
   Sex <- ifelse(
     setequal(names(Age), c("Mal", "Fem")), 
     "All", names(Age))
-
-  out <- list(
-    inFiles=inFiles,
-    Years=Years,
-    Sex=Sex,
-    Age=Age,
-    AgeCat=AgeCat,
-    FemCode=switch(Sex,
-      Mal=0,Fem=1,All=c(0, 1)),
-    ResRule=ResRule,
-    nSimulations=nSimulations,
-    imputeMethod=imputeMethod,
-    aname=aname,
-    printout=printout
-  )
-  if (!is.null(MoreArgs))
-    out <- append(out, MoreArgs)
-  return(out)
+  FemCode=switch(Sex,
+    Mal=0,Fem=1,All=c(0, 1))
+  #
+  as.list(environment())
 }
 
