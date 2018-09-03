@@ -27,7 +27,7 @@ getFiles <- function(
   pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta") {
   flist <- as.list(environment())
   flist <- lapply(flist, function(x) file.path(root, x))
-  return(flist[-1])
+  return(flist[setdiff(names(flist), "root")])
 }
 
 
