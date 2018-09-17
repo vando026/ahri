@@ -5,8 +5,8 @@
 \title{ARTCov}
 \usage{
 ARTCov(Args, wdat = NULL, Formula = "OnART ~ Year + Female + AgeCat",
-  stpopVar = "Total", calcBy = c("Year", "Female"), mergeVars = "AgeCat",
-  binom = FALSE, cutoff = 9, fmt = TRUE)
+  stpopVar = "Total", calcBy = c("Year", "Female"),
+  mergeVars = "AgeCat", binom = FALSE, cutoff = 9, fmt = TRUE)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}

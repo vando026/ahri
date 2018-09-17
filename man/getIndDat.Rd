@@ -4,10 +4,10 @@
 \alias{getIndDat}
 \title{getIndDat}
 \usage{
-getIndDat(Args)
+getIndDat(inFile = Args$inFiles$indfile)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}}
+\item{infile}{requires Args, see \code{\link{setArgs}}}
 }
 \value{
 data.frame

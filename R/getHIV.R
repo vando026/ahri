@@ -30,20 +30,9 @@ getHIV <- function(Args) {
   # Get the bounds for obs period
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y"))) %>%
     filter(Year %in% Args$Years)
-
+  
   # Filter by age
-  if ("All" %in% names(Args$Age)) {
-    hiv <- filter(hiv, !(AgeAtVisit < Args$Age[["All"]][1]) &
-      !(AgeAtVisit > Args$Age[["All"]][2]))
-  } 
-  if ("Mal" %in% names(Args$Age)) {
-    hiv <- filter(hiv, !(Female==0 & AgeAtVisit < Args$Age[["Mal"]][1]) &
-      !(Female==0 & AgeAtVisit > Args$Age[["Mal"]][2]))
-  } 
-  if ("Fem" %in% names(Args$Age)) {
-    hiv <- filter(hiv, !(Female==1 & AgeAtVisit < Args$Age[["Fem"]][1]) &
-      !(Female==1 & AgeAtVisit > Args$Age[["Fem"]][2]))
-  }
+  hiv <- setAge(hiv, Args)
 
   # Keep sex
   hiv <- filter(hiv, Female %in% Args$FemCode)

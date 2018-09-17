@@ -4,10 +4,10 @@
 \alias{IntCensParse}
 \title{IntCensParse}
 \usage{
-IntCensParse(file = NULL)
+IntCensParse(File = NULL)
 }
 \arguments{
-\item{file}{file path to output}
+\item{File}{File path to output}
 }
 \description{
 Code to get IntCens results from output

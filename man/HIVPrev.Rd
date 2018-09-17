@@ -5,8 +5,8 @@
 \title{HIVPrev}
 \usage{
 HIVPrev(Args, wdat = NULL, Formula = "HIVResult ~ Year + AgeCat",
-  calcBy = "Year", mergeVars = c("AgeCat"), binom = FALSE, fmt = TRUE,
-  ...)
+  calcBy = "Year", mergeVars = c("AgeCat"), binom = FALSE,
+  fmt = TRUE, ...)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}} to pass to \code{getHIV} function}

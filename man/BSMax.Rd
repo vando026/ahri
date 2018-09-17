@@ -5,8 +5,8 @@
 \title{BSMax}
 \usage{
 BSMax(inFile = file.path(Sys.getenv("USERPROFILE"),
-  "Documents/AC_Data/Derived/Demography/2016", "RD02-01_ACDIS_Demography.csv"),
-  outFile = "MaxBSIntID.csv")
+  "Documents/AC_Data/Derived/Demography/2016",
+  "RD02-01_ACDIS_Demography.csv"), outFile = "MaxBSIntID.csv")
 }
 \arguments{
 \item{inFile}{file path to import Demography dataset.}

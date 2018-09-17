@@ -15,7 +15,7 @@ getFiles <- function(
   root=file.path(Sys.getenv("HOME"), "Documents/AC_Data/Derived"),
   demfile="Demography/2016/RD02-01_ACDIS_Demography.csv",
   indfile="Individuals/2016/RD01-01_ACDIS_Individuals.csv",
-  hivfile="HIVSurveillance/2016/RD05-99_ACDIS_HIV_All.csv",
+  hivfile="HIVSurveillance/2017/RD05-99_ACDIS_HIV_All.csv",
   hsefile="HSE/HSE2009_2012.dta",
   wghfile="WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
   mghfile="WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",

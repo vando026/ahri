@@ -38,3 +38,23 @@ getDemographyData <- function(
 }
 
 
+#' @title setDemography
+#' 
+#' @description  Makes an age variable and filters by age
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}
+#'
+#' @return data.frame
+#'
+#' @export 
+
+setDemography <- function(Args) {
+  dem <- getDemographyData()
+  ind <- getIndDat()
+  dat <- left_join(dem, ind, by="IIntID")
+  dat <- subset(dat, Year %in% Args$Years)
+  dat <- mutate(dat, 
+    AgeAtVisit = round(as.numeric((ObservationStart - DateOfBirth)/365.25)))
+  dat <- setAge(dat, Args)
+  dat
+}
