@@ -49,8 +49,8 @@ getDemographyData <- function(
 #' @export 
 
 setDemography <- function(Args) {
-  dem <- getDemographyData()
-  ind <- getIndDat()
+  dem <- getDemographyData(Args$inFile$demfile)
+  ind <- getIndDat(Args$inFile$indfile)
   dat <- left_join(dem, ind, by="IIntID")
   dat <- subset(dat, Year %in% Args$Years)
   dat <- mutate(dat, 

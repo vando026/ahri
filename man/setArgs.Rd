@@ -4,7 +4,7 @@
 \alias{setArgs}
 \title{setArgs}
 \usage{
-setArgs(inFiles = getFiles(), Years = c(2004:2015), Age = list(All =
+setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
   c(15, 54)), AgeCat = seq(15, 55, 5), ResRule = 0,
   nSimulations = 500, imputeMethod = imputeRandomPoint,
   aname = "filename", printout = FALSE, MoreArgs = NULL)
