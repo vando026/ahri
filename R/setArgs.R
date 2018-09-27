@@ -38,7 +38,7 @@ setArgs <- function(
   AgeCat=seq(15, 55, 5),
   ResRule=0,
   nSimulations=500, 
-  imputeMethod=imputeRandomPoint,
+  imputeMethod=NULL,
   aname='filename',
   printout=FALSE,
   MoreArgs=NULL) {

@@ -2,18 +2,16 @@
 #' 
 #' @description  Pulls in Community Viral Load data
 #' 
-#' @param inFile path to the Stata .dta file
-#' 
-#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param Args requires Args (\code{\link{setArgs}}) for filepath and setting age
 #'
 #' @return data.frame
 #'
 #' @export 
 
-getCVLData <- function(inFile=Args$inFiles$pvlfile, Args) {
+getCVLData <- function(Args) {
 
   set.seed(20000)
-  dat <- read_dta(inFile) %>% rename(IIntID=IIntId)
+  dat <- read_dta(Args$inFile$pvlfile) %>% rename(IIntID=IIntId)
   dat <- mutate(dat, Comments = as.character(as_factor(dat$Comments)))
 
   # We dont want for year 2012
@@ -42,7 +40,7 @@ getCVLData <- function(inFile=Args$inFiles$pvlfile, Args) {
       AgeCat = cut(AgeAtVisit, breaks=Args$AgeCat, 
         include.lowest=TRUE, labels=NULL, right=FALSE))
   cvl <- select(cvl, IIntID, matches("Year"), Female, Age=AgeAtVisit, AgeCat,
-    ViralLoad, log10VL, VLDetect, VLSuppress)
+    DBSTestDate=SpecimenDate, ViralLoad, log10VL, VLDetect, VLSuppress)
   cvl$HIVResult <- 1
   cvl
 }
