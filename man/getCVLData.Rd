@@ -4,12 +4,10 @@
 \alias{getCVLData}
 \title{getCVLData}
 \usage{
-getCVLData(inFile = Args$inFiles$pvlfile, Args)
+getCVLData(Args)
 }
 \arguments{
-\item{inFile}{path to the Stata .dta file}
-
-\item{Args}{requires Args, see \code{\link{setArgs}}}
+\item{Args}{requires Args (\code{\link{setArgs}}) for filepath and setting age}
 }
 \value{
 data.frame
