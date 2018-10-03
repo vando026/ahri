@@ -10,3 +10,4 @@ LazyData: true
 RoxygenNote: 6.1.0
 Imports: epitools, dplyr (>= 0.7.4), foreign, 
   readr, survival, stats, zoo, plotrix 
+Suggests: testthat

@@ -48,6 +48,5 @@ getHIV <- function(Args) {
 
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-  if (Args$printout==TRUE) print(table(hiv$Female))
   hiv 
 }

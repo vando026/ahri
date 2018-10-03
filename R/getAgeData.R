@@ -1,10 +1,10 @@
 #' @title getAgeData
 #' 
-#' @description  gets Age in a given surveillance year
+#' @description  gets Age of participant in a surveillance year
 #' 
 #' @param dat dataset for which age is needed at a given episode.
 #'
-#' @param idat individuals dataset from \code{\link{getFiles}}.
+#' @param idat Individuals dataset (Date of Birth variable) from \code{\link{getFiles}}.
 #'
 #' @param Args takes a list from \code{\link{setArgs}}. 
 #'
@@ -16,36 +16,23 @@
 #' 
 #' @examples
 #' rtdata <- getRTData(hiv)
-#' sdat <- splitRTData(rtdata)
-#' adat <- getAgeData(sdata, idat)
+#' sdat <- splitData(rtdat)
+#' adat <- getAgeData(sdat, idat)
 
 getAgeData <- function(dat, idat,
   Args=eval.parent(quote(Args))) {
-
+  # merge datasets
   adat <- left_join(dat, idat, by="IIntID")
   adat <- filter(adat, !is.na(DateOfBirth)) %>%
-    mutate(Age = floor(as.numeric(
+    mutate(AgeAtVisit = floor(as.numeric(
     difftime(obs_end, DateOfBirth, units='weeks'))/52.25))
-
   # Make Categories
   adat <- mutate(adat, AgeCat = 
-    cut(Age, breaks=Args$AgeCat, 
+    cut(AgeAtVisit, breaks=Args$AgeCat, 
     labels=NULL, right=FALSE))
-
-  if ("All" %in% names(Args$Age)) {
-    adat <- filter(adat, !(Age < Args$Age[["All"]][1]) &
-      !(Age > Args$Age[["All"]][2]))
-  } 
-  if ("Mal" %in% names(Args$Age)) {
-    adat <- filter(adat, !(Female==0 & Age < Args$Age[["Mal"]][1]) &
-      !(Female==0 & Age > Args$Age[["Mal"]][2]))
-  }
-  if ("Fem" %in% names(Args$Age)) {
-    adat <- filter(adat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
-      !(Female==1 & Age > Args$Age[["Fem"]][2]))
-  }
-
-  adat[, !(names(adat) %in% "DateOfBirth")] 
+  # Filter by Age limits
+  adat <- setAge(adat, Args)
+  select(adat, -(DateOfBirth)) %>% rename(Age = AgeAtVisit)
 }
 
 #' @title makeAgeVars
