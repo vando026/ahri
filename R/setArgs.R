@@ -16,9 +16,13 @@
 #'
 #' @param aname root name to associate with output or filenames.
 #'
-#' @param imputeMethod select either \code{imputeRandomPoint} or \code{imputeMidPoint}.
+#' @param imputeMethod select either \code{\link{imputeRandomPoint}} or
+#' \code{\link{imputeMidPoint}}.
 #'
 #' @param printout print out results.
+#'
+#' @param mcores number of cores to use for parallel package (used in
+#' \code{\link{getIncidence}}.
 #'
 #' @param MoreArgs a list, which adds more arguments if needed.
 #'
@@ -41,6 +45,7 @@ setArgs <- function(
   imputeMethod=imputeRandomPoint,
   aname='filename',
   printout=FALSE,
+  mcores=1,
   MoreArgs=NULL) {
   #
   Sex <- ifelse(
