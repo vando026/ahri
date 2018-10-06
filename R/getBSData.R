@@ -141,6 +141,8 @@ mkBSData <- function(inFiles) {
 #' @param inFile path to the BSIntID coordinates csv file
 #' 
 #' @return data.frame
+#'
+#' @export
 
 getBSCord <- function(inFile=Args$inFile$bscfile) {
   read_csv(inFile)
