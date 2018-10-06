@@ -247,13 +247,15 @@ getEstimates <- function(dat, Args, By="Year") {
 #' @return data.frame
 #'
 #' @export
+#'
+#' @import parallel
 
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   idat <- getIndDat(Args$inFiles$indfile)
   wdat <- getWeights(Args)
-  dat <- parallel::mclapply(seq(Args$nSimulations),
+  dat <- mclapply(seq(Args$nSimulations),
     getIncData(rtdat, wdat, idat, Args), 
       mc.cores=Args$mcores)
   Year <- getEstimates(dat, Args) 
