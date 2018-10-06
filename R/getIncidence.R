@@ -253,7 +253,7 @@ getIncidence <- function(Args) {
   rtdat <- getRTData(hiv)
   idat <- getIndDat(Args$inFiles$indfile)
   wdat <- getWeights(Args)
-  dat <- mclapply(seq(Args$nSimulations),
+  dat <- parallel::mclapply(seq(Args$nSimulations),
     getIncData(rtdat, wdat, idat, Args), 
       mc.cores=Args$mcores)
   Year <- getEstimates(dat, Args) 
