@@ -255,9 +255,9 @@ getIncidence <- function(Args) {
   rtdat <- getRTData(hiv)
   idat <- getIndDat(Args$inFiles$indfile)
   wdat <- getWeights(Args)
-  dat <- mclapply(seq(Args$nSimulations),
-    getIncData(rtdat, wdat, idat, Args), 
-      mc.cores=Args$mcores)
+  dat <- mclapply(seq(Args$nSimulations), 
+    function(i) getIncData(rtdat, wdat, idat, Args), 
+    mc.cores=Args$mcores)
   Year <- getEstimates(dat, Args) 
   Age <- getEstimates(dat, Args, By='AgeCat') 
   list(Year=Year, Age=Age)
