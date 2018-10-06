@@ -7,7 +7,8 @@
 setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
   c(15, 54)), AgeCat = seq(15, 55, 5), ResRule = 0,
   nSimulations = 500, imputeMethod = imputeRandomPoint,
-  aname = "filename", printout = FALSE, MoreArgs = NULL)
+  aname = "filename", printout = FALSE, mcores = 1,
+  MoreArgs = NULL)
 }
 \arguments{
 \item{inFiles}{list of files to pass to function.}
@@ -22,11 +23,15 @@ setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
 
 \item{nSimulations}{number of simulations to perform.}
 
-\item{imputeMethod}{select either \code{imputeRandomPoint} or \code{imputeMidPoint}.}
+\item{imputeMethod}{select either \code{\link{imputeRandomPoint}} or
+\code{\link{imputeMidPoint}}.}
 
 \item{aname}{root name to associate with output or filenames.}
 
 \item{printout}{print out results.}
+
+\item{mcores}{number of cores to use for parallel package (used in
+\code{\link{getIncidence}}.}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
 }

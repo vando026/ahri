@@ -12,9 +12,11 @@ getFiles(root = file.path(Sys.getenv("HOME"), "Documents/AC_Data"),
   wghfile = "Derived/WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
   mghfile = "Derived/WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
   artemis = "Derived/ARTemis/ARTemisAll2013A.dta",
-  bsmfile = "Other/MaxBSIntID.csv", bsafile = "Other/BS_Area.Rdata",
-  parfile = "Other/PartnerDat.Rdata",
+  bsmfile = "Derived/Other/MaxBSIntID.csv",
+  bsafile = "Other/BS_Area.Rdata",
+  parfile = "Derived/Other/PartnerDat.Rdata",
   prvfile = "Other/HIV_Prev_Aug21.csv",
+  bscfile = "Source/BoundedStructure/BSIntID_Coords.csv",
   pvlfile = "Source/CVL_2011_2014/Community Viral Load 2011-2014.dta")
 }
 \arguments{
