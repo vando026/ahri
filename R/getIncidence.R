@@ -244,15 +244,9 @@ getEstimates <- function(dat, Args, By="Year") {
 #' 
 #' @param Args takes list from \code{\link{setArgs}}
 #'
-#' @param wdat data.frame of weights from \code{\link{getWeights}}
-#'
-#' @param idat Individuals dataset of birthdates from \code{\link{getIndDat}}.
-#'
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @import dplyr
 
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
