@@ -21,6 +21,7 @@ getFiles <- function(
   mghfile="Derived/WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
   artemis="Derived/ARTemis/ARTemisAll2013A.dta",
   bsmfile="Derived/Other/MaxBSIntID.csv",
+  epifile="Source/Episodes/2017/SurveillanceEpisodesBasicAgeYrHIV.dta",
   bsafile="Other/BS_Area.Rdata",
   parfile="Derived/Other/PartnerDat.Rdata",
   prvfile="Other/HIV_Prev_Aug21.csv",
