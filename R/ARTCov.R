@@ -1,20 +1,23 @@
-#' @title getART
+#' @title getARTDates
 #' 
-#' @description  get ARTemis data, mainly for calculating ART coverage
+#' @description  get ART initiation dates
 #' 
 #' @param inFile path to data which is typically set using \code{\link{inFiles}}
 #'
 #' @return data.frame
 #'
 #' @import dplyr
-#' 
+#'
 #' @export
 
-getART <- function(inFile=Args$inFiles$epifile) {
-  art <- tbl_df(foreign::read.dta(inFile)) %>% 
-    rename(IIntID=IIntId)
-  art <- filter(art, !duplicated(IIntID))
-  art
+getARTDates <- function(inFile=Args$inFiles$epifile) {
+  dat <- getEpisodes(inFile)
+  dat <- select(dat, IIntID, DateOfInitiation=EarliestARTInitDate)
+  dat <- filter(dat, !is.na(DateOfInitiation))
+  dat <- distinct(dat, IIntID, .keep_all=TRUE)
+  dat <- mutate(dat,
+    YearOfInitiation = as.numeric(format(DateOfInitiation, "%Y")))
+  dat
 }
 
 #' @title ARTCov
@@ -56,7 +59,7 @@ ARTCov <- function(
   hpos <- filter(hdat, HIVResult==1) %>% 
     select(IIntID, Year, Female, AgeCat, HIVResult) 
 
-  art <- getART(Args$inFiles$artemis)
+  art <- getARTDates(Args$inFiles$epifile)
   art <- select(art, IIntID, DateOfInitiation)
   art <- filter(art, !is.na(DateOfInitiation)) 
   art <- mutate(art, 
