@@ -10,8 +10,7 @@
 #' 
 #' @export
 
-getART <- function(
-  inFile=Args$inFiles$artemis) {
+getART <- function(inFile=Args$inFiles$epifile) {
   art <- tbl_df(foreign::read.dta(inFile)) %>% 
     rename(IIntID=IIntId)
   art <- filter(art, !duplicated(IIntID))
