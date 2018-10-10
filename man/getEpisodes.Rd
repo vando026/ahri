@@ -15,3 +15,7 @@ data.frame
 \description{
 Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}
 }
+\examples{
+Args <- setArgs()
+getEpisodes()
+}

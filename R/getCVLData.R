@@ -9,19 +9,21 @@
 #' @export 
 
 getCVLData <- function(Args) {
-
+  #
   set.seed(20000)
-  dat <- haven::read_dta(Args$inFile$pvlfile) %>% rename(IIntID=IIntId)
-  dat <- mutate(dat, Comments = as.character(as_factor(dat$Comments)))
-
+  dat <- haven::read_dta(Args$inFile$pvlfile) %>% 
+    rename(IIntID=IIntId)
+  dat <- mutate(dat, 
+    Comments = as.character(haven::as_factor(dat$Comments)))
   # We dont want for year 2012
   dat <- mutate(dat, IIntID = as.integer(IIntID),
     Year = as.integer(format(SpecimenDate, "%Y")))
   dat <- filter(dat, Year != 2012)
 
-  ind <- getIndDat()
+  ind <- getBirthDate(Args$inFile$epifile)
   dat <- left_join(dat, ind, by="IIntID")
-  dat <- mutate(dat, AgeAtVisit = round(as.numeric((SpecimenDate - DateOfBirth)/365.25)))
+  dat <- mutate(dat, 
+    AgeAtVisit = round(as.numeric((SpecimenDate - DateOfBirth)/365.25)))
   hiv <- getHIV(Args)
   hiv <- hiv[!duplicated(hiv$IIntID), c("IIntID", "Female")]
   dat <- left_join(dat, hiv, by="IIntID")

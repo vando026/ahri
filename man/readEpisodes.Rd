@@ -17,3 +17,7 @@ data.frame
 Reads in new Episodes dta dataset which replaces the Demography dataset (for
 2017) and converts it to a .Rdata file
 }
+\examples{
+Args <- setArgs()
+readEpisodes()
+}
