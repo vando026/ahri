@@ -19,7 +19,7 @@ getCVLData <- function(Args) {
     Year = as.integer(format(SpecimenDate, "%Y")))
   dat <- filter(dat, Year != 2012)
 
-  ind <- getIndDat()
+  ind <- getIndDat(Args$inFile$indfile)
   dat <- left_join(dat, ind, by="IIntID")
   dat <- mutate(dat, AgeAtVisit = round(as.numeric((SpecimenDate - DateOfBirth)/365.25)))
   hiv <- getHIV(Args)
