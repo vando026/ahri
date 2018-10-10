@@ -60,6 +60,8 @@ getEpisodes <- function(inFile=Args$inFiles$epifile) {
 #' @description  gets birth dates from \code{\link{getEpisodes}} data
 #' 
 #' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
+#'
+#' @param addVars string for a regular expression to select additional vars
 #' 
 #' @return data.frame
 #'
@@ -69,12 +71,14 @@ getEpisodes <- function(inFile=Args$inFiles$epifile) {
 #'
 #' @examples
 #' Args <- setArgs()
-#' getBirthDate()
+#' getBirthDate(addVars="Female)
 
-getBirthDate <- function(inFile=Args$inFile$epifile) {
+getBirthDate <- function(
+  inFile=Args$inFile$epifile, 
+  addVars=" ") {
   dat <- getEpisodes(inFile) 
-  dat <- select(dat, IIntID, DateOfBirth=DoB)
+  dat <- select(dat, IIntID, DateOfBirth=DoB, contains(addVars))
   dat <- distinct(dat, IIntID, .keep_all=TRUE)
-  # dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1918)
+  dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1910)
   dat
 }
