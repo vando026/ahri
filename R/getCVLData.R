@@ -20,7 +20,7 @@ getCVLData <- function(Args) {
     Year = as.integer(format(SpecimenDate, "%Y")))
   dat <- filter(dat, Year != 2012)
 
-  ind <- getBirthDate(Args$inFile$epifile)
+  ind <- getBirthDate(Args$inFile$epifile, addVars="Female")
   dat <- left_join(dat, ind, by="IIntID")
   dat <- mutate(dat, 
     AgeAtVisit = round(as.numeric((SpecimenDate - DateOfBirth)/365.25)))
@@ -39,7 +39,7 @@ getCVLData <- function(Args) {
       VLDetect = ifelse(ViralLoad>=1550 & !is.na(ViralLoad), 1, 0),
       AgeCat = cut(AgeAtVisit, breaks=Args$AgeCat, 
         include.lowest=TRUE, labels=NULL, right=FALSE))
-  cvl <- select(cvl, IIntID, matches("Year"), Female, Age=AgeAtVisit, AgeCat,
+  cvl <- select(cvl, IIntID, Year, Female, Age=AgeAtVisit, AgeCat,
     DBSTestDate=SpecimenDate, ViralLoad, VLDetect)
   cvl
 }
