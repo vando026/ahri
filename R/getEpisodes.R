@@ -75,6 +75,6 @@ getBirthDate <- function(inFile=Args$inFile$epifile) {
   dat <- getEpisodes(inFile) 
   dat <- select(dat, IIntID, DateOfBirth=DoB)
   dat <- distinct(dat, IIntID, .keep_all=TRUE)
-  dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1918)
+  # dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1918)
   dat
 }
