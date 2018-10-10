@@ -12,7 +12,7 @@ getCVLData <- function(Args) {
 
   set.seed(20000)
   dat <- haven::read_dta(Args$inFile$pvlfile) %>% rename(IIntID=IIntId)
-  dat <- mutate(dat, Comments = as.character(as_factor(dat$Comments)))
+  dat <- mutate(dat, Comments = as.character(haven::as_factor(dat$Comments)))
 
   # We dont want for year 2012
   dat <- mutate(dat, IIntID = as.integer(IIntID),
