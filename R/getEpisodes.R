@@ -55,6 +55,28 @@ getEpisodes <- function(inFile=Args$inFiles$epifile) {
   dat
 }
 
+
+#' @title setEpisodes
+#' 
+#' @description  set episodes data according to Args.
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @return data.frame
+#'
+#' @export 
+#'
+#' @examples
+#' Args <- setArgs()
+#' setEpisodes(Args)
+
+setEpisodes <- function(Args) {
+  dat <- getEpisodes(Args$inFiles$epifile)
+  dat <- filter(dat, ExpYear %in% Args$Years)
+  dat
+}
+
+
 #' @title getBirthDate
 #' 
 #' @description  gets birth dates from \code{\link{getEpisodes}} data
