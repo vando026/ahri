@@ -8,14 +8,14 @@ readEpisodes(inFile = Args$inFiles$epi_dta,
   outFile = Args$inFiles$epifile)
 }
 \arguments{
-\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}}
+\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
 }
 \value{
 data.frame
 }
 \description{
 Reads in new Episodes dta dataset which replaces the Demography dataset (for
-2017) and converts it to a .Rdata file
+2017) and converts it to a .Rdata file.
 }
 \examples{
 Args <- setArgs()

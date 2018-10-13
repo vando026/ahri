@@ -38,7 +38,7 @@ readEpisodes <- function(
 
 #' @title getEpisodes
 #' 
-#' @description  Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}).
+#' @description  Loads Episodes .Rdata into memory, see \code{\link{readEpisodes}}.
 #' 
 #' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
 #' 
@@ -46,9 +46,8 @@ readEpisodes <- function(
 #'
 #' @export 
 #'
-#' @examples
 #' Args <- setArgs()
-#' getEpisodes()
+#' getEpisodes(Args$inFile$epifile)
 
 getEpisodes <- function(inFile=Args$inFiles$epifile) {
   load(inFile, envir=environment())
