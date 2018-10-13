@@ -1,9 +1,9 @@
 #' @title readEpisodes
 #' 
 #' @description  Reads in new Episodes dta dataset which replaces the Demography dataset (for
-#' 2017) and converts it to a .Rdata file
+#' 2017) and converts it to a .Rdata file.
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
+#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
 #' 
 #' @return data.frame
 #'
@@ -38,9 +38,9 @@ readEpisodes <- function(
 
 #' @title getEpisodes
 #' 
-#' @description  Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}
+#' @description  Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}).
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
+#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
 #' 
 #' @return data.frame
 #'

@@ -7,7 +7,7 @@
 aggregateInc(dat)
 }
 \arguments{
-\item{dat}{dataset from \code{\link{splitData}}.}
+\item{dat}{dataset}
 }
 \value{
 data.frame
@@ -17,7 +17,7 @@ Gets the aggregated sero_event counts and total person-years by Year, Age,
 and sex.
 }
 \examples{
-edat <- splitData(rtdat, Args)
+edat <- splitAtEarlyPos(rtdat)
 adat <- getAgeData(edat, Args)
 inc <- aggregateInc(adat)
 }

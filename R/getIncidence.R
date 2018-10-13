@@ -3,14 +3,14 @@
 #' @description Gets the aggregated sero_event counts and total person-years by Year, Age,
 #' and sex.
 #' 
-#' @param dat dataset from \code{\link{splitData}}. 
+#' @param dat dataset 
 #' 
 #' @return data.frame
 #'
 #' @export
 #' 
 #' @examples
-#' edat <- splitData(rtdat, Args)
+#' edat <- splitAtEarlyPos(rtdat)
 #' adat <- getAgeData(edat, Args)
 #' inc <- aggregateInc(adat)
 
@@ -33,8 +33,7 @@ aggregateInc <- function(dat) {
 
 getIncData <- function(rtdat, wdat, idat, Args) {
   dat <- Args$imputeMethod(rtdat)
-  edat <- splitData(dat,
-    splitYears=Args$Years, svar="sero_date") 
+  edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
   adat <- getAgeData(edat, idat,  Args)
   adat <- aggregateInc(adat)
   dat <- merge(adat, wdat, by=c("Year", "AgeCat"))

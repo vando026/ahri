@@ -7,13 +7,13 @@
 getEpisodes(inFile = Args$inFiles$epifile)
 }
 \arguments{
-\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}}
+\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
 }
 \value{
 data.frame
 }
 \description{
-Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}
+Loads Episodes .Rdata into memory (see \code{\link{readEpisodes}}).
 }
 \examples{
 Args <- setArgs()

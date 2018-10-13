@@ -16,7 +16,7 @@
 #' 
 #' @examples
 #' rtdata <- getRTData(hiv)
-#' sdat <- splitData(rtdat)
+#' sdat <- splitAtEarlyPos(rtdat)
 #' adat <- getAgeData(sdat, idat)
 
 getAgeData <- function(dat, idat,

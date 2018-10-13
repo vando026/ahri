@@ -21,6 +21,6 @@ gets Age of participant in a surveillance year
 }
 \examples{
 rtdata <- getRTData(hiv)
-sdat <- splitData(rtdat)
+sdat <- splitAtEarlyPos(rtdat)
 adat <- getAgeData(sdat, idat)
 }
