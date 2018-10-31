@@ -252,7 +252,7 @@ getEstimates <- function(dat, Args, By="Year") {
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  idat <- getIndDat(Args$inFiles$indfile)
+  idat <- getBirthDate(Args$inFiles$epifile)
   wdat <- getWeights(Args)
   dat <- mclapply(seq(Args$nSimulations), 
     function(i) getIncData(rtdat, wdat, idat, Args), 
