@@ -13,7 +13,7 @@
 
 getHIV <- function(Args) {
 
-  hiv <- read_csv(Args$inFiles$hivfile, 
+  hiv <- readr::read_csv(Args$inFiles$hivfile, 
     col_types=cols_only(
       ResidencyBSIntId="i",
       IIntId="i",
