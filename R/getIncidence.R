@@ -1,61 +1,129 @@
-#' @title aggregateInc
+#' @title getIncData
 #' 
-#' @description Gets the aggregated sero_event counts and total person-years by Year, Age,
-#' and sex.
+#' @description Function used to prepare the data for \code{\link{getIncidence}}.
 #' 
-#' @param dat dataset 
+#' @param rtdat dataset from \code{\link{getRTData}}. 
+#' @param idat dataset from \code{\link{getBirthData}}. 
+#' @param Args takes list from \code{\link{setArgs}}.
+#'
+#' @export
+#' 
+#' @return data.frame
+#' @examples
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' dat <- Args$imputeMethod(rtdat)
+#' edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
+#' adat <- getAgeData(edat, idat,  Args)
+#' getIncData(rtdat, idat, Args)
+
+getIncData <- function(rtdat, idat, Args) {
+  dat <- Args$imputeMethod(rtdat)
+  edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
+  adat <- getAgeData(edat, idat,  Args)
+  adat
+}
+
+#' @title AggFunc
+#' 
+#' @description Function to create aggregates of sero events and pyears by Var
+#' 
+#' @param Var as in Sex or AgeCat
+#' 
+#' @return data.frame
+
+AggFunc <- function(Var) {
+  function(dat) {
+    F1 <- as.formula(paste(
+      "cbind(sero_event, pyears=Time/365.25) ~ ", Var))
+    aggregate(F1, data=dat, FUN=sum)
+  }
+}
+
+#' @title AggByYear
+#' 
+#' @description Aggregates sero events and pyears by Year.
+#' 
+#' @param dat dataset.
 #' 
 #' @return data.frame
 #'
 #' @export
 #' 
 #' @examples
-#' edat <- splitAtEarlyPos(rtdat)
-#' adat <- getAgeData(edat, Args)
-#' inc <- aggregateInc(adat)
+#' dat <- getIncData(rtdat, idat, Args)
+#' AggByYear(dat)
 
-aggregateInc <- function(dat) {
-  aggregate(cbind(sero_event, pyears=Time/365.25) ~ 
-    Year+AgeCat+Female, data=dat, FUN=sum)
-}
+AggByYear <- AggFunc("Year")
 
-#' @title getIncData
+#' @title AggByAge
 #' 
-#' @description Function used to prepare the data for \code{\link{getIncidence}}.
+#' @description Aggregates sero events and pyears by AgeCat.
 #' 
-#' @param rtdat dataset from \code{\link{getRTData}}. 
+#' @param dat dataset. 
 #' 
-#' @param Args takes list from \code{\link{setArgs}}.
+#' @return data.frame
 #'
 #' @export
 #' 
+#' @examples
+#' dat <- getIncData(rtdat, idat, Args)
+#' AggByAge(dat)
+
+AggByAge <- AggFunc("AgeCat")
+
+#' @title getAggData
+#' 
+#' @description Function to create aggregates of sero events and pyears by Var
+#' 
+#' @param Var as in Sex or AgeCat
+#' 
 #' @return data.frame
 
-getIncData <- function(rtdat, wdat, idat, Args) {
-  dat <- Args$imputeMethod(rtdat)
-  edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
-  adat <- getAgeData(edat, idat,  Args)
-  adat <- aggregateInc(adat)
-  dat <- merge(adat, wdat, by=c("Year", "AgeCat"))
-  dat$AgeCat <- factor(dat$AgeCat)
-  dat
+getAggData <- function(dat) {
+  getDat <- function(name) {
+    function(dat) {
+      dat <- lapply(dat, `[`, name)
+      do.call("cbind", dat)
+    }
+  }
+  getSero <- getDat("sero_event")
+  getPYear <- getDat("pyears")
+  lapply(c(getSero, getPYear), 
+    function(f) f(dat))
 }
 
-getAggData <- function(dat, Args, 
-  calcBy=eval.parent(quote(By))) {
-  getDat <- function(dat, name) {
-    dat <- lapply(dat, `[`, name)
-    do.call("cbind", dat)
-  }
-  nm <- c("sero_event", "pyears")
-  dat <- lapply(dat, function(x)
-    aggregate(x[, nm], by=list(x[, calcBy]), FUN=sum))
-  adat <- lapply(nm, function(x) getDat(dat, x))
-  adat <- lapply(adat, function(x) apply(x, MARGIN=1, mean))
-  out <- do.call("cbind", adat)
-  colnames(out) <- nm
-  rownames(out) <- dat[[1]]$Group.1
-  out
+
+#' @title doPoisYear
+#' 
+#' @description DO poisson regression for incidence rates by year or age. 
+#' 
+#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
+#'
+#' @return data.frame
+#' @examples
+#' doPoisYear <- poisFunc("as.factor(Year)")
+#' doPoisAge <- poisFunc("as.factor(AgeCat)")
+
+doPoisYear <- function(dat) {
+  dat$tscale <- dat$Time/365.25
+  mod <- glm(sero_event ~ as.factor(Year) + Age + offset(log(tscale)),
+    data=dat, family=poisson)
+  nyears <- seq(unique(dat$Year))
+  ndat <- data.frame(Age = mean(dat$Age), tscale=1,
+    Year = factor(nyears, levels = nyears, labels = levels(as.factor(dat$Year))))
+  predict.glm(mod, ndat, type="response", se.fit=TRUE)[c("fit", "se.fit")]
+}
+
+doPoisAge <- function(dat) {
+  dat$tscale <- dat$Time/365.25
+  mod <- glm(sero_event ~ AgeCat + offset(log(tscale)),
+    data=dat, family=poisson)
+  nage <- seq(unique(dat$AgeCat))
+  ndat <- data.frame(tscale=1,
+    AgeCat = factor(nage, levels = nage, labels = levels(as.factor(dat$AgeCat))))
+  predict.glm(mod, ndat, type="response", se.fit=TRUE)[c("fit", "se.fit")]
 }
 
 
@@ -76,52 +144,71 @@ getAggData <- function(dat, Args,
 #' @export
 #' 
 #' @examples
-#' edat <- censorData(rtdat,Args)
-#' adat <- getAgeData(edat, Args)
-#' inc <- aggregateInc(adat)
-#' calcInc(inc, getCrudeMI, calcBy="Year")
 
-calcInc <- function(dat, fun, calcBy="Year") {
-  dat <- data.frame(dat)
-  dat <- split(dat, dat[calcBy])
-  fun(dat)
+calcInc <- function(rtdat, idat, Args) {
+  dat <- getIncData(rtdat, idat, Args)
+  nm <- c("Year", "Age", "poisYear", "poisAge")
+  funs <- list(AggByYear, AggByAge, doPoisYear, doPoisAge)
+  adat <- lapply(setNames(funs, nm), function(f) f(dat))
+  adat
 }
 
-#' @title getCrudeMI
-#' 
-#' @description Calculates the rate and var according to code in
-#' epitools::ageadjust.direct
-#' 
-#' @return data.frame
 
-getCrudeMI <- function(dat) {
-  crude <- function(x) {
-    sero <- sum(x$sero_event)
-    pyears <- sum(x$pyears)
-    dsr <- sero/pyears
-    dsr.var <- sero/pyears^2
-    c(dsr=dsr, dsr.var=dsr.var, wm=0)
+#' @title getEstFunc
+#' 
+#' @description gets estimates from \code{\link{calcInc}}.
+#' 
+#' @param obs the object name.
+#' 
+#' @param name the name of vector.
+#' 
+#' @return function
+
+getEstFunc <- function(obj, name) {
+  function(dat, nsim=Args$nSim) {
+    sapply(seq(nsim),
+      function(i) dat[[i]][[obj]][[name]] )
   }
-  t(sapply(dat, crude))
 }
 
-#' @title getAdjMI
+#' @title getEstimates
 #' 
-#' @description Calculates the rate and var according to code in
-#' epitools::ageadjust.direct
+#' @description Once dates are imputed get the estimates.
 #' 
+#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
+#'
+#' @param Args takes list from \code{\link{setArgs}}.
+#' 
+#' @param By calculate by Year or AgeCat.
+#'
 #' @return data.frame
+#'
+#' @export
+#' 
+#' @import dplyr
+#'
+#' @examples
+#' getIncidence <- function(Args) {
+#'   hiv   <- getHIV(Args)
+#'   rtdat <- getRTData(hiv)
+#'   dat <- lapply(seq(Args$nSimulations),
+#'     function(i) doIncData(rtdat, Args))
+#'   out <- getEstimates(dat, Args) 
+#'   out
+#' }
 
-getAdjMI <- function(dat) {
-  adj <- function(x) {
-    stdwt <- with(x, Total/sum(Total))
-    rate <- with(x, sero_event/pyears)
-    dsr <- sum(stdwt * rate)
-    dsr.var <- sum((stdwt^2) * with(x, sero_event/pyears^2))
-    wm <- max(stdwt/x$pyears)
-    c(dsr=dsr, dsr.var=dsr.var, wm=wm)
-  }
-  t(sapply(dat, adj))
+getEstimates <-  function(dat, nsim=2) {
+  funs <- list(
+    getSero = getEstFunc("Year", "sero_event"),
+    getPYear = getEstFunc("Year", "pyears"),
+    getAgeSero = getEstFunc("Age", "sero_event"),
+    getAgePYear = getEstFunc("Age", "pyears"),
+    getPoisYearEst = getEstFunc("poisYear", "fit"),
+    getPoisYearSE = getEstFunc("poisYear", "se.fit"),
+    getPoisAgeEst = getEstFunc("poisAge", "fit"),
+    getPoisAgeSE = getEstFunc("poisAge", "se.fit")
+  )
+  lapply(funs, function(f) f(dat)) 
 }
 
 #' @title getEstMI
@@ -196,46 +283,6 @@ getCrudeSI <- function(x) {
   lapply(x, getEst)
 }
 
-#' @title getEstimates
-#' 
-#' @description Once dates are imputed get the estimates.
-#' 
-#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
-#'
-#' @param Args takes list from \code{\link{setArgs}}.
-#' 
-#' @param By calculate by Year or AgeCat.
-#'
-#' @return data.frame
-#'
-#' @export
-#' 
-#' @import dplyr
-#'
-#' @examples
-#' getIncidence <- function(Args) {
-#'   hiv   <- getHIV(Args)
-#'   rtdat <- getRTData(hiv)
-#'   dat <- lapply(seq(Args$nSimulations),
-#'     function(i) doIncData(rtdat, Args))
-#'   out <- getEstimates(dat, Args) 
-#'   out
-#' }
-
-getEstimates <- function(dat, Args, By="Year") {
-
-  # Get events and pyears by year 
-  aggdat <- getAggData(dat, Args, calcBy=By)
-
-  if (Args$nSimulations==1) {
-    crude <- getEstSI(dat, getCrudeSI)
-    adj <- getEstSI(dat, getAdjSI)
-  } else {
-    crude <- getEstMI(dat, getCrudeMI)
-    adj <- getEstMI(dat, getAdjMI)
-  }
-  list(AggDat = aggdat, CrudeRate = crude, AdjRate = adj)
-}
 
 #' @title getIncidence
 #' 
@@ -253,13 +300,12 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   idat <- getBirthDate(Args$inFiles$epifile)
-  wdat <- getWeights(Args)
   dat <- mclapply(seq(Args$nSimulations), 
-    function(i) getIncData(rtdat, wdat, idat, Args), 
+    function(i) calcInc(rtdat, idat, Args), 
     mc.cores=Args$mcores)
-  Year <- getEstimates(dat, Args) 
-  Age <- getEstimates(dat, Args, By='AgeCat') 
-  list(Year=Year, Age=Age)
+  dat
+  # out <- getEstimates(dat) 
+  # out
 }
 
 

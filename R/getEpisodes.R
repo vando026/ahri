@@ -46,6 +46,7 @@ readEpisodes <- function(
 #'
 #' @export 
 #'
+#' @examples
 #' Args <- setArgs()
 #' getEpisodes(Args$inFile$epifile)
 
@@ -92,7 +93,7 @@ setEpisodes <- function(Args) {
 #'
 #' @examples
 #' Args <- setArgs()
-#' getBirthDate(addVars="Female)
+#' getBirthDate(addVars="Female")
 
 getBirthDate <- function(
   inFile=Args$inFile$epifile, 

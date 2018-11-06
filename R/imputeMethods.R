@@ -7,14 +7,12 @@
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @import dplyr
 
 imputeMidPoint <- function(dat) {
   dat$sero_date <-  
     (as.numeric(dat$late_neg) + as.numeric(dat$early_pos))/2
   dat$sero_date <- as.Date(dat$sero_date, origin='1970-01-01') 
-  dat
+  tibble::as_tibble(dat)
 }
 
 #' @title imputeRandomPoint
@@ -26,8 +24,6 @@ imputeMidPoint <- function(dat) {
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @import dplyr
 
 imputeRandomPoint <- function(dat) {
   idat <- split(dat, as.factor(dat$IIntID))
@@ -47,7 +43,7 @@ imputeRandomPoint <- function(dat) {
   sdat <- data.frame(do.call("rbind", sdat ))
   dat <- merge(dat, sdat, by="IIntID", all.x=TRUE)
   dat$sero_date <- as.Date(dat$sero_date, origin = "1970-01-01")
-  dat
+  tibble::as_tibble(dat)
 }
 
 #' @title imputeEndPoint
@@ -59,11 +55,9 @@ imputeRandomPoint <- function(dat) {
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @import dplyr
 
 imputeEndPoint <- function(dat) {
   dat$sero_date <- dat$early_pos
-  dat
+  tibble::as_tibble(dat)
 }
 

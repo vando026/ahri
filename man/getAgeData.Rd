@@ -9,7 +9,7 @@ getAgeData(dat, idat, Args = eval.parent(quote(Args)))
 \arguments{
 \item{dat}{dataset for which age is needed at a given episode.}
 
-\item{idat}{Individuals dataset (Date of Birth variable) from \code{\link{getFiles}}.}
+\item{idat}{Individuals dataset (Date of Birth variable) from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes a list from \code{\link{setArgs}}.}
 }
@@ -17,10 +17,11 @@ getAgeData(dat, idat, Args = eval.parent(quote(Args)))
 data.frame
 }
 \description{
-gets Age of participant in a surveillance year
+gets and sets Age of participant in a surveillance year.
 }
 \examples{
 rtdata <- getRTData(hiv)
+idat <- getBirthDate(Args$inFiles$epifile)
 sdat <- splitAtEarlyPos(rtdat)
 adat <- getAgeData(sdat, idat)
 }

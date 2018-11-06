@@ -17,3 +17,7 @@ data.frame
 \description{
 gets birth dates from \code{\link{getEpisodes}} data
 }
+\examples{
+Args <- setArgs()
+getBirthDate(addVars="Female")
+}
