@@ -1,3 +1,27 @@
+#' @title readBSData
+#' 
+#' @description  Read in Bounded Structures data.
+#' 
+#' @param inFile filepath to data.
+#' 
+#' @return data.frame
+#'
+#' @export 
+#'
+#' @examples
+#' Args <- setArgs()
+#' readBSData(Args$inFiles$bsifile) 
+
+readBSData <- function(inFile=Args$inFiles$bsifile) {
+  dat <- haven::read_dta(inFile)
+  dat <- mutate(dat, 
+    LocalArea = as.character(haven::as_factor(dat$LocalArea)),
+    Isigodi = as.character(haven::as_factor(dat$Isigodi)),
+    IsUrbanOrRural = as.character(haven::as_factor(dat$IsUrbanOrRural)))
+  dat
+}
+
+
 #' @title BSMax
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
