@@ -15,3 +15,12 @@ list
 \description{
 Collect all estimates into single matrix
 }
+\examples{
+hiv   <- getHIV(Args)
+rtdat <- getRTData(hiv)
+idat <- getBirthDate(Args$inFiles$epifile)
+dat <- mclapply(seq(Args$nSimulations), 
+  function(i) calcInc(rtdat, idat, Args), 
+  mc.cores=Args$mcores)
+cdat <- combineEst(dat) 
+}
