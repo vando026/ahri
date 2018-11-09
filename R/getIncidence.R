@@ -122,6 +122,15 @@ calcInc <- function(rtdat, idat, Args) {
 #' @return list 
 #'
 #' @export
+#'
+#' @examples
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' dat <- mclapply(seq(Args$nSimulations), 
+#'   function(i) calcInc(rtdat, idat, Args), 
+#'   mc.cores=Args$mcores)
+#' cdat <- combineEst(dat) 
 
 combineEst <-  function(dat) {
   getFunc <- function(dat) {
@@ -198,7 +207,6 @@ getIncidence <- function(Args) {
     function(i) calcInc(rtdat, idat, Args), 
     mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
-  browser()
   crude <- getCrudeRate(cdat[1:4])
   adj <- getAdjRate(cdat[5:8])
   list(crude=crude, adj=adj)
