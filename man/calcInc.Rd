@@ -4,7 +4,7 @@
 \alias{calcInc}
 \title{calcInc}
 \usage{
-calcInc(dat, fun, calcBy = "Year")
+calcInc(rtdat, idat, Args)
 }
 \arguments{
 \item{dat}{Dataset from \code{\link{aggregateInc}}.}
@@ -20,8 +20,8 @@ data.frame
 Calculates the crude and adjusted incidence.
 }
 \examples{
-edat <- censorData(rtdat,Args)
-adat <- getAgeData(edat, Args)
-inc <- aggregateInc(adat)
-calcInc(inc, getCrudeMI, calcBy="Year")
+hiv   <- getHIV(Args)
+rtdat <- getRTData(hiv)
+idat <- getBirthDate(Args$inFiles$epifile)
+calcInc(rtdat, idat, Args)
 }

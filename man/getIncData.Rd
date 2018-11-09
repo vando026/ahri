@@ -17,14 +17,11 @@ getIncData(rtdat, idat, Args)
 data.frame
 }
 \description{
-Function used to prepare the data for \code{\link{getIncidence}}.
+Function that imputes sero date, splits at censoring date and set the age.
 }
 \examples{
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
 idat <- getBirthDate(Args$inFiles$epifile)
-dat <- Args$imputeMethod(rtdat)
-edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
-adat <- getAgeData(edat, idat,  Args)
 getIncData(rtdat, idat, Args)
 }

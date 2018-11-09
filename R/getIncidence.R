@@ -1,6 +1,6 @@
 #' @title getIncData
 #' 
-#' @description Function used to prepare the data for \code{\link{getIncidence}}.
+#' @description Function that imputes sero date, splits at censoring date and set the age.
 #' 
 #' @param rtdat dataset from \code{\link{getRTData}}. 
 #' @param idat dataset from \code{\link{getBirthData}}. 
@@ -13,9 +13,6 @@
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' idat <- getBirthDate(Args$inFiles$epifile)
-#' dat <- Args$imputeMethod(rtdat)
-#' edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
-#' adat <- getAgeData(edat, idat,  Args)
 #' getIncData(rtdat, idat, Args)
 
 getIncData <- function(rtdat, idat, Args) {
@@ -29,71 +26,26 @@ getIncData <- function(rtdat, idat, Args) {
 #' 
 #' @description Function to create aggregates of sero events and pyears by Var
 #' 
-#' @param Var as in Sex or AgeCat
+#' @param RHS right hand side of the formula, as in Sex or AgeCat
 #' 
 #' @return data.frame
+#' 
+#' @examples
+#' AggByYear <- AggFunc("Year")
+#' AggByAge <- AggFunc("AgeCat")
 
-AggFunc <- function(Var) {
+AggFunc <- function(RHS) {
   function(dat) {
     F1 <- as.formula(paste(
-      "cbind(sero_event, pyears=Time/365.25) ~ ", Var))
-    aggregate(F1, data=dat, FUN=sum)
+      "cbind(sero_event, pyears=Time/365.25) ~ ", RHS))
+    out <- aggregate(F1, data=dat, FUN=sum)
+    rownames(out) <- out[[1]]
+    out
   }
 }
-
-#' @title AggByYear
-#' 
-#' @description Aggregates sero events and pyears by Year.
-#' 
-#' @param dat dataset.
-#' 
-#' @return data.frame
-#'
-#' @export
-#' 
-#' @examples
-#' dat <- getIncData(rtdat, idat, Args)
-#' AggByYear(dat)
 
 AggByYear <- AggFunc("Year")
-
-#' @title AggByAge
-#' 
-#' @description Aggregates sero events and pyears by AgeCat.
-#' 
-#' @param dat dataset. 
-#' 
-#' @return data.frame
-#'
-#' @export
-#' 
-#' @examples
-#' dat <- getIncData(rtdat, idat, Args)
-#' AggByAge(dat)
-
 AggByAge <- AggFunc("AgeCat")
-
-#' @title getAggData
-#' 
-#' @description Function to create aggregates of sero events and pyears by Var
-#' 
-#' @param Var as in Sex or AgeCat
-#' 
-#' @return data.frame
-
-getAggData <- function(dat) {
-  getDat <- function(name) {
-    function(dat) {
-      dat <- lapply(dat, `[`, name)
-      do.call("cbind", dat)
-    }
-  }
-  getSero <- getDat("sero_event")
-  getPYear <- getDat("pyears")
-  lapply(c(getSero, getPYear), 
-    function(f) f(dat))
-}
-
 
 #' @title doPoisYear
 #' 
@@ -113,7 +65,10 @@ doPoisYear <- function(dat) {
   nyears <- seq(unique(dat$Year))
   ndat <- data.frame(Age = mean(dat$Age), tscale=1,
     Year = factor(nyears, levels = nyears, labels = levels(as.factor(dat$Year))))
-  predict.glm(mod, ndat, type="response", se.fit=TRUE)[c("fit", "se.fit")]
+  out <- predict.glm(mod, ndat, type="response", se.fit=TRUE)
+  out <- data.frame(out[c("fit", "se.fit")])
+  rownames(out) <- ndat$Year
+  out
 }
 
 doPoisAge <- function(dat) {
@@ -123,9 +78,11 @@ doPoisAge <- function(dat) {
   nage <- seq(unique(dat$AgeCat))
   ndat <- data.frame(tscale=1,
     AgeCat = factor(nage, levels = nage, labels = levels(as.factor(dat$AgeCat))))
-  predict.glm(mod, ndat, type="response", se.fit=TRUE)[c("fit", "se.fit")]
+  out <- predict.glm(mod, ndat, type="response", se.fit=TRUE)
+  out <- data.frame(out[c("fit", "se.fit")])
+  rownames(out) <- ndat$AgeCat
+  out
 }
-
 
 #' @title calcInc
 #' 
@@ -144,145 +101,82 @@ doPoisAge <- function(dat) {
 #' @export
 #' 
 #' @examples
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' calcInc(rtdat, idat, Args)
 
 calcInc <- function(rtdat, idat, Args) {
   dat <- getIncData(rtdat, idat, Args)
   nm <- c("Year", "Age", "poisYear", "poisAge")
   funs <- list(AggByYear, AggByAge, doPoisYear, doPoisAge)
-  adat <- lapply(setNames(funs, nm), function(f) f(dat))
-  adat
+  lapply(setNames(funs, nm), function(f) f(dat))
 }
 
-
-#' @title getEstFunc
+#' @title combineEst
 #' 
-#' @description gets estimates from \code{\link{calcInc}}.
+#' @description Collect all estimates into single matrix
 #' 
-#' @param obs the object name.
-#' 
-#' @param name the name of vector.
-#' 
-#' @return function
-
-getEstFunc <- function(obj, name) {
-  function(dat, nsim=Args$nSim) {
-    sapply(seq(nsim),
-      function(i) dat[[i]][[obj]][[name]] )
-  }
-}
-
-#' @title getEstimates
-#' 
-#' @description Once dates are imputed get the estimates.
-#' 
-#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
+#' @param dat takes results from a function (i.e., \code{calcInc}.)
 #'
-#' @param Args takes list from \code{\link{setArgs}}.
-#' 
-#' @param By calculate by Year or AgeCat.
-#'
-#' @return data.frame
+#' @return list 
 #'
 #' @export
-#' 
-#' @import dplyr
-#'
-#' @examples
-#' getIncidence <- function(Args) {
-#'   hiv   <- getHIV(Args)
-#'   rtdat <- getRTData(hiv)
-#'   dat <- lapply(seq(Args$nSimulations),
-#'     function(i) doIncData(rtdat, Args))
-#'   out <- getEstimates(dat, Args) 
-#'   out
-#' }
 
-getEstimates <-  function(dat, nsim=2) {
-  funs <- list(
-    getSero = getEstFunc("Year", "sero_event"),
-    getPYear = getEstFunc("Year", "pyears"),
-    getAgeSero = getEstFunc("Age", "sero_event"),
-    getAgePYear = getEstFunc("Age", "pyears"),
-    getPoisYearEst = getEstFunc("poisYear", "fit"),
-    getPoisYearSE = getEstFunc("poisYear", "se.fit"),
-    getPoisAgeEst = getEstFunc("poisAge", "fit"),
-    getPoisAgeSE = getEstFunc("poisAge", "se.fit")
-  )
-  lapply(funs, function(f) f(dat)) 
-}
-
-#' @title getEstMI
-#' 
-#' @description Calculates the standard errors for multiple imputation following formula given in P. Allison Missing Data
-#' book, pg 30, in '~/Dropbox/Textbooks/Statistics'.
-#' 
-#' @return data.frame
-
-getEstMI  <- function(dat, fun,
-  Args=eval.parent(quote(Args)), 
-  calcBy=eval.parent(quote(By))) {
-
-  getCI <- function(x, M=Args$nSimulations) {
-    x <- as.data.frame(x)
-    var1 <- sum(x$dsr.var)/M
-    var2 <- with(x, sum((dsr - mean(dsr))^2))
-    dsr.var <- var1 + ((1+(1/M)) * (1/(M-1) * var2)) 
-    dsr <- mean(x$dsr)
-    wm <- mean(x$wm)
-    gamma.lci <- qgamma(0.05/2, shape = (dsr^2)/dsr.var, 
-      scale = dsr.var/dsr)
-    gamma.uci <- qgamma(1 - 0.05/2, shape = ((dsr + wm)^2)/(dsr.var + wm^2),
-      scale = (dsr.var + wm^2)/(dsr + wm))
-    c(rate = dsr, lci = gamma.lci, uci = gamma.uci)*100
+combineEst <-  function(dat) {
+  getFunc <- function(dat) {
+    function(obj) {
+      out <- sapply(seq(length(dat)),
+        function(i) dat[[i]][[obj]])
+      rownames(out) <- rownames(dat[[1]][[obj[1]]])
+      out
+    }
   }
-
-  # Get rate and vars by iteration
-  dat <- lapply(dat, 
-    function(x) calcInc(x, fun, calcBy=calcBy))
-
-  # Group data by year
-  nm <- rownames(dat[[1]])
-  collect <- lapply(seq(nm),
-    function(y) lapply(dat, function(x) x[y, ]))
-  bind <- lapply(collect, function(x) do.call("rbind", x))
-  out <- lapply(bind, getCI)
-  out <- do.call("rbind", out)
-  rownames(out) <- nm
-  out
+  getEst <- getFunc(dat)
+  nms <- list(
+    getSero = c("Year", "sero_event"),
+    getPYear = c("Year", "pyears"),
+    getAgeSero = c("Age", "sero_event"),
+    getAgePYear = c("Age", "pyears"),
+    getPoisYearEst = c("poisYear", "fit"),
+    getPoisYearSE = c("poisYear", "se.fit"),
+    getPoisAgeEst = c("poisAge", "fit"),
+    getPoisAgeSE = c("poisAge", "se.fit"))
+  lapply(nms, getEst)
 }
 
-#' @title getEstSI
-#' 
-#' @description Calculates the rate and confidence intervals for single imputation such as mid-point or
-#' end-point.
-#' 
-#' @return data.frame
 
-getEstSI <- function(dat, fun,
-    calcBy=eval.parent(quote(By))) {
-    out <- calcInc(dat, fun, calcBy=calcBy)
-    out <- do.call("rbind", out)
-    names(out) <- c("rate", "lci", "uci")
-    out
+getCrudeRate <- function(dat) {
+  getMeans <- function(dat) rowMeans(dat) 
+  out <- sapply(dat, getMeans)
+  Year <- data.frame(sero=out[[1]], pyears=out[[2]])
+  Age <- data.frame(sero=out[[3]], pyears=out[[4]])
+  getInc <- function(dat)  dat$sero/dat$pyear * 100 
+  lapply(list(Year=Year, Age=Age), 
+    function(x) {x$rate = getInc(x); x})
 }
 
-getAdjSI <- function(x) {
-  getEst <- function(x) {
-  as.data.frame(t(with(x, 
-    ageadjust.direct(sero_event, pyears,
-      stdpop=Total)[2:4] * 100)))
+getAdjRate <- function(dat) {
+  # Calc using Rubins Rule for predictions
+  calcPredict <- function(est, se) {
+    getPredict <- function(est, se) {
+      m <- length(est)
+      mn_est <- mean(est)
+      var_with <- mean(se^2)
+      var_betw <- sum((est - mn_est)^2)/(m-1)
+      var_tot <- var_with + var_betw*(1 + (1/m))
+      c(mn=mn_est, se=sqrt(var_tot))
+    }
+    est <- split(est, rownames(est))
+    se <- split(se, rownames(se))
+    out <- Map(getPredict, est, se)
+    out <- do.call(rbind, out)
+    data.frame(out)
   }
-  lapply(x, getEst)
+  predYear <- calcPredict(dat[["getPoisYearEst"]], dat[["getPoisYearSE"]])
+  predAge <- calcPredict(dat[["getPoisAgeEst"]], dat[["getPoisAgeSE"]])
+  list(Year=predYear, Age=predAge)
 }
-
-getCrudeSI <- function(x) {
-  getEst <- function(x) {
-    with(x, pois.exact(sum(sero_event), 
-      sum(pyears))[3:5] * 100)
- }
-  lapply(x, getEst)
-}
-
 
 #' @title getIncidence
 #' 
@@ -292,7 +186,7 @@ getCrudeSI <- function(x) {
 #'
 #' @return data.frame
 #'
-#' @export
+#-' @export
 #'
 #' @import parallel
 
@@ -303,9 +197,11 @@ getIncidence <- function(Args) {
   dat <- mclapply(seq(Args$nSimulations), 
     function(i) calcInc(rtdat, idat, Args), 
     mc.cores=Args$mcores)
-  dat
-  # out <- getEstimates(dat) 
-  # out
+  cdat <- combineEst(dat) 
+  browser()
+  crude <- getCrudeRate(cdat[1:4])
+  adj <- getAdjRate(cdat[5:8])
+  list(crude=crude, adj=adj)
 }
 
 
