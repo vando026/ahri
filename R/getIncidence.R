@@ -156,7 +156,10 @@ combineEst <-  function(dat) {
 
 
 getCrudeRate <- function(dat) {
-  getMeans <- function(dat) rowMeans(dat) 
+  getMeans <- function(dat) {
+    # if (ncol(dat)==1) return(dat)
+    rowMeans(dat) 
+  }
   out <- sapply(dat, getMeans)
   Year <- data.frame(sero=out[[1]], pyears=out[[2]])
   Age <- data.frame(sero=out[[3]], pyears=out[[4]])
@@ -170,6 +173,7 @@ getAdjRate <- function(dat) {
   calcPredict <- function(est, se) {
     getPredict <- function(est, se) {
       m <- length(est)
+      if (m==1) return(list(mn=est, se=se))
       mn_est <- mean(est)
       var_with <- mean(se^2)
       var_betw <- sum((est - mn_est)^2)/(m-1)
@@ -203,8 +207,8 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   idat <- getBirthDate(Args$inFiles$epifile)
-  dat <- mclapply(seq(Args$nSimulations), 
-    function(i) calcInc(rtdat, idat, Args), 
+  dat <- mclapply(seq(Args$nSim), 
+    function(i) calcInc(rtdat, idat, Args),
     mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
   crude <- getCrudeRate(cdat[1:4])
