@@ -5,9 +5,9 @@
 #' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
 #'
 #' @param svar varname to create obs_end variable. Can either split at early_pos or at
-#' sero_date 
+#' sero_date.
 #'
-#' @param splitYears years to split
+#' @param splitYears years to split.
 #'
 #' @return data.frame
 #'
