@@ -12,7 +12,7 @@ splitAtSeroDate(dat = NULL, splitYears = Args$Years)
 \item{splitYears}{Vector from \code{\link{getYearDates}}.}
 }
 \value{
-
+data.frame
 }
 \description{
 Split data at the imputed seroconversion date.

@@ -12,7 +12,7 @@ splitAtEarlyPos(dat = NULL, splitYears = NULL)
 \item{splitYears}{Vector from \code{\link{getYearDates}}.}
 }
 \value{
-
+data.frame
 }
 \description{
 Split data at the earliest HIV-positive date.

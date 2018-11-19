@@ -71,6 +71,7 @@ splitData <- function(
 #' @return data.frame
 #'
 #' @importFrom survival survSplit Surv
+#'
 #' @export 
 
 splitData2 <- function(
@@ -111,7 +112,8 @@ getYearDates <- function(Years) {
 #' 
 #' @param dat a dataset
 #' @param splitYears Vector from \code{\link{getYearDates}}.
-#' @return 
+#' 
+#' @return data.frame 
 #'
 #' @export 
 #'
@@ -137,7 +139,8 @@ splitAtSeroDate <- function(
 #' 
 #' @param dat a dataset
 #' @param splitYears Vector from \code{\link{getYearDates}}.
-#' @return 
+#' 
+#' @return data.frame
 #'
 #' @export 
 #'
