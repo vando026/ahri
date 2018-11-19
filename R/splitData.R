@@ -1,6 +1,6 @@
 #' @title splitData
 #' 
-#' @description Split the data into year episodes at svar
+#' @description Split the data into year episodes at svar.
 #' 
 #' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
 #'
