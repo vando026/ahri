@@ -6,9 +6,10 @@
 #' @param idat dataset from \code{\link{getBirthDate}}. 
 #' @param Args takes list from \code{\link{setArgs}}.
 #'
-#' @export
-#' 
 #' @return data.frame
+#' 
+#' @export
+#'
 #' @examples
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
@@ -247,9 +248,9 @@ getAdjRate <- function(dat) {
 #'
 #' @return data.frame
 #'
-#' @export
-#'
 #' @import parallel
+#'
+#' @export
 
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
