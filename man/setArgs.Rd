@@ -5,10 +5,9 @@
 \title{setArgs}
 \usage{
 setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
-  c(15, 54)), AgeCat = seq(15, 55, 5), ResRule = 0,
-  nSimulations = 500, imputeMethod = imputeRandomPoint,
-  aname = "filename", printout = FALSE, mcores = 1,
-  MoreArgs = NULL)
+  c(15, 54)), AgeCat = seq(15, 55, 5), ResRule = 0, nSim = 500,
+  imputeMethod = imputeRandomPoint, aname = "filename",
+  printout = FALSE, mcores = 1, MoreArgs = NULL)
 }
 \arguments{
 \item{inFiles}{list of files to pass to function.}
@@ -21,7 +20,7 @@ setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
 
 \item{ResRule}{proportion of time spent in DSA, greater than >.}
 
-\item{nSimulations}{number of simulations to perform.}
+\item{nSim}{number of simulations to perform.}
 
 \item{imputeMethod}{select either \code{\link{imputeRandomPoint}} or
 \code{\link{imputeMidPoint}}.}

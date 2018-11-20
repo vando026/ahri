@@ -10,7 +10,7 @@
 #'
 #' @param AgeCat numeric vector of age categories.
 #'
-#' @param nSimulations number of simulations to perform.
+#' @param nSim number of simulations to perform.
 #'
 #' @param ResRule proportion of time spent in DSA, greater than >.
 #'
@@ -41,7 +41,7 @@ setArgs <- function(
   Age=list(All=c(15, 54)),
   AgeCat=seq(15, 55, 5),
   ResRule=0,
-  nSimulations=500, 
+  nSim=500, 
   imputeMethod=imputeRandomPoint,
   aname='filename',
   printout=FALSE,

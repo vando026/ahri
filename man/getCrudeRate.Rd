@@ -20,7 +20,7 @@ Args <- setArgs(nSim=10)
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
 idat <- getBirthDate(Args$inFiles$epifile)
-dat <- mclapply(seq(Args$nSimulations), 
+dat <- mclapply(seq(Args$nSim), 
   function(i) calcInc(rtdat, idat, Args))
 cdat <- combineEst(dat)
 getCrudeRate(cdat)
