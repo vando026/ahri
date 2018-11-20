@@ -7,7 +7,7 @@
 combineEst(dat)
 }
 \arguments{
-\item{dat}{takes results from a function (i.e., \code{calcInc}.)}
+\item{dat}{Dataset from \code{\link{calcInc}}.}
 }
 \value{
 list

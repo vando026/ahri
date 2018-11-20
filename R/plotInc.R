@@ -10,13 +10,13 @@ plotKSInc <- function(
   inc1, inc2=NULL, inc3=NULL, 
   Colors=c("grey60", "grey70", NULL),
   bwidth=list(inc1=c(2,2), inc2=c(2,2), inc3=NULL),
-  ylim1=c(0, 7), 
+  ylim1=c(0, 7), outpath,
   gcolor="grey50", gfun=png,
   Legend=c("Men", "Women", NULL),
   title="", fname="year_plot") {
 
   if(!is.null(gfun)) {
-    gfun(file.path(output,
+    gfun(file.path(outpath,
       paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.0, height=5.0, pointsize=9, 
       res=200, type="cairo")

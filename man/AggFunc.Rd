@@ -19,4 +19,11 @@ formula.
 \examples{
 AggByYear <- AggFunc("Year")
 AggByAge <- AggFunc("AgeCat")
+# Show for one imputation 
+Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
+hiv   <- getHIV(Args)
+rtdat <- getRTData(hiv)
+idat <- getBirthDate(Args$inFiles$epifile)
+ydat <- getIncData(rtdat, idat, Args)
+inc <- AggByYear(ydat)
 }

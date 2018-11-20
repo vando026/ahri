@@ -34,6 +34,13 @@ getIncData <- function(rtdat, idat, Args) {
 #' @examples
 #' AggByYear <- AggFunc("Year")
 #' AggByAge <- AggFunc("AgeCat")
+#' # Show for one imputation 
+#' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' ydat <- getIncData(rtdat, idat, Args)
+#' inc <- AggByYear(ydat)
 
 AggFunc <- function(RHS) {
   function(dat) {
@@ -119,7 +126,7 @@ calcInc <- function(rtdat, idat, Args) {
 #' 
 #' @description Collect all estimates into single matrix
 #' 
-#' @param dat takes results from a function (i.e., \code{calcInc}.)
+#' @param dat Dataset from \code{\link{calcInc}}.
 #'
 #' @return list 
 #'
@@ -156,13 +163,28 @@ combineEst <-  function(dat) {
   lapply(nms, getEst)
 }
 
+#' @title getCrudeRate
+#' 
+#' @description Calculate crude incidence rate estimates using the standard formula. 
+#' 
+#' @param dat Dataset from \code{\link{combineEst}}. 
+#' 
+#' @return  data.frame
+#'
+#' @export 
+#'
+#' @examples
+#' Args <- setArgs(nSim=10)
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' dat <- mclapply(seq(Args$nSimulations), 
+#'   function(i) calcInc(rtdat, idat, Args))
+#' cdat <- combineEst(dat)
+#' getCrudeRate(cdat)
 
 getCrudeRate <- function(dat) {
-  getMeans <- function(dat) {
-    # if (ncol(dat)==1) return(dat)
-    rowMeans(dat) 
-  }
-  out <- sapply(dat, getMeans)
+  out <- sapply(dat, rowMeans)
   Year <- data.frame(sero=out[[1]], pyears=out[[2]])
   Age <- data.frame(sero=out[[3]], pyears=out[[4]])
   getInc <- function(dat)  dat$sero/dat$pyear * 100 
@@ -190,25 +212,31 @@ getCrudeRate <- function(dat) {
 calcRubin <- function(est, se) {
   m <- length(est)
   if (m==1) return(list(mn=est, se=se))
-  mn_est <- mean(est)
+  mn <- mean(est)
   var_with <- mean(se^2)
-  var_betw <- sum((est - mn_est)^2)/(m-1)
+  var_betw <- sum((est - mn)^2)/(m-1)
   var_tot <- var_with + var_betw*(1 + (1/m))
-  c(mn=mn_est, se=sqrt(var_tot))
+  se <- sqrt(var_tot)
+  rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
+  tdf <- qt(1 - (0.05/2), rdf)
+  lb <- mn - (tdf * se)
+  ub <- mn + (tdf * se)
+  c(rate=mn, se=se, lci=lb, uci=ub)
 }
 
 getAdjRate <- function(dat) {
-  # Calc using Rubins Rule for predictions
   calcPredict <- function(est, se) {
     est <- split(est, rownames(est))
     se <- split(se, rownames(se))
     out <- Map(calcRubin, est, se)
-    out <- do.call(rbind, out)
-    data.frame(out)
+    dat <- data.frame(do.call(rbind, out))
+    dat[] <- lapply(dat[], `*`, 100)
+    dat
   }
-  predYear <- calcPredict(dat[["getPoisYearEst"]], dat[["getPoisYearSE"]])
-  predAge <- calcPredict(dat[["getPoisAgeEst"]], dat[["getPoisAgeSE"]])
-  list(Year=predYear, Age=predAge)
+  list(
+    Year = calcPredict(dat[["getPoisYearEst"]], dat[["getPoisYearSE"]]),
+    Age = calcPredict(dat[["getPoisAgeEst"]], dat[["getPoisAgeSE"]])
+  )
 }
 
 #' @title getIncidence
