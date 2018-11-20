@@ -30,7 +30,7 @@ setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
 \item{printout}{print out results.}
 
 \item{mcores}{number of cores to use for parallel package (used in
-\code{\link{getIncidence}}.}
+\code{\link{getIncidence}}).}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
 }

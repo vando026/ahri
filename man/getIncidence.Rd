@@ -7,11 +7,11 @@
 getIncidence(Args)
 }
 \arguments{
-\item{Args}{takes list from \code{\link{setArgs}}}
+\item{Args}{takes list from \code{\link{setArgs}}.}
 }
 \value{
 data.frame
 }
 \description{
-Calculates the crude and adjusted incidence.
+Calculates the crude and adjusted incidence rates.
 }

@@ -241,13 +241,13 @@ getAdjRate <- function(dat) {
 
 #' @title getIncidence
 #' 
-#' @description Calculates the crude and adjusted incidence.
+#' @description Calculates the crude and adjusted incidence rates.
 #' 
-#' @param Args takes list from \code{\link{setArgs}}
+#' @param Args takes list from \code{\link{setArgs}}.
 #'
 #' @return data.frame
 #'
-#-' @export
+#' @export
 #'
 #' @import parallel
 

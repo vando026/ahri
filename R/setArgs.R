@@ -22,7 +22,7 @@
 #' @param printout print out results.
 #'
 #' @param mcores number of cores to use for parallel package (used in
-#' \code{\link{getIncidence}}.
+#' \code{\link{getIncidence}}).
 #'
 #' @param MoreArgs a list, which adds more arguments if needed.
 #'
