@@ -7,7 +7,7 @@
 getARTDates(inFile = Args$inFiles$epifile)
 }
 \arguments{
-\item{inFile}{path to data which is typically set using \code{\link{inFiles}}}
+\item{inFile}{path to data, typically \code{Args$inFile}.}
 }
 \value{
 data.frame

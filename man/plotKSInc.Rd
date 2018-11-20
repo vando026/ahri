@@ -10,7 +10,7 @@ plotKSInc(inc1, inc2 = NULL, inc3 = NULL, Colors = c("grey60",
   Legend = c("Men", "Women", NULL), title = "", fname = "year_plot")
 }
 \arguments{
-\item{dat}{dataset from \code{\link{getIncidence()}}.}
+\item{dat}{dataset from \code{\link{getIncidence}}.}
 }
 \description{
 Plot HIV incidence.

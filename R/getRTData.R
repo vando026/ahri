@@ -2,9 +2,9 @@
 #' 
 #' @description  Get all repeat testers from HIV surveillance.
 #' 
-#' @param dat dataset from \code{\link{getHIV()}}. 
+#' @param dat dataset from \code{\link{getHIV}}. 
 #'
-#' @param Args takes an Args list from \code{\link{setArgs()}}. 
+#' @param Args takes an Args list from \code{\link{setArgs}}. 
 #'
 #' @return data.frame
 #'

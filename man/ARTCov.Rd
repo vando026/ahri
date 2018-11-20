@@ -11,7 +11,7 @@ ARTCov(Args, wdat = NULL, Formula = "OnART ~ Year + Female + AgeCat",
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}
 
-\item{wdat}{weights, most likely from \code{\link{getWeightsKZN}}.}
+\item{wdat}{weights.}
 
 \item{stpopVar}{name of var from \code{wdat} with weights.}
 

@@ -7,7 +7,7 @@
 getDemographyData(inFile = Args$inFiles$demfile)
 }
 \arguments{
-\item{inFile}{path to data which is typically set using \code{\link{inFiles}}}
+\item{inFile}{path to data, see \code{\link{getFiles}}.}
 }
 \value{
 data.frame

@@ -2,7 +2,7 @@
 #' 
 #' @description  get AHRI demography dataset
 #' 
-#' @param inFile path to data which is typically set using \code{\link{inFiles}}
+#' @param inFile path to data, see \code{\link{getFiles}}.
 #'
 #' @return data.frame
 #'

@@ -2,7 +2,7 @@
 #' 
 #' @description  Impute a mid-point seroconversion date within the censored interval.
 #' 
-#' @param dat dataset from \code{\link{getRTData()}}. 
+#' @param dat dataset from \code{\link{getRTData}}. 
 #'
 #' @return data.frame
 #'
@@ -19,7 +19,7 @@ imputeMidPoint <- function(dat) {
 #' 
 #' @description  Impute random seroconversion date(s) within the censored interval.
 #' 
-#' @param dat dataset from \code{\link{getRTData()}}. 
+#' @param dat dataset from \code{\link{getRTData}}. 
 #'
 #' @return data.frame
 #'
@@ -50,7 +50,7 @@ imputeRandomPoint <- function(dat) {
 #' 
 #' @description  Impute a end-point seroconversion date within the censored interval.
 #' 
-#' @param dat dataset from \code{\link{getRTData()}}. 
+#' @param dat dataset from \code{\link{getRTData}}. 
 #'
 #' @return data.frame
 #'

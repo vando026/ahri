@@ -2,7 +2,7 @@
 #' 
 #' @description  get ART initiation dates
 #' 
-#' @param inFile path to data which is typically set using \code{\link{inFiles}}
+#' @param inFile path to data, typically \code{Args$inFile}. 
 #'
 #' @return data.frame
 #'
@@ -27,7 +27,7 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
 #' 
 #' @param Args  arguments from \code{\link{setArgs}}.
 #'
-#' @param wdat weights, most likely from \code{\link{getWeightsKZN}}.
+#' @param wdat weights. 
 #'
 #' @param cutoff value from 1 and 12, if ART initiation is after this value then no ART
 #' usage for that entire year. Use cutoff=12 to ignore this argument.

@@ -9,7 +9,7 @@ getIncData(rtdat, idat, Args)
 \arguments{
 \item{rtdat}{dataset from \code{\link{getRTData}}.}
 
-\item{idat}{dataset from \code{\link{getBirthData}}.}
+\item{idat}{dataset from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes list from \code{\link{setArgs}}.}
 }

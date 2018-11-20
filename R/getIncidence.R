@@ -3,7 +3,7 @@
 #' @description Function that imputes sero date, splits at censoring date and set the age.
 #' 
 #' @param rtdat dataset from \code{\link{getRTData}}. 
-#' @param idat dataset from \code{\link{getBirthData}}. 
+#' @param idat dataset from \code{\link{getBirthDate}}. 
 #' @param Args takes list from \code{\link{setArgs}}.
 #'
 #' @export
@@ -24,9 +24,10 @@ getIncData <- function(rtdat, idat, Args) {
 
 #' @title AggFunc
 #' 
-#' @description Function to create aggregates of sero events and pyears by Var
+#' @description Function to create aggregates of sero events and pyears by right-hand side
+#' formula.
 #' 
-#' @param RHS right hand side of the formula, as in Sex or AgeCat
+#' @param RHS right hand side of the formula, as in Sex or AgeCat or "Sex + Cat".
 #' 
 #' @return data.frame
 #' 
@@ -49,14 +50,17 @@ AggByAge <- AggFunc("AgeCat")
 
 #' @title doPoisYear
 #' 
-#' @description DO poisson regression for incidence rates by year or age. 
+#' @description Do poisson regression for incidence rates by year or age. 
 #' 
-#' @param dat takes dataset from a function (i.e., \code{doIncData}.)
+#' @param dat Dataset from a function \code{\link{getIncData}}.
 #'
 #' @return data.frame
+#'
 #' @examples
-#' doPoisYear <- poisFunc("as.factor(Year)")
-#' doPoisAge <- poisFunc("as.factor(AgeCat)")
+#' doPoisYear <- poisFunc("Year")
+#' pdat <- getIncData(dat) 
+#' doPoisYear(pdat)
+#' doPoisAge <- poisFunc("AgeCat")
 
 doPoisYear <- function(dat) {
   dat$tscale <- dat$Time/365.25
@@ -88,15 +92,13 @@ doPoisAge <- function(dat) {
 #' 
 #' @description Calculates the crude and adjusted incidence.
 #' 
-#' @param dat Dataset from \code{\link{aggregateInc}}.
+#' @param rtdat Dataset from \code{\link{getRTData}}.
 #' 
-#' @param fun Function to use for calculations
+#' @param idat Dataset from \code{\link{getBirthDate}}.
 #' 
-#' @param calcBy Results by Year, Age, or Sex.
-#'
+#' @param Args provide arguments from \code{\link{setArgs}}.
+#' 
 #' @return data.frame
-#'
-#' @importFrom epitools ageadjust.direct
 #'
 #' @export
 #' 
@@ -168,21 +170,39 @@ getCrudeRate <- function(dat) {
     function(x) {x$rate = getInc(x); x})
 }
 
+
+#' @title calcRubin
+#' 
+#' @description  Calculates standard error according to Rubin's rules. 
+#' 
+#' @param est Estimates from m imputations
+#' @param se Estimates from m imputations
+#' 
+#' @return 
+#'
+#' @export 
+#'
+#' @examples
+#' e <- c(2, 4) # m = 2
+#' s <- c(0.5, 0.5) # m = 2
+#' x <- calcRubin(e, s)
+
+calcRubin <- function(est, se) {
+  m <- length(est)
+  if (m==1) return(list(mn=est, se=se))
+  mn_est <- mean(est)
+  var_with <- mean(se^2)
+  var_betw <- sum((est - mn_est)^2)/(m-1)
+  var_tot <- var_with + var_betw*(1 + (1/m))
+  c(mn=mn_est, se=sqrt(var_tot))
+}
+
 getAdjRate <- function(dat) {
   # Calc using Rubins Rule for predictions
   calcPredict <- function(est, se) {
-    getPredict <- function(est, se) {
-      m <- length(est)
-      if (m==1) return(list(mn=est, se=se))
-      mn_est <- mean(est)
-      var_with <- mean(se^2)
-      var_betw <- sum((est - mn_est)^2)/(m-1)
-      var_tot <- var_with + var_betw*(1 + (1/m))
-      c(mn=mn_est, se=sqrt(var_tot))
-    }
     est <- split(est, rownames(est))
     se <- split(se, rownames(se))
-    out <- Map(getPredict, est, se)
+    out <- Map(calcRubin, est, se)
     out <- do.call(rbind, out)
     data.frame(out)
   }

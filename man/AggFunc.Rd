@@ -7,13 +7,14 @@
 AggFunc(RHS)
 }
 \arguments{
-\item{RHS}{right hand side of the formula, as in Sex or AgeCat}
+\item{RHS}{right hand side of the formula, as in Sex or AgeCat or "Sex + Cat".}
 }
 \value{
 data.frame
 }
 \description{
-Function to create aggregates of sero events and pyears by Var
+Function to create aggregates of sero events and pyears by right-hand side
+formula.
 }
 \examples{
 AggByYear <- AggFunc("Year")

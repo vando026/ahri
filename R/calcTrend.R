@@ -4,7 +4,7 @@
 #' 
 #' @param dat dataset for computing trends. 
 #'
-#' @param wdat standard population weights from \code{\link{getWeightsKZN}}.
+#' @param wdat weights.
 #'
 #' @param Formula string argument for aggregate function; terms and operators must be
 #' separated by white space

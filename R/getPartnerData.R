@@ -2,7 +2,7 @@
 #' 
 #' @description  get data on partners and marital status. 
 #' 
-#' @param inFile path to data which is typically set using \code{\link{inFiles}}
+#' @param inFile path to data which is typically set using \code{\link{getFiles}}
 #'
 #' @return data.frame
 #'
@@ -69,7 +69,7 @@ getPartnerData <- function(
 #' 
 #' @param dat data.frame to which partner data is merged.
 #' 
-#' @param inFile path to data which is typically set using \code{\link{inFiles}}
+#' @param inFile path to data which is typically set using \code{\link{getFiles}}.
 #'
 #' @return data.frame
 #'

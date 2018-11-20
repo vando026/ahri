@@ -7,7 +7,7 @@
 imputeMidPoint(dat)
 }
 \arguments{
-\item{dat}{dataset from \code{\link{getRTData()}}.}
+\item{dat}{dataset from \code{\link{getRTData}}.}
 }
 \value{
 data.frame

@@ -2,7 +2,7 @@
 #' 
 #' @description Split the data into year episodes at svar.
 #' 
-#' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint()}}. 
+#' @param dat dataset from imputation method, eg \code{\link{imputeRandomPoint}}. 
 #'
 #' @param svar varname to create obs_end variable. Can either split at early_pos or at
 #' sero_date.

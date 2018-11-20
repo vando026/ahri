@@ -8,7 +8,7 @@ plotIncAge(age_mal, age_fem, Colors = c("grey50", "grey80"),
   fname = "age_plot", TIFF = TRUE)
 }
 \arguments{
-\item{dat}{dataset from \code{\link{getIncidence()}}.}
+\item{dat}{dataset from \code{\link{getIncidence}}.}
 }
 \description{
 Plot HIV incidence by Age.

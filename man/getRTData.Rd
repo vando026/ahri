@@ -7,9 +7,9 @@
 getRTData(dat, Args = eval.parent(quote(Args)))
 }
 \arguments{
-\item{dat}{dataset from \code{\link{getHIV()}}.}
+\item{dat}{dataset from \code{\link{getHIV}}.}
 
-\item{Args}{takes an Args list from \code{\link{setArgs()}}.}
+\item{Args}{takes an Args list from \code{\link{setArgs}}.}
 }
 \value{
 data.frame

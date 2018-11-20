@@ -7,18 +7,18 @@
 splitData(dat = NULL, splitYears = NULL, svar = "sero_date")
 }
 \arguments{
-\item{dat}{dataset from imputation method, eg \code{\link{imputeRandomPoint()}}.}
+\item{dat}{dataset from imputation method, eg \code{\link{imputeRandomPoint}}.}
 
-\item{splitYears}{years to split}
+\item{splitYears}{years to split.}
 
 \item{svar}{varname to create obs_end variable. Can either split at early_pos or at
-sero_date}
+sero_date.}
 }
 \value{
 data.frame
 }
 \description{
-Split the data into year episodes at svar
+Split the data into year episodes at svar.
 }
 \examples{
 rtdat <- getRTData(hiv)

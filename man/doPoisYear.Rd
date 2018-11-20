@@ -7,15 +7,17 @@
 doPoisYear(dat)
 }
 \arguments{
-\item{dat}{takes dataset from a function (i.e., \code{doIncData}.)}
+\item{dat}{Dataset from a function \code{\link{getIncData}}.}
 }
 \value{
 data.frame
 }
 \description{
-DO poisson regression for incidence rates by year or age.
+Do poisson regression for incidence rates by year or age.
 }
 \examples{
-doPoisYear <- poisFunc("as.factor(Year)")
-doPoisAge <- poisFunc("as.factor(AgeCat)")
+doPoisYear <- poisFunc("Year")
+pdat <- getIncData(dat) 
+doPoisYear(pdat)
+doPoisAge <- poisFunc("AgeCat")
 }

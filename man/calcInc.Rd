@@ -7,11 +7,11 @@
 calcInc(rtdat, idat, Args)
 }
 \arguments{
-\item{dat}{Dataset from \code{\link{aggregateInc}}.}
+\item{rtdat}{Dataset from \code{\link{getRTData}}.}
 
-\item{fun}{Function to use for calculations}
+\item{idat}{Dataset from \code{\link{getBirthDate}}.}
 
-\item{calcBy}{Results by Year, Age, or Sex.}
+\item{Args}{provide arguments from \code{\link{setArgs}}.}
 }
 \value{
 data.frame

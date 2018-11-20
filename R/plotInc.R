@@ -2,7 +2,7 @@
 #' 
 #' @description  Plot HIV incidence.
 #' 
-#' @param dat dataset from \code{\link{getIncidence()}}. 
+#' @param dat dataset from \code{\link{getIncidence}}. 
 #' 
 #' @export
 
@@ -71,7 +71,7 @@ plotKSInc <- function(
 #' 
 #' @description  Plot HIV incidence by Age.
 #' 
-#' @param dat dataset from \code{\link{getIncidence()}}. 
+#' @param dat dataset from \code{\link{getIncidence}}. 
 #' 
 #' @importFrom plotrix plotCI 
 #' 
