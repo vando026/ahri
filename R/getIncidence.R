@@ -257,7 +257,7 @@ getIncidence <- function(Args) {
   rtdat <- getRTData(hiv)
   idat <- getBirthDate(Args$inFiles$epifile)
   dat <- mclapply(seq(Args$nSim), 
-    function(i) calcInc(rtdat, idat, Args),
+    function(i) {cat(i, ""); calcInc(rtdat, idat, Args)},
     mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
   crude <- getCrudeRate(cdat[1:4])
