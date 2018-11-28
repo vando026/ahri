@@ -25,7 +25,7 @@ getFiles <- function(
   epifile="Derived/Episodes/2017/SurveillanceEpisodes.Rdata",
   bsafile="Other/BS_Area.Rdata",
   parfile="Derived/Other/PartnerDat.Rdata",
-  prvfile="Other/HIV_Prev_Aug21.csv",
+  prvfile="Derived/Other/HIV_Prev_Aug21.csv",
   bscfile="Source/BoundedStructure/BSIntID_Coords.csv",
   pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta") {
   flist <- as.list(environment())

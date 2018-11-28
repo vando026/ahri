@@ -225,12 +225,33 @@ calcRubin <- function(est, se) {
   c(rate=mn, se=se, lci=lb, uci=ub)
 }
 
+#' @title getAdjRate
+#' 
+#' @description Calculate adjusted incidence rate estimates using Poisson models and
+#' Rubin's rules
+#' 
+#' @param dat Dataset from \code{\link{combineEst}}. 
+#' 
+#' @return  data.frame
+#'
+#' @export 
+#'
+#' @examples
+#' Args <- setArgs(nSim=10)
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' idat <- getBirthDate(Args$inFiles$epifile)
+#' dat <- mclapply(seq(Args$nSim), 
+#'   function(i) calcInc(rtdat, idat, Args))
+#' cdat <- combineEst(dat)
+#' geteAdjRate(cdat)
+
 getAdjRate <- function(dat) {
   calcPredict <- function(est, se) {
     est <- split(est, rownames(est))
     se <- split(se, rownames(se))
     out <- Map(calcRubin, est, se)
-    dat <- data.frame(do.call(rbind, out))
+    dat <- dplyr::bind_rows(out)
     dat[] <- lapply(dat[], `*`, 100)
     dat
   }
