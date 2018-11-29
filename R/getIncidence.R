@@ -251,7 +251,7 @@ getAdjRate <- function(dat) {
     est <- split(est, rownames(est))
     se <- split(se, rownames(se))
     out <- Map(calcRubin, est, se)
-    dat <- dplyr::bind_rows(out)
+    dat <- dplyr::bind_rows(!!!out)
     dat[] <- lapply(dat[], `*`, 100)
     dat
   }
