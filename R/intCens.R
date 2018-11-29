@@ -28,7 +28,20 @@ IntCensParse <- function(File=NULL) {
   emat[, -1] <- apply(emat[, -1], 2, as.numeric)
   colnames(emat) <-  unlist(strsplit(out[Cov_ln], " "))
 
-  list(sdat=surv_dat, edat=emat)
+  # # Now covariance estimates into R object
+  line1 <- unlist(strsplit(grep("[Co]?[vV]ariance", out, value=TRUE), ' '))
+  lset <- ifelse(length(line1)==1, 1, 2) 
+  cov_ln <- grep("[Co]?[vV]ariance", out) + lset
+  cov_ln2 <- grep("Cummulative Hazard", out)-1
+  cmat <- out[cov_ln:cov_ln2] 
+  cmat <- strsplit(cmat, " ")
+  cmat <- data.frame(do.call(rbind, cmat), stringsAsFactors=FALSE)
+  nm <- gsub(":", "", cmat[, 2])
+  cmat <- cmat[, -c(1,2)]
+  cmat[, -1] <- apply(cmat[, -1], 2, as.numeric)
+  colnames(cmat) <-  rownames(cmat) <- nm
+
+  list(sdat=surv_dat, edat=emat, cmat=cmat)
 }
 
 

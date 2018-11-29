@@ -212,7 +212,7 @@ getCrudeRate <- function(dat) {
 
 calcRubin <- function(est, se) {
   m <- length(est)
-  if (m==1) return(list(mn=est, se=se))
+  if (m==1) return(list(rate=est, se=se))
   mn <- mean(est)
   var_with <- mean(se^2)
   var_betw <- sum((est - mn)^2)/(m-1)
