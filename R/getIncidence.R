@@ -72,7 +72,7 @@ AggByAge <- AggFunc("AgeCat")
 
 doPoisYear <- function(dat) {
   dat$tscale <- dat$Time/365.25
-  mod <- glm(sero_event ~ as.factor(Year) + Age + offset(log(tscale)),
+  mod <- glm(sero_event ~ as.factor(Year) -1 + Age + offset(log(tscale)),
     data=dat, family=poisson)
   nyears <- seq(unique(dat$Year))
   ndat <- data.frame(Age = mean(dat$Age), tscale=1,
@@ -212,7 +212,7 @@ getCrudeRate <- function(dat) {
 
 calcRubin <- function(est, se) {
   m <- length(est)
-  if (m==1) return(list(rate=est, se=se))
+  if (m==1) return(c(rate=est, se=se))
   mn <- mean(est)
   var_with <- mean(se^2)
   var_betw <- sum((est - mn)^2)/(m-1)
@@ -248,11 +248,12 @@ calcRubin <- function(est, se) {
 
 getAdjRate <- function(dat) {
   calcPredict <- function(est, se) {
-    est <- split(est, rownames(est))
+    est1 <- split(est, rownames(est))
     se <- split(se, rownames(se))
-    out <- Map(calcRubin, est, se)
-    dat <- dplyr::bind_rows(!!!out)
+    out <- Map(calcRubin, est1, se)
+    dat <- data.frame(do.call(rbind, out))
     dat[] <- lapply(dat[], `*`, 100)
+    rownames(dat) <- rownames(est)
     dat
   }
   list(

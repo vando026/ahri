@@ -38,10 +38,10 @@ IntCensParse <- function(File=NULL) {
   cmat <- data.frame(do.call(rbind, cmat), stringsAsFactors=FALSE)
   nm <- gsub(":", "", cmat[, 2])
   cmat <- cmat[, -c(1,2)]
-  cmat[, -1] <- apply(cmat[, -1], 2, as.numeric)
+  cmat <- apply(cmat, 2, as.numeric)
   colnames(cmat) <-  rownames(cmat) <- nm
 
-  list(sdat=surv_dat, edat=emat, cmat=cmat)
+  list(sdat=surv_dat, edat=emat, cdat=cmat)
 }
 
 
