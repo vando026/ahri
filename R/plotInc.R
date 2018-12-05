@@ -23,7 +23,7 @@ plotKSInc <- function(
   }
 
   par(mar=c(4.0,4.5,0.8,0.5))
-  x <- rownames(inc1)
+  x <- as.numeric(rownames(inc1))
 
   if(length(x)>9) {
     labs <- grep("^20", rownames(inc1), value=TRUE)
