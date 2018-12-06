@@ -12,14 +12,15 @@ getFiles(root = file.path(Sys.getenv("HOME"), "Documents/AC_Data"),
   hsefile = "Derived/HSE/HSE2009_2012.dta",
   wghfile = "Derived/WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
   mghfile = "Derived/WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
-  bsifile = "Source/BoundedStructure/2017/RD01-03_ACDIS_BoundedStructures.dta",
+  bsifile = "Derived/BoundedStructure/2017/RD01-03_ACDIS_BoundedStructures.dta",
   bsmfile = "Derived/Other/MaxBSIntID.csv",
   epi_dta = "Source/Episodes/2017/SurveillanceEpisodesBasicAgeYrHIV.dta",
   epifile = "Derived/Episodes/2017/SurveillanceEpisodes.Rdata",
-  bsafile = "Other/BS_Area.Rdata",
+  bsafile = "Derived/Other/BS_Area.Rdata",
   parfile = "Derived/Other/PartnerDat.Rdata",
   prvfile = "Derived/Other/HIV_Prev_Aug21.csv",
-  bscfile = "Source/BoundedStructure/BSIntID_Coords.csv",
+  pipfile = "Derived/BoundedStructure/PIPBoundedStructures.xlsx",
+  bscfile = "Derived/BoundedStructure/BSIntID_Coords.csv",
   pvlfile = "Source/CVL_2011_2014/Community Viral Load 2011-2014.dta")
 }
 \arguments{
