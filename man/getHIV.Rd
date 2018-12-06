@@ -7,7 +7,7 @@
 getHIV(Args)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}}
+\item{Args}{requires Args, see \code{\link{setArgs}}.}
 }
 \value{
 data.frame

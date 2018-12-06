@@ -22,6 +22,21 @@ readBSData <- function(inFile=Args$inFiles$bsifile) {
 }
 
 
+#' @title readPIPData
+#' 
+#' @description  Read in PIP data to identify ACIDS from TASP area
+#' 
+#' @param inFile
+#' 
+#' @return data.frame
+#'
+#' @export 
+readPIPData <- function(inFile=Args$inFiles$pipfile) {
+  dat <- readxl::read_excel(inFile) 
+  dat <- dplyr::rename(dat, BSIntID=BSIntId)
+  dat
+}
+
 #' @title BSMax
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
