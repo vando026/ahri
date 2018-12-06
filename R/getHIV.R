@@ -27,8 +27,9 @@ readHIVData <- function(inFiles=Args$inFiles,
   if(dropTasP) {
     pipdat <- readPIPData(inFiles$pipfile)
     pipdat <- select(pipdat, BSIntID, PIPSA)
-    hiv <- left_join(hiv, pipdat, by="BSIntID")
-    hiv <- filter(hiv, PIPSA=="S") %>% select(-PIPSA)
+    hiv <- full_join(hiv, pipdat, by="BSIntID")
+    hiv <- filter(hiv, !is.na(IIntID))
+    hiv <- filter(hiv, PIPSA %in% c("S", NA)) %>% select(-PIPSA)
     comment(hiv) <- "This dataset drops HIV tests from TasP areas in 2017"
     hiv
   }
