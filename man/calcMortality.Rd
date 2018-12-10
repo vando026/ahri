@@ -13,5 +13,5 @@ calcMortality(dat)
 table
 }
 \description{
-Calculates mortality rates from \code{\link{getMortalityData}}.
+Calculates annual mortality rates from \code{\link{getMortalityData}}.
 }

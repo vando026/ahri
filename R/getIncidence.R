@@ -89,7 +89,7 @@ doPoisAge <- function(dat) {
     data=dat, family=poisson)
   nage <- seq(unique(dat$AgeCat))
   ndat <- data.frame(tscale=1,
-    AgeCat = factor(nage, levels = nage, labels = levels(as.factor(dat$AgeCat))))
+    AgeCat = factor(nage, levels = nage, labels = levels(dat$AgeCat)))
   out <- predict.glm(mod, ndat, type="response", se.fit=TRUE)
   out <- data.frame(out[c("fit", "se.fit")])
   rownames(out) <- ndat$AgeCat

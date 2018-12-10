@@ -22,7 +22,7 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
     mutate(obs_start = min(obs_start, na.rm=TRUE)) %>%
     distinct(IIntID, .keep_all=TRUE)
   # Get all death dates
-  dodat <- getEpisodes() %>% 
+  dodat <- getEpisodes(Args$inFiles$epifile) %>% 
     select(IIntID, DoD) %>% 
     filter(is.finite(DoD)) %>% 
     distinct(IIntID, .keep_all=TRUE)
@@ -45,7 +45,7 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
   sdat <- filter(sdat, obs_end>obs_start)
   # split data
   tdat <- splitData2(sdat, years=Args$Years)
-  bdat <- getBirthDate(addVars="Female") 
+  bdat <- getBirthDate(Args$inFiles$epifile, addVars="Female") 
   tdat <- getAgeData(tdat, bdat, Args)
   tdat <- mutate(tdat, Days = as.numeric(obs_end-obs_start))
   tdat
@@ -53,7 +53,7 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
 
 #' @title calcMortality
 #' 
-#' @description Calculates mortality rates from \code{\link{getMortalityData}}.
+#' @description Calculates annual mortality rates from \code{\link{getMortalityData}}.
 #' 
 #' @param  dat a dataset
 #' 
@@ -69,6 +69,7 @@ calcMortality <- function(dat) {
   out <- epitools::pois.exact(dat$Count, dat$PYears)
   out <- select(out, Deaths=x, PTime=pt, Rate=rate, LB=lower, UB=upper)
   out[c(3:5)] <- lapply(out[c(3:5)], "*", 100)
+  rownames(out) <- dat$Year
   out
 }
 
