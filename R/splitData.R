@@ -157,6 +157,7 @@ splitAtEarlyPos <- function(
   dat <- rename(dat, event = sero_event)
   edat <- splitData2(dat, splitYears)
   edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
+  edat <- mutate(edat, TimeYear = as.numeric(obs_end - obs_start))
   edat <- rename(edat, sero_event = event)
   tbl_df(edat)
 }
