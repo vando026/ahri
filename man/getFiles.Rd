@@ -4,7 +4,7 @@
 \alias{getFiles}
 \title{getFiles}
 \usage{
-getFiles(root = file.path(Sys.getenv("HOME"), "Documents/AC_Data"),
+getFiles(root = setRoot(),
   demfile = "Derived/Demography/2016/RD02-01_ACDIS_Demography.csv",
   indfile = "Derived/Individuals/2016/RD01-01_ACDIS_Individuals.csv",
   hiv_dta = "Derived/HIVSurveillance/2017/RD05-99_ACDIS_HIV_All.csv",

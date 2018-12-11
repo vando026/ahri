@@ -12,7 +12,7 @@
 #' inFiles <- getFiles()
 
 getFiles <- function(
-  root=file.path(Sys.getenv("HOME"), "Documents/AC_Data"),
+  root=setRoot(),
   demfile="Derived/Demography/2016/RD02-01_ACDIS_Demography.csv",
   indfile="Derived/Individuals/2016/RD01-01_ACDIS_Individuals.csv",
   hiv_dta="Derived/HIVSurveillance/2017/RD05-99_ACDIS_HIV_All.csv",
@@ -36,8 +36,20 @@ getFiles <- function(
 }
 
 
+#' @title setRoot
+#' 
+#' @description Sets the root path to datasets depending on the platform.
+#' 
+#' @return 
+#'
+#' @export 
 
-
-
-
+setRoot <- function() {
+  if (Sys.getenv("R_PLATFORM")==  "x86_64-redhat-linux-gnu") {
+    root    <- file.path("/data/AlainData/AC_Data")
+  } else {
+    root=file.path(Sys.getenv("HOME"), "Documents/AC_Data")
+  }
+  root
+}
 
