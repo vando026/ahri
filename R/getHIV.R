@@ -19,7 +19,7 @@ dropTasPData <- function(dat, inFile=inFiles$pipfile) {
   # drop if NA in 2017
   dat <- filter(dat, !(is.na(PIPSA) & Year==2017))
   dat <- select(dat, -c(Year, PIPSA))
-  comment(dat) <- "This dataset drops HIV tests from TasP areas in 2017"
+  comment(dat) <- "This dataset drops HIV tests from TasP (and NA) areas in 2017"
   dat
 }
 
@@ -69,6 +69,7 @@ readHIVData <- function(inFiles=Args$inFiles,
 
 getHIV <- function(Args) {
   load(Args$inFiles$hivfile, envir=environment())
+  if (!is.null(comment(hiv))) print(comment(hiv))
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y"))) %>%
     filter(Year %in% Args$Years)
   # Filter by age

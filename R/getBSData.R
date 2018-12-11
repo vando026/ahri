@@ -32,7 +32,7 @@ readBSData <- function(inFile=Args$inFiles$bsifile) {
 #'
 #' @export 
 readPIPData <- function(inFile=Args$inFiles$pipfile) {
-  dat <- readxl::read_excel(inFile) 
+  dat <- data.frame(readxl::read_excel(inFile))
   dat <- dplyr::rename(dat, BSIntID=BSIntId)
   dat
 }
