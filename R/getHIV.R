@@ -8,8 +8,8 @@
 #'
 #' @export 
 
-dropTasPData <- function(dat) {
-  pipdat <- readPIPData(inFiles$pipfile)
+dropTasPData <- function(dat, inFile=inFiles$pipfile) {
+  pipdat <- readPIPData(inFile)
   pipdat <- select(pipdat, BSIntID, PIPSA)
   dat <- full_join(dat, pipdat, by="BSIntID")
   dat <- filter(dat, !is.na(IIntID))
@@ -49,7 +49,8 @@ readHIVData <- function(inFiles=Args$inFiles,
   hiv <- mutate(hiv, Female=as.integer(ifelse(Sex==2, 1, 0)))
   hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
    select(-Sex) %>% arrange(IIntID, VisitDate)
-  if (dropTasP) dropTasPData(hiv)
+  if (dropTasP==TRUE) 
+    hiv <- dropTasPData(hiv, inFile=inFiles$pipfile)
   save(hiv, file=file.path(inFiles$hivfile))
   hiv
 }
