@@ -19,16 +19,6 @@
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
   # function
-  getDates <- function(dat, f) {
-    function(Var, Name) {
-      dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
-      dates <- tapply(dat[, Var], dat[, "IIntID"], f)
-      # names(out)
-      out <- data.frame(as.integer(names(dates)), dates)
-      colnames(out) <- c("IIntID", Name)
-      out
-    }
-  }
   getDatesMin <- getDates(dat, min)
   getDatesMax <- getDates(dat, max)
 
@@ -74,3 +64,21 @@ getRTData <- function(dat,
   rtdat
 }
 
+#' @title getDates
+#' 
+#' @description Function to get earliest and latest test dates
+#' 
+#' @param  Var a variable name.
+#' @param  Name new variable name.
+#' 
+#' @return data.frame
+getDates <- function(dat, f) {
+  function(Var, Name) {
+    dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
+    dates <- tapply(dat[, Var], dat[, "IIntID"], f)
+    # names(out)
+    out <- data.frame(as.integer(names(dates)), dates)
+    colnames(out) <- c("IIntID", Name)
+    out
+  }
+}

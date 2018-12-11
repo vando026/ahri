@@ -18,9 +18,11 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
   hiv <- getHIV(Args) %>% select(
     IIntID, obs_start = matches("HIVPositive")) %>%
     filter(is.finite(obs_start))
-  startdat <- group_by(hiv, IIntID) %>%
-    mutate(obs_start = min(obs_start, na.rm=TRUE)) %>%
-    distinct(IIntID, .keep_all=TRUE)
+  
+  # Get earliest obs start
+  getDatesMin <- getDates(hiv, min)
+  startdat <- getDatesMin("obs_start", "obs_start")
+
   # Get all death dates
   dodat <- getEpisodes(Args$inFiles$epifile) %>% 
     select(IIntID, DoD) %>% 
@@ -28,16 +30,16 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
     distinct(IIntID, .keep_all=TRUE)
   dodat <- filter(dodat, 
     as.numeric(format(DoD, "%Y")) %in% Args$Years)
+
   # Get last observation date
-  enddat <- setEpisodes(Args) %>% 
-    group_by(IIntID) %>% 
-    summarize(end_date=max(ObservationEnd, na.rm=TRUE))
+  enddat <- setEpisodes(Args)
+  getDatesMax <- getDates(enddat, max)
+  enddat <- getDatesMax("ObservationEnd", "end_date")
+
   # Make obs_end as death or last obs date
   enddat <- left_join(enddat, dodat, by="IIntID")
-  enddat <- mutate(enddat, 
-    obs_end = as.Date(
-      ifelse(is.finite(DoD), DoD, end_date), 
-      origin="1970-01-01"),
+  enddat <- mutate(enddat,
+    obs_end = ifelse(is.finite(DoD), DoD, end_date),
     event = as.numeric(is.finite(DoD)))
   # merge obs_start and obs_end dates 
   sdat <- left_join(startdat, enddat, by="IIntID") %>% 
@@ -72,7 +74,3 @@ calcMortality <- function(dat) {
   rownames(out) <- dat$Year
   out
 }
-
-
-
-
