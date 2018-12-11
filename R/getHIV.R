@@ -1,4 +1,4 @@
-#' @title dropTasP
+#' @title dropTasPData
 #' 
 #' @description  Function to drop individuals who tested in TasP areas.
 #' 
@@ -18,6 +18,7 @@ dropTasPData <- function(dat) {
   dat <- filter(dat, PIPSA %in% c("S", NA)) 
   # drop if NA in 2017
   dat <- filter(dat, !(is.na(PIPSA) & Year==2017))
+  dat <- select(dat, -c(Year, PIPSA))
   comment(dat) <- "This dataset drops HIV tests from TasP areas in 2017"
   dat
 }
