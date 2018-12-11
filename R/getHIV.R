@@ -1,3 +1,27 @@
+#' @title dropTasP
+#' 
+#' @description  Function to drop individuals who tested in TasP areas.
+#' 
+#' @param dat A dataset.
+#' 
+#' @return data.frame
+#'
+#' @export 
+
+dropTasPData <- function(dat) {
+  pipdat <- readPIPData(inFiles$pipfile)
+  pipdat <- select(pipdat, BSIntID, PIPSA)
+  dat <- full_join(dat, pipdat, by="BSIntID")
+  dat <- filter(dat, !is.na(IIntID))
+  dat <- mutate(dat, Year = format(VisitDate, "%Y"))
+  # keep if miss BS prior to 2017
+  dat <- filter(dat, PIPSA %in% c("S", NA)) 
+  # drop if NA in 2017
+  dat <- filter(dat, !(is.na(PIPSA) & Year==2017))
+  comment(dat) <- "This dataset drops HIV tests from TasP areas in 2017"
+  dat
+}
+
 #' @title readHIVData
 #' 
 #' @description  Reads in AHRI data from csv file
@@ -24,15 +48,7 @@ readHIVData <- function(inFiles=Args$inFiles,
   hiv <- mutate(hiv, Female=as.integer(ifelse(Sex==2, 1, 0)))
   hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
    select(-Sex) %>% arrange(IIntID, VisitDate)
-  if(dropTasP) {
-    pipdat <- readPIPData(inFiles$pipfile)
-    pipdat <- select(pipdat, BSIntID, PIPSA)
-    hiv <- full_join(hiv, pipdat, by="BSIntID")
-    hiv <- filter(hiv, !is.na(IIntID))
-    hiv <- filter(hiv, PIPSA %in% c("S", NA)) %>% select(-PIPSA)
-    comment(hiv) <- "This dataset drops HIV tests from TasP areas in 2017"
-    hiv
-  }
+  if (dropTasP) dropTasPData(hiv)
   save(hiv, file=file.path(inFiles$hivfile))
   hiv
 }
