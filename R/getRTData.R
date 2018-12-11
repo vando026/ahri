@@ -18,39 +18,45 @@
 
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
-
-  setMinMax <- function(f) {
-    function(x) 
-      ifelse(all(is.na(x)), NA, f(x, na.rm=TRUE))
+  # function
+  getDates <- function(dat, f) {
+    function(Var, Name) {
+      dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
+      dates <- tapply(dat[, Var], dat[, "IIntID"], f)
+      # names(out)
+      out <- data.frame(as.integer(names(dates)), dates)
+      colnames(out) <- c("IIntID", Name)
+      out
+    }
   }
-  getDateMin <- setMinMax(min)
-  getDateMax <- setMinMax(max)
+  getDatesMin <- getDates(hiv, min)
+  getDatesMax <- getDates(hiv, max)
 
-  dates <- group_by(dat, IIntID) %>% summarize(
-    early_neg=getDateMin(HIVNegative),
-    early_pos=getDateMin(HIVPositive),
-    late_neg=getDateMax(HIVNegative),
-    late_pos=getDateMax(HIVPositive))
+  # get dates 
+  early_neg <- getDatesMin("HIVNegative", "early_neg")
+  early_pos <- getDatesMin("HIVPositive", "early_pos")
+  late_neg <- getDatesMax("HIVNegative", "late_neg")
+  late_pos <- getDatesMax("HIVPositive", "late_pos")
 
-  dat1 <- select(dat, IIntID, Female) %>% 
-    group_by(IIntID) %>% slice(1) %>% ungroup(dat1)
-  rtdat <- left_join(dat1, dates, by="IIntID")
+  # merge
+  dat <- select(dat, IIntID, Female) %>% 
+    group_by(IIntID) %>% slice(1) %>% ungroup(dat)
+  dat <- left_join(dat, early_neg, by="IIntID")
+  dat <- left_join(dat, late_neg, by="IIntID")
+  dat <- left_join(dat, early_pos, by="IIntID")
+  dat <- left_join(dat, late_pos, by="IIntID")
 
   # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
-  rtdat <- mutate(rtdat, late_neg_after = ifelse(
+  rtdat <- mutate(dat, late_neg_after = ifelse(
     (late_neg > early_pos) & is.finite(early_pos) & is.finite(late_neg), 1, 0)) 
-
   # ** I just drop these individuals, irreconcilable
   rtdat <- filter(rtdat, late_neg_after==0) %>% 
     select(-c(late_neg_after, late_pos))
-
   # Drop any indiv that dont have a first neg date.
   rtdat <- filter(rtdat, !(is.na(early_neg) & is.na(late_neg)))
-
   # Must have two tests, if early neg date is equal to late neg date and missing pos date then drop
   rtdat <- filter(rtdat, !(early_neg==late_neg & is.na(early_pos)))
   rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
-
   ### Sanity Checks
   testDates <- function(dat=NULL) {
     testNeg <- filter(dat, is.finite(early_neg) & is.finite(late_neg))
@@ -61,7 +67,6 @@ getRTData <- function(dat,
         stop("Some late_neg >= early_pos") 
   }
   testDates(rtdat)
-
   # Make for split episodes later rather than in loop to save time
   rtdat <- rename(rtdat, obs_start = early_neg)
   vars <- c("obs_start", "late_neg", "early_pos")
