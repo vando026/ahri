@@ -29,8 +29,8 @@ getRTData <- function(dat,
       out
     }
   }
-  getDatesMin <- getDates(hiv, min)
-  getDatesMax <- getDates(hiv, max)
+  getDatesMin <- getDates(dat, min)
+  getDatesMax <- getDates(dat, max)
 
   # get dates 
   early_neg <- getDatesMin("HIVNegative", "early_neg")
