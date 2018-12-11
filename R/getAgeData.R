@@ -59,9 +59,9 @@ getAgeData <- function(dat, idat,
   adat <- mutate(adat, AgeCat = 
     cut(AgeAtVisit, breaks=Args$AgeCat, 
     labels=NULL, right=FALSE))
-  adat$AgeCat <- droplevels(adat$AgeCat)
   # Filter by Age limits
   adat <- setAge(adat, Args)
+  adat$AgeCat <- droplevels(adat$AgeCat)
   select(adat, -(DateOfBirth)) %>% rename(Age = AgeAtVisit)
 }
 

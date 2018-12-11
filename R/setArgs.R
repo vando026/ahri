@@ -39,7 +39,8 @@ setArgs <- function(
   inFiles=getFiles(),
   Years=c(2004:2016),
   Age=list(All=c(15, 54)),
-  AgeCat=seq(15, 55, 5),
+  AgeCat=NULL,
+  AgeBy=5,
   ResRule=0,
   nSim=500, 
   imputeMethod=imputeRandomPoint,
@@ -48,6 +49,10 @@ setArgs <- function(
   mcores=1,
   MoreArgs=NULL) {
   #
+  if (is.null(AgeCat)) {
+    AgeCat=seq(min(unlist(Age)),
+      max(unlist(Age))+1, AgeBy)
+  }
   Sex <- ifelse(
     setequal(names(Age), c("Mal", "Fem")), 
     "All", names(Age))

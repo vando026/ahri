@@ -5,7 +5,7 @@
 \title{setArgs}
 \usage{
 setArgs(inFiles = getFiles(), Years = c(2004:2016), Age = list(All =
-  c(15, 54)), AgeCat = seq(15, 55, 5), ResRule = 0, nSim = 500,
+  c(15, 54)), AgeCat = NULL, AgeBy = 5, ResRule = 0, nSim = 500,
   imputeMethod = imputeRandomPoint, aname = "filename",
   printout = FALSE, mcores = 1, MoreArgs = NULL)
 }
