@@ -28,7 +28,7 @@ imputeMidPoint <- function(dat) {
 imputeRandomPoint <- function(dat) {
   idat <- split(dat, as.factor(dat$IIntID))
   Fun1 <- function(idat) {
-    if (is.infinite(idat$early_pos)) {
+    if (is.na(idat$early_pos)) {
       with(idat, cbind(IIntID, sero_date=NA))
     } else {
       if (idat$early_pos - idat$late_neg <= 1) {

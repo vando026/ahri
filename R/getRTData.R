@@ -19,30 +19,37 @@
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
 
-  # Now make the dates
-  dat <- group_by(dat, IIntID) %>% mutate(
-    early_neg = min(HIVNegative, na.rm=TRUE),
-    late_neg = max(HIVNegative, na.rm=TRUE),
-    early_pos = min(HIVPositive, na.rm=TRUE),
-    late_pos = max(HIVPositive, na.rm=TRUE)
-  )
+  setMinMax <- function(f) {
+    function(x) 
+      ifelse(all(is.na(x)), NA, f(x, na.rm=TRUE))
+  }
+  getDateMin <- setMinMax(min)
+  getDateMax <- setMinMax(max)
 
-  dat <- group_by(dat, IIntID) %>% slice(1) %>% ungroup(dat)
+  dates <- group_by(dat, IIntID) %>% summarize(
+    early_neg=getDateMin(HIVNegative),
+    early_pos=getDateMin(HIVPositive),
+    late_neg=getDateMax(HIVNegative),
+    late_pos=getDateMax(HIVPositive))
+
+  dat1 <- select(dat, IIntID, Female) %>% 
+    group_by(IIntID) %>% slice(1) %>% ungroup(dat1)
+  rtdat <- left_join(dat1, dates, by="IIntID")
 
   # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
-  rtdat <- mutate(dat, late_neg_after = ifelse(
+  rtdat <- mutate(rtdat, late_neg_after = ifelse(
     (late_neg > early_pos) & is.finite(early_pos) & is.finite(late_neg), 1, 0)) 
 
   # ** I just drop these individuals, irreconcilable
-  rtdat <- filter(rtdat, late_neg_after==0) 
+  rtdat <- filter(rtdat, late_neg_after==0) %>% 
+    select(-c(late_neg_after, late_pos))
 
   # Drop any indiv that dont have a first neg date.
-  rtdat <- filter(rtdat, !(is.infinite(early_neg) & is.infinite(late_neg)))
+  rtdat <- filter(rtdat, !(is.na(early_neg) & is.na(late_neg)))
 
   # Must have two tests, if early neg date is equal to late neg date and missing pos date then drop
-  rtdat <- filter(rtdat, !(early_neg==late_neg & is.infinite(early_pos)))
-  rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0)) %>%
-    select(IIntID, Female, early_neg, late_neg, early_pos, sero_event)
+  rtdat <- filter(rtdat, !(early_neg==late_neg & is.na(early_pos)))
+  rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
 
   ### Sanity Checks
   testDates <- function(dat=NULL) {
