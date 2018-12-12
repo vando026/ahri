@@ -19,7 +19,7 @@ dropTasPData <- function(dat, inFile=inFiles$pipfile) {
   # drop if NA in 2017
   dat <- filter(dat, !(is.na(PIPSA) & Year==2017))
   dat <- select(dat, -c(Year, PIPSA))
-  comment(dat) <- "This dataset drops HIV tests from TasP (and NA) areas in 2017"
+  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
   dat
 }
 
