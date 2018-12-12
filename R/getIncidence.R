@@ -64,6 +64,8 @@ AggByAge <- AggFunc("AgeCat")
 #'
 #' @return data.frame
 #'
+#' @export
+#'
 #' @examples
 #' doPoisYear <- poisFunc("Year")
 #' pdat <- getIncData(dat) 
@@ -72,8 +74,8 @@ AggByAge <- AggFunc("AgeCat")
 
 doPoisYear <- function(dat) {
   dat$tscale <- dat$Time/365.25
-  mod <- glm(sero_event ~ as.factor(Year) -1 + Age + offset(log(tscale)),
-    data=dat, family=poisson)
+  mod <- glm(sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age 
+    + offset(log(tscale)), data=dat, family=poisson)
   nyears <- seq(unique(dat$Year))
   ndat <- data.frame(Age = mean(dat$Age), tscale=1,
     Year = factor(nyears, levels = nyears, labels = levels(as.factor(dat$Year))))

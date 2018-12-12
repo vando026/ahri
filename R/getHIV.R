@@ -69,7 +69,7 @@ readHIVData <- function(inFiles=Args$inFiles,
 
 getHIV <- function(Args) {
   load(Args$inFiles$hivfile, envir=environment())
-  if (!is.null(comment(hiv))) print(comment(hiv))
+  if (!is.null(comment(hiv))) message(comment(hiv))
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y"))) %>%
     filter(Year %in% Args$Years)
   # Filter by age
