@@ -35,9 +35,9 @@ dropTasPData <- function(dat, inFile=inFiles$pipfile) {
 #' @import dplyr
 #' @export 
 
-readHIVData <- function(inFiles=Args$inFiles,
-  dropTasP=TRUE) {
-  hiv <- readr::read_csv(inFiles$hiv_dta, 
+readHIVData <- function(
+  inFiles=getFiles(), dropTasP=TRUE) {
+  hiv <- readr::read_csv(inFiles$hivfile,
     col_types=cols_only(
       ResidencyBSIntId="i",
       IIntId="i",
@@ -51,7 +51,6 @@ readHIVData <- function(inFiles=Args$inFiles,
    select(-Sex) %>% arrange(IIntID, VisitDate)
   if (dropTasP==TRUE) 
     hiv <- dropTasPData(hiv, inFile=inFiles$pipfile)
-  save(hiv, file=file.path(inFiles$hivfile))
   hiv
 }
 
@@ -68,12 +67,8 @@ readHIVData <- function(inFiles=Args$inFiles,
 #' @export 
 
 getHIV <- function(Args) {
-  load(Args$inFiles$hivfile, envir=environment())
+  hiv <- readHIVData(Args$inFiles, dropTasP=TRUE)
   if (!is.null(comment(hiv))) message(comment(hiv))
-  hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y"))) %>%
-    filter(Year %in% Args$Years)
-  # Filter by age
-  hiv <- setAge(hiv, Args)
   # Keep sex
   hiv <- filter(hiv, Female %in% Args$FemCode)
   # Only deal with valid test results
@@ -81,8 +76,7 @@ getHIV <- function(Args) {
   hiv <- mutate(hiv, 
     HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
     HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
-  hiv <- mutate(hiv, AgeCat = cut(AgeAtVisit, breaks=Args$AgeCat,
-    include.lowest=FALSE, labels=NULL, right=FALSE))
+  hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
   hiv 

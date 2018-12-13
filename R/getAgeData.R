@@ -26,9 +26,10 @@ setAge <- function(dat, Args) {
   dat
 }
 
-#' @title getAgeData
+#' @title setAgeYear
 #' 
-#' @description  gets and sets Age of participant in a surveillance year.
+#' @description  sets Age and survey year according to values in
+#' \code{\link{setArgs}}.
 #' 
 #' @param dat dataset for which age is needed at a given episode.
 #'
@@ -46,21 +47,23 @@ setAge <- function(dat, Args) {
 #' rtdata <- getRTData(hiv)
 #' idat <- getBirthDate(Args$inFiles$epifile)
 #' sdat <- splitAtEarlyPos(rtdat)
-#' adat <- getAgeData(sdat, idat)
+#' adat <- setAgeYear(sdat, idat)
 
-getAgeData <- function(dat, idat,
+setAgeYear <- function(dat, idat,
   Args=eval.parent(quote(Args))) {
   # merge datasets
   adat <- left_join(dat, idat, by="IIntID")
   adat <- filter(adat, !is.na(DateOfBirth)) %>%
     mutate(AgeAtVisit = floor(as.numeric(
     difftime(obs_end, DateOfBirth, units='weeks'))/52.25))
+  # Filter by Age limits
+  adat <- setAge(adat, Args)
+  # Filter by year
+  adat <- filter(adat, Year %in% Args$Years)
   # Make Categories
   adat <- mutate(adat, AgeCat = 
     cut(AgeAtVisit, breaks=Args$AgeCat, 
     labels=NULL, right=FALSE))
-  # Filter by Age limits
-  adat <- setAge(adat, Args)
   adat$AgeCat <- droplevels(adat$AgeCat)
   select(adat, -(DateOfBirth)) %>% rename(Age = AgeAtVisit)
 }
@@ -79,7 +82,7 @@ getAgeData <- function(dat, idat,
 #' @export
 #' 
 #' @examples
-#' adat <- getAgeData(sdata)
+#' adat <- setAge(sdata)
 #' adat <- makeAgeVars(adat)
 
 makeAgeVars <- function(dat){

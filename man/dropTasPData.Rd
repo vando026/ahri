@@ -4,7 +4,7 @@
 \alias{dropTasPData}
 \title{dropTasPData}
 \usage{
-dropTasPData(dat)
+dropTasPData(dat, inFile = inFiles$pipfile)
 }
 \arguments{
 \item{dat}{A dataset.}

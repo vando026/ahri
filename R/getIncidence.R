@@ -18,9 +18,8 @@
 
 getIncData <- function(rtdat, idat, Args) {
   dat <- Args$imputeMethod(rtdat)
-  edat <- splitAtSeroDate(dat, splitYears=Args$Years) 
-  adat <- getAgeData(edat, idat,  Args)
-  adat
+  edat <- splitAtSeroDate(dat) 
+  setAgeYear(edat, idat,  Args)
 }
 
 #' @title AggFunc
