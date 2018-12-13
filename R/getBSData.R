@@ -32,8 +32,8 @@ readBSData <- function(inFile=Args$inFiles$bsifile) {
 #'
 #' @export 
 readPIPData <- function(inFile=Args$inFiles$pipfile) {
-  dat <- data.frame(readxl::read_excel(inFile))
-  dat <- dplyr::rename(dat, BSIntID=BSIntId)
+  dat <- readxl::read_excel(inFile)
+  names(dat)[names(dat)=="BSIntId"] = "BSIntID"
   dat
 }
 
