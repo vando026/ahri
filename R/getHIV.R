@@ -68,7 +68,6 @@ readHIVData <- function(
 
 getHIV <- function(Args) {
   hiv <- readHIVData(Args$inFiles, dropTasP=TRUE)
-  if (!is.null(comment(hiv))) message(comment(hiv))
   # Keep sex
   hiv <- filter(hiv, Female %in% Args$FemCode)
   # Only deal with valid test results
