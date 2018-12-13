@@ -24,16 +24,13 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
   startdat <- getDatesMin("obs_start", "obs_start")
 
   # Get all death dates
-  dodat <- getEpisodes(Args$inFiles$epifile) %>% 
-    select(IIntID, DoD) %>% 
+  edat <- getEpisodes(Args$inFiles$epifile)
+  dodat  <- select(edat, IIntID, DoD) %>% 
     filter(is.finite(DoD)) %>% 
     distinct(IIntID, .keep_all=TRUE)
-  # dodat <- filter(dodat, 
-    # as.numeric(format(DoD, "%Y")) %in% Args$Years)
 
   # Get last observation date
-  enddat <- setEpisodes(Args)
-  getDatesMax <- getDates(enddat, max)
+  getDatesMax <- getDates(edat, max)
   enddat <- getDatesMax("ObservationEnd", "end_date")
 
   # Make obs_end as death or last obs date
