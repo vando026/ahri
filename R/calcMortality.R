@@ -28,8 +28,8 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
     select(IIntID, DoD) %>% 
     filter(is.finite(DoD)) %>% 
     distinct(IIntID, .keep_all=TRUE)
-  dodat <- filter(dodat, 
-    as.numeric(format(DoD, "%Y")) %in% Args$Years)
+  # dodat <- filter(dodat, 
+    # as.numeric(format(DoD, "%Y")) %in% Args$Years)
 
   # Get last observation date
   enddat <- setEpisodes(Args)
@@ -46,10 +46,11 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
     select(IIntID, obs_start, obs_end, event)
   sdat <- filter(sdat, obs_end>obs_start)
   # split data
-  tdat <- splitData2(sdat, years=Args$Years)
+  tdat <- splitData2(sdat)
   bdat <- getBirthDate(Args$inFiles$epifile, addVars="Female") 
-  tdat <- getAgeData(tdat, bdat, Args)
+  tdat <- setAgeYear(tdat, bdat, Args)
   tdat <- mutate(tdat, Days = as.numeric(obs_end-obs_start))
+  if(any(tdat$Days > 366)) stop("Days > 366")
   tdat
 } 
 
