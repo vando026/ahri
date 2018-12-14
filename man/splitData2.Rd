@@ -4,7 +4,7 @@
 \alias{splitData2}
 \title{splitData2}
 \usage{
-splitData2(dat, years = Args$Years)
+splitData2(dat, years = c(2003:2018))
 }
 \arguments{
 \item{dat}{Dataset must have variables called obs_start, obs_end and event.}

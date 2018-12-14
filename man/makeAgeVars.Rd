@@ -16,6 +16,6 @@ data.frame
 Centers age variable and takes square and cube.
 }
 \examples{
-adat <- getAgeData(sdata)
+adat <- setAge(sdata)
 adat <- makeAgeVars(adat)
 }

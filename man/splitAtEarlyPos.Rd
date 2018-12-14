@@ -4,7 +4,7 @@
 \alias{splitAtEarlyPos}
 \title{splitAtEarlyPos}
 \usage{
-splitAtEarlyPos(dat = NULL, splitYears = NULL)
+splitAtEarlyPos(dat = NULL, splitYears = c(2003:2018))
 }
 \arguments{
 \item{dat}{a dataset}

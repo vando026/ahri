@@ -72,6 +72,8 @@ getRTData <- function(dat,
 #' @param  Name new variable name.
 #' 
 #' @return data.frame
+#' 
+#' @export
 getDates <- function(dat, f) {
   function(Var, Name) {
     dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])

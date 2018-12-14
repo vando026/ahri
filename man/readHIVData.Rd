@@ -4,7 +4,7 @@
 \alias{readHIVData}
 \title{readHIVData}
 \usage{
-readHIVData(inFiles = Args$inFiles, dropTasP = TRUE)
+readHIVData(inFiles = getFiles(), dropTasP = TRUE)
 }
 \arguments{
 \item{inFiles}{file paths from \code{\link{setArgs}}.}
