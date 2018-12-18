@@ -69,6 +69,5 @@ calcMortality <- function(dat) {
   out <- epitools::pois.exact(dat$Count, dat$PYears)
   out <- select(out, Deaths=x, PTime=pt, Rate=rate, LB=lower, UB=upper)
   out[c(3:5)] <- lapply(out[c(3:5)], "*", 100)
-  rownames(out) <- dat$Year
-  out
+  cbind(Year=dat$Year, out)
 }

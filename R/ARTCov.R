@@ -16,23 +16,19 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
   dat <- filter(dat, !is.na(DateOfInitiation))
   dat <- distinct(dat, IIntID, .keep_all=TRUE)
   dat <- mutate(dat,
-    YearOfInitiation = as.numeric(format(DateOfInitiation, "%Y")))
+    YearOfInitiation = as.numeric(format(DateOfInitiation, "%Y")),
+    MonthART = as.numeric(format(DateOfInitiation, "%m")))
   dat
 }
 
 #' @title ARTCov
 #' 
-#' @description  Calculate ART coverage for AHRI data. ART coverage can only be calculated
-#' up to 2012, so new arguments need to be set.
+#' @description  Calculate ART coverage for AHRI data.
 #' 
 #' @param Args  arguments from \code{\link{setArgs}}.
 #'
-#' @param wdat weights. 
-#'
 #' @param cutoff value from 1 and 12, if ART initiation is after this value then no ART
 #' usage for that entire year. Use cutoff=12 to ignore this argument.
-#' 
-#' @param stpopVar name of var from \code{wdat} with weights. 
 #' 
 #' @param calcBy string variable to calc the estimates by
 #' 
@@ -42,7 +38,7 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
 #'
 #' @import dplyr
 #' 
-#' @importFrom epitools binom.exact
+#' @import epitools 
 #' 
 #' @export
 
@@ -56,16 +52,13 @@ ARTCov <- function(
 
   # Get HIV data 
   hdat <- getHIV(Args)
-  hpos <- filter(hdat, HIVResult==1) %>% 
-    select(IIntID, Year, Female, AgeCat, HIVResult) 
+  getDatesMax <- getDates(hdat, max)
+  earlyPos <- getDatesMax("HIVPositive", "early_pos")
 
+  hpos <- filter(hdat, HIVResult==1) %>% 
+    select(IIntID, Year, Female, VisitDate, HIVResult) 
+  
   art <- getARTDates(Args$inFiles$epifile)
-  art <- select(art, IIntID, DateOfInitiation)
-  art <- filter(art, !is.na(DateOfInitiation)) 
-  art <- mutate(art, 
-    YearART = as.numeric(format(DateOfInitiation, "%Y")),
-    MonthART = as.numeric(format(DateOfInitiation, "%m")))
-  art <- filter(art, YearART %in% Args$Years)
 
   # Merge with ART data
   adat <- left_join(hpos, art, by="IIntID")

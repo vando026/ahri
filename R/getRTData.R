@@ -74,6 +74,11 @@ getRTData <- function(dat,
 #' @return data.frame
 #' 
 #' @export
+#'
+#' @examples
+#' hdat <- getHIV(Args)
+#' getDatesMax <- getDates(hdat, max)
+
 getDates <- function(dat, f) {
   function(Var, Name) {
     dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])

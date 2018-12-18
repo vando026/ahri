@@ -54,24 +54,22 @@ getHIVMiss <- function(Args) {
   # Only legible for testing
   hdat <- dplyr::filter(hdat, HIVRefused %in% c(1, 2)) 
 
-  getRefused <- function(dat) {
-    out <- round(prop.table(table(dat$HIVRefused))*100, 2)
-    # HIVRefused 1=yes 2=no
-    cbind(Refused=out[1], NotRefused=out[2])
-  }
-  sdat <- split(hdat, hdat$Year)
-  out <- t(sapply(sdat,  getRefused))
-  colnames(out) <- c("Refused", "Not_Refused")
-  
+  # Refused
+  out <- group_by(hdat, Year) %>% 
+    summarize(Refused=round((sum(as.numeric(HIVRefused==1))/n())*100, 2),
+      Not_Refused=100 - Refused)
+
   # Get perc ever tested
-  cdat <- mutate(hdat, HIVTest = as.numeric(HIVRefused==2))
-  cdat <- group_by(cdat, IIntID) %>%
+  cdat <- dplyr::mutate(hdat, HIVTest = as.numeric(HIVRefused==2))
+  cdat <- dplyr::group_by(cdat, IIntID) %>%
     mutate(EverTest = as.numeric(cumsum(HIVTest)>=1))
-  out2 <- group_by(cdat, Year) %>%
-    summarize(Test=sum(EverTest), Tot=n(),
-    PercEverTest = round(Test/Tot * 100, 2))
-  out2
-  cbind(out, out2[, "PercEverTest"])
+  out2 <- dplyr::group_by(cdat, Year) %>%
+    dplyr::summarize(EverTest=round((sum(EverTest)/n())*100, 2))
+  fem <- dplyr::group_by(hdat, Year) %>%
+    dplyr::summarize(FemPerc = round((sum(Female)/n())*100, 2))
+  res <- left_join(fem, out, by="Year")
+  res <- left_join(res, out2, by="Year")
+  res
 }
 
 # hdat1 <- group_by(yydat, IIntID) %>%
