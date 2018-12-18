@@ -19,14 +19,11 @@
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
   # function
-  getDatesMin <- getDates(dat, min)
-  getDatesMax <- getDates(dat, max)
-
   # get dates 
-  early_neg <- getDatesMin("HIVNegative", "early_neg")
-  early_pos <- getDatesMin("HIVPositive", "early_pos")
-  late_neg <- getDatesMax("HIVNegative", "late_neg")
-  late_pos <- getDatesMax("HIVPositive", "late_pos")
+  early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
+  early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
+  late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
+  late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
 
   # merge
   dat <- select(dat, IIntID, Female) %>% 
@@ -66,8 +63,28 @@ getRTData <- function(dat,
 
 #' @title getDates
 #' 
-#' @description Function to get earliest and latest test dates
+#' @description Function to get earliest/latest test dates
 #' 
+#' @param  f a function.
+#' 
+#' @return data.frame
+#' 
+#' @export
+getDates <- function(f) {
+  function(dat, Var, Name) {
+    dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
+    dates <- tapply(dat[, Var], dat[, "IIntID"], f)
+    out <- data.frame(as.integer(names(dates)), dates)
+    colnames(out) <- c("IIntID", Name)
+    out
+  }
+}
+
+#' @title getDatesMin
+#' 
+#' @description Function to get earliest test dates
+#' 
+#' @param  dat a dataset.
 #' @param  Var a variable name.
 #' @param  Name new variable name.
 #' 
@@ -77,15 +94,24 @@ getRTData <- function(dat,
 #'
 #' @examples
 #' hdat <- getHIV(Args)
-#' getDatesMax <- getDates(hdat, max)
+#' getDatesMin <- getDates(min)
+getDatesMin <- getDates(min)
 
-getDates <- function(dat, f) {
-  function(Var, Name) {
-    dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
-    dates <- tapply(dat[, Var], dat[, "IIntID"], f)
-    # names(out)
-    out <- data.frame(as.integer(names(dates)), dates)
-    colnames(out) <- c("IIntID", Name)
-    out
-  }
-}
+
+#' @title getDatesMax
+#' 
+#' @description Function to get latest test dates
+#' 
+#' @param  dat a dataset.
+#' @param  Var a variable name.
+#' @param  Name new variable name.
+#' 
+#' @return data.frame
+#' 
+#' @export
+#'
+#' @examples
+#' hdat <- getHIV(Args)
+#' getDatesMax <- getDates(max)
+getDatesMax <- getDates(max)
+

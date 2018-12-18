@@ -4,21 +4,15 @@
 \alias{ARTCov}
 \title{ARTCov}
 \usage{
-ARTCov(Args, wdat = NULL, Formula = "OnART ~ Year + Female + AgeCat",
-  stpopVar = "Total", calcBy = c("Year", "Female"),
-  mergeVars = "AgeCat", binom = FALSE, cutoff = 9, fmt = TRUE)
+ARTCov(Args, Formula = "OnART ~ Year + Female + AgeCat", cutoff = 9)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}
 
-\item{wdat}{weights.}
-
-\item{stpopVar}{name of var from \code{wdat} with weights.}
-
-\item{calcBy}{string variable to calc the estimates by}
-
 \item{cutoff}{value from 1 and 12, if ART initiation is after this value then no ART
 usage for that entire year. Use cutoff=12 to ignore this argument.}
+
+\item{calcBy}{string variable to calc the estimates by}
 
 \item{fmt}{format to percentage and round to two decimal places}
 }
@@ -26,6 +20,5 @@ usage for that entire year. Use cutoff=12 to ignore this argument.}
 data.frame
 }
 \description{
-Calculate ART coverage for AHRI data. ART coverage can only be calculated
-up to 2012, so new arguments need to be set.
+Calculate ART coverage for AHRI data.
 }

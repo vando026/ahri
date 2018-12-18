@@ -42,36 +42,32 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
 #' 
 #' @export
 
-
-ARTCov <- function(
-  Args, wdat=NULL, 
+ARTCov <- function( Args, 
   Formula="OnART ~ Year + Female + AgeCat",
-  stpopVar="Total", calcBy=c("Year", "Female"),
-  mergeVars="AgeCat",
-  binom=FALSE, cutoff=9, fmt=TRUE) {
-
+  cutoff=9) {
   # Get HIV data 
   hdat <- getHIV(Args)
-  getDatesMax <- getDates(hdat, max)
-  earlyPos <- getDatesMax("HIVPositive", "early_pos")
-
+  earlyPos <- getDatesMax(hdat, "HIVPositive", "early_pos")
   hpos <- filter(hdat, HIVResult==1) %>% 
-    select(IIntID, Year, Female, VisitDate, HIVResult) 
-  
-  art <- getARTDates(Args$inFiles$epifile)
-
+    select(IIntID, Year, Female, AgeAtVisit, VisitDate, HIVResult) 
   # Merge with ART data
+  art <- getARTDates(Args$inFiles$epifile)
   adat <- left_join(hpos, art, by="IIntID")
   adat <- arrange(adat, IIntID, Year) 
   adat <- group_by(adat, IIntID) %>% 
-    mutate(OnARTYear = ifelse(Year >= YearART, 1, 0))
-  adat <- mutate(adat, OnARTYear = ifelse(is.na(OnARTYear), 0, OnARTYear))
+    mutate(OnART = as.numeric(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
-    ifelse((YearART==Year) & MonthART > cutoff & !is.na(MonthART), 0, OnARTYear))
-
-  sdat <- calcTrend(adat, wdat=wdat, Formula=Formula,
-    mergeVars=mergeVars, calcBy=calcBy, binom=binom, fmt=fmt)
-  sdat 
+    ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
+  adat <- setAge(adat, Args)
+  adat <- filter(adat, Year %in% Args$Years)
+  out <- do.call('data.frame', 
+    aggregate(as.formula(Formula), data=adat,
+    FUN=function(x) c(Count=sum(x), Total=length(x))))
+  out <- binom.exact(out[, "OnART.Count"], out[, "OnART.Total"])[, 1:5]
+  out[c(3:5)] <- lapply(out[c(3:5)], function(x) round(x*100, 2))
+  colnames(out) <- c("OnArt", "HIV+", "Prop", "lci", "uci")
+  out$Year <- Args$Years 
+  out
 }
 

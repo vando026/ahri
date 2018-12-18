@@ -4,16 +4,14 @@
 \alias{getDates}
 \title{getDates}
 \usage{
-getDates(dat, f)
+getDates(f)
 }
 \arguments{
-\item{Var}{a variable name.}
-
-\item{Name}{new variable name.}
+\item{f}{a function.}
 }
 \value{
 data.frame
 }
 \description{
-Function to get earliest and latest test dates
+Function to get earliest/latest test dates
 }
