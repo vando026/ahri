@@ -42,8 +42,8 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
 #' 
 #' @export
 
-ARTCov <- function( Args, 
-  Formula="OnART ~ Year + Female + AgeCat",
+ARTCov <- function(Args, 
+  Formula="OnART ~ Year",
   cutoff=9) {
   # Get HIV data 
   hdat <- getHIV(Args)

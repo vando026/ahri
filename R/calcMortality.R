@@ -62,10 +62,11 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
 
 calcMortality <- function(dat) {
   dat <- group_by(dat, Year) %>% 
-    summarize(Count=sum(event), PYears=sum(Days)/365.25) %>%
+    summarize(N=length(unique(IIntID)), 
+      Count=sum(event), PYears=sum(Days)/365.25) %>%
     mutate(rate = Count/PYears * 100)
   out <- epitools::pois.exact(dat$Count, dat$PYears)
   out <- select(out, Deaths=x, PTime=pt, Rate=rate, LB=lower, UB=upper)
   out[c(3:5)] <- lapply(out[c(3:5)], "*", 100)
-  cbind(Year=dat$Year, out)
+  cbind(Year=dat$Year, N=dat$N, out)
 }
