@@ -4,7 +4,7 @@
 \alias{ARTCov}
 \title{ARTCov}
 \usage{
-ARTCov(Args, Formula = "OnART ~ Year + Female + AgeCat", cutoff = 9)
+ARTCov(Args, Formula = "OnART ~ Year", cutoff = 9)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}
