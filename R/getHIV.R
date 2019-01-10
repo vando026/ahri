@@ -11,13 +11,12 @@
 dropTasPData <- function(dat, inFile=inFiles$pipfile) {
   pipdat <- readPIPData(inFile)
   pipdat <- select(pipdat, BSIntID, PIPSA)
-  dat <- full_join(dat, pipdat, by="BSIntID")
-  dat <- filter(dat, !is.na(IIntID))
+  dat <- left_join(dat, pipdat, by="BSIntID")
   dat <- mutate(dat, Year = format(VisitDate, "%Y"))
   # keep if miss BS prior to 2017
   dat <- filter(dat, PIPSA %in% c("S", NA)) 
   # drop if NA in 2017
-  dat <- filter(dat, !(is.na(PIPSA) & Year==2017))
+  dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
   dat <- select(dat, -c(Year, PIPSA))
   comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
   dat

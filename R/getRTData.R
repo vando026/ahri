@@ -18,8 +18,7 @@
 
 getRTData <- function(dat, 
   Args=eval.parent(quote(Args))) {
-  # function
-  # get dates 
+  # function  get dates 
   early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
   early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
   late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")

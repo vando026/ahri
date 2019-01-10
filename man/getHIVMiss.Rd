@@ -2,7 +2,7 @@
 % Please edit documentation in R/getMissedHIV.R
 \name{getHIVMiss}
 \alias{getHIVMiss}
-\title{getMissedHIV}
+\title{getHIVMiss}
 \usage{
 getHIVMiss(Args)
 }
