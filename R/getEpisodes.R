@@ -16,8 +16,8 @@
 #' readEpisodes()
 
 readEpisodes <- function(
-  inFile=Args$inFiles$epi_dta,
-  outFile=Args$inFiles$epifile) {
+  inFile=getFiles()$epi_dta,
+  outFile=getFiles()$epifile) {
   #
   dat <- read_dta(inFile) 
   dat <- select(dat,
@@ -50,7 +50,7 @@ readEpisodes <- function(
 #' Args <- setArgs()
 #' getEpisodes(Args$inFile$epifile)
 
-getEpisodes <- function(inFile=Args$inFiles$epifile) {
+getEpisodes <- function(inFile=getFiles()$epifile) {
   load(inFile, envir=environment())
   dat
 }
@@ -77,30 +77,3 @@ setEpisodes <- function(Args) {
 }
 
 
-#' @title getBirthDate
-#' 
-#' @description  gets birth dates from \code{\link{getEpisodes}} data
-#' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
-#'
-#' @param addVars string for a regular expression to select additional vars
-#' 
-#' @return data.frame
-#'
-#' @import dplyr
-#'
-#' @export 
-#'
-#' @examples
-#' Args <- setArgs()
-#' getBirthDate(addVars="Female")
-
-getBirthDate <- function(
-  inFile=Args$inFile$epifile, 
-  addVars=" ") {
-  dat <- getEpisodes(inFile) 
-  dat <- select(dat, IIntID, DateOfBirth=DoB, contains(addVars))
-  dat <- distinct(dat, IIntID, .keep_all=TRUE)
-  dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1910)
-  dat
-}

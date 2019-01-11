@@ -4,12 +4,12 @@
 \alias{calcInc}
 \title{calcInc}
 \usage{
-calcInc(rtdat, idat, Args)
+calcInc(rtdat, bdat, Args)
 }
 \arguments{
 \item{rtdat}{Dataset from \code{\link{getRTData}}.}
 
-\item{idat}{Dataset from \code{\link{getBirthDate}}.}
+\item{bdat}{Dataset from \code{\link{getBirthDate}}.}
 
 \item{Args}{provide arguments from \code{\link{setArgs}}.}
 }
@@ -22,6 +22,6 @@ Calculates the crude and adjusted incidence.
 \examples{
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
-idat <- getBirthDate(Args$inFiles$epifile)
-calcInc(rtdat, idat, Args)
+bdat <- getBirthDate(Args$inFiles$epifile)
+calcInc(rtdat, bdat, Args)
 }

@@ -22,12 +22,6 @@
 #'
 #' @return data.frame
 #'
-#' @import dplyr
-#' 
-#' @importFrom epitools binom.exact ageadjust.direct
-#' 
-#' @importFrom stringr word
-#' 
 #' @export
 #' 
 #' @examples
@@ -39,8 +33,8 @@ calcTrend <- function(
   Formula="HIVResult ~ Year + AgeCat",
   calcBy="Year", mergeVars=c("AgeCat"),
   binom=FALSE, fmt=TRUE, ...) {
-
-  Input <- word(Formula, 1)
+  browser()
+  Input <- strsplit(Formula,' ')[[1]][1]
   adat <- do.call('data.frame', 
     aggregate(as.formula(Formula), data=dat,
     FUN=function(x) c(Count=sum(x), Total=length(x))))
@@ -52,11 +46,11 @@ calcTrend <- function(
   stpopVar <- ifelse(!is.null(wdat), "Total", Total)
   if (binom==FALSE) {
     adat <- lapply(adat, function(x) 
-      ageadjust.direct(x[Count], x[Total], 
+      epitools::ageadjust.direct(x[Count], x[Total], 
       stdpop=x[stpopVar]))
   } else {
     adat <- lapply(adat, function(x) 
-      binom.exact(x[, Count], x[, Total]))
+      epitools::binom.exact(x[, Count], x[, Total]))
     # adat <- adat[, c("proportion", "lower", "upper")]
   }
   adat <- do.call("rbind", adat)

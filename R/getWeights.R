@@ -2,12 +2,12 @@
 #' 
 #' @description Get weights for age and sex adjustement. 
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
-#' 
 #' @export
 
-getWeights <- function(Args) {
+getWeights <- function() {
+  Args <- setArgs()
   dat <- getHIV(Args)
+  dat <- setData(dat)
   dat <- filter(dat, HIVResult==0)
   dat <- rename(dat, Total=IIntID)
   aggregate(Total ~ Year + AgeCat, 

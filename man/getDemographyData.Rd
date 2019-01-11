@@ -4,7 +4,7 @@
 \alias{getDemographyData}
 \title{getDemographyData}
 \usage{
-getDemographyData(inFile = Args$inFiles$demfile)
+getDemographyData(inFile = getFiles()$demfile)
 }
 \arguments{
 \item{inFile}{path to data, see \code{\link{getFiles}}.}

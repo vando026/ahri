@@ -4,10 +4,7 @@
 \alias{getWeights}
 \title{getWeights}
 \usage{
-getWeights(Args)
-}
-\arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
+getWeights()
 }
 \description{
 Get weights for age and sex adjustement.

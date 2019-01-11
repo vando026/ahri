@@ -20,9 +20,9 @@ Rubin's rules
 Args <- setArgs(nSim=10)
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
-idat <- getBirthDate(Args$inFiles$epifile)
+bdat <- getBirthDate(Args$inFiles$epifile)
 dat <- mclapply(seq(Args$nSim), 
-  function(i) calcInc(rtdat, idat, Args))
+  function(i) calcInc(rtdat, bdat, Args))
 cdat <- combineEst(dat)
 geteAdjRate(cdat)
 }

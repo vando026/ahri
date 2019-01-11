@@ -34,12 +34,6 @@ data.frame
 Multipurpose function to calc trends  over time.
 }
 \examples{
-inFiles <- getFiles()
-Args <- setArgs(inFiles, 
-  AgeCat=c(15, 25, 55), 
-  Sex="Fem")
+Args <- setArgs()
 hiv=getHIV(Args)
-
-# Calculate HIV prevalence using KZN 2015 weights
-calcTrend(hiv, wdat, Formula="HIVResult ~ Year + AgeCat", mergeVar="AgeCat", calcBy="Year")
 }

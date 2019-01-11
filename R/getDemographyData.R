@@ -7,15 +7,11 @@
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @importFrom readr read_tsv cols_only
-#'
-#' @importFrom dplyr tbl_df
 
 getDemographyData <- function(
-  inFile=Args$inFiles$demfile) {
-  dem <- read_tsv(inFile, 
-    col_types=cols_only(
+  inFile=getFiles()$demfile) {
+  dem <- readr::read_tsv(inFile, 
+    col_types=readr::cols_only(
       BSIntID="i",
       IIntID="i",
       ObservationStart="D",
@@ -38,23 +34,19 @@ getDemographyData <- function(
 }
 
 
-#' @title setDemography
+#' @title setDemographyData
 #' 
-#' @description  Makes an age variable and filters by age
+#' @description  Sets the data according to Args.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}
 #'
 #' @return data.frame
 #'
 #' @export 
+#' @examples
+#' setDemographyData(Args)
 
-setDemography <- function(Args) {
-  dem <- getDemographyData(Args$inFile$demfile)
-  ind <- getIndDat(Args$inFile$indfile)
-  dat <- left_join(dem, ind, by="IIntID")
-  dat <- subset(dat, Year %in% Args$Years)
-  dat <- mutate(dat, 
-    AgeAtVisit = round(as.numeric((ObservationStart - DateOfBirth)/365.25)))
-  dat <- setAge(dat, Args)
-  dat
+setDemographyData <- function(Args) {
+  dat <- getDemographyData(Args$inFiles$demfile)
+  setData(dat)
 }

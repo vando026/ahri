@@ -18,9 +18,9 @@ Collect all estimates into single matrix
 \examples{
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
-idat <- getBirthDate(Args$inFiles$epifile)
+bdat <- getBirthDate(Args$inFiles$epifile)
 dat <- mclapply(seq(Args$nSim), 
-  function(i) calcInc(rtdat, idat, Args), 
+  function(i) calcInc(rtdat, bdat, Args), 
   mc.cores=Args$mcores)
 cdat <- combineEst(dat) 
 }

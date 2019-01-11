@@ -3,7 +3,7 @@
 #' @description Function that imputes sero date, splits at censoring date and set the age.
 #' 
 #' @param rtdat dataset from \code{\link{getRTData}}. 
-#' @param idat dataset from \code{\link{getBirthDate}}. 
+#' @param bdat dataset from \code{\link{getBirthDate}}. 
 #' @param Args takes list from \code{\link{setArgs}}.
 #'
 #' @return data.frame
@@ -13,13 +13,13 @@
 #' @examples
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
-#' getIncData(rtdat, idat, Args)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' getIncData(rtdat, bdat, Args)
 
-getIncData <- function(rtdat, idat, Args) {
+getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setData(edat, idat,  Args)
+  setData(edat, bdat,  Args)
 }
 
 #' @title AggFunc
@@ -38,8 +38,8 @@ getIncData <- function(rtdat, idat, Args) {
 #' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
-#' ydat <- getIncData(rtdat, idat, Args)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' ydat <- getIncData(rtdat, bdat, Args)
 #' inc <- AggByYear(ydat)
 
 AggFunc <- function(RHS) {
@@ -103,7 +103,7 @@ doPoisAge <- function(dat) {
 #' 
 #' @param rtdat Dataset from \code{\link{getRTData}}.
 #' 
-#' @param idat Dataset from \code{\link{getBirthDate}}.
+#' @param bdat Dataset from \code{\link{getBirthDate}}.
 #' 
 #' @param Args provide arguments from \code{\link{setArgs}}.
 #' 
@@ -114,11 +114,11 @@ doPoisAge <- function(dat) {
 #' @examples
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
-#' calcInc(rtdat, idat, Args)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' calcInc(rtdat, bdat, Args)
 
-calcInc <- function(rtdat, idat, Args) {
-  dat <- getIncData(rtdat, idat, Args)
+calcInc <- function(rtdat, bdat, Args) {
+  dat <- getIncData(rtdat, bdat, Args)
   nm <- c("Year", "Age", "poisYear", "poisAge")
   funs <- list(AggByYear, AggByAge, doPoisYear, doPoisAge)
   lapply(setNames(funs, nm), function(f) f(dat))
@@ -137,9 +137,9 @@ calcInc <- function(rtdat, idat, Args) {
 #' @examples
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
 #' dat <- mclapply(seq(Args$nSim), 
-#'   function(i) calcInc(rtdat, idat, Args), 
+#'   function(i) calcInc(rtdat, bdat, Args), 
 #'   mc.cores=Args$mcores)
 #' cdat <- combineEst(dat) 
 
@@ -175,9 +175,9 @@ combineEst <-  function(dat) {
 #' Args <- setArgs(nSim=10)
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
 #' dat <- mclapply(seq(Args$nSim), 
-#'   function(i) calcInc(rtdat, idat, Args))
+#'   function(i) calcInc(rtdat, bdat, Args))
 #' cdat <- combineEst(dat)
 #' getCrudeRate(cdat)
 
@@ -237,9 +237,9 @@ calcRubin <- function(est, se) {
 #' Args <- setArgs(nSim=10)
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' idat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
 #' dat <- mclapply(seq(Args$nSim), 
-#'   function(i) calcInc(rtdat, idat, Args))
+#'   function(i) calcInc(rtdat, bdat, Args))
 #' cdat <- combineEst(dat)
 #' geteAdjRate(cdat)
 
@@ -274,9 +274,9 @@ getAdjRate <- function(dat) {
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  idat <- getBirthDate(Args$inFiles$epifile)
+  bdat <- getBirthDate(Args$inFiles$epifile)
   dat <- mclapply(seq(Args$nSim), 
-    function(i) {cat(i, ""); calcInc(rtdat, idat, Args)},
+    function(i) {cat(i, ""); calcInc(rtdat, bdat, Args)},
     mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
   crude <- getCrudeRate(cdat[1:4])

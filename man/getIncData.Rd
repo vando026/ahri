@@ -4,12 +4,12 @@
 \alias{getIncData}
 \title{getIncData}
 \usage{
-getIncData(rtdat, idat, Args)
+getIncData(rtdat, bdat, Args)
 }
 \arguments{
 \item{rtdat}{dataset from \code{\link{getRTData}}.}
 
-\item{idat}{dataset from \code{\link{getBirthDate}}.}
+\item{bdat}{dataset from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes list from \code{\link{setArgs}}.}
 }
@@ -22,6 +22,6 @@ Function that imputes sero date, splits at censoring date and set the age.
 \examples{
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
-idat <- getBirthDate(Args$inFiles$epifile)
-getIncData(rtdat, idat, Args)
+bdat <- getBirthDate(Args$inFiles$epifile)
+getIncData(rtdat, bdat, Args)
 }
