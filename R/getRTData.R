@@ -52,7 +52,7 @@ getRTData <- function(dat,
     if(any(with(testPos, late_neg >= early_pos))) 
         stop("Some late_neg >= early_pos") 
   }
-  testDates(rtdat)
+  # testDates(rtdat)
   # Make for split episodes later rather than in loop to save time
   rtdat <- rename(rtdat, obs_start = early_neg)
   vars <- c("obs_start", "late_neg", "early_pos")

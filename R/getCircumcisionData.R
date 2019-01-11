@@ -1,61 +1,58 @@
 #' @title getCircumcisionData
 #' 
-#' @description  gets Circumcision data from MGH AHRI datasets. IsCircumcised: 1=yes;
-#' 2=no. WhenCircumcised: 1=as_child,2=as_adult,3=as_infant,>4 = NA.
+#' @description  gets Circumcision data from MGH AHRI datasets. 
 #' 
-#' @param inFile arguments from \code{\link{setArgs}} to pass to \code{getHIV} function
+#' @param inFile filepath to dataset, default is \code{getFiles()$mghfile}.
 #' 
 #' @export
-#' 
-#' @importFrom readr read_csv cols_only
 
 getCircumcisionData <- function(
-  inFile=Args$inFiles$mghfile) {
-  cdat <- read_csv(inFile, 
-    col_types=cols_only(
+  inFile=getFiles()$mghfile) {
+  cdat <- readr::read_csv(inFile, 
+    col_types=readr::cols_only(
       IIntId="i",
       VisitDate="D",
       AgeAtVisit="i",
       IsCircumcised="i"))
   names(cdat)[names(cdat)=="IIntId"] <- "IIntID"
   cdat <- cdat[cdat$IsCircumcised %in% c(1,2), ]
-  cdat$IsCircumcised <- 
-    ifelse(cdat$IsCircumcised==1, 1, 0)
+  cdat$IsCircumcised <- as.numeric(cdat$IsCircumcised==1)
   cdat$Year <- as.integer(format(cdat$VisitDate, "%Y"))
   cdat[, !(names(cdat) %in% "VisitDate")]
 }
 
-#' @title addCircumcisionData
+#' @title getCircum
 #' 
 #' @description gets Circumcision data from MGH AHRI datasets.
 #' 
+#' @param Keep keeps or drops circumcised men.
+#' 
 #' @param dat dataset with episodes.
 #' 
-#' @param cdat circumcision dataset.
-#' 
-#' @param mergeBy merge by IIntID or IIntID/Year.
+#' @param Args arguments. 
 #' 
 #' @export
-#' 
-#' @importFrom zoo na.locf  
-#' @import dplyr
+#' @examples
+#' keepCircum <- getCircum(Keep=1)
+#' dropCircum <- getCircum(Keep=0)
+#' keepCircum(dat, Args)
 
-addCircumcisionData <- function(dat, cdat, 
-  mergeBy=c("IIntID", "Year"), Args) {
-
-  dat <- left_join(dat, cdat, by=mergeBy)
-
-  dat1 <- group_by(dat, IIntID) %>% mutate(
-    CircumNo = ifelse(IsCircumcised==0, 0, NA),
-    Circumcised = ifelse(IsCircumcised==1, 1, NA))
-
-  dat2 <- group_by(dat1, IIntID) %>%
-    arrange(IIntID, Year) %>% mutate(
-      CircumNo = na.locf(CircumNo, fromLast=TRUE, na.rm=FALSE),
-      Circumcised = na.locf(Circumcised, na.rm=FALSE))
-
-  dat2$Circumcised[with(dat2, is.na(Circumcised) & CircumNo==0)] <- 0
-  dat2[, !(names(dat2) %in% c("CircumNo", "IsCircumcised"))]
+getCircum <- function(Keep) {
+  function(dat, Args=eval.parent(quote(Args))) {
+  if("Fem" %in% names(Args$Age)) stop("No females allowed")
+  cdat <- getCircumcisionData(Args$inFiles$mghfile)
+  cdat <- filter(cdat, IsCircumcised==1)
+  cdat <- group_by(cdat, IIntID) %>% 
+    summarize(YearCircum = min(Year))
+  dat <- left_join(dat, cdat, by="IIntID")
+  dat = mutate(dat,
+    IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)))
+  dat[, !(names(dat) %in% c("YearCircum"))]
+  dat <- filter(dat, IsCircum==Keep)
+  dat
+  }
 }
 
+keepCircum <- getCircum(Keep=1)
+dropCircum <- getCircum(Keep=0)
 

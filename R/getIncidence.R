@@ -19,7 +19,7 @@
 getIncData <- function(rtdat, idat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setAgeYear(edat, idat,  Args)
+  setData(edat, idat,  Args)
 }
 
 #' @title AggFunc
@@ -48,6 +48,7 @@ AggFunc <- function(RHS) {
       "cbind(sero_event, pyears=Time/365.25) ~ ", RHS))
     out <- aggregate(F1, data=dat, FUN=sum)
     rownames(out) <- out[[1]]
+    print(out)
     out
   }
 }
@@ -186,9 +187,9 @@ combineEst <-  function(dat) {
 #' getCrudeRate(cdat)
 
 getCrudeRate <- function(dat) {
-  out <- sapply(dat, rowMeans)
-  Year <- data.frame(sero=out[[1]], pyears=out[[2]])
-  Age <- data.frame(sero=out[[3]], pyears=out[[4]])
+  out <- lapply(dat, rowMeans)
+  Year <- data.frame(sero=out$getSero, pyears=out$getPYear)
+  Age <- data.frame(sero=out$getAgeSero, pyears=out$getAgePYear)
   getInc <- function(dat)  dat$sero/dat$pyear * 100 
   lapply(list(Year=Year, Age=Age), 
     function(x) {x$rate = getInc(x); x})

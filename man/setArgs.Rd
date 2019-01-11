@@ -7,7 +7,7 @@
 setArgs(inFiles = getFiles(), Years = c(2004:2017), Age = list(All =
   c(15, 54)), AgeCat = NULL, AgeBy = 5, ResRule = 0, nSim = 500,
   imputeMethod = imputeRandomPoint, aname = "filename",
-  printout = FALSE, mcores = 1, MoreArgs = NULL)
+  printout = FALSE, mcores = 1, setFun = identity, MoreArgs = NULL)
 }
 \arguments{
 \item{inFiles}{list of files to pass to function.}
@@ -31,6 +31,8 @@ setArgs(inFiles = getFiles(), Years = c(2004:2017), Age = list(All =
 
 \item{mcores}{number of cores to use for parallel package (used in
 \code{\link{getIncidence}}).}
+
+\item{setFun}{a function used by \code{\link{setData}} by which the data can be further subset.}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
 }

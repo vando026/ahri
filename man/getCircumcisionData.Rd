@@ -4,12 +4,11 @@
 \alias{getCircumcisionData}
 \title{getCircumcisionData}
 \usage{
-getCircumcisionData(inFile = Args$inFiles$mghfile)
+getCircumcisionData(inFile = getFiles()$mghfile)
 }
 \arguments{
-\item{inFile}{arguments from \code{\link{setArgs}} to pass to \code{getHIV} function}
+\item{inFile}{filepath to dataset, default is \code{getFiles()$mghfile}.}
 }
 \description{
-gets Circumcision data from MGH AHRI datasets. IsCircumcised: 1=yes;
-2=no. WhenCircumcised: 1=as_child,2=as_adult,3=as_infant,>4 = NA.
+gets Circumcision data from MGH AHRI datasets.
 }
