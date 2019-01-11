@@ -48,7 +48,6 @@ AggFunc <- function(RHS) {
       "cbind(sero_event, pyears=Time/365.25) ~ ", RHS))
     out <- aggregate(F1, data=dat, FUN=sum)
     rownames(out) <- out[[1]]
-    print(out)
     out
   }
 }
@@ -145,15 +144,11 @@ calcInc <- function(rtdat, idat, Args) {
 #' cdat <- combineEst(dat) 
 
 combineEst <-  function(dat) {
-  getFunc <- function(dat) {
-    function(obj) {
-      out <- sapply(seq(length(dat)),
-        function(i) dat[[i]][[obj]])
-      rownames(out) <- rownames(dat[[1]][[obj[1]]])
-      out
-    }
+  getEst <- function(dat, obj) {
+    out <- sapply(dat, "[[", obj)
+    rownames(out) <- rownames(dat[[1]][[obj[1]]])
+    out
   }
-  getEst <- getFunc(dat)
   nms <- list(
     getSero = c("Year", "sero_event"),
     getPYear = c("Year", "pyears"),
@@ -163,7 +158,7 @@ combineEst <-  function(dat) {
     getPoisYearSE = c("poisYear", "se.fit"),
     getPoisAgeEst = c("poisAge", "fit"),
     getPoisAgeSE = c("poisAge", "se.fit"))
-  lapply(nms, getEst)
+  lapply(nms, function(x) getEst(dat, x))
 }
 
 #' @title getCrudeRate
