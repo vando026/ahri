@@ -13,5 +13,5 @@ getDemographyData(inFile = getFiles()$demfile)
 data.frame
 }
 \description{
-get AHRI demography dataset
+get AHRI demography dataset (old dataset).
 }

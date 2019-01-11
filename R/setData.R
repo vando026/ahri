@@ -84,13 +84,8 @@ setData <- function(dat,
   if(!("AgeAtVisit" %in% names(dat))) {
     dat <- left_join(dat, bdat, by="IIntID")
     dat <- filter(dat, !is.na(DateOfBirth))
-    if("obs_end" %in% names(dat)) {
     dat <- mutate(dat, AgeAtVisit = floor(as.numeric(
       difftime(obs_end, DateOfBirth, units='weeks'))/52.25))
-    } else if ("ObservationStart" %in% names(dat)) {
-    dat <- mutate(dat, AgeAtVisit = floor(as.numeric(
-      difftime(ObservationStart, DateOfBirth, units='weeks'))/52.25))
-    }
     dat <- select(dat, -(DateOfBirth))
   }
   # Filter by Age limits

@@ -1,26 +1,3 @@
-#' @title dropTasPData
-#' 
-#' @description  Function to drop individuals who tested in TasP areas.
-#' 
-#' @param dat A dataset.
-#' 
-#' @return data.frame
-#'
-#' @export 
-
-dropTasPData <- function(dat, inFile=inFiles$pipfile) {
-  pipdat <- readPIPData(inFile)
-  pipdat <- select(pipdat, BSIntID, PIPSA)
-  dat <- left_join(dat, pipdat, by="BSIntID")
-  dat <- mutate(dat, Year = format(VisitDate, "%Y"))
-  # keep if miss BS prior to 2017
-  dat <- filter(dat, PIPSA %in% c("S", NA)) 
-  # drop if NA in 2017
-  dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
-  dat <- select(dat, -c(Year, PIPSA))
-  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
-  dat
-}
 
 #' @title readHIVData
 #' 
@@ -45,7 +22,9 @@ readHIVData <- function(
       Sex="i",
       AgeAtVisit="i"))
   hiv <- filter(hiv, Sex %in% c(1,2))
-  hiv <- mutate(hiv, Female=as.integer(ifelse(Sex==2, 1, 0)))
+  hiv <- mutate(hiv,
+    Female=as.integer(ifelse(Sex==2, 1, 0)),
+    Year = format(VisitDate, "%Y"))
   hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
    select(-Sex) %>% arrange(IIntID, VisitDate)
   if (dropTasP==TRUE) 
@@ -77,3 +56,4 @@ getHIV <- function(Args) {
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
   hiv 
 }
+

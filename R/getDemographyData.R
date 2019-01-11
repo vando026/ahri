@@ -1,6 +1,6 @@
 #' @title getDemographyData
 #' 
-#' @description  get AHRI demography dataset
+#' @description  get AHRI demography dataset (old dataset). 
 #' 
 #' @param inFile path to data, see \code{\link{getFiles}}.
 #'
@@ -50,3 +50,6 @@ setDemographyData <- function(Args) {
   dat <- getDemographyData(Args$inFiles$demfile)
   setData(dat)
 }
+
+
+

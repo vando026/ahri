@@ -22,16 +22,17 @@ readEpisodes <- function(
   dat <- read_dta(inFile) 
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
-    ExpYear=Year, ExpDays=Days,
+    Year, ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
-    Female=Sex, Age, Resident,
+    Female=Sex, AgeAtVisit=Age, Resident,
     EarliestARTInitDate, DoB, DoD)
   dat <- filter(dat, Female %in% c(1, 2))
   dat <- mutate(dat, 
     Female=as.numeric(Female==2),
     IIntID=as.integer(IIntID))
   dat <- arrange(dat, IIntID, ObservationStart)
+  attributes(dat$BSIntID) <- NULL
   save(dat, file=file.path(outFile))
 }
 
@@ -55,25 +56,72 @@ getEpisodes <- function(inFile=getFiles()$epifile) {
   dat
 }
 
+#' @title dropTasPData
+#' 
+#' @description  Function to drop individuals who tested in TasP areas.
+#' 
+#' @param dat A dataset.
+#' 
+#' @return data.frame
+#'
+#' @export 
+
+dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
+  pipdat <- readPIPData(inFile)
+  pipdat <- select(pipdat, BSIntID, PIPSA)
+  dat <- left_join(dat, pipdat, by="BSIntID")
+  # keep if miss BS prior to 2017
+  dat <- filter(dat, PIPSA %in% c("S", NA)) 
+  # drop if NA in 2017
+  dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
+  dat <- select(dat, -c(PIPSA))
+  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
+  dat
+}
 
 #' @title setEpisodes
 #' 
-#' @description  set episodes data according to Args.
+#' @description  set episodes data according to Args and drops TasP Areas if needed.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param dropTasP default is to drop TasP areas.
 #' 
 #' @return data.frame
 #'
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs()
-#' setEpisodes(Args)
+#' setEpisodes(setArgs())
 
-setEpisodes <- function(Args) {
+setEpisodes <- function(Args, dropTasP=TRUE) {
   dat <- getEpisodes(Args$inFiles$epifile)
-  dat <- filter(dat, ExpYear %in% Args$Years)
+  dat <- setData(dat)
+  if (dropTasP==TRUE) 
+    dat <- dropTasPData(dat, Args$inFiles$pipfile)
   dat
 }
+
+
+#' @title getDemResident
+#' 
+#' @description Gets the total number of individuals from the Episodes dataset. 
+#' 
+#' @param  Args 
+#' @param  perc Percentage time spent in DSA to be included in analysis.  
+#' 
+#' @return  data.frame
+#'
+#' @export 
+
+getDemResident <- function(Args, perc=0.5) {
+  dat <- setEpisodes(Args, dropTasP=TRUE)
+  dat <- filter(dat, Resident==1)
+  gdat <- group_by(dat, IIntID, Year) %>% 
+    summarize(Perc = sum(ExpDays)/366)
+  dat <- left_join(dat, gdat, by=c("IIntID", "Year"))
+  dat <- filter(dat, Perc>=perc)
+  dat
+}
+
 
 

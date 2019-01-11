@@ -1,23 +1,3 @@
-#' @title getHIVPop
-#' 
-#' @description Gets the total number of HIV- and HIV+ participants.
-#' 
-#' @param  Args
-#' 
-#' @return list 
-#'
-#' @export 
-
-getHIVPop <- function(Args) {
-  hiv <- getHIV(Args)
-  hiv <- dplyr::filter(hiv, Year %in% Args$Years)
-  neg <- dplyr::filter(hiv, HIVResult==0) %>%
-    group_by(Year) %>% summarize(n=n())
-  pos <- dplyr::filter(hiv, HIVResult==1) %>%
-    group_by(Year) %>% summarize(n=n())
-  list(hiv_neg=neg, hiv_pos=pos)
-}
-
 
 #' @title getHIVMiss
 #' 
