@@ -78,8 +78,6 @@ getBirthDate <- function(
 setData <- function(dat,
   bdat=getBirthDate(),
   Args=eval.parent(quote(Args))) {
-  # Keep sex
-  dat <- filter(dat, Female %in% Args$FemCode)
   # For specific datasets
   if(!("AgeAtVisit" %in% names(dat))) {
     dat <- left_join(dat, bdat, by="IIntID")
@@ -88,6 +86,8 @@ setData <- function(dat,
       difftime(obs_end, DateOfBirth, units='weeks'))/52.25))
     dat <- select(dat, -(DateOfBirth))
   }
+  # Keep sex
+  dat <- filter(dat, Female %in% Args$FemCode)
   # Filter by Age limits
   dat <- setAge(dat, Args)
   # Make Categories

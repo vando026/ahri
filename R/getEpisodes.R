@@ -34,6 +34,7 @@ readEpisodes <- function(
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
   save(dat, file=file.path(outFile))
+  dat
 }
 
 
@@ -104,22 +105,22 @@ setEpisodes <- function(Args, dropTasP=TRUE) {
 
 #' @title getDemResident
 #' 
-#' @description Gets the total number of individuals from the Episodes dataset. 
+#' @description Gets the total number of residents from the Episodes dataset. 
 #' 
 #' @param  Args 
-#' @param  perc Percentage time spent in DSA to be included in analysis.  
+#' @param  prop proportion time spent in DSA to be included in analysis.  
 #' 
 #' @return  data.frame
 #'
 #' @export 
 
-getDemResident <- function(Args, perc=0.5) {
+getDemResident <- function(Args, prop=0.5) {
   dat <- setEpisodes(Args, dropTasP=TRUE)
   dat <- filter(dat, Resident==1)
   gdat <- group_by(dat, IIntID, Year) %>% 
     summarize(Perc = sum(ExpDays)/366)
   dat <- left_join(dat, gdat, by=c("IIntID", "Year"))
-  dat <- filter(dat, Perc>=perc)
+  dat <- filter(dat, Perc>=prop)
   dat
 }
 

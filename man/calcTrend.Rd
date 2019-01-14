@@ -14,7 +14,7 @@ calcTrend(dat, wdat = NULL, Formula = "HIVResult ~ Year + AgeCat",
 \item{wdat}{from \link{\code{getHIVPop}}.}
 
 \item{Formula}{string argument for aggregate function; terms and operators must be
-separated by white space}
+separated by white space.}
 
 \item{calcBy}{variable(s) to calc the trend by.}
 
@@ -25,7 +25,7 @@ typically \code{AgeCat} variable.}
 
 \item{fmt}{convert to percentage and round: TRUE/FALSE.}
 
-\item{stpopVar}{name of standard population column in \code{wdat}}
+\item{stpopVar}{name of standard population column in \code{wdat}.}
 }
 \value{
 data.frame

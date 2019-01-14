@@ -57,3 +57,16 @@ getHIV <- function(Args) {
   hiv 
 }
 
+#' @title setHIV
+#' 
+#' @description set HIV data according parameters of Args. 
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @return 
+#'
+#' @export 
+setHIV <- function(Args) {
+  dat <- getHIV(Args)
+  setData(dat)
+}

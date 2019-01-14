@@ -30,9 +30,9 @@ getPopAgg <- function(dat,
 #' @param wdat from \link{\code{getHIVPop}}.
 #'
 #' @param Formula string argument for aggregate function; terms and operators must be
-#' separated by white space
+#' separated by white space.
 #'
-#' @param stpopVar name of standard population column in \code{wdat}
+#' @param stpopVar name of standard population column in \code{wdat}.
 #'
 #' @param mergeVars variables with which to merge \code{dat} and \code{wdat} datasets,
 #' typically \code{AgeCat} variable. 

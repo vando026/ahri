@@ -10,7 +10,7 @@
 #'
 #' @export
 
-getARTDates <- function(inFile=Args$inFiles$epifile) {
+getARTDates <- function(inFile=getFiles()$epifile) {
   dat <- getEpisodes(inFile)
   dat <- select(dat, IIntID, DateOfInitiation=EarliestARTInitDate)
   dat <- filter(dat, !is.na(DateOfInitiation))
@@ -21,7 +21,7 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
   dat
 }
 
-#' @title ARTCov
+#' @title calcARTCov
 #' 
 #' @description  Calculate ART coverage for AHRI data.
 #' 
@@ -42,12 +42,11 @@ getARTDates <- function(inFile=Args$inFiles$epifile) {
 #' 
 #' @export
 
-ARTCov <- function(Args, 
+calcARTCov <- function(Args, 
   Formula="OnART ~ Year",
   cutoff=9) {
-  # Get HIV data 
+  # Get HIV+ data only
   hdat <- getHIV(Args)
-  earlyPos <- getDatesMax(hdat, "HIVPositive", "early_pos")
   hpos <- filter(hdat, HIVResult==1) %>% 
     select(IIntID, Year, Female, AgeAtVisit, VisitDate, HIVResult) 
   # Merge with ART data
@@ -59,15 +58,8 @@ ARTCov <- function(Args,
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
     ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  adat <- setAge(adat, Args)
-  adat <- filter(adat, Year %in% Args$Years)
-  out <- do.call('data.frame', 
-    aggregate(as.formula(Formula), data=adat,
-    FUN=function(x) c(Count=sum(x), Total=length(x))))
-  out <- binom.exact(out[, "OnART.Count"], out[, "OnART.Total"])[, 1:5]
-  out[c(3:5)] <- lapply(out[c(3:5)], function(x) round(x*100, 2))
-  colnames(out) <- c("OnArt", "HIV+", "Prop", "lci", "uci")
-  out$Year <- Args$Years 
+  adat <- setData(adat, Args)
+  out <- calcTrend(adat, Formula=Formula)
   out
 }
 

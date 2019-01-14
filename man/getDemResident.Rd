@@ -4,16 +4,16 @@
 \alias{getDemResident}
 \title{getDemResident}
 \usage{
-getDemResident(Args, perc = 0.5)
+getDemResident(Args, prop = 0.5)
 }
 \arguments{
 \item{Args}{}
 
-\item{perc}{Percentage time spent in DSA to be included in analysis.}
+\item{prop}{proportion time spent in DSA to be included in analysis.}
 }
 \value{
 data.frame
 }
 \description{
-Gets the total number of individuals from the Episodes dataset.
+Gets the total number of residents from the Episodes dataset.
 }
