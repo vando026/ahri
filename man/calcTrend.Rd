@@ -11,7 +11,7 @@ calcTrend(dat, wdat = NULL, Formula = "HIVResult ~ Year + AgeCat",
 \arguments{
 \item{dat}{dataset for computing trends.}
 
-\item{wdat}{from \link{\code{getHIVPop}}.}
+\item{wdat}{from \code{\link{getPopAgg}}.}
 
 \item{Formula}{string argument for aggregate function; terms and operators must be
 separated by white space.}
@@ -24,16 +24,10 @@ typically \code{AgeCat} variable.}
 \item{binom}{use binomial exact formula to calculate CIs: TRUE/FALSE.}
 
 \item{fmt}{convert to percentage and round: TRUE/FALSE.}
-
-\item{stpopVar}{name of standard population column in \code{wdat}.}
 }
 \value{
 data.frame
 }
 \description{
-Multipurpose function to calc trends  over time.
-}
-\examples{
-Args <- setArgs()
-hiv=getHIV(Args)
+Multipurpose function to calc trends over time.
 }

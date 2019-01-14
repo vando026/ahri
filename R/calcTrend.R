@@ -23,16 +23,14 @@ getPopAgg <- function(dat,
 
 #' @title calcTrend
 #' 
-#' @description  Multipurpose function to calc trends  over time.
+#' @description  Multipurpose function to calc trends over time.
 #' 
 #' @param dat dataset for computing trends. 
 #'
-#' @param wdat from \link{\code{getHIVPop}}.
+#' @param wdat from \code{\link{getPopAgg}}.
 #'
 #' @param Formula string argument for aggregate function; terms and operators must be
 #' separated by white space.
-#'
-#' @param stpopVar name of standard population column in \code{wdat}.
 #'
 #' @param mergeVars variables with which to merge \code{dat} and \code{wdat} datasets,
 #' typically \code{AgeCat} variable. 
@@ -46,10 +44,6 @@ getPopAgg <- function(dat,
 #' @return data.frame
 #'
 #' @export
-#' 
-#' @examples
-#' Args <- setArgs()
-#' hiv=getHIV(Args)
 
 calcTrend <- function(
   dat, wdat=NULL,
