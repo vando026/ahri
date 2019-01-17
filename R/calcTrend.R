@@ -51,27 +51,28 @@ calcTrend <- function(
   calcBy="Year", mergeVars=c("AgeCat"),
   binom=FALSE, fmt=TRUE, ...) {
   Input <- strsplit(Formula,' ')[[1]][1]
-  adat <- do.call('data.frame', 
+  dat <- do.call('data.frame', 
     aggregate(as.formula(Formula), data=dat,
     FUN=function(x) c(Count=sum(x), Total=length(x))))
   if (!is.null(wdat)) 
-    adat <- merge(adat, wdat, by=mergeVars) 
-  adat <- split(adat, adat[calcBy])
+    dat <- merge(dat, wdat, by=mergeVars) 
+  adat <- split(dat, dat[calcBy])
   Count <- paste0(Input, '.Count')
   Total <- paste0(Input, '.Total')
   stpopVar <- ifelse(!is.null(wdat), "IIntID", Total)
   if (binom==FALSE) {
-    adat <- lapply(adat, function(x) 
+    edat <- lapply(adat, function(x) 
       epitools::ageadjust.direct(x[Count], x[Total], 
       stdpop=x[stpopVar]))
   } else {
-    adat <- lapply(adat, function(x) 
+    edat <- lapply(adat, function(x) 
       epitools::binom.exact(x[, Count], x[, Total]))
   }
-  adat <- do.call("rbind", adat)
+  edat <- do.call("rbind", edat)
+  edat <- cbind(N=dat[, Count], edat)
   if (fmt==TRUE) 
-    adat <- round(adat*100, 2)
-  data.frame(adat)
+    edat <- round(edat*100, 2)
+  data.frame(edat)
 }
 
 
