@@ -9,9 +9,9 @@ getMortalityData(Args, startVar = "HIVPositive")
 \arguments{
 \item{Args}{see \code{\link{setArgs}}.}
 
-\item{startDate}{string variable at which person-time starts. Use early_pos
-for HIV-positive all-cause mortality, otherwise obs_start (earliest HIV-neg) for all-cause
-mortality.}
+\item{startDate}{string variable at which person-time starts. Use 
+HIVPositive for AIDS-related mortality, otherwise only those with an HIVNegative test
+or those with the EarliestTest from HIVSurveillance. Or use ObservationStart from the Episodes dataset.}
 }
 \value{
 data.frame

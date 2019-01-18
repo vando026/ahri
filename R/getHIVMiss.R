@@ -23,14 +23,13 @@ getHIVMiss <- function(Args) {
   hdat <- dplyr::mutate(hdat, Female=as.integer(ifelse(Sex==2, 1, 0)))
   hdat <- dplyr::rename(hdat, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
      select(-Sex) 
-  hdat <- dropTasPData(hdat, Args$inFiles$pipfile)
   # Get the bounds for obs period
-  hdat <- dplyr::mutate(hdat, Year=as.integer(format(VisitDate, "%Y"))) %>%
-    filter(Year %in% Args$Years)
+  hdat <- dplyr::mutate(hdat, Year=as.integer(format(VisitDate, "%Y")))
+  hdat <- dropTasPData(hdat, Args$inFiles$pipfile)
   hdat <- dplyr::arrange(hdat, IIntID, VisitDate)
-  hdat <- setAge(hdat, Args)
+  hdat <- setData(hdat, Args)
   # Keep sex
-  hdat <- dplyr::filter(hdat, Female %in% Args$FemCode)
+  # hdat <- dplyr::filter(hdat, Female %in% Args$FemCode)
   # Only legible for testing
   hdat <- dplyr::filter(hdat, HIVRefused %in% c(1, 2)) 
 

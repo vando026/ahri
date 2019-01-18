@@ -3,9 +3,9 @@
 #' @description  gets mortality data.
 #' 
 #' @param Args see \code{\link{setArgs}}.
-#' @param startDate string variable at which person-time starts. Use early_pos
-#' for HIV-positive all-cause mortality, otherwise obs_start (earliest HIV-neg) for all-cause
-#' mortality.
+#' @param startDate string variable at which person-time starts. Use 
+#' HIVPositive for AIDS-related mortality, otherwise only those with an HIVNegative test
+#' or those with the EarliestTest from HIVSurveillance. Or use ObservationStart from the Episodes dataset. 
 #' 
 #' @return data.frame
 #'
@@ -14,28 +14,31 @@
 
 
 getMortalityData <- function(Args, startVar="HIVPositive") {
-  # Get start date
-  hiv <- getHIV(Args) %>% select(
-    IIntID, obs_start = matches("HIVPositive")) %>%
-    filter(is.finite(obs_start))
-  
-  # Get earliest obs start
-  startdat <- getDatesMin(hiv, "obs_start", "obs_start")
-
-  # Get all death dates
+  #
   edat <- getEpisodes(Args$inFiles$epifile)
+  # Get start date
+  if (startVar=="ObservationStart") {
+    dat <- edat
+  } else {
+    dat <- getHIV(Args)
+    dat <- mutate(dat, EarliestTest = pmin(HIVNegative, HIVPositive, na.rm=TRUE))
+  }
+  dat <- select(dat, IIntID, obs_start = matches(startVar)) %>%
+    filter(is.finite(obs_start))
+  startdat <- getDatesMin(dat, "obs_start", "obs_start")
+  #
+  # Get all death dates
   dodat  <- select(edat, IIntID, DoD) %>% 
     filter(is.finite(DoD)) %>% 
     distinct(IIntID, .keep_all=TRUE)
-
   # Get last observation date
   enddat <- getDatesMax(edat, "ObservationEnd", "end_date")
-
   # Make obs_end as death or last obs date
   enddat <- left_join(enddat, dodat, by="IIntID")
   enddat <- mutate(enddat,
     obs_end = ifelse(is.finite(DoD), DoD, end_date),
     event = as.numeric(is.finite(DoD)))
+  #
   # merge obs_start and obs_end dates 
   sdat <- left_join(startdat, enddat, by="IIntID") %>% 
     select(IIntID, obs_start, obs_end, event)
