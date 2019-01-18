@@ -13,15 +13,16 @@
 #' @export 
 
 
-getMortalityData <- function(Args, startVar="HIVPositive") {
+getMortalityData <- function(Args, 
+  startVar="HIVPositive", dropHIVPos=FALSE) {
   #
   edat <- getEpisodes(Args$inFiles$epifile)
+  hiv <- getHIV(Args)
   # Get start date
   if (startVar=="ObservationStart") {
     dat <- edat
   } else {
-    dat <- getHIV(Args)
-    dat <- mutate(dat, EarliestTest = pmin(HIVNegative, HIVPositive, na.rm=TRUE))
+    dat <- mutate(hiv, EarliestTest = pmin(HIVNegative, HIVPositive, na.rm=TRUE))
   }
   dat <- select(dat, IIntID, obs_start = matches(startVar)) %>%
     filter(is.finite(obs_start))
@@ -43,6 +44,13 @@ getMortalityData <- function(Args, startVar="HIVPositive") {
   sdat <- left_join(startdat, enddat, by="IIntID") %>% 
     select(IIntID, obs_start, obs_end, event)
   sdat <- filter(sdat, obs_end>obs_start)
+  # Only HIV-negative mortality
+  if(startVar=="ObservationStart" & dropHIVPos) {
+     HIVPos <-  group_by(hiv, IIntID) %>% 
+      summarize(HIVResult = max(HIVResult, na.rm=TRUE)) 
+     sdat <- left_join(sdat, HIVPos, by="IIntID")
+     sdat <- filter(sdat, HIVResult %in% c(NA, 0))
+  }
   # split data
   tdat <- splitData2(sdat)
   bdat <- getBirthDate(Args$inFiles$epifile, addVars="Female") 
