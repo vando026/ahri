@@ -69,10 +69,9 @@ calcTrend <- function(
       epitools::binom.exact(x[, Count], x[, Total]))
   }
   edat <- do.call("rbind", edat)
-  edat <- cbind(N=dat[, Count], edat)
-  if (fmt==TRUE) 
-    edat <- round(edat*100, 2)
-  data.frame(edat)
+  if (fmt==TRUE) edat <- round(edat*100, 2)
+  N <- tapply(dat[, Total], dat[, calcBy], sum)
+  data.frame(cbind(N=N, edat))
 }
 
 
