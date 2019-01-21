@@ -4,7 +4,7 @@
 \alias{getMortalityData}
 \title{getMortalityData}
 \usage{
-getMortalityData(Args, startVar = "HIVPositive")
+getMortalityData(Args, startVar = "HIVPositive", dropHIVPos = FALSE)
 }
 \arguments{
 \item{Args}{see \code{\link{setArgs}}.}

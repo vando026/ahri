@@ -1,9 +1,8 @@
-
 #' @title getHIVMiss
 #' 
 #' @description  Calculates missed HIV test dates by year.
 #' 
-#' @param Args 
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
 #' @return data.frame
 #'
@@ -57,13 +56,14 @@ getHIVMiss <- function(Args) {
 #' 
 #' @description  Gets missed test dates but pulls each HIV surveillance dataset by year.
 #' 
-#' @param getFiles
+#' @param Root The root path to folder containing HIV surveillance datasets. 
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
 #' @return 
 #'
 #' @export 
 
-getHIVMiss2 <- function(Root=setRoot()) {
+getHIVMiss2 <- function(Args, Root=setRoot()) {
   filep <- file.path(Root, "Source/HIVSurveillance")
   files <- list.files(filep, pattern=".csv$")
   getData <- function(ifile) {
@@ -71,15 +71,11 @@ getHIVMiss2 <- function(Root=setRoot()) {
       col_types=cols_only(
         IIntId="i",
         VisitDate="D",
-        FormRefused="i",
         HIVRefused="i"))
-    dat <- filter(dat, FormRefused %in% c(1, 2))
-    # FormRefused = Yes = 1
-    dat <- mutate(dat, 
-      FormRefused = as.numeric(FormRefused==1))
-    dat$HIVRefused[with(dat, FormRefused==1 & HIVRefused==97)] <- 1
+
     dat <- filter(dat, HIVRefused %in% c(1, 2))
     dat <- mutate(dat, HIVRefused = as.numeric(HIVRefused==1))
+    browser()
     yr <- unique(format(dat$VisitDate, "%Y")) 
     # print(with(dat, table(FormRefused, HIVRefused)))
     # print(with(dat, table(FormRefused, HIVRefused)))

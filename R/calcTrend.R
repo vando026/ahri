@@ -1,4 +1,4 @@
-#' @title getPopAgg
+#' @title getAggregate
 #' 
 #' @description Gets aggregated numbers by category.
 #' 
@@ -12,8 +12,8 @@
 #' Args <- setArgs()
 #' hiv <- getHIV(Args)
 #' hiv <- setData(hiv)
-#' getPopAgg(hiv, "IIntID ~ Year + HIVResult")
-getPopAgg <- function(dat, 
+#' getAggregate(hiv, "IIntID ~ Year + HIVResult")
+getAggregate <- function(dat, 
   Formula = "IIntID ~ Year") {
   F1 <- as.formula(Formula)
   dat <- aggregate(as.formula(Formula),
