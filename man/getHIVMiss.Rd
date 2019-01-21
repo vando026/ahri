@@ -7,7 +7,7 @@
 getHIVMiss(Args)
 }
 \arguments{
-\item{Args}{}
+\item{Args}{requires Args, see \code{\link{setArgs}}.}
 }
 \value{
 data.frame

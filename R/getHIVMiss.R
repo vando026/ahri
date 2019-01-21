@@ -72,17 +72,29 @@ getHIVMiss2 <- function(Args, Root=setRoot()) {
         IIntId="i",
         VisitDate="D",
         HIVRefused="i"))
-
+    # Values 1 and 2 matter only
     dat <- filter(dat, HIVRefused %in% c(1, 2))
     dat <- mutate(dat, HIVRefused = as.numeric(HIVRefused==1))
-    browser()
-    yr <- unique(format(dat$VisitDate, "%Y")) 
-    # print(with(dat, table(FormRefused, HIVRefused)))
-    # print(with(dat, table(FormRefused, HIVRefused)))
-    x <- table(dat$HIVRefused)
-    y <- prop.table(x)
-    data.frame(Year=yr, N = sum(x), Refused = round(y[2]*100, 2))
- }
- out <- lapply(files, getData)
- do.call(rbind, out)
+    dat <- filter(dat, !is.na(IIntId))
+    select(dat, IIntID=IIntId, VisitDate, HIVRefused)
+  }
+  adat <- lapply(files, getData)
+  adat <- do.call(rbind, adat)
+  adat <- mutate(adat, Year = format(VisitDate, "%Y"))
+  adat <- rename(adat, obs_end=VisitDate)
+  bdat <- getBirthDate(addVars="Female")
+  adat <- setData(adat, bdat)
+  Refused <- group_by(adat, Year) %>%
+    summarize(N=n(),
+    Refused = round(sum(HIVRefused)/n() * 100, 2))
+  # Get perc ever tested
+  cdat <- mutate(adat, HIVTest = as.numeric(HIVRefused==0))
+  cdat <- group_by(cdat, IIntID) %>%
+    mutate(EverTest = as.numeric(cumsum(HIVTest)>=1))
+  EverTest <- group_by(cdat, Year) %>%
+    summarize(EverTest=round((sum(EverTest)/n())*100, 2))
+  Fem <- group_by(adat, Year) %>%
+    summarize(FemPerc = round((sum(Female)/n())*100, 2))
+  out <- left_join(Refused, EverTest)
+  left_join(out, Fem)
 }

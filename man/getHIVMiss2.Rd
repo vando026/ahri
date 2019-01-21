@@ -4,10 +4,12 @@
 \alias{getHIVMiss2}
 \title{getHIVMiss2}
 \usage{
-getHIVMiss2(Root = setRoot())
+getHIVMiss2(Args, Root = setRoot())
 }
 \arguments{
-\item{getFiles}{}
+\item{Args}{requires Args, see \code{\link{setArgs}}.}
+
+\item{Root}{The root path to folder containing HIV surveillance datasets.}
 }
 \value{
 
