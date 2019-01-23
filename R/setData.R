@@ -28,11 +28,11 @@ setAge <- function(dat, Args) {
 
 #' @title getBirthDate
 #' 
-#' @description  gets birth dates from \code{\link{getEpisodes}} data
+#' @description  Gets birth dates from \code{\link{getEpisodes}} data
 #' 
 #' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
 #'
-#' @param addVars string for a regular expression to select additional vars
+#' @param addVars String for a regular expression to select additional vars
 #' 
 #' @return data.frame
 #'
@@ -55,11 +55,11 @@ getBirthDate <- function(
 
 #' @title setData
 #' 
-#' @description  sets data according to values in \code{\link{setArgs}}.
+#' @description  Sets data according to values in \code{\link{setArgs}}.
 #' 
-#' @param dat dataset for which age is needed at a given episode.
+#' @param dat Dataset for which age is needed at a given episode.
 #'
-#' @param idat Date of Birth variable from \code{\link{getBirthDate}}.
+#' @param bdat Date of Birth variable from \code{\link{getBirthDate}}.
 #'
 #' @param Args takes a list from \code{\link{setArgs}}. 
 #'

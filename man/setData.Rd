@@ -7,17 +7,17 @@
 setData(dat, bdat = getBirthDate(), Args = eval.parent(quote(Args)))
 }
 \arguments{
-\item{dat}{dataset for which age is needed at a given episode.}
+\item{dat}{Dataset for which age is needed at a given episode.}
+
+\item{bdat}{Date of Birth variable from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes a list from \code{\link{setArgs}}.}
-
-\item{idat}{Date of Birth variable from \code{\link{getBirthDate}}.}
 }
 \value{
 data.frame
 }
 \description{
-sets data according to values in \code{\link{setArgs}}.
+Sets data according to values in \code{\link{setArgs}}.
 }
 \examples{
 rtdata <- getRTData(hiv)

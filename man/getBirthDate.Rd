@@ -9,13 +9,13 @@ getBirthDate(inFile = getFiles()$epifile, addVars = " ")
 \arguments{
 \item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}}
 
-\item{addVars}{string for a regular expression to select additional vars}
+\item{addVars}{String for a regular expression to select additional vars}
 }
 \value{
 data.frame
 }
 \description{
-gets birth dates from \code{\link{getEpisodes}} data
+Gets birth dates from \code{\link{getEpisodes}} data
 }
 \examples{
 Args <- setArgs()
