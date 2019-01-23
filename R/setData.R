@@ -80,6 +80,7 @@ setData <- function(dat,
   Args=eval.parent(quote(Args))) {
   # For specific datasets
   if(!("AgeAtVisit" %in% names(dat))) {
+    dat <- mutate(dat, IIntID = as.integer(IIntID))
     dat <- left_join(dat, bdat, by="IIntID")
     dat <- filter(dat, !is.na(DateOfBirth))
     dat <- mutate(dat, AgeAtVisit = floor(as.numeric(

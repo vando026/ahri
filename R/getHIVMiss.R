@@ -61,15 +61,15 @@ getHIVMiss <- function(Args) {
 #'
 #' @export 
 readHIVSurvYear <- function(inFile, addVars=" ") {
-  dat <- readr::read_csv(inFile,
-    col_types=cols_only(
-      IIntId="i",
-      VisitDate="D",
-      PrematureCompletionReason="i",
-      HIVRefused="i"))
-  dat <- filter(dat, !is.na(IIntId))
-  select(dat, IIntID=IIntId, VisitDate, 
-    Reason=PrematureCompletionReason, HIVRefused, contains(addVars))
+  dat <- haven::read_dta(inFile) %>% mutate(
+    Comment = as.character(haven::as_factor(PrematureCompletionReason)))
+  dat <- select(dat, IIntID=IIntId, VisitDate, 
+    Comment, HIVRefused, contains(addVars))
+  # replace missing visit dates
+  yr <- unique(format(dat$VisitDate[!is.na(dat$VisitDate)], "%Y"))[1]
+  dat$VisitDate[is.na(dat$VisitDate)]  <- 
+    as.Date(paste0(yr, "-01-01"), origin="1970-01-01")
+  filter(dat, !is.na(IIntID))
 }
 
 #' @title setHIVMiss
@@ -85,7 +85,7 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 
 setHIVMiss <- function(Args, Root=setRoot()) {
   filep <- file.path(Root, "Source/HIVSurveillance")
-  files <- list.files(filep, pattern=".csv$")
+  files <- list.files(filep, pattern=".dta$")
   adat <- lapply(file.path(filep, files), readHIVSurvYear)
   adat <- do.call(rbind, adat)
   adat <- mutate(adat, Year = format(VisitDate, "%Y"))
@@ -147,12 +147,13 @@ getHIVCumTest <- function(Args, num_test=1) {
 ##' @return 
 ##'
 ##' @export 
-
 getHIVEligible <- function(Args) {
   dat <- setHIVMiss(Args)
   eligible <- group_by(dat, Year) %>% 
     summarize(Eligible = n())
-  present <- filter(dat, Reason %in% c(1:4, 7))
+  present <- filter(dat, !grepl(
+    "Out|Temp|Migr|Broken|Non-Functional|Non-[cC]|Dead",
+    Comment))
   present <- group_by(present, Year) %>% 
    summarize(Present = n()) 
   left_join(eligible, present, by="Year")
