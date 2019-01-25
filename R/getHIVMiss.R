@@ -21,7 +21,7 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 
 #' @title setHIVMiss
 #' 
-#' @description  Gets test dates but pulls each HIV surveillance dataset by year.
+#' @description  Gets HIV test dates by merging yearly HIV surveillance datasets.
 #' 
 #' @param Root The root path to folder containing HIV surveillance datasets. 
 #' @param Args requires Args, see \code{\link{setArgs}}.
@@ -38,7 +38,50 @@ setHIVMiss <- function(Args, Root=setRoot()) {
   adat <- rename(adat, obs_end=VisitDate)
   bdat <- getBirthDate(addVars="Female")
   adat <- setData(adat, bdat, Args)
+  adat <- rename(adat, VisitDate=obs_end)
+  # Dead is not legible for testing
+  adat <- filter(adat, !grepl("Reported Dead", Comment))
   adat
+}
+
+##' @title getHIVPresentData
+##' 
+##' @description  Get participants who are eligible and present for HIV test.
+##' 
+##' @param Args requires Args, see \code{\link{setArgs}}.
+##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
+##' 
+##' @return 
+##'
+##' @export 
+getHIVPresentData <- function(Args, dat=NULL) {
+  if(is.null(dat)) dat <- setHIVMiss(Args)
+  dat <- filter(dat, 
+    !grepl("Out|Temp|Migr|Broken|Non-Functional", Comment))
+  dat
+}
+
+##' @title getHIVEligible
+##' 
+##' @description  Get eligibility for HIV testing.
+##' 
+##' @param Args requires Args, see \code{\link{setArgs}}.
+##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
+##' 
+##' @return 
+##'
+##' @export 
+getHIVEligible <- function(Args, dat=NULL) {
+  if(is.null(dat)) dat <- setHIVMiss(Args)
+  eligible <- group_by(dat, Year) %>% 
+    summarize(EligibleN = n())
+  pdat <- getHIVPresentData(Args, dat)
+  present <- group_by(pdat, Year) %>% 
+   summarize(PresentN = n()) 
+  out <- left_join(eligible, present, by="Year")
+  # No data for 2017
+  out$PresentN[out$Year==2017] = NA
+   mutate(out, PresentPerc = round(PresentN/EligibleN * 100, 2))
 }
 
 #' @title getHIVRefused
@@ -87,32 +130,6 @@ getHIVCumTest <- function(Args, ntest=1, dat=NULL) {
   dat
 }
 
-##' @title getHIVEligible
-##' 
-##' @description  Calculate eligibility for HIV testing.
-##' 
-##' @param Args requires Args, see \code{\link{setArgs}}.
-##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
-##' 
-##' @return 
-##'
-##' @export 
-getHIVEligible <- function(Args, dat=NULL) {
-  if(is.null(dat)) dat <- setHIVMiss(Args)
-  # dat <- filter(dat, Year==2010)
-  # Dead is not legible
-  dat <- filter(dat, !grepl("Reported Dead", Comment))
-  eligible <- group_by(dat, Year) %>% 
-    summarize(EligibleN = n())
-  present <- filter(dat, !grepl(
-    "Out|Temp|Migr|Broken|Non-Functional", Comment))
-  present <- group_by(present, Year) %>% 
-   summarize(PresentN = n()) 
-  out <- left_join(eligible, present, by="Year")
-  # No data for 2017
-  out$PresentN[out$Year==2017] = NA
-   mutate(out, PresentPerc = round(PresentN/EligibleN * 100, 2))
-}
 
 #' @title getHIVIncEligible
 #' 
@@ -126,22 +143,21 @@ getHIVEligible <- function(Args, dat=NULL) {
 #' @export 
 
 getHIVIncEligible <- function(Args) {
-  dat <- setHIV(Args)
-  dat <- arrange(dat, IIntID, VisitDate) %>%
-    group_by(IIntID) %>% mutate(byCount = 1:n()) 
-  dat <- filter(dat, byCount>=2)
-  elig <- group_by(dat, Year) %>% summarize(IncEligN=n())
   # Get HIV inc cohort
   hiv <- getHIV(Args)
-  hiv_test <- select(hiv, IIntID, Year) 
   rtdat <- getRTData(hiv)
-  sdat <- Args$imputeMethod(rtdat)
-  sdat <- splitAtSeroDate(sdat)
-  sdat <- setData(sdat)
-  ndat <- left_join(sdat, hiv_test, by=c("IIntID", "Year"))
-  tested <- filter(ndat, Tested==1) %>% 
-    group_by(Year) %>% summarize(IncTestedN = n())
-  out <- left_join(elig, tested, by="Year")
+  rtdat <- mutate(rtdat, 
+    StartYr = as.numeric(format(obs_start, "%Y"))) %>%
+    select(IIntID, StartYr) 
+  dat <- getHIVPresentData(Args)
+  dat <- left_join(dat, rtdat, by="IIntID")
+  dat <- arrange(dat, IIntID, VisitDate) %>% mutate(
+    Year = as.numeric(Year),
+    Elig = as.numeric(Year >= StartYr & !is.na(StartYr)))
+  out <- group_by(dat, Year) %>% 
+    summarize(IncTestedN = n(), IncEligN = sum(Elig))
+
+
   mutate(out, IncTestPerc = round(IncTestedN/IncEligN*100, 2))
 }
 
