@@ -70,22 +70,21 @@ getHIVRefused <- function(Args, dat=NULL) {
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param num_test Integer for number of times tested. Use 2 for incidence cohort.
-#' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
 #' 
 #' @return 
 #'
 #' @export 
-getHIVCumTest <- function(Args, num_test=1, dat=NULL) {
+getHIVCumTest <- function(Args, ntest=1, dat=NULL) {
   if(is.null(dat)) dat <- setHIVMiss(Args)
   # HIVRefusedYes = 1, HIVRefusedNo = 2
-  dat <- filter(dat, HIVRefused==2) %>%
-    mutate(HIVTest = as.numeric(HIVRefused==2))
-  cdat <- group_by(dat, IIntID) %>%
-    mutate(EverTest = as.numeric(cumsum(HIVTest)>=num_test))
-  EverTest <- group_by(cdat, Year) %>% summarize(
-    N=n(), EverTestN=sum(EverTest),
-    EverTestPerc = round(EverTestN/N*100, 2))
-  EverTest
+  dat <- filter(dat, HIVRefused %in% c(1, 2))
+  dat <- mutate(dat, HIVTested = as.numeric(HIVRefused==2))
+  dat <- arrange(dat, IIntID, Year) %>% group_by(IIntID) %>% 
+    mutate(CumTest = as.numeric(cumsum(HIVTested)>=ntest))
+  dat <- group_by(dat, Year) %>%
+    summarize(TestedN = n(), EverTest = sum(CumTest),
+    TestedPerc = round(EverTest/TestedN*100, 2))
+  dat
 }
 
 ##' @title getHIVEligible
@@ -128,19 +127,20 @@ getHIVEligible <- function(Args, dat=NULL) {
 
 getHIVIncEligible <- function(Args) {
   dat <- setHIV(Args)
-  dat <- group_by(dat, IIntID) %>% 
-    mutate(byCount = n()) %>% arrange(IIntID, Year)
+  dat <- arrange(dat, IIntID, VisitDate) %>%
+    group_by(IIntID) %>% mutate(byCount = 1:n()) 
   dat <- filter(dat, byCount>=2)
   elig <- group_by(dat, Year) %>% summarize(IncEligN=n())
   # Get HIV inc cohort
   hiv <- getHIV(Args)
-  hiv_test <- select(hiv, IIntID, Year) %>% mutate(Tested=1)
+  hiv_test <- select(hiv, IIntID, Year) 
   rtdat <- getRTData(hiv)
   sdat <- Args$imputeMethod(rtdat)
   sdat <- splitAtSeroDate(sdat)
   sdat <- setData(sdat)
   ndat <- left_join(sdat, hiv_test, by=c("IIntID", "Year"))
-  tested <- filter(ndat, Tested==1) %>% group_by(Year) %>% summarize(IncTestedN = n())
+  tested <- filter(ndat, Tested==1) %>% 
+    group_by(Year) %>% summarize(IncTestedN = n())
   out <- left_join(elig, tested, by="Year")
   mutate(out, IncTestPerc = round(IncTestedN/IncEligN*100, 2))
 }
