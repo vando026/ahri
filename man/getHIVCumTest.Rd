@@ -4,14 +4,12 @@
 \alias{getHIVCumTest}
 \title{getHIVCumTest}
 \usage{
-getHIVCumTest(Args, num_test = 1, dat = NULL)
+getHIVCumTest(Args, ntest = 1, dat = NULL)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
 
 \item{num_test}{Integer for number of times tested. Use 2 for incidence cohort.}
-
-\item{dat}{Dataset, otherwise made with \code{\link{setHIVMiss}}.}
 }
 \value{
 

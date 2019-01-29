@@ -125,3 +125,46 @@ plotIncAge <- function(
 
   if (TIFF==TRUE) dev.off() 
 }
+
+#' @title plotIncPrev
+#' 
+#' @description Plots incidence and prevalence. 
+#' 
+#' @param inc Incidence data. 
+#' @param prev Prevalence data. 
+#' 
+#' @export 
+
+
+plotIncPrev <- function(inc, prev=NULL,
+  Args=NULL, gfun=png, bwidth=2, fname="test") {
+  if(!is.null(gfun)) {
+    gfun(file.path(output,
+      paste0(fname, ".", deparse(substitute(gfun)))),
+      units="in", width=5.0, height=5.0, pointsize=9, 
+      res=200, type="cairo")
+  }
+  par(mar=c(4.0,4.5,3.8,4.5))
+  x <- as.numeric(rownames(inc))
+  y <- inc$rate
+  plotCI(x, inc$rate, ui=inc$uci, li=inc$lci,
+    bty="u", sfrac=0, lwd=2, pch=19, col="blue",
+    xlab="Year", ylab="HIV incidence per 100 person-years", 
+    font.lab=2)
+  lines(x, y, lty=1, col="blue", lwd=2)
+  abline(v=2011, lty=3)
+  par(new = T)
+  x <- as.numeric(rownames(prev))
+  ys <- ksmooth(x, prev$adj.rate*100, "normal", bandwidth=1.5)
+  ymax = max(ys$y)*1.20
+  plot(ys$x, ys$y, axes=F, type="l", lwd=3,
+    ylim=c(0, ymax), 
+    xlab=NA, ylab=NA, cex=1.2, col="red")
+  axis(side = 4)
+  mtext(side = 4, line = 2, "HIV prevalence (%)", font=2)
+  legend("top", inset=c(0, -0.08), xpd=TRUE,
+    c("HIV Incidence", "HIV Prevalence"),
+    lwd=2, pch=c(19, NA), lty=1, cex=1.2,
+    bty="n", ncol=2, col=c("blue", "red"))
+  if(!is.null(gfun)) dev.off()
+}

@@ -4,7 +4,7 @@
 \alias{getHIVIncEligible}
 \title{getHIVIncEligible}
 \usage{
-getHIVIncEligible(Args)
+getHIVIncEligible(Args, dat = NULL)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}

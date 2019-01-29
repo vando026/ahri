@@ -15,5 +15,5 @@ setHIVMiss(Args, Root = setRoot())
 
 }
 \description{
-Gets test dates but pulls each HIV surveillance dataset by year.
+Gets HIV test dates by merging yearly HIV surveillance datasets.
 }

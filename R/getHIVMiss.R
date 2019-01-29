@@ -34,7 +34,7 @@ setHIVMiss <- function(Args, Root=setRoot()) {
   files <- list.files(filep, pattern=".dta$")
   adat <- lapply(file.path(filep, files), readHIVSurvYear)
   adat <- do.call(rbind, adat)
-  adat <- mutate(adat, Year = format(VisitDate, "%Y"))
+  adat <- mutate(adat, Year = as.integer(format(VisitDate, "%Y")))
   adat <- rename(adat, obs_end=VisitDate)
   bdat <- getBirthDate(addVars="Female")
   adat <- setData(adat, bdat, Args)
@@ -44,9 +44,9 @@ setHIVMiss <- function(Args, Root=setRoot()) {
   adat
 }
 
-##' @title getHIVPresentData
+##' @title getHIVContact
 ##' 
-##' @description  Get participants who are eligible and present for HIV test.
+##' @description  Get participants who are eligible and contacted for HIV test.
 ##' 
 ##' @param Args requires Args, see \code{\link{setArgs}}.
 ##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
@@ -54,10 +54,11 @@ setHIVMiss <- function(Args, Root=setRoot()) {
 ##' @return 
 ##'
 ##' @export 
-getHIVPresentData <- function(Args, dat=NULL) {
+getHIVContact <- function(Args, dat=NULL) {
   if(is.null(dat)) dat <- setHIVMiss(Args)
   dat <- filter(dat, 
-    !grepl("Out|Temp|Migr|Broken|Non-Functional", Comment))
+    !grepl("Out[mM]igrat|Temp|Migrated|Broken|Non-Functional|
+      Not Tracked |Non-Contact After Tracking", Comment))
   dat
 }
 
@@ -75,7 +76,7 @@ getHIVEligible <- function(Args, dat=NULL) {
   if(is.null(dat)) dat <- setHIVMiss(Args)
   eligible <- group_by(dat, Year) %>% 
     summarize(EligibleN = n())
-  pdat <- getHIVPresentData(Args, dat)
+  pdat <- getHIVContact(Args, dat)
   present <- group_by(pdat, Year) %>% 
    summarize(PresentN = n()) 
   out <- left_join(eligible, present, by="Year")
@@ -142,27 +143,45 @@ getHIVCumTest <- function(Args, ntest=1, dat=NULL) {
 #'
 #' @export 
 
-getHIVIncEligible <- function(Args) {
+getHIVIncEligible <- function(Args, dat=NULL) {
   # Get HIV inc cohort
-  hiv <- getHIV(Args)
-  rtdat <- getRTData(hiv)
-  rtdat <- mutate(rtdat, 
-    StartYr = as.numeric(format(obs_start, "%Y"))) %>%
-    select(IIntID, StartYr) 
-  dat <- getHIVPresentData(Args)
-  dat <- left_join(dat, rtdat, by="IIntID")
-  dat <- arrange(dat, IIntID, VisitDate) %>% mutate(
-    Year = as.numeric(Year),
-    Elig = as.numeric(Year >= StartYr & !is.na(StartYr)))
-  out <- group_by(dat, Year) %>% 
-    summarize(IncTestedN = n(), IncEligN = sum(Elig))
+  fmt <- function(x)
+    as.numeric(format(as.Date(x, origin="1970-01-01"), "%Y"))
+ 
+  hdat <- getHIV(Args)
+  hdat <- getRTData(hdat)
+  hdat <- splitAtEarlyPos(hdat) 
+  bdat <- getBirthDate(Args$inFiles$epifile)
+  adat <- setData(hdat, bdat,  Args)
+  year_n <- group_by(adat, Year) %>%  
+    summarize(IncN=length(unique(IIntID)))
 
+  hArgs = Args
+  hArgs$Years  <- c(2003:2017)
+  hiv <- setHIV(hArgs)
+  early_neg <- getDatesMin(hiv, "HIVNegative", "early_neg")
+  early_neg <- mutate(early_neg, YearNeg = fmt(early_neg)) 
+  early_pos <- getDatesMin(hiv, "HIVPositive", "early_pos")
+  early_pos <- mutate(early_pos, YearPos = fmt(early_pos)) 
+  tdat <- left_join(early_neg, early_pos, by="IIntID") %>%
+    select(IIntID, YearNeg, YearPos) 
 
-  mutate(out, IncTestPerc = round(IncTestedN/IncEligN*100, 2))
+  # dat <- getHIVContact(Args)
+  if(is.null(dat)) dat <- setHIVMiss(Args)
+  dat <- left_join(dat, tdat, by=c("IIntID"))
+  dat <- arrange(dat, IIntID, VisitDate) 
+  # Any negative is eligible
+  dat <- group_by(dat, IIntID) %>% mutate(Elig = 
+      as.numeric((Year >= YearNeg & !is.na(YearNeg))))
+  # But before HIV+
+  dat$Elig[dat$Year >= dat$YearPos] <- 0
+  elig <- arrange(dat, IIntID, VisitDate) %>%
+    group_by(Year) %>% 
+    summarize(IncEligN = sum(Elig))
+  out <- left_join(elig, year_n, by="Year")
+  mutate(out, IncPerc = round(IncN/IncEligN * 100, 2))
+
 }
-
-
-
 
 #' @title mkHIVTestTable
 #' 
@@ -185,14 +204,17 @@ mkHIVTestTable <- function(Args) {
   b1 <- select(tab1, Year, ContactN, PresentN) %>%
     mutate(ContactPerc = rnd(ContactN/PresentN*100))
   b1$Eligible = with(b1, paste0(fmt(ContactN), "/", fmt(PresentN)))
-  b1$EPerc = paste0("(", b1$ContactPerc, "%)")
+  b1$EPerc = paste0("(", b1$ContactPerc, ")")
   b2 <- select(tab1, Year, TestedN, ContactN) %>%
     mutate(TestedPerc = rnd(TestedN/ContactN*100))
   b2$Test = with(b2, paste0(fmt(TestedN), "/", fmt(ContactN))) 
-  b2$TestP = paste0("(", b2$TestedPerc, "%)")
-  b3 <- getHIVIncEligible(Args)
-  b3$Test = with(b3, paste0(fmt(IncTestedN), "/", fmt(IncEligN))) 
-  b3$TestPerc = paste0("(", rnd(b3$IncTestPerc), "%)")
-  data.frame(b1$Year, b1$Eligible, b1$EPerc, b2$Test, b2$TestP, 
-    b3$Test, b3$TestPerc)
+  b2$TestP = paste0("(", b2$TestedPerc, ")")
+  b3 <- getHIVIncEligible(Args, dat=dat)
+  b3$Elig <- with(b3, paste0(fmt(IncN), "/", fmt(IncEligN)))
+  b3$IncPerc = paste0("(", rnd(b3$IncPerc), ")")
+  b4 <- getHIVCumTest(Args, dat=dat)
+  b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
+  data.frame(Year=b1$Year, Elig=b1$Eligible, EligPerc=b1$EPerc, 
+    Present=b2$Test, Tested=b2$TestP, CumTest=b4$CumPerc,
+    IncElig=b3$Elig, IncPerc=b3$IncPerc)
 }
