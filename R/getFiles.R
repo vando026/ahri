@@ -18,7 +18,7 @@ getFiles <- function(
   hivfile="Derived/HIVSurveillance/2017/RD05-99_ACDIS_HIV_All.csv",
   hsefile="Derived/HSE/HSE2009_2012.dta",
   wghfile="Derived/WGH_MGH/2016/RD03-99_ACDIS_WGH_ALL.csv",
-  mghfile="Derived/WGH_MGH/2016/RD04-99_ACDIS_MGH_ALL.csv",
+  mghfile="Derived/WGH_MGH/2018/RD04-99_ACDIS_MGH_ALL.csv",
   bsifile="Derived/BoundedStructure/2017/RD01-03_ACDIS_BoundedStructures.dta",
   bsmfile="Derived/Other/MaxBSIntID.csv",
   epi_dta="Source/Episodes/2017/SurveillanceEpisodesBasicAgeYrHIV.dta",

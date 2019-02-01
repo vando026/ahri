@@ -16,6 +16,7 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
   yr <- unique(format(dat$VisitDate[!is.na(dat$VisitDate)], "%Y"))[1]
   dat$VisitDate[is.na(dat$VisitDate)]  <- 
     as.Date(paste0(yr, "-01-01"), origin="1970-01-01")
+  dat$HIVRefused[is.na(dat$HIVRefused)] <- 97 
   filter(dat, !is.na(IIntID))
 }
 
@@ -39,27 +40,7 @@ setHIVMiss <- function(Args, Root=setRoot()) {
   bdat <- getBirthDate(addVars="Female")
   adat <- setData(adat, bdat, Args)
   adat <- rename(adat, VisitDate=obs_end)
-  # Dead is not legible for testing
-  adat <- filter(adat, !grepl("Reported Dead", Comment))
   adat
-}
-
-##' @title getHIVContact
-##' 
-##' @description  Get participants who are eligible and contacted for HIV test.
-##' 
-##' @param Args requires Args, see \code{\link{setArgs}}.
-##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
-##' 
-##' @return 
-##'
-##' @export 
-getHIVContact <- function(Args, dat=NULL) {
-  if(is.null(dat)) dat <- setHIVMiss(Args)
-  dat <- filter(dat, 
-    !grepl("Out[mM]igrat|Temp|Migrated|Broken|Non-Functional|
-      Not Tracked |Non-Contact After Tracking", Comment))
-  dat
 }
 
 ##' @title getHIVEligible
@@ -74,15 +55,14 @@ getHIVContact <- function(Args, dat=NULL) {
 ##' @export 
 getHIVEligible <- function(Args, dat=NULL) {
   if(is.null(dat)) dat <- setHIVMiss(Args)
-  eligible <- group_by(dat, Year) %>% 
-    summarize(EligibleN = n())
-  pdat <- getHIVContact(Args, dat)
-  present <- group_by(pdat, Year) %>% 
-   summarize(PresentN = n()) 
-  out <- left_join(eligible, present, by="Year")
-  # No data for 2017
-  out$PresentN[out$Year==2017] = NA
-   mutate(out, PresentPerc = round(PresentN/EligibleN * 100, 2))
+  dat <- mutate(dat, NonContact = as.numeric(
+    grepl("Non-[cC]ontact|Refused|Other", Comment)))
+  dat <- mutate(dat, Contact = 
+    ifelse(HIVRefused==1, "Refused",
+    ifelse(HIVRefused==2, "Consent",
+    ifelse(NonContact==1, "NonContact", "NotEligible"))))
+  dat <- filter(dat, Contact != "NotEligible")
+  dat
 }
 
 #' @title getHIVRefused
@@ -97,15 +77,23 @@ getHIVEligible <- function(Args, dat=NULL) {
 #' @export 
 getHIVRefused <- function(Args, dat=NULL) {
   if(is.null(dat)) dat <- setHIVMiss(Args)
-  # HIVRefusedYes = 1, HIVRefusedNo = 2
-  dat <- filter(dat, HIVRefused %in% c(1, 2))
-  dat <- mutate(dat, HIVRefused = as.numeric(HIVRefused==1))
-  Refused <- group_by(dat, Year) %>% summarize(
-    N=n(), RefusedN = sum(HIVRefused),
-    TestedN = N - RefusedN,
-    TestedPerc = round(TestedN/N *100, 2),
-    RefusedPerc = round(RefusedN/N*100, 2))
-  rename(Refused, ContactN = N)
+  dat <- getHIVEligible(Args, dat=dat)
+  eligible <- group_by(dat, Year) %>% 
+    summarize(EligibleN = n())
+  non_contact <- filter(dat, Contact=="NonContact") %>% 
+    group_by(Year) %>% summarize(NonContactN=n())
+  consent <- filter(dat, Contact=="Consent") %>% 
+    group_by(Year) %>% summarize(ConsentN=n())
+  refused <- filter(dat, Contact=="Refused") %>% 
+    group_by(Year) %>% summarize(RefusedN=n())
+  out <- Reduce(left_join, list(eligible, non_contact, consent, refused))
+  out <- mutate(out,
+    ContactedN = EligibleN - NonContactN,
+    NonContactPerc = NonContactN/EligibleN,
+    RefusePerc = RefusedN/EligibleN,
+    ConsentPerc = ConsentN/EligibleN,
+    ConsentRate = ConsentN/ContactedN)
+  out
 }
 
 #' @title getHIVCumTest
@@ -180,7 +168,6 @@ getHIVIncEligible <- function(Args, dat=NULL) {
     summarize(IncEligN = sum(Elig))
   out <- left_join(elig, year_n, by="Year")
   mutate(out, IncPerc = round(IncN/IncEligN * 100, 2))
-
 }
 
 #' @title mkHIVTestTable
@@ -198,23 +185,70 @@ mkHIVTestTable <- function(Args) {
   rnd <- function(x) trimws(format(x, digits=2, nsmall=2))
   # Get testing date
   dat <- setHIVMiss(Args)
-  elig <- getHIVEligible(Args, dat=dat)
-  refuse <- getHIVRefused(Args, dat=dat)
-  tab1 <- left_join(elig, refuse, by="Year")
-  b1 <- select(tab1, Year, ContactN, PresentN) %>%
-    mutate(ContactPerc = rnd(ContactN/PresentN*100))
-  b1$Eligible = with(b1, paste0(fmt(ContactN), "/", fmt(PresentN)))
-  b1$EPerc = paste0("(", b1$ContactPerc, ")")
-  b2 <- select(tab1, Year, TestedN, ContactN) %>%
-    mutate(TestedPerc = rnd(TestedN/ContactN*100))
-  b2$Test = with(b2, paste0(fmt(TestedN), "/", fmt(ContactN))) 
-  b2$TestP = paste0("(", b2$TestedPerc, ")")
+  edat <- getHIVEligible(Args, dat=dat)
+  sdat <- getHIVRefused(Args, dat=edat)
+  Eligible = with(sdat, paste0(fmt(ContactedN), "/", fmt(EligibleN)))
+  EligiblePerc = paste0("(", rnd(sdat$ContactPerc*100), ")")
+  Consent = with(sdat, paste0(fmt(ConsentN), "/", fmt(ContactedN))) 
+  ConsentPerc = paste0("(", rnd(sdat$ConsentPerc*100), ")")
   b3 <- getHIVIncEligible(Args, dat=dat)
   b3$Elig <- with(b3, paste0(fmt(IncN), "/", fmt(IncEligN)))
   b3$IncPerc = paste0("(", rnd(b3$IncPerc), ")")
   b4 <- getHIVCumTest(Args, dat=dat)
   b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
-  data.frame(Year=b1$Year, Elig=b1$Eligible, EligPerc=b1$EPerc, 
-    Present=b2$Test, Tested=b2$TestP, CumTest=b4$CumPerc,
+  data.frame(Year=sdat$Year, Eligible, EligiblePerc,
+    Consent, ConsentPerc, CumTest=b4$CumPerc,
     IncElig=b3$Elig, IncPerc=b3$IncPerc)
 }
+# debugonce(mkHIVTestTable)
+# mkHIVTestTable(Args)
+
+#' @title plotHIVTest
+#' 
+#' @description Make plot of HIV testing rate. 
+#' 
+#' @param Args.
+#' 
+#' @return 
+#'
+#' @export 
+plotHIVTest <- function(Args, 
+  fname=Args$fname, gfun=png) {
+  dat <- getHIVRefused(Args)
+  dat <- filter(dat, Year != 2017)
+  pd <- select(dat, ConsentPerc, RefusePerc, NonContactPerc)
+  rate <- dat$ConsentRate
+  px <-  t(as.matrix(pd)) 
+
+  if(!is.null(gfun)) {
+    gfun(file.path(output,
+      paste0(fname, ".", deparse(substitute(gfun)))),
+      units="in", width=5.5, height=5.0, pointsize=9, 
+      res=200, type="cairo")
+  }
+  m <- layout(matrix(seq(2), nrow=2), heights=c(8.5, 1))
+  YlRed <- RColorBrewer::brewer.pal(9, "YlOrRd")
+  xl <- unique(dat$Year)
+  xlx <- (seq(length(xl))* 1.2) - 0.5
+  par(mar=c(3.8, 4.4, 1.0, 1))
+  barplot(px,  col=YlRed[c(4, 6, 8)], width=1, space=0.2,
+    xlab="Year", ylab="Proportion", font.lab=2)
+  lines(xlx, rate, col=YlRed[9], lwd=4)
+  plotrix::staxlab(side=1, at=xlx, labels=xl, srt=45)
+  consent = px["ConsentPerc", ]
+  refuse = px["RefusePerc", ]
+  nonc = px["NonContactPerc", ]
+  text(xlx, y=0.15, labels=round(consent, 2), col="white", font=2, pos=1)
+  text(xlx, y=refuse+consent, labels=round(refuse, 2), col="white", font=2, pos=1)
+  text(xlx, y=1, labels=round(nonc, 2), col="white", font=2, pos=1)
+  text(xlx, y=rate-0.05, labels=round(rate, 2), col=YlRed[9], pos=1, font=2)
+  par(mar=c(1.1, 4.4, 1.0, 1))
+  plot.new()
+  legend("bottom", c("Consent rate", "Consent", "Refuse", "Non-Contact"),
+    ncol=4, bty="n", inset=c(0, 0), pch=c(NA, rep(15, 3)), pt.cex=3, 
+    lty=c(1, rep(NA, 3)), lwd=6, col=c(YlRed[c(9, 4, 6, 8)]))
+  if(!is.null(gfun)) dev.off()
+}
+
+
+

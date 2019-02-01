@@ -27,7 +27,7 @@ getAggregate <- function(dat,
 #' 
 #' @param dat dataset for computing trends. 
 #'
-#' @param wdat from \code{\link{getPopAgg}}.
+#' @param wdat from \code{\link{getAggregate}}.
 #'
 #' @param Formula string argument for aggregate function; terms and operators must be
 #' separated by white space.

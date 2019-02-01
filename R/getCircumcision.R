@@ -11,9 +11,10 @@ getCircumcisionData <- function(
   cdat <- readr::read_csv(inFile, 
     col_types=readr::cols_only(
       IIntId="i",
-      VisitDate="D",
+      VisitDate="c",
       AgeAtVisit="i",
       IsCircumcised="i"))
+  cdat$VisitDate <- as.Date(cdat$VisitDate, "%d/%m/%Y")
   names(cdat)[names(cdat)=="IIntId"] <- "IIntID"
   cdat <- cdat[cdat$IsCircumcised %in% c(1,2), ]
   cdat$IsCircumcised <- as.numeric(cdat$IsCircumcised==1)
@@ -46,6 +47,8 @@ getCircum <- function(Keep) {
   cdat <- group_by(cdat, IIntID) %>% 
     summarize(YearCircum = min(Year))
   dat <- left_join(dat, cdat, by="IIntID")
+  # No surv time before 2009
+  dat <- filter(dat, !(Year < 2009))
   dat = mutate(dat,
     IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)))
   dat[, !(names(dat) %in% c("YearCircum"))]

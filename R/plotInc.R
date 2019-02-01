@@ -130,11 +130,17 @@ plotIncAge <- function(
 #' 
 #' @description Plots incidence and prevalence. 
 #' 
-#' @param inc Incidence data. 
-#' @param prev Prevalence data. 
+#' @param inc Incidence data, must include CIs, from \code{\link{getIncidence}}. 
+#' @param prev Prevalence data, only a vector. 
 #' 
 #' @export 
-
+#' @examples
+#' inc <- getIncidence(Args)$adj$Year
+#' hiv <- setHIV(Args) 
+#' prev <-  calcTrend(hiv, 
+#'   Formula = "HIVResult ~ Year", fmt=FALSE)
+#' prev <- prev$adj.rate*100
+#' plotIncPrev(inc, prev) 
 
 plotIncPrev <- function(inc, prev=NULL,
   Args=NULL, gfun=png, bwidth=2, fname="test") {
@@ -154,8 +160,8 @@ plotIncPrev <- function(inc, prev=NULL,
   lines(x, y, lty=1, col="blue", lwd=2)
   abline(v=2011, lty=3)
   par(new = T)
-  x <- as.numeric(rownames(prev))
-  ys <- ksmooth(x, prev$adj.rate*100, "normal", bandwidth=1.5)
+  x <- as.numeric(rownames(inc))
+  ys <- ksmooth(x, prev, "normal", bandwidth=1.5)
   ymax = max(ys$y)*1.20
   plot(ys$x, ys$y, axes=F, type="l", lwd=3,
     ylim=c(0, ymax), 

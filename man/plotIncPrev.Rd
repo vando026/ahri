@@ -8,10 +8,18 @@ plotIncPrev(inc, prev = NULL, Args = NULL, gfun = png, bwidth = 2,
   fname = "test")
 }
 \arguments{
-\item{inc}{Incidence data.}
+\item{inc}{Incidence data, must include CIs, from \code{\link{getIncidence}}.}
 
-\item{prev}{Prevalence data.}
+\item{prev}{Prevalence data, only a vector.}
 }
 \description{
 Plots incidence and prevalence.
+}
+\examples{
+inc <- getIncidence(Args)$adj$Year
+hiv <- setHIV(Args) 
+prev <-  calcTrend(hiv, 
+  Formula = "HIVResult ~ Year", fmt=FALSE)
+prev <- prev$adj.rate*100
+plotIncPrev(inc, prev) 
 }

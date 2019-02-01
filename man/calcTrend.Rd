@@ -11,7 +11,7 @@ calcTrend(dat, wdat = NULL, Formula = "HIVResult ~ Year + AgeCat",
 \arguments{
 \item{dat}{dataset for computing trends.}
 
-\item{wdat}{from \code{\link{getPopAgg}}.}
+\item{wdat}{from \code{\link{getAggregate}}.}
 
 \item{Formula}{string argument for aggregate function; terms and operators must be
 separated by white space.}
