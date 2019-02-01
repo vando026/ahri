@@ -156,7 +156,8 @@ plotIncPrev <- function(inc, prev=NULL,
   plotCI(x, inc$rate, ui=inc$uci, li=inc$lci,
     bty="u", sfrac=0, lwd=2, pch=19, col="blue",
     xlab="Year", ylab="HIV incidence per 100 person-years", 
-    font.lab=2)
+    font.lab=2, xaxt="n", cex.axis=1.3, cex.lab=1.2)
+  staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
   lines(x, y, lty=1, col="blue", lwd=2)
   abline(v=2011, lty=3)
   par(new = T)
