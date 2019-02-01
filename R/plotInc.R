@@ -165,10 +165,10 @@ plotIncPrev <- function(inc, prev=NULL,
   ys <- ksmooth(x, prev, "normal", bandwidth=1.5)
   ymax = max(ys$y)*1.20
   plot(ys$x, ys$y, axes=F, type="l", lwd=3,
-    ylim=c(0, ymax), 
+    ylim=c(0, ymax), cex.axis=1.3, cex.lab=1.2,
     xlab=NA, ylab=NA, cex=1.2, col="red")
   axis(side = 4)
-  mtext(side = 4, line = 2, "HIV prevalence (%)", font=2)
+  mtext(side = 4, line = 2, "HIV prevalence (%)", font=2, cex=1.2)
   legend("top", inset=c(0, -0.08), xpd=TRUE,
     c("HIV Incidence", "HIV Prevalence"),
     lwd=2, pch=c(19, NA), lty=1, cex=1.2,
