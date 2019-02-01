@@ -143,7 +143,7 @@ plotIncAge <- function(
 #' plotIncPrev(inc, prev) 
 
 plotIncPrev <- function(inc, prev=NULL,
-  Args=NULL, gfun=png, bwidth=2, fname="test") {
+  Args=NULL, gfun=png, bwidth=2.5, fname="test") {
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -154,7 +154,7 @@ plotIncPrev <- function(inc, prev=NULL,
   x <- as.numeric(rownames(inc))
   y <- inc$rate
   plotCI(x, inc$rate, ui=inc$uci, li=inc$lci,
-    bty="u", sfrac=0, lwd=2, pch=19, col="blue",
+    ylim=c(0, 5), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
     xlab="Year", ylab="HIV incidence per 100 person-years", 
     font.lab=2, xaxt="n", cex.axis=1.3, cex.lab=1.2)
   staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
@@ -162,7 +162,7 @@ plotIncPrev <- function(inc, prev=NULL,
   abline(v=2011, lty=3)
   par(new = T)
   x <- as.numeric(rownames(inc))
-  ys <- ksmooth(x, prev, "normal", bandwidth=1.5)
+  ys <- ksmooth(x, prev, "normal", bandwidth=bwidth)
   ymax = max(ys$y)*1.20
   plot(ys$x, ys$y, axes=F, type="l", lwd=3,
     ylim=c(0, ymax), cex.axis=1.3, cex.lab=1.2,
