@@ -90,6 +90,7 @@ getHIVRefused <- function(Args, dat=NULL) {
   out <- mutate(out,
     ContactedN = EligibleN - NonContactN,
     NonContactPerc = NonContactN/EligibleN,
+    ContactPerc = 1 - NonContactPerc,
     RefusePerc = RefusedN/EligibleN,
     ConsentPerc = ConsentN/EligibleN,
     ConsentRate = ConsentN/ContactedN)
