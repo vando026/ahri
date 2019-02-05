@@ -30,7 +30,9 @@ readEpisodes <- function(
   dat <- filter(dat, Female %in% c(1, 2))
   dat <- mutate(dat, 
     Female=as.numeric(Female==2),
-    IIntID=as.integer(IIntID))
+    IIntID=as.integer(IIntID),
+    BSIntID=as.integer(BSIntID),
+    Year=as.integer(Year))
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
   save(dat, file=file.path(outFile))

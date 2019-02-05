@@ -8,7 +8,7 @@
 #'
 #' @param Age list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.
 #'
-#' @param AgeCat numeric vector of age categories.
+#' @param AgeCat numeric vector of age categories, e.g. \code{seq(15, 55, by=5)}.
 #'
 #' @param nSim number of simulations to perform.
 #'

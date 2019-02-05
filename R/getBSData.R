@@ -34,6 +34,7 @@ readBSData <- function(inFile=Args$inFiles$bsifile) {
 readPIPData <- function(inFile=Args$inFiles$pipfile) {
   dat <- readxl::read_excel(inFile)
   names(dat)[names(dat)=="BSIntId"] = "BSIntID"
+  dat <- mutate(dat, BSIntID=as.integer(BSIntID))
   dat
 }
 
@@ -184,5 +185,6 @@ mkBSData <- function(inFiles) {
 #' @export
 
 getBSCord <- function(inFile=Args$inFile$bscfile) {
-  read_csv(inFile)
+  dat <-  read_csv(inFile)
+  mutate(dat, BSIntID=as.integer(BSIntID))
 }
