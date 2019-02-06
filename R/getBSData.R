@@ -9,15 +9,16 @@
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs()
-#' readBSData(Args$inFiles$bsifile) 
+#' readBSData() 
 
-readBSData <- function(inFile=Args$inFiles$bsifile) {
+readBSData <- function(inFile=getFiles()$bsifile) {
   dat <- haven::read_dta(inFile)
   dat <- mutate(dat, 
+    BSIntID = as.integer(BSIntID),
     LocalArea = as.character(haven::as_factor(dat$LocalArea)),
     Isigodi = as.character(haven::as_factor(dat$Isigodi)),
     IsUrbanOrRural = as.character(haven::as_factor(dat$IsUrbanOrRural)))
+  dat <- select(dat, -BSIntId)
   dat
 }
 
@@ -31,7 +32,7 @@ readBSData <- function(inFile=Args$inFiles$bsifile) {
 #' @return data.frame
 #'
 #' @export 
-readPIPData <- function(inFile=Args$inFiles$pipfile) {
+readPIPData <- function(inFile=getFiles()$pipfile) {
   dat <- readxl::read_excel(inFile)
   names(dat)[names(dat)=="BSIntId"] = "BSIntID"
   dat <- mutate(dat, BSIntID=as.integer(BSIntID))
@@ -54,10 +55,10 @@ readPIPData <- function(inFile=Args$inFiles$pipfile) {
 #' hiv <- BSMax(Args$inFiles$demfile)
 
 BSMax <- function(
-  inFile=Args$inFiles$demfile,
-  outFile="MaxBSIntID.csv") {
+  inFile=getFiles()$demfile,
+  outFile="MaxBSIntID.Rdata") {
 
-  dem <- tbl_df(readr::read_tsv(inFile)) %>% 
+  dem <- readr::read_tsv(inFile) %>% 
     select(BSIntID, IIntID, Year=ExpYear, Episode, ExpDays) %>% 
     arrange(IIntID, Episode)
 
@@ -77,7 +78,8 @@ BSMax <- function(
 
   maxBS <- group_by(maxBS, IIntID, Year) %>% 
     filter(row_number()==1)
-  readr::write_csv(maxBS, file.path(Sys.getenv("HOME"), outFile))
+  save(maxBS, file.path(Sys.getenv("HOME"), 
+    "Documents/AC_Data/Derived/Other", outFile))
   return(maxBS)
 }
 
