@@ -4,7 +4,7 @@
 \alias{readBSData}
 \title{readBSData}
 \usage{
-readBSData(inFile = Args$inFiles$bsifile)
+readBSData(inFile = getFiles()$bsifile)
 }
 \arguments{
 \item{inFile}{filepath to data.}
@@ -16,6 +16,5 @@ data.frame
 Read in Bounded Structures data.
 }
 \examples{
-Args <- setArgs()
-readBSData(Args$inFiles$bsifile) 
+readBSData() 
 }

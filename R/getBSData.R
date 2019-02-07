@@ -14,11 +14,11 @@
 readBSData <- function(inFile=getFiles()$bsifile) {
   dat <- haven::read_dta(inFile)
   dat <- mutate(dat, 
-    BSIntID = as.integer(BSIntID),
+    BSIntId = as.integer(BSIntId),
     LocalArea = as.character(haven::as_factor(dat$LocalArea)),
     Isigodi = as.character(haven::as_factor(dat$Isigodi)),
     IsUrbanOrRural = as.character(haven::as_factor(dat$IsUrbanOrRural)))
-  dat <- select(dat, -BSIntId)
+  dat <- rename(dat, BSIntID=BSIntId)
   dat
 }
 
@@ -78,7 +78,9 @@ BSMax <- function(
 
   maxBS <- group_by(maxBS, IIntID, Year) %>% 
     filter(row_number()==1)
-  save(maxBS, file.path(Sys.getenv("HOME"), 
+  maxBS[] <- lapply(maxBS[], as.integer)
+  maxBS <- rename(maxBS, BSIntID=MaxBSIntID)
+  save(maxBS, file=file.path(Sys.getenv("HOME"), 
     "Documents/AC_Data/Derived/Other", outFile))
   return(maxBS)
 }
@@ -190,3 +192,24 @@ getBSCord <- function(inFile=Args$inFile$bscfile) {
   dat <-  read_csv(inFile)
   mutate(dat, BSIntID=as.integer(BSIntID))
 }
+
+#' @title addBSVars
+#' 
+#' @description Add variables from Bounded Structures to existing dataset.
+#' 
+#' @param dat An existing dataset.
+#' @param Vars Select variables.
+#' 
+#' @return 
+#'
+#' @export 
+
+addBSVars <- function(dat, Vars="IsUrbanOrRural") {
+  load(getFiles()$bsmfile)
+  dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
+  bdat <- readBSData()
+  bdat <- select(bdat, BSIntID, contains(Vars))
+  dat <- left_join(dat, bdat, by="BSIntID")
+  dat
+}
+

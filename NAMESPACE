@@ -2,6 +2,7 @@
 
 export(IntCensParse)
 export(UniReg)
+export(addBSVars)
 export(calcARTCov)
 export(calcInc)
 export(calcMortality)

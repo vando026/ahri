@@ -4,7 +4,7 @@
 \alias{readPIPData}
 \title{readPIPData}
 \usage{
-readPIPData(inFile = Args$inFiles$pipfile)
+readPIPData(inFile = getFiles()$pipfile)
 }
 \arguments{
 \item{inFile}{}

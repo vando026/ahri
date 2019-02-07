@@ -4,8 +4,8 @@
 \alias{plotIncPrev}
 \title{plotIncPrev}
 \usage{
-plotIncPrev(inc, prev = NULL, Args = NULL, gfun = png, bwidth = 2,
-  fname = "test")
+plotIncPrev(inc, prev = NULL, Args = NULL, gfun = png,
+  bwidth = 2.5, fname = "test")
 }
 \arguments{
 \item{inc}{Incidence data, must include CIs, from \code{\link{getIncidence}}.}

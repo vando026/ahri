@@ -4,7 +4,7 @@
 \alias{BSMax}
 \title{BSMax}
 \usage{
-BSMax(inFile = Args$inFiles$demfile, outFile = "MaxBSIntID.csv")
+BSMax(inFile = getFiles()$demfile, outFile = "MaxBSIntID.Rdata")
 }
 \arguments{
 \item{inFile}{file path to Demography dataset.}

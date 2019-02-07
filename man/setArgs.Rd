@@ -16,7 +16,7 @@ setArgs(inFiles = getFiles(), Years = c(2004:2017), Age = list(All =
 
 \item{Age}{list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.}
 
-\item{AgeCat}{numeric vector of age categories.}
+\item{AgeCat}{numeric vector of age categories, e.g. \code{seq(15, 55, by=5)}.}
 
 \item{ResRule}{proportion of time spent in DSA, greater than >.}
 
