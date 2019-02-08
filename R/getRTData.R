@@ -4,7 +4,7 @@
 #' 
 #' @param dat dataset from \code{\link{getHIV}}. 
 #'
-#' @param Args takes an Args list from \code{\link{setArgs}}. 
+#' @param onlyRT Drops IDs who are not repeat-testers.
 #'
 #' @return data.frame
 #'
@@ -16,21 +16,16 @@
 #' hiv <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
 
-getRTData <- function(dat, 
-  Args=eval.parent(quote(Args))) {
+getRTData <- function(dat, onlyRT=TRUE) {
+
   # function  get dates 
   early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
   early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
   late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
   late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
-
-  # merge
-  dat <- select(dat, IIntID, Female) %>% 
-    group_by(IIntID) %>% slice(1) %>% ungroup(dat)
-  dat <- left_join(dat, early_neg, by="IIntID")
-  dat <- left_join(dat, late_neg, by="IIntID")
-  dat <- left_join(dat, early_pos, by="IIntID")
-  dat <- left_join(dat, late_pos, by="IIntID")
+  dat <- distinct(dat, IIntID, Female)
+  dat <- Reduce(left_join, 
+    list(dat, early_neg, late_neg, early_pos, late_pos))
 
   # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
   rtdat <- mutate(dat, late_neg_after = ifelse(
@@ -38,21 +33,13 @@ getRTData <- function(dat,
   # ** I just drop these individuals, irreconcilable
   rtdat <- filter(rtdat, late_neg_after==0) %>% 
     select(-c(late_neg_after, late_pos))
-  # Drop any indiv that dont have a first neg date.
-  rtdat <- filter(rtdat, !(is.na(early_neg) & is.na(late_neg)))
-  # Must have two tests, if early neg date is equal to late neg date and missing pos date then drop
-  rtdat <- filter(rtdat, !(early_neg==late_neg & is.na(early_pos)))
-  rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
-  ### Sanity Checks
-  testDates <- function(dat=NULL) {
-    testNeg <- filter(dat, is.finite(early_neg) & is.finite(late_neg))
-    if(any(with(testNeg, early_neg > late_neg))) 
-        stop("Some early_neg > late_neg") 
-    testPos <- filter(dat, is.finite(early_pos) & is.finite(late_neg))
-    if(any(with(testPos, late_neg >= early_pos))) 
-        stop("Some late_neg >= early_pos") 
+  if (onlyRT) {
+    # Drop any indiv that dont have a first neg date.
+    rtdat <- filter(rtdat, !(is.na(early_neg) & is.na(late_neg)))
+    # Must have two tests, if early neg date is equal to late neg date and missing pos date then drop
+    rtdat <- filter(rtdat, !(early_neg==late_neg & is.na(early_pos)))
   }
-  # testDates(rtdat)
+  rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
   # Make for split episodes later rather than in loop to save time
   rtdat <- rename(rtdat, obs_start = early_neg)
   vars <- c("obs_start", "late_neg", "early_pos")
@@ -113,4 +100,29 @@ getDatesMin <- getDates(min)
 #' hdat <- getHIV(Args)
 #' getDatesMax <- getDates(max)
 getDatesMax <- getDates(max)
+
+
+
+#' @title getHIVDatesLong
+#' 
+#' @description Gets HIV dates and saves in long format. Used mainly for IntCens.  
+#' 
+#' @param dat Dateset from \code{\link{getHIV}}.
+#' 
+#' @return 
+#'
+#' @export 
+
+getHIVDatesLong <- function(dat) {
+  dat <- getHIV(Args)
+  early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
+  early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
+  late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
+  late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
+  dat <- distinct(dat, IIntID, Female)
+  dat <- Reduce(left_join, 
+    list(early_neg, late_neg, early_pos, late_pos))
+}
+
+
 

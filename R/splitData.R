@@ -22,8 +22,7 @@ splitData2 <- function(
     cut=getYearDates(years))
   vars <- c("obs_start", "obs_end")
   edat[vars] <- lapply(edat[vars], as.Date)
-  edat <- mutate(edat,
-    Year=as.integer(format(obs_start, "%Y")))
+  edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
   tbl_df(edat)
 }
 
@@ -65,7 +64,7 @@ splitAtSeroDate <- function(
   dat <- rename(dat, event = sero_event)
   dat <- mutate(dat, obs_end=ifelse(event==1, sero_date, late_neg))
   edat <- splitData2(dat, years=splitYears)
-  edat <- mutate(edat, Time = as.numeric(difftime(obs_end, obs_start, units='days')))
+  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start))
   if(any(edat$Time>366)) stop("Days > 366")
   edat <- rename(edat, sero_event = event)
   tbl_df(edat)
@@ -90,14 +89,18 @@ splitAtSeroDate <- function(
 
 splitAtEarlyPos <- function(
   dat=NULL,  splitYears=c(2003:2018)) {
-  dat$obs_start0 <- dat$obs_start
-  dat <- mutate(dat, obs_end=ifelse(sero_event==1, early_pos, late_neg))
+  # Make a baseline value
+  dat <- mutate(dat,
+    obs_start0 = obs_start,
+    obs_end=ifelse(sero_event==1, early_pos, late_neg))
   dat <- rename(dat, event = sero_event)
   edat <- splitData2(dat, years=splitYears)
-  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
-  edat <- mutate(edat, TimeYear = as.numeric(obs_end - obs_start))
-  if(any(edat$TimeYear > 366)) stop("Days > 366")
+  edat <- mutate(edat, 
+    Time = as.numeric(obs_end - obs_start0),
+    TimeYear = as.numeric(obs_end - obs_start))
   edat <- rename(edat, sero_event = event)
+  if(any(edat$TimeYear > 366) | any(is.na(edat$obs_start))) 
+    message("Warning: Days > 366 or NA")
   tbl_df(edat)
 }
 
