@@ -17,7 +17,7 @@ UniReg(InFile, OutFile, Model, ID = NULL, inf = "Inf", iter = 5000,
 \item{ID}{name of subject ID}
 }
 \description{
-wrapper for IntCens fuction
+Wrapper for IntCens fuction by Zeng et al 2016.
 }
 \examples{
 UniReg(

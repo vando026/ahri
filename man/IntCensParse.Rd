@@ -7,8 +7,8 @@
 IntCensParse(File = NULL)
 }
 \arguments{
-\item{File}{File path to output}
+\item{File}{File path to output.txt.}
 }
 \description{
-Code to get IntCens results from output
+Code to get IntCens results from output.
 }
