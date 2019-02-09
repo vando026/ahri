@@ -4,7 +4,8 @@
 \alias{setData}
 \title{setData}
 \usage{
-setData(dat, bdat = getBirthDate(), Args = eval.parent(quote(Args)))
+setData(dat, bdat = getBirthDate(), Args = eval.parent(quote(Args)),
+  time2 = "obs_end")
 }
 \arguments{
 \item{dat}{Dataset for which age is needed at a given episode.}
@@ -12,6 +13,8 @@ setData(dat, bdat = getBirthDate(), Args = eval.parent(quote(Args)))
 \item{bdat}{Date of Birth variable from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes a list from \code{\link{setArgs}}.}
+
+\item{time2}{A date variable that is used to calculate age from Birthdate to time2.}
 }
 \value{
 data.frame

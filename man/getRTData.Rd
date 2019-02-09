@@ -4,12 +4,12 @@
 \alias{getRTData}
 \title{getRTData}
 \usage{
-getRTData(dat, Args = eval.parent(quote(Args)))
+getRTData(dat, onlyRT = TRUE)
 }
 \arguments{
 \item{dat}{dataset from \code{\link{getHIV}}.}
 
-\item{Args}{takes an Args list from \code{\link{setArgs}}.}
+\item{onlyRT}{Drops IDs who are not repeat-testers.}
 }
 \value{
 data.frame

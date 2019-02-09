@@ -1,8 +1,8 @@
 #' @title IntCensParse
 #' 
-#' @description  Code to get IntCens results from output
+#' @description  Code to get IntCens results from output.
 #' 
-#' @param File File path to output
+#' @param File File path to output.txt.
 #'
 #' @export
 #'
@@ -47,7 +47,7 @@ IntCensParse <- function(File=NULL) {
 
 #' @title UniReg
 #' 
-#' @description  wrapper for IntCens fuction
+#' @description  Wrapper for IntCens fuction by Zeng et al 2016.
 #' 
 #' @param InFile txt file to be input
 #' 

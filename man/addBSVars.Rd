@@ -4,7 +4,7 @@
 \alias{addBSVars}
 \title{addBSVars}
 \usage{
-addBSVars(dat, Vars)
+addBSVars(dat, Vars = "IsUrbanOrRural")
 }
 \arguments{
 \item{dat}{An existing dataset.}

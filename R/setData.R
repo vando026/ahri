@@ -49,6 +49,7 @@ getBirthDate <- function(
   dat <- getEpisodes(inFile) 
   dat <- select(dat, IIntID, DateOfBirth=DoB, contains(addVars))
   dat <- distinct(dat, IIntID, .keep_all=TRUE)
+  dat <- filter(dat, !is.na(DateOfBirth))
   dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1910)
   dat
 }
@@ -62,6 +63,8 @@ getBirthDate <- function(
 #' @param bdat Date of Birth variable from \code{\link{getBirthDate}}.
 #'
 #' @param Args takes a list from \code{\link{setArgs}}. 
+#'
+#' @param time2 A date variable that is used to calculate age from Birthdate to time2.
 #'
 #' @return data.frame
 #'
@@ -77,14 +80,13 @@ getBirthDate <- function(
 
 setData <- function(dat,
   bdat=getBirthDate(),
-  Args=eval.parent(quote(Args))) {
+  Args=eval.parent(quote(Args)),
+  time2 = "obs_end") {
   # For specific datasets
   if(!("AgeAtVisit" %in% names(dat))) {
-    dat <- mutate(dat, IIntID = as.integer(IIntID))
-    dat <- left_join(dat, bdat, by="IIntID")
-    dat <- filter(dat, !is.na(DateOfBirth))
-    dat <- mutate(dat, AgeAtVisit = floor(as.numeric(
-      difftime(obs_end, DateOfBirth, units='weeks'))/52.25))
+    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
+    dat$AgeAtVisit <- floor(as.numeric(difftime(
+      dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
     dat <- select(dat, -(DateOfBirth))
   }
   # Keep sex
@@ -100,7 +102,8 @@ setData <- function(dat,
   dat <- filter(dat, Year %in% Args$Years)
   # Further subsetting to take place if needed
   dat <- Args$setFun(dat)
-  rename(dat, Age = AgeAtVisit)
+  dat <- rename(dat, Age = AgeAtVisit)
+  as_tibble(dat)
 }
 
 #' @title makeAgeVars
