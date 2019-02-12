@@ -94,7 +94,6 @@ getCircum <- function(Keep) {
     dat
   }
 }
-
 getCircumcision <- getCircum(Keep = c(0, 1))
 keepCircum <- getCircum(Keep=1)
 dropCircum <- getCircum(Keep=0)
