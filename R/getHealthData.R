@@ -1,14 +1,3 @@
-#' @title readHealthData
-#' 
-#' @description  Reads in men and women general health data. 
-#' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
-#' 
-#' @return 
-#'
-#' @examples
-#' readHealthMen <- readHealthData(getFiles()$mghfile)
-#' readHealthWomen <- readHealthData(getFiles()$wghfile)
 readHealthData <- function(inFile, Fem) {
   function() {
     dat <- haven::read_dta(inFile) %>%
@@ -63,20 +52,9 @@ getCircumcisionData <- function() {
   dat <- readHealthDataMen() 
   dat <- filter(dat, IsCircumcised %in% c(1, 2))
   dat <- mutate(dat, IsCircumcised=as.numeric(IsCircumcised==1))
-  select(dat, IIntID, Year, IsCircumcised)
+  select(dat, IIntID, VisitDate, Year, AgeAtVisit, IsCircumcised)
 }
 
-#' @title getCircum
-#' 
-#' @description gets Circumcision data from MGH AHRI datasets.
-#' 
-#' @param Keep Keeps or drops circumcised men.
-#' 
-#' @export
-#' @examples
-#' keepCircum <- getCircum(Keep=1)
-#' dropCircum <- getCircum(Keep=0)
-#' getCircumcision <- getCircum(Keep = c(0, 1))
 
 getCircum <- function(Keep) {
   function(dat) {
@@ -94,8 +72,32 @@ getCircum <- function(Keep) {
     dat
   }
 }
+
+#' @title getCircumcision
+#' 
+#' @description gets Circumcision data from MGH AHRI datasets.
+#' 
+#' @param Keep Keeps or drops circumcised men.
+#' 
+#' @export
 getCircumcision <- getCircum(Keep = c(0, 1))
+
+#' @title keepCircum
+#' 
+#' @description gets Circumcision data from MGH AHRI datasets.
+#' 
+#' @param Keep Keeps or drops circumcised men.
+#' 
+#' @export
 keepCircum <- getCircum(Keep=1)
+
+#' @title dropCircum
+#' 
+#' @description gets Circumcision data from MGH AHRI datasets.
+#' 
+#' @param Keep Keeps or drops circumcised men.
+#' 
+#' @export
 dropCircum <- getCircum(Keep=0)
 
 
