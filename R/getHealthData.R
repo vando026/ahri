@@ -58,20 +58,19 @@ getCircumcisionData <- function() {
 
 getCircumStatus <- function(Keep) {
   function(dat) {
-    browser()
     cdat <- getCircumcisionData()
     cdat <- filter(cdat, IsCircumcised==1)
     cdat <- group_by(cdat, IIntID) %>% 
       summarize(YearCircum = min(Year)) %>% 
       mutate(EverCircum =1)
-    dat <- left_join(dat, cdat, by="IIntID")
+    dat <- as_tibble(left_join(dat, cdat, by="IIntID"))
     # No surv time before 2009
     dat <- filter(dat, !(Year < 2009))
     dat = mutate(dat,
       IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
       EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
     dat <- select(dat, -(YearCircum))
-    dat <- filter(dat, IsCircum %in% Keep)
+    dat <- filter(dat, EverCircum %in% Keep)
     dat
   }
 }
