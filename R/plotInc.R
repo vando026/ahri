@@ -150,30 +150,25 @@ plotIncPrev <- function(inc, prev=NULL,
       units="in", width=5.0, height=4.0, pointsize=9, 
       res=200, type="cairo")
   }
-  browser()
   par(mar=c(4.0,4.5,3.8,4.5))
-  x <- as.numeric(rownames(inc)); x1 <- x - 0.25
+  x <- as.numeric(rownames(inc))
   y <- inc$rate
-  plotCI(x1, inc$rate, ui=inc$uci, li=inc$lci, xaxt="n",
+  plotCI(x, inc$rate, ui=inc$uci, li=inc$lci,
     ylim=c(0, 5), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
     xlab="Year", ylab="HIV incidence per 100 person-years", 
     font.lab=2, cex.axis=1.2, cex.lab=1.2)
-  staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1.1)
-  lines(x1, y, lty=1, col="blue", lwd=2)
+  # staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
+  lines(x, y, lty=1, col="blue", lwd=2)
   abline(v=2011, lty=3)
   par(new = T)
-  x2 <- as.numeric(rownames(prev)) + 0.25
-  y2 <- prev$adj.rate
-  browser()
-  plotCI(x2, y2 , ui=prev$uci, li=prev$lci, axes=FALSE,
-    ylim=c(0, 50), lwd=2, pch=19, sfrac=0,  col="red", ylab="")
-  # x <- as.numeric(rownames(inc))
-  # plot(x, prev, axes=F, type="l", lwd=3,
-    # ylim=c(0, 50), xlab=NA, ylab=NA,  col="red")
+  x <- as.numeric(rownames(inc))
+  # ys <- ksmooth(x, prev, "normal", bandwidth=bwidth)
+  # ymax = max(ys$y)*1.20
+  plot(x, prev, axes=F, type="l", lwd=3,
+    ylim=c(0, 50), xlab=NA, ylab=NA,  col="red")
   axis(side = 4, cex.axis=1.2)
   mtext(side = 4, line = 2, "HIV prevalence (%)", font=2, 
     cex=1.2)
-  lines(x2, y2, lty=1, col="red", lwd=2)
   legend("top", inset=c(0, -0.12), xpd=TRUE,
     c("HIV Incidence", "HIV Prevalence"),
     lwd=2, pch=c(19, NA), lty=1, cex=1.3,
