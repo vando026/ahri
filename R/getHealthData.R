@@ -56,18 +56,21 @@ getCircumcisionData <- function() {
 }
 
 
-getCircum <- function(Keep) {
+getCircumStatus <- function(Keep) {
   function(dat) {
+    browser()
     cdat <- getCircumcisionData()
     cdat <- filter(cdat, IsCircumcised==1)
     cdat <- group_by(cdat, IIntID) %>% 
-      summarize(YearCircum = min(Year))
+      summarize(YearCircum = min(Year)) %>% 
+      mutate(EverCircum =1)
     dat <- left_join(dat, cdat, by="IIntID")
     # No surv time before 2009
     dat <- filter(dat, !(Year < 2009))
     dat = mutate(dat,
-      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)))
-    dat[, !(names(dat) %in% c("YearCircum"))]
+      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
+      EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
+    dat <- select(dat, -(YearCircum))
     dat <- filter(dat, IsCircum %in% Keep)
     dat
   }
@@ -80,7 +83,7 @@ getCircum <- function(Keep) {
 #' @param Keep Keeps or drops circumcised men.
 #' 
 #' @export
-getCircumcision <- getCircum(Keep = c(0, 1))
+getCircum <- getCircumStatus(Keep = c(0, 1))
 
 #' @title keepCircum
 #' 
@@ -89,7 +92,7 @@ getCircumcision <- getCircum(Keep = c(0, 1))
 #' @param Keep Keeps or drops circumcised men.
 #' 
 #' @export
-keepCircum <- getCircum(Keep=1)
+keepCircum <- getCircumStatus(Keep=1)
 
 #' @title dropCircum
 #' 
@@ -98,7 +101,7 @@ keepCircum <- getCircum(Keep=1)
 #' @param Keep Keeps or drops circumcised men.
 #' 
 #' @export
-dropCircum <- getCircum(Keep=0)
+dropCircum <- getCircumStatus(Keep=0)
 
 
 #' @title getCondomUseData
