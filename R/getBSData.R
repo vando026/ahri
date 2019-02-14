@@ -39,7 +39,7 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
   dat
 }
 
-#' @title BSMax
+#' @title getBSMax
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
@@ -49,37 +49,30 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 #'
 #' @return data.frame
 #'
-#' @import dplyr
+#' @export 
 #'
 #' @examples 
-#' hiv <- BSMax(Args$inFiles$demfile)
+#' hiv <- getBSMax(Args$inFiles$demfile)
 
-BSMax <- function(
+getBSMax <- function(
   inFile=getFiles()$demfile,
   outFile="MaxBSIntID.Rdata") {
 
-  dem <- readr::read_tsv(inFile) %>% 
-    select(BSIntID, IIntID, Year=ExpYear, Episode, ExpDays) %>% 
-    arrange(IIntID, Episode)
-
+  dem <- getEpisodes() %>% 
+    select(BSIntID, IIntID, Year, ExpDays) 
+    
   # Identify max expdays per episode
-  maxBS <- group_by(dem, IIntID, Year) %>% 
-    mutate(MaxDays = max(ExpDays, na.rm=TRUE))
-    
-  # Identify the BSIntID
-  maxBS <- group_by(maxBS, IIntID, Year) %>%
-    mutate(MaxBSIntID=ifelse(MaxDays==ExpDays, BSIntID, NA)) %>%
+  maxBS <- group_by(dem, IIntID, Year) %>% mutate(
+    MaxDays = max(ExpDays, na.rm=TRUE)) %>%
     ungroup(maxBS)
+  
+  maxBS <- filter(maxBS, MaxDays==ExpDays) %>%
+    select(IIntID, Year, BSIntID )
     
-  # Deal with same time in 2+ episodes, just take the first BS
-  maxBS <- filter(maxBS, !is.na(MaxBSIntID)) %>%
-    select(IIntID, Year, MaxBSIntID ) %>%
-    arrange(IIntID, Year) 
-
   maxBS <- group_by(maxBS, IIntID, Year) %>% 
-    filter(row_number()==1)
-  maxBS[] <- lapply(maxBS[], as.integer)
-  maxBS <- rename(maxBS, BSIntID=MaxBSIntID)
+    filter(row_number()==1) %>%
+    ungroup(maxBS)
+
   save(maxBS, file=file.path(Sys.getenv("HOME"), 
     "Documents/AC_Data/Derived/Other", outFile))
   return(maxBS)

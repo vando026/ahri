@@ -35,7 +35,8 @@ setHIVMiss <- function(Args, Root=setRoot()) {
   files <- list.files(filep, pattern=".dta$")
   adat <- lapply(file.path(filep, files), readHIVSurvYear)
   adat <- do.call(rbind, adat)
-  adat <- mutate(adat, Year = as.integer(format(VisitDate, "%Y")))
+  adat <- mutate(adat, IIntID = as.integer(IIntID),
+    Year = as.integer(format(VisitDate, "%Y")))
   adat <- rename(adat, obs_end=VisitDate)
   bdat <- getBirthDate(addVars="Female")
   adat <- setData(adat, bdat, Args)

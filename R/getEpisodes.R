@@ -35,6 +35,8 @@ readEpisodes <- function(
     Year=as.integer(Year))
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
+  # There is an issue here
+  # dat <- filter(dat, !(IIntID %in% c(9552, 29637, 73585)))
   save(dat, file=file.path(outFile))
   dat
 }
