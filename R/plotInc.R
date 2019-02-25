@@ -22,7 +22,7 @@ plotKSInc <- function(
       res=200, type="cairo")
   }
 
-  par(mar=c(4.0,4.5,0.8,0.5))
+  par(mar=c(4.0,4.5,1.4,0.5))
   x <- as.numeric(rownames(inc1))
 
   if(length(x)>9) {
