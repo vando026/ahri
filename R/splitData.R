@@ -89,13 +89,11 @@ splitAtSeroDate <- function(
 
 splitAtEarlyPos <- function(
   dat=NULL,  splitYears=c(2003:2018)) {
-  dat$obs_start0 <- dat$obs_start
   dat <- mutate(dat, obs_end=ifelse(sero_event==1, early_pos, late_neg))
   dat <- rename(dat, event = sero_event)
   edat <- splitData2(dat, years=splitYears)
-  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start0))
-  edat <- mutate(edat, TimeYear = as.numeric(obs_end - obs_start))
-  if(any(edat$TimeYear > 366)) stop("Days > 366")
+  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start))
+  if(any(edat$Time > 366)) stop("Days > 366")
   edat <- rename(edat, sero_event = event)
   tbl_df(edat)
 }

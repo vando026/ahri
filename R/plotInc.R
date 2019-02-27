@@ -1,4 +1,4 @@
-#' @title plotKSInc
+#' @title plotIncSex
 #' 
 #' @description  Plot HIV incidence.
 #' 
@@ -6,64 +6,49 @@
 #' 
 #' @export
 
-plotKSInc <- function(
-  inc1, inc2=NULL, inc3=NULL, 
-  Colors=c("grey60", "grey70", NULL),
-  bwidth=list(inc1=c(2,2), inc2=c(2,2), inc3=NULL),
-  ylim1=c(0, 7), outpath,
-  gcolor="grey50", gfun=png,
-  Legend=c("Men", "Women", NULL),
-  title="", fname="year_plot") {
+plotIncSex <- function(Mal, Fem, yLim=7,
+  Colors=c("blue", "red"), gfun=png,
+  Title="", fname="year_plot") {
 
+  par(mar=c(4.0,4.5,1.4,0.5))
   if(!is.null(gfun)) {
-    gfun(file.path(outpath,
+    gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.0, height=5.0, pointsize=9, 
       res=200, type="cairo")
   }
+  Fem <- data.frame(Fem,
+    Grp=seq(nrow(Fem))+0.20,
+    sex="Fem")
+  Mal <- data.frame(Mal,
+    Grp=seq(nrow(Mal))-0.20,
+    sex="Mal")
+  Sex <- rbind(Mal, Fem)
+  Sex <- arrange(Sex, sex)
 
-  par(mar=c(4.0,4.5,1.4,0.5))
-  x <- as.numeric(rownames(inc1))
+  labs <- rownames(Mal)
+  len <- length(labs)
+  scols <- c(rep(Colors[1], len),rep(Colors[2], len))
 
-  if(length(x)>9) {
-    labs <- grep("^20", rownames(inc1), value=TRUE)
-    labs[seq(1, length(inc1[, "rate"]), 2)] <- " "
-  } else {
-    labs <- x 
-  }
-
-  plot(x, inc1[, "rate"], type='n',
-    pch=4, bty="n", xaxt='n',
-    ylim=ylim1, main=title,
-    cex.axis=1.1, cex.lab=1.2,
+  with(Sex,
+    plotrix::plotCI(Grp, y=rate, 
+    ui=uci, li=lci, 
+    ylab="Incidence rate per 100 person-years", 
     xlab="Year", font.lab=2,
-    ylab="Incidence Rate per 100 person-years")
-  axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
+    cex.axis=1.2, cex.lab=1.3,
+    xaxt="n", bty="n", 
+    ylim=c(0, yLim),
+    pt.bg=scols, col=scols,
+    lwd=2, cex=0.6, pch=21))
+    axis(side=1, at = seq(length(labs)), 
+      labels = labs, cex.axis=1.2, cex.lab=1.3)
 
-  renderInc <- function(dat, Colors, bwidth) {
-    uci <- dat[, "uci"]; lci <- dat[, "lci"]
-    lci[is.na(lci)] <- 0
-    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[2])
-    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth[2])
-    polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
-      col=Colors, border=Colors)
-    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
-    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth[1]), 
-      lwd=1, lty=1, col=gcolor)
-  }
+  legend("top", 
+    c("Men", "Women"),
+    lwd=10, lty=1, col=Colors,
+    ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
+    cex=1.2)
 
-  renderInc(inc1, Colors[1], bwidth[[1]])
-  if(!is.null(inc2)) renderInc(inc2, Colors[2], bwidth[[2]])
-  if(!is.null(inc3)) renderInc(inc3, Colors[3], bwidth[[3]])
-
-  if (!is.null(Legend)) {
-    legend("top", Legend,
-      lwd=ifelse(is.null(inc2), 0, 12), 
-      lty=1, col=Colors,
-      ncol=length(Legend), 
-      bty="n", pt.lwd=6, xpd=TRUE,
-      cex=1.1)
-  }
   if(!is.null(gfun)) dev.off()
 }
 

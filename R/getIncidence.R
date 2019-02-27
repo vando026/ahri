@@ -57,7 +57,7 @@ AggByAge <- AggFunc("AgeCat")
 
 #' @title doPoisYear
 #' 
-#' @description Do poisson regression for incidence rates by year or age. 
+#' @description Do poisson regression for incidence rates by year.
 #' 
 #' @param dat Dataset from a function \code{\link{getIncData}}.
 #'
@@ -66,10 +66,6 @@ AggByAge <- AggFunc("AgeCat")
 #' @export
 #'
 #' @examples
-#' doPoisYear <- poisFunc("Year")
-#' pdat <- getIncData(dat) 
-#' doPoisYear(pdat)
-#' doPoisAge <- poisFunc("AgeCat")
 
 doPoisYear <- function(dat) {
   dat$tscale <- dat$Time/365.25
@@ -84,6 +80,15 @@ doPoisYear <- function(dat) {
   out
 }
 
+#' @title doPoisAge
+#' 
+#' @description Do poisson regression for incidence rates by age. 
+#' 
+#' @param dat Dataset from a function \code{\link{getIncData}}.
+#'
+#' @return data.frame
+#'
+#' @export
 doPoisAge <- function(dat) {
   dat$tscale <- dat$Time/365.25
   mod <- glm(sero_event ~ AgeCat + offset(log(tscale)),
@@ -307,32 +312,5 @@ getIncidence <- function(Args) {
 smoothInc <- function(dat, x="time", y="rate", bwidth=1) {
   dat <- as.data.frame(dat)
   with(dat, ksmooth(x,  y, "normal", bandwidth = bwidth))
-}
-
-#' @title incTab
-#' 
-#' @description Make table for excel.
-#' 
-#' @param obj takes dataset. 
-#'
-#' @param age Do for age or year.
-#'
-#' @return data.frame
-
-incTab <- function(obj) {
-  with(obj, cbind(AggDat, CrudeRate, AdjRate))
-}
-
-#' @title saveInc
-#' 
-#' @description Save to .Rdata file.
-#' 
-#' @param obj takes object. 
-#'
-#' @param out File path to write. 
-
-saveInc <- function(obj, out=output) {
-  save(obj, file=file.path(output, 
-    paste0(deparse(substitute(obj)), ".Rdata")))
 }
 
