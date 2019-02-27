@@ -74,8 +74,7 @@ doPoisYear <- function(dat) {
   nyears <- seq(unique(dat$Year))
   ndat <- data.frame(Age = mean(dat$Age), tscale=1,
     Year = factor(nyears, levels = nyears, labels = levels(as.factor(dat$Year))))
-  out <- predict.glm(mod, ndat, type="response", se.fit=TRUE)
-  out <- data.frame(out[c("fit", "se.fit")])
+  out <- data.frame(predict.glm(mod, ndat, se.fit=TRUE)[c(1,2)])
   rownames(out) <- ndat$Year
   out
 }
@@ -96,8 +95,7 @@ doPoisAge <- function(dat) {
   nage <- seq(unique(dat$AgeCat))
   ndat <- data.frame(tscale=1,
     AgeCat = factor(nage, levels = nage, labels = levels(dat$AgeCat)))
-  out <- predict.glm(mod, ndat, type="response", se.fit=TRUE)
-  out <- data.frame(out[c("fit", "se.fit")])
+  out <- data.frame(predict.glm(mod, ndat, se.fit=TRUE)[c(1, 2)])
   rownames(out) <- ndat$AgeCat
   out
 }
@@ -214,18 +212,22 @@ getCrudeRate <- function(dat) {
 
 calcRubin <- function(est, se) {
   m <- length(est)
-  if (m==1) return(c(rate=est, se=se))
   mn <- mean(est)
-  var_with <- mean(se^2)
-  var_betw <- sum((est - mn)^2)/(m-1)
-  var_tot <- var_with + var_betw*(1 + (1/m))
-  se <- sqrt(var_tot)
-  rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
-  tdf <- qt(1 - (0.05/2), rdf)
-  lb <- mn - (tdf * se)
-  ub <- mn + (tdf * se)
-  c(rate=mn, se=se, lci=lb, uci=ub)
+  if (m > 1) {
+    var_with <- mean(se^2)
+    var_betw <- sum((est - mn)^2)/(m-1)
+    se <- sqrt(var_with + var_betw*(1 + (1/m)))
+    rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
+    tdf <- qt(1 - (0.05/2), rdf)
+  } else {
+    tdf <- 1.96 
+  }
+  ci <- exp(mn + c(-1, 1) * (tdf * se))
+  c(rate=exp(mn), se=exp(se), 
+    lci=ci[1], uci=ci[2])
 }
+
+
 
 #' @title getAdjRate
 #' 
