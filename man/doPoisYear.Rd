@@ -4,7 +4,7 @@
 \alias{doPoisYear}
 \title{doPoisYear}
 \usage{
-doPoisYear(dat)
+doPoisYear(ndata)
 }
 \arguments{
 \item{dat}{Dataset from a function \code{\link{getIncData}}.}

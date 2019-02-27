@@ -4,7 +4,7 @@
 \alias{calcInc}
 \title{calcInc}
 \usage{
-calcInc(rtdat, bdat, Args)
+calcInc(rtdat, bdat, pdat, Args)
 }
 \arguments{
 \item{rtdat}{Dataset from \code{\link{getRTData}}.}
