@@ -44,7 +44,7 @@ readHIVData <- function(
 #' @export 
 
 getHIV <- function(Args) {
-  hiv <- readHIVData(Args$inFiles, dropTasP=TRUE)
+  hiv <- readHIVData(Args$inFiles, dropTasP=FALSE)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
   hiv <- mutate(hiv, 
