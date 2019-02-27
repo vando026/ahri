@@ -228,10 +228,8 @@ calcRubin <- function(est, se) {
     tdf <- 1.96 
   }
   ci <- exp(mn + c(-1, 1) * (tdf * se))
-  c(rate=exp(mn), se=exp(se), 
-    lci=ci[1], uci=ci[2])
+  c(rate=exp(mn), se=se, lci=ci[1], uci=ci[2])
 }
-
 
 
 #' @title getAdjRate
