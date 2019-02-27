@@ -13,11 +13,5 @@ doPoisYear(dat)
 data.frame
 }
 \description{
-Do poisson regression for incidence rates by year or age.
-}
-\examples{
-doPoisYear <- poisFunc("Year")
-pdat <- getIncData(dat) 
-doPoisYear(pdat)
-doPoisAge <- poisFunc("AgeCat")
+Do poisson regression for incidence rates by year.
 }

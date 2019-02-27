@@ -64,9 +64,6 @@ AggByAge <- AggFunc("AgeCat")
 #' @return data.frame
 #'
 #' @export
-#'
-#' @examples
-
 doPoisYear <- function(dat) {
   dat$tscale <- dat$Time/365.25
   mod <- glm(sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age 
