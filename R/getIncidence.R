@@ -55,6 +55,16 @@ AggFunc <- function(RHS) {
 AggByYear <- AggFunc("Year")
 AggByAge <- AggFunc("AgeCat")
 
+
+getPredYear <- function(Args) {
+  dat <- setHIV(Args)
+  mn_age <- tapply(dat$Age, dat$Year, mean)
+  nyears <- sort(unique(dat$Year))
+  data.frame(Age = mn_age, tscale=1,
+    Year = factor(nyears, levels = nyears, 
+    labels = levels(as.factor(dat$Year))))
+}
+
 #' @title doPoisYear
 #' 
 #' @description Do poisson regression for incidence rates by year.
@@ -64,16 +74,13 @@ AggByAge <- AggFunc("AgeCat")
 #' @return data.frame
 #'
 #' @export
-doPoisYear <- function(dat) {
-  dat$tscale <- dat$Time/365.25
-  mod <- glm(sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age 
-    + offset(log(tscale)), data=dat, family=poisson)
-  nyears <- seq(unique(dat$Year))
-  ndat <- data.frame(Age = mean(dat$Age), tscale=1,
-    Year = factor(nyears, levels = nyears, labels = levels(as.factor(dat$Year))))
-  out <- data.frame(predict.glm(mod, ndat, se.fit=TRUE)[c(1,2)])
-  rownames(out) <- ndat$Year
-  out
+doPoisYear <- function(ndata) {
+  function(dat) {
+    dat$tscale <- dat$Time/365.25
+    mod <- glm(sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age 
+      + offset(log(tscale)), data=dat, family=poisson)
+    data.frame(predict.glm(mod, ndata, se.fit=TRUE)[c(1,2)])
+  }
 }
 
 #' @title doPoisAge
@@ -117,10 +124,11 @@ doPoisAge <- function(dat) {
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' calcInc(rtdat, bdat, Args)
 
-calcInc <- function(rtdat, bdat, Args) {
+calcInc <- function(rtdat, bdat, pdat, Args) {
   dat <- getIncData(rtdat, bdat, Args)
+  doPoisYear_ <- doPoisYear(pdat)
   nm <- c("Year", "Age", "poisYear", "poisAge")
-  funs <- list(AggByYear, AggByAge, doPoisYear, doPoisAge)
+  funs <- list(AggByYear, AggByAge, doPoisYear_, doPoisAge)
   lapply(setNames(funs, nm), function(f) f(dat))
 }
 
@@ -278,10 +286,13 @@ getAdjRate <- function(dat) {
 getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  bdat <- getBirthDate(Args$inFiles$epifile)
+  bdat <- getBirthDate()
+  pdat <- getPredYear(Args)
   dat <- mclapply(seq(Args$nSim), 
-    function(i) {cat(i, ""); calcInc(rtdat, bdat, Args)},
-    mc.cores=Args$mcores)
+    function(i) {
+      cat(i, "")
+      calcInc(rtdat, bdat, pdat, Args)},
+      mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
   crude <- getCrudeRate(cdat[1:4])
   adj <- getAdjRate(cdat[5:8])
