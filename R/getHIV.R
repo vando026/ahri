@@ -44,7 +44,7 @@ readHIVData <- function(
 #' @export 
 
 getHIV <- function(Args) {
-  hiv <- readHIVData(Args$inFiles, dropTasP=FALSE)
+  hiv <- readHIVData(Args$inFiles)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
   hiv <- mutate(hiv, 
@@ -91,7 +91,4 @@ getHIVDates <- function(Args, surv_date="2005-01-01") {
   dat <- setData(dat, time2="VisitDate")
   dat
 }
-
-  # dat <- mutate(dat, 
-    # Time = as.numeric(VisitDate - as.Date(surv_date, origin="1970-01-01")))
 

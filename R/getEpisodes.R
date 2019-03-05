@@ -36,7 +36,7 @@ readEpisodes <- function(
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
   # There is an issue here
-  # dat <- filter(dat, !(IIntID %in% c(9552, 29637, 73585)))
+  dat <- filter(dat, !(IIntID %in% c(9566, 25413)))
   save(dat, file=file.path(outFile))
   dat
 }
@@ -54,7 +54,7 @@ readEpisodes <- function(
 #'
 #' @examples
 #' Args <- setArgs()
-#' getEpisodes(Args$inFile$epifile)
+#' getEpisodes(getFiles$epifile)
 
 getEpisodes <- function(inFile=getFiles()$epifile) {
   load(inFile, envir=environment())
@@ -98,11 +98,11 @@ dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
 #' @examples
 #' setEpisodes(setArgs())
 
-setEpisodes <- function(Args, dropTasP=TRUE) {
-  dat <- getEpisodes(Args$inFiles$epifile)
+setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
+  dat <- getEpisodes(getFiles()$epifile)
   dat <- setData(dat)
   if (dropTasP==TRUE) 
-    dat <- dropTasPData(dat, Args$inFiles$pipfile)
+    dat <- dropTasPData(dat, getFiles()$pipfile)
   dat
 }
 
@@ -111,14 +111,14 @@ setEpisodes <- function(Args, dropTasP=TRUE) {
 #' 
 #' @description Gets the total number of residents from the Episodes dataset. 
 #' 
-#' @param  Args 
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param  prop proportion time spent in DSA to be included in analysis.  
 #' 
 #' @return  data.frame
 #'
 #' @export 
 
-getDemResident <- function(Args, prop=0.5) {
+getDemResident <- function(Args=setArgs(), prop=0.5) {
   dat <- setEpisodes(Args, dropTasP=TRUE)
   dat <- filter(dat, Resident==1)
   gdat <- group_by(dat, IIntID, Year) %>% 

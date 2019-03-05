@@ -15,13 +15,3 @@ data.frame
 \description{
 Calculate crude incidence rate estimates using the standard formula.
 }
-\examples{
-Args <- setArgs(nSim=10)
-hiv   <- getHIV(Args)
-rtdat <- getRTData(hiv)
-bdat <- getBirthDate(Args$inFiles$epifile)
-dat <- mclapply(seq(Args$nSim), 
-  function(i) calcInc(rtdat, bdat, Args))
-cdat <- combineEst(dat)
-getCrudeRate(cdat)
-}

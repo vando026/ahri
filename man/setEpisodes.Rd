@@ -4,7 +4,7 @@
 \alias{setEpisodes}
 \title{setEpisodes}
 \usage{
-setEpisodes(Args, dropTasP = TRUE)
+setEpisodes(Args = setArgs(), dropTasP = TRUE)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}

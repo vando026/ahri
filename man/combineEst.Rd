@@ -7,7 +7,7 @@
 combineEst(dat)
 }
 \arguments{
-\item{dat}{Dataset from \code{\link{calcInc}}.}
+\item{dat}{Dataset from \code{\link{setInc}}.}
 }
 \value{
 list
@@ -19,8 +19,8 @@ Collect all estimates into single matrix
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
 bdat <- getBirthDate(Args$inFiles$epifile)
-dat <- mclapply(seq(Args$nSim), 
-  function(i) calcInc(rtdat, bdat, Args), 
+calcInc <- setInc(rtdat, bdat, doPoisAge, Args)
+dat <- mclapply(seq(Args$nSim), calcInc,
   mc.cores=Args$mcores)
 cdat <- combineEst(dat) 
 }

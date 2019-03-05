@@ -4,7 +4,7 @@
 \alias{getIndDat}
 \title{getIndDat}
 \usage{
-getIndDat(inFile = Args$inFiles$indfile)
+getIndDat(inFile = getFiles()$indfile)
 }
 \arguments{
 \item{infile}{requires Args, see \code{\link{setArgs}}}

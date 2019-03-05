@@ -4,10 +4,10 @@
 \alias{getDemResident}
 \title{getDemResident}
 \usage{
-getDemResident(Args, prop = 0.5)
+getDemResident(Args = setArgs(), prop = 0.5)
 }
 \arguments{
-\item{Args}{}
+\item{Args}{requires Args, see \code{\link{setArgs}}.}
 
 \item{prop}{proportion time spent in DSA to be included in analysis.}
 }

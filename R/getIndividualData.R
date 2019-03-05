@@ -10,7 +10,7 @@
 #'
 #' @export 
 
-getIndDat <- function(inFile=Args$inFiles$indfile) {
+getIndDat <- function(inFile=getFiles()$indfile) {
   idat <- read_csv(inFile,
     col_types=cols_only(
       IIntID="i", DateOfBirth="D"))

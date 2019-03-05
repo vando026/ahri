@@ -30,7 +30,7 @@ readHealthDataMen <- readHealthData(getFiles()$mghfile, Fem=0)
 #' 
 #' @description  Reads in women general health data. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
+#' @param inFile Filepath to dataset, default is \code{getFiles()$fghfile}.
 #' 
 #' @return 
 #'
