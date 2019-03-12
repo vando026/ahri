@@ -111,3 +111,45 @@ makePartnerData <- function(dat,
   out <- select(out, -matches("Married[C1]"))
   out
 }
+
+#' @title getMaritalStatus
+#' 
+#' @description  Get the marital status variable.
+#' 
+#' @param dat Dataset from \code{\link{readHealthDataMen}}.
+#' 
+#' @return 
+#'
+#' @export 
+getMaritalStatus <- function(dat) {
+  dat <- select(dat, IIntID, Year, Female, Marital)
+  dat <- mutate(dat, MaritalStatus = 
+    ifelse(Marital %in% c(1,2,4,6:8,11,13,15,16), "Married",
+    ifelse(Marital %in% c(3,12,14), "Polygamous",
+    ifelse(Marital %in% c(5,9,10,17), "Single", NA_character_))))
+  dat <- filter(dat, !is.na(MaritalStatus))
+  dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
+  dat
+}
+
+
+#' @title addMaritalStatus
+#' 
+#' @description  Add marital status to exisisting dataset. 
+#' 
+#' @param dat Existing dataset.
+#' 
+#' @param mdat Dataset from \code{\link{readHealthDataMen}}.
+#' 
+#' @return 
+#'
+#' @export 
+addMaritalStatus <- function(dat, mdat) {
+  mdat <- getMaritalStatus(mdat) %>%
+    select(IIntID, Year, MaritalStatus)
+  dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
+  dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE))
+  dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE, fromLast=TRUE))
+  dat <- mutate(dat, MaritalStatus = as.factor(MaritalStatus))
+  dat
+}

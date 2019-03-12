@@ -7,7 +7,7 @@
 readHealthDataWomen()
 }
 \arguments{
-\item{inFile}{Filepath to dataset, default is \code{getFiles()$mghfile}.}
+\item{inFile}{Filepath to dataset, default is \code{getFiles()$fghfile}.}
 }
 \value{
 

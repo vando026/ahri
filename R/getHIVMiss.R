@@ -8,10 +8,9 @@
 #'
 #' @export 
 readHIVSurvYear <- function(inFile, addVars=" ") {
-  dat <- haven::read_dta(inFile) %>% mutate(
-    Comment = as.character(haven::as_factor(PrematureCompletionReason)))
-  dat <- select(dat, IIntID=IIntId, VisitDate, 
-    Comment, HIVRefused, contains(addVars))
+  dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, VisitDate, 
+    Comment=PrematureCompletionReason, HIVRefused, contains(addVars))
+  dat <- mutate(dat, Comment = as.character(haven::as_factor(Comment)))
   # replace missing visit dates
   yr <- unique(format(dat$VisitDate[!is.na(dat$VisitDate)], "%Y"))[1]
   dat$VisitDate[is.na(dat$VisitDate)]  <- 

@@ -4,7 +4,7 @@
 \alias{calcRubin}
 \title{calcRubin}
 \usage{
-calcRubin(est, se)
+calcRubin(est, se, fun = exp)
 }
 \arguments{
 \item{est}{Estimates from m imputations}

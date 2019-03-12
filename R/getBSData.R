@@ -78,97 +78,59 @@ getBSMax <- function(
   return(maxBS)
 }
 
-#' @title mkBSData
+#' @title addMigrVars
 #' 
-#' @description Makes a specific file for the IntCens project
+#' @description Gets variables on Migration.
 #' 
-#' @param inFile file path to import Demography dataset.
+#' @param inFile File path to import Demography dataset.
 #' 
-#' @param outFile file path to write dataset.
-#'
 #' @return data.frame
+#' @export
 
+addMigrVars <- function(dat, dem=NULL, inFile=getFiles()$demfile) {
 
-mkBSData <- function(inFiles) {
-
-  dem <- read_tsv(inFiles$dem, 
-    col_types=cols_only(
-      BSIntID="i",
-      IIntID="i",
-      ObservationStart="T",
-      ObservationEnd="T",
-      ExpYear="i",
-      ExpDays="i",
-      Area="i",
-      InMigrEx="i",
-      OutMigrEx="i"))
-
-  dem <- rename(dem, Year=ExpYear) %>%
-    arrange(IIntID, ObservationStart) %>%
-    mutate(InDSA = ifelse(!is.na(BSIntID), 1, 0))
+  if (is.null(dem))
+    dem <- readEpisodes(Vars="^Resident$|Migration")
 
   # Make resident % rule
-  Total <- group_by(dem, IIntID, Year) %>% 
-    summarize(Total=sum(ExpDays))
-  TotalIn <- filter(dem, InDSA==1) %>%
-    group_by(IIntID, Year) %>% 
-    summarize(TotalIn=sum(ExpDays))
-  # Now get prop of days in and out
-  Rule1 <- left_join(Total, TotalIn, by=c("IIntID", "Year"))
-  Rule1 <- mutate(Rule1, 
-    TotalIn=ifelse(is.na(TotalIn), 0, TotalIn),
-    Prop=TotalIn/Total)
-  Rule1 <- filter(Rule1, Prop>=Args$ResRule) %>% 
-    select(IIntID, Year, Prop)
-  
-  # Get Area of BS
-  Area <- select(dem, BSIntID, Area) %>%
-    filter(!is.na(BSIntID)) %>%
-    filter(!duplicated(BSIntID))  
-
-  # Count external migr events
-  Migr <- group_by(dem, IIntID) %>% 
-    summarize(In=sum(InMigrEx),
-    Out=sum(OutMigrEx)) %>% 
-    mutate(MigrCount=In+Out) %>% 
-    select(IIntID, MigrCount)
-
+  # Total <- group_by(dem, IIntID, Year) %>% 
+  #   summarize(Total=sum(ExpDays))
+  # TotalIn <- filter(dem, Resident==1) %>%
+  #   group_by(IIntID, Year) %>% 
+  #   summarize(TotalIn=sum(ExpDays))
+  # # Now get prop of days in and out
+  # TimeIn <- left_join(Total, TotalIn, by=c("IIntID", "Year"))
+  # TimeIn <- mutate(TimeIn, 
+  #   TotalIn=ifelse(is.na(TotalIn), 0, TotalIn),
+  #   TimeInProp=TotalIn/Total) %>%
+  #   select(IIntID, Year, TimeInProp)
   # Count time outside
-  TimeOut <- filter(dem, InDSA==0) %>% 
+  TimeOut <- filter(dem, Resident==0) %>% 
     group_by(IIntID, Year) %>% 
     summarize(DaysOut=sum(ExpDays))
 
-  bsmax <- read_csv(inFiles$bsmfile) %>% 
-    rename(BSIntID=MaxBSIntID)
+  # Count external migr events
+  Migr <- group_by(dem, IIntID) %>% summarize(
+    In=sum(InMigration), Out=sum(OutMigration)) %>%
+    ungroup()
+  Migr <- mutate(Migr, MigrCount=In+Out) %>% 
+    select(IIntID, MigrCount)
 
   # Now bring all data together
-  # dem1 <- filter(dat, IIntID %in% Rule1$IIntID)
-  dem1 <- left_join(dem1, bsmax, by=c("IIntID", "Year"))
-  dem1 <- arrange(dem1, IIntID, Year) %>% 
-    group_by(IIntID) %>% mutate(
-      BSIntID = zoo::na.locf(BSIntID, na.rm=FALSE),
-      BSIntID = zoo::na.locf(BSIntID, na.rm=FALSE, fromLast=TRUE))
-  dem1 <- filter(dem1, !is.na(BSIntID)) #rm miss BS after CF
-  dem1 <- left_join(dem1, Area, by="BSIntID") 
-  dem1 <- left_join(dem1, Migr, by="IIntID")
-  dem1 <- left_join(dem1, TimeOut, by=c("IIntID", "Year"))
-  dem1 <- mutate(dem1, 
+  # dat <- left_join(dat, TimeIn, by=c("IIntID", "Year"))
+  dat <- left_join(dat, TimeOut, by=c("IIntID", "Year"))
+  dat <- left_join(dat, Migr, by="IIntID")
+  dat <- mutate(dat, 
     DaysOut=ifelse(is.na(DaysOut), 0, DaysOut),
     TimeOut=round((DaysOut/365.25)*100,2),
     DayYear=365.25)
-  dem1 <- group_by(dem1, IIntID) %>%
+  dat <- group_by(dat, IIntID) %>%
     mutate(CumDays=cumsum(DaysOut), 
       CumDayYear=cumsum(DayYear),
       CumTimeOut=round((CumDays/CumDayYear)*100, 2))
-  dem1 <- select(dem1, -c(CumDays, DaysOut, DayYear, CumDayYear)) %>%
-    ungroup(dem1)
-
-  bdat <- mutate(dem1, 
-    Rural=ifelse(Area==0, 1, 0),
-    Peri=ifelse(Area==1, 1, 0),
-    Urban=ifelse(Area==2, 1, 0)) 
-    
-  bdat
+  dat <- select(dat, -c(CumDays, DaysOut, DayYear, TimeOut, CumDayYear))
+  dat <- arrange(dat, IIntID, Year)
+  dat
 }
 
 #' @title getBSCord
@@ -197,12 +159,62 @@ getBSCord <- function(inFile=Args$inFile$bscfile) {
 #'
 #' @export 
 
-addBSVars <- function(dat, Vars="IsUrbanOrRural") {
+addBSVars <- function(dat, Vars="IsUrbanOrRural", 
+  dropMissBS=TRUE) {
   load(getFiles()$bsmfile)
   dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
   bdat <- readBSData()
-  bdat <- select(bdat, BSIntID, contains(Vars))
+  bdat <- select(bdat, BSIntID, matches(Vars))
   dat <- left_join(dat, bdat, by="BSIntID")
+  dat <- rename(dat, Area=IsUrbanOrRural)
+  dat$Area[is.na(dat$Area)] <- 
+    sample(sort(unique(dat$Area)),
+    size=sum(is.na(dat$Area)),
+    replace=TRUE,
+    prob=prop.table(table(dat$Area)))
+  if (dropMissBS)
+    dat <- filter(dat, !is.na(BSIntID))
   dat
 }
 
+#' @title readHSEData
+#' 
+#' @description Read HSE data.
+#' 
+#' @param inFile. File path from \code{\link{getFiles}}.
+#' 
+#' @return 
+#'
+#' @export 
+readHSEData <- function(inFile=getFiles()$hsefile) {
+  dat <- haven::read_dta(inFile)
+  dat <- rename(dat, Year=ExpYear, AIQ=AssetIndexQuintile) %>% 
+    arrange(BSIntID, Year) 
+  dat[] <- lapply(dat[], as.integer)
+  dat
+}
+
+#' @title addAIQVar
+#' 
+#' @description Add variables from Bounded Structures to existing dataset.
+#' 
+#' @param dat An existing dataset.
+#' @param Vars Select variables.
+#' 
+#' @return 
+#'
+#' @export 
+
+addAIQVar <- function(dat) {
+  hdat <- readHSEData() %>% select(BSIntID, Year, AIQ)
+  hdat <- distinct(hdat, BSIntID, Year, .keep_all=TRUE) 
+  dat <- left_join(dat, hdat, by=c("BSIntID", "Year"))
+  dat <- mutate(dat, 
+    AIQ = zoo::na.locf(AIQ, na.rm=FALSE), 
+    AIQ = zoo::na.locf(AIQ, na.rm=FALSE, fromLast=TRUE))
+  dat <- mutate(dat, AIQ3 =
+    ifelse(AIQ %in% c(1:2), "lower",
+    ifelse(AIQ %in% c(4:5), "upper", "middle")))
+  dat <- mutate(dat, AIQ3 = as.factor(AIQ3))
+  dat
+}

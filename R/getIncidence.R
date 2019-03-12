@@ -15,32 +15,49 @@
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' getIncData(rtdat, bdat, Args)
-
 getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setData(edat, bdat,  Args)
+  sdat <- setData(edat, bdat,  Args)
+  sdat <- mutate(sdat, Year = as.factor(Year),
+    tscale = Time/365.25)
+  sdat
 }
 
-#' @title AggFunc
+#' @title setInc
 #' 
-#' @description Function to create aggregates of sero events and pyears by right-hand side
-#' formula.
+#' @description Sets the data and functions to calculate incidence estimates.
 #' 
-#' @param RHS right hand side of the formula, as in Sex or AgeCat or "Sex + Cat".
+#' @param rtdat Dataset from \code{\link{getRTData}}.
+#' 
+#' @param bdat Dataset from \code{\link{getBirthDate}}, this is needed to set the data by
+#' year and age.
+#' 
+#' @param fun Functions to calculate incidence estimates.
+#' 
+#' @param Args provide arguments from \code{\link{setArgs}}.
 #' 
 #' @return data.frame
+#'
+#' @export
 #' 
 #' @examples
-#' AggByYear <- AggFunc("Year")
-#' AggByAge <- AggFunc("AgeCat")
-#' # Show for one imputation 
-#' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
-#' ydat <- getIncData(rtdat, bdat, Args)
-#' inc <- AggByYear(ydat)
+#' setInc(rtdat, bdat, doPoisAge, Args)
+setInc <- function(rtdat, bdat, Args, fun=NULL) {
+  sfuns <- list(
+    year = AggByYear, 
+    crude = calcCrudeInc, 
+    age_adj = setPoisYear(getAgeYear(Args)))
+  fun <- append(sfuns, fun)
+  function(i) {
+    cat(i, "")
+    dat <- getIncData(rtdat, bdat, Args)
+    lapply(fun, function(f) f(dat))
+  }
+}
 
 AggFunc <- function(RHS) {
   function(dat) {
@@ -52,8 +69,55 @@ AggFunc <- function(RHS) {
   }
 }
 
+#' @title AggByYear
+#' 
+#' @description Aggregates data to get sero events and pyears by year.
+#' formula.
+#' 
+#' @param dat Dataset. 
+#' 
+#' @return data.frame
+#' 
+#' @export 
+#' 
+#' @examples
+#' # Show for one imputation 
+#' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' ydat <- getIncData(rtdat, bdat, Args)
+#' inc <- AggByYear(ydat)
 AggByYear <- AggFunc("Year")
+
+#' @title AggByAge
+#' 
+#' @description Aggregates data to get sero events and pyears by age category.
+#' formula.
+#' 
+#' @param dat Dataset. 
+#' 
+#' @return data.frame
+#' 
+#' @export 
 AggByAge <- AggFunc("AgeCat")
+
+
+#' @title calcCrudeInc
+#' 
+#' @description  Calculates crude incidence rates by year using poisson regression.
+#' 
+#' @param dat Dataset from \code{\link{AggByYear}}.
+#' 
+#' @return 
+#'
+#' @export 
+calcCrudeInc <- function(dat) {
+  dat <- AggByYear(dat)
+  mod <- glm(sero_event ~ - 1 + Year + offset(log(pyears)),
+    data=dat, family=poisson)
+  data.frame(fit=mod$coef, se.fit=summary(mod)$coef[, 2])
+}
 
 
 #' @title setPoisYear
@@ -96,35 +160,6 @@ doPoisAge <- function(dat) {
   out
 }
 
-#' @title setInc
-#' 
-#' @description Sets the data and functions to calc the crude and adjusted incidence.
-#' 
-#' @param rtdat Dataset from \code{\link{getRTData}}.
-#' 
-#' @param bdat Dataset from \code{\link{getBirthDate}}.
-#' 
-#' @param fun Functions to calculate incidence rates.
-#' 
-#' @param Args provide arguments from \code{\link{setArgs}}.
-#' 
-#' @return data.frame
-#'
-#' @export
-#' 
-#' @examples
-#' hiv   <- getHIV(Args)
-#' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
-#' setInc(rtdat, bdat, doPoisAge, Args)
-setInc <- function(rtdat, bdat, fun, Args) {
-  function(i) {
-    cat(i, "")
-    dat <- getIncData(rtdat, bdat, Args)
-    lapply(fun, function(f) f(dat))
-  }
-}
-
 
 #' @title combineEst
 #' 
@@ -144,44 +179,22 @@ setInc <- function(rtdat, bdat, fun, Args) {
 #' dat <- mclapply(seq(Args$nSim), calcInc,
 #'   mc.cores=Args$mcores)
 #' cdat <- combineEst(dat) 
-
-combineEst <-  function(dat) {
+combineEst <-  function(dat, get_names=NULL) {
+  standard <- list(
+    sero=c("year", "sero_event"),
+    pyears=c("year", "pyears"),
+    crude_est=c("crude", "fit"),
+    crude_se=c("crude", "se.fit"),
+    adj_est=c("age_adj", "fit"),
+    adj_se=c("age_adj", "se.fit"))
+  get_names <- append(standard, get_names)
   getEst <- function(dat, obj) {
     out <- sapply(dat, "[[", obj)
     rownames(out) <- rownames(dat[[1]][[obj[1]]])
     out
   }
-  nms <- list(
-    getSero = c("Year", "sero_event"),
-    getPYear = c("Year", "pyears"),
-    getAgeSero = c("Age", "sero_event"),
-    getAgePYear = c("Age", "pyears"),
-    getPoisYearEst = c("poisYear", "fit"),
-    getPoisYearSE = c("poisYear", "se.fit"),
-    getPoisAgeEst = c("poisAge", "fit"),
-    getPoisAgeSE = c("poisAge", "se.fit"))
-  lapply(nms, function(x) getEst(dat, x))
+  lapply(get_names, function(x) getEst(dat, x))
 }
-
-#' @title getCrudeRate
-#' 
-#' @description Calculate crude incidence rate estimates using the standard formula. 
-#' 
-#' @param dat Dataset from \code{\link{combineEst}}. 
-#' 
-#' @return  data.frame
-#'
-#' @export 
-
-getCrudeRate <- function(dat) {
-  out <- lapply(dat, rowMeans)
-  Year <- data.frame(sero=out$getSero, pyears=out$getPYear)
-  Age <- data.frame(sero=out$getAgeSero, pyears=out$getAgePYear)
-  getInc <- function(dat)  dat$sero/dat$pyear * 100 
-  lapply(list(Year=Year, Age=Age), 
-    function(x) {x$rate = getInc(x); x})
-}
-
 
 #' @title calcRubin
 #' 
@@ -199,61 +212,38 @@ getCrudeRate <- function(dat) {
 #' s <- c(0.5, 0.5) # m = 2
 #' x <- calcRubin(e, s)
 
-calcRubin <- function(est, se) {
-  m <- length(est)
-  mn <- mean(est)
-  if (m > 1) {
-    var_with <- mean(se^2)
-    var_betw <- sum((est - mn)^2)/(m-1)
-    se <- sqrt(var_with + var_betw*(1 + (1/m)))
-    rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
-    tdf <- qt(1 - (0.05/2), rdf)
-  } else {
-    tdf <- 1.96 
+calcRubin <- function(est, se, fun=exp) {
+  doCalc <- function(est, se, func=fun) {
+    m <- length(est)
+    mn <- mean(est)
+    if (m > 1) {
+      var_with <- mean(se^2)
+      var_betw <- sum((est - mn)^2)/(m-1)
+      se <- sqrt(var_with + var_betw*(1 + (1/m)))
+      rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
+      tdf <- qt(1 - (0.05/2), rdf)
+    } else {
+      tdf <- 1.96 
+    }
+    ci <- func(mn + c(-1, 1) * (tdf * se))
+    c(rate=func(mn), lci=ci[1], uci=ci[2])
   }
-  ci <- exp(mn + c(-1, 1) * (tdf * se))
-  c(rate=exp(mn), lci=ci[1], uci=ci[2])
+  est <- split(est, rownames(est))
+  se <- split(se, rownames(se))
+  out <- Map(doCalc, est, se)
+  out <- data.frame(do.call(rbind, out))
+  out[] <- lapply(out[], `*`, 100)
+  out
 }
 
-
-#' @title getAdjRate
-#' 
-#' @description Calculate adjusted incidence rate estimates using Poisson models and
-#' Rubin's rules
-#' 
-#' @param dat Dataset from \code{\link{combineEst}}. 
-#' 
-#' @return  data.frame
-#'
-#' @export 
-#'
-#' @examples
-#' Args <- setArgs(nSim=10)
-#' hiv   <- getHIV(Args)
-#' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
-#' dat <- mclapply(seq(Args$nSim), 
-#'   function(i) calcInc(rtdat, bdat, Args))
-#' cdat <- combineEst(dat)
-#' geteAdjRate(cdat)
-
-getAdjRate <- function(dat) {
-  calcPredict <- function(est, se) {
-    est1 <- split(est, rownames(est))
-    se <- split(se, rownames(se))
-    out <- Map(calcRubin, est1, se)
-    dat <- data.frame(do.call(rbind, out))
-    dat[] <- lapply(dat[], `*`, 100)
-    rownames(dat) <- rownames(est)
-    dat
-  }
-  list(
-    Year = calcPredict(dat[["getPoisYearEst"]], dat[["getPoisYearSE"]]),
-    Age = calcPredict(dat[["getPoisAgeEst"]], dat[["getPoisAgeSE"]])
-  )
+# This calculates standard incidence rates
+calcEst <- function(cdat) {
+  agg <- cbind(sero=rowMeans(cdat$sero),
+    pyears=rowMeans(cdat$pyears))
+  crude <- calcRubin(cdat$crude_est, cdat$crude_se)
+  adj <- calcRubin(cdat$adj_est, cdat$adj_se)
+  list(agg=agg, crude=crude, age_adj=adj)
 }
-
-
 
 
 #' @title getIncidence
@@ -272,41 +262,11 @@ getIncidence <- function(Args) {
   hiv   <- getHIV(Args)
   rtdat <- getRTData(hiv)
   bdat <- getBirthDate()
-  ndata <- getAgeYear(Args)
-  doPoisYear <- setPoisYear(getAgeYear(Args))
-  ifun <- list(Year=AggByYear, Age=AggByAge, 
-     poisYear=doPoisYear, poisAge=doPoisAge)
-  calcInc <- setInc(rtdat, bdat, ifun, Args)
-  dat <- mclapply(seq(Args$nSim), 
+  calcInc <- setInc(rtdat, bdat, Args)
+  dat <- mclapply(seq(Args$nSim),
     calcInc, mc.cores=Args$mcores)
   cdat <- combineEst(dat) 
-  crude <- getCrudeRate(cdat[1:4])
-  adj <- getAdjRate(cdat[5:8])
-  list(crude=crude, adj=adj)
+  calcEst(cdat)
 }
 
-
-###############################################################################################
-######################################## Misc Inc Funs ########################################
-###############################################################################################
-
-#' @title smoothInc
-#' 
-#' @description get smoothed incidence estimates.
-#' 
-#' @param dat takes dataset from \code{\link{getIncidence}}.
-#'
-#' @param bwidth bandwith for \code{ksmooth} function. 
-#'
-#' @return data.frame
-#'
-#' @export
-#'
-#' @examples
-#' smoothInc(dat, x="time", y="rate")
-
-smoothInc <- function(dat, x="time", y="rate", bwidth=1) {
-  dat <- as.data.frame(dat)
-  with(dat, ksmooth(x,  y, "normal", bandwidth = bwidth))
-}
 

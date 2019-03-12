@@ -17,16 +17,18 @@
 
 readEpisodes <- function(
   inFile=getFiles()$epi_dta,
-  outFile=getFiles()$epifile) {
+  outFile=getFiles()$epifile, Vars="") {
   #
-  dat <- read_dta(inFile) 
+  dat <- haven::read_dta(inFile) 
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
     Year, ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     Female=Sex, AgeAtVisit=Age, Resident,
-    EarliestARTInitDate, DoB, DoD)
+    EarliestARTInitDate, DoB, DoD, matches(Vars))
+  dat <- haven::zap_labels(dat)
+  dat <- haven::zap_formats(dat)
   dat <- filter(dat, Female %in% c(1, 2))
   dat <- mutate(dat, 
     Female=as.numeric(Female==2),

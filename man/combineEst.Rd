@@ -4,7 +4,7 @@
 \alias{combineEst}
 \title{combineEst}
 \usage{
-combineEst(dat)
+combineEst(dat, get_names = NULL)
 }
 \arguments{
 \item{dat}{Dataset from \code{\link{setInc}}.}

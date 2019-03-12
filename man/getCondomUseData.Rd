@@ -12,3 +12,7 @@ getCondomUseData(dat)
 \description{
 gets Condom use data from AHRI datasets.
 }
+\examples{
+dat <- readHealthDataMen()
+getCondomUseData(dat)
+}
