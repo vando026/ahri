@@ -143,7 +143,10 @@ addCondomVar <- function(dat, cdat) {
     size=sum(is.na(dat$EverUsedCondom)),
     replace=TRUE,
     prob=prop.table(table(dat$EverUsedCondom)))
-   dat
+  dat <- mutate(dat, EverUsedCondom = 
+    ifelse(EverUsedCondom==1, "Always",
+    ifelse(EverUsedCondom==2, "Sometimes", "Never")))
+  dat
 }
 
 

@@ -32,9 +32,6 @@ addHIVPrevBS <- function(dat,
       HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE, fromLast=TRUE))
   dat$HIVPrev[is.na(dat$HIVPrev)]  <- 
     runif(sum(is.na(dat$HIVPrev)), 0, 50)
-  dat <- mutate(dat, HIVPrevCat = 
-    cut(HIVPrev, breaks=c(0, 10, 15, 20, 100),
-    include.lowest=TRUE, right=FALSE))
   dat
 }
 

@@ -124,9 +124,9 @@ makePartnerData <- function(dat,
 getMaritalStatus <- function(dat) {
   dat <- select(dat, IIntID, Year, Female, Marital)
   dat <- mutate(dat, MaritalStatus = 
-    ifelse(Marital %in% c(1,2,4,6:8,11,13,15,16), "Married",
-    ifelse(Marital %in% c(3,12,14), "Polygamous",
-    ifelse(Marital %in% c(5,9,10,17), "Single", NA_character_))))
+    ifelse(Marital %in% c(1:4,6:8,11:16), "Married",
+    # ifelse(Marital %in% c(3,12,14), "Polygamous",
+    ifelse(Marital %in% c(5,9,10,17), "Single", NA_character_)))
   dat <- filter(dat, !is.na(MaritalStatus))
   dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
   dat

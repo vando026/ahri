@@ -2,6 +2,7 @@
 
 export(AggByAge)
 export(AggByYear)
+export(AggFunc)
 export(IntCensParse)
 export(UniReg)
 export(addAIQVar)

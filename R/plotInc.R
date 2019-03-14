@@ -17,19 +17,19 @@ plotIncSex <- function(Mal, Fem, yLim=7,
       res=200, type="cairo")
   }
   par(mar=c(4.0,4.5,1.4,0.5))
-  Fem <- data.frame(Fem,
+  Fem1 <- data.frame(Fem,
     Grp=seq(nrow(Fem))+0.20,
     sex="Fem")
-  Mal <- data.frame(Mal,
+  Mal1 <- data.frame(Mal,
     Grp=seq(nrow(Mal))-0.20,
     sex="Mal")
-  Sex <- rbind(Mal, Fem)
+  Sex <- rbind(Mal1, Fem1)
   Sex <- arrange(Sex, sex)
 
+  # browser()
   labs <- rownames(Mal)
   len <- length(labs)
-  scols <- c(rep(Colors[1], len),rep(Colors[2], len))
-
+  scols <- c(rep(Blues[3], len),rep(Reds[3], len))
   with(Sex,
     plotrix::plotCI(Grp, y=rate, 
     ui=uci, li=lci, 
@@ -37,15 +37,18 @@ plotIncSex <- function(Mal, Fem, yLim=7,
     xlab="Year", font.lab=2,
     cex.axis=1.2, cex.lab=1.3,
     xaxt="n", bty="n", 
-    ylim=c(0, yLim),
-    pt.bg=scols, col=scols,
+    ylim=c(0, yLim), 
+    pt.bg=par("bg"), col=scols,
     lwd=2, cex=0.6, pch=21))
     axis(side=1, at = seq(length(labs)), 
       labels = labs, cex.axis=1.2, cex.lab=1.3)
-
+  kfem <- ksmooth(Sex$Grp[Sex$sex=="Fem"], Fem$rate, "normal", bandwidth=2.3)
+  kmal <- ksmooth(Sex$Grp[Sex$sex=="Mal"], Mal$rate, "normal", bandwidth=2.9)
+  lines(kfem, col=Reds[5], lwd=2)
+  lines(kmal, col=Blues[5], lwd=2)
   legend("top", 
     c("Men", "Women"),
-    lwd=10, lty=1, col=Colors,
+    lwd=10, lty=1, col=c(Reds[5], Blues[5]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
     cex=1.2)
 

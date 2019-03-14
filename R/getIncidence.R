@@ -59,6 +59,15 @@ setInc <- function(rtdat, bdat, Args, fun=NULL) {
   }
 }
 
+#' @title AggFunc
+#' 
+#' @description  Get aggregated events and pyears by Var.
+#' 
+#' @param RHS RHS of formula.
+#' 
+#' @return 
+#'
+#' @export 
 AggFunc <- function(RHS) {
   function(dat) {
     F1 <- as.formula(paste(
