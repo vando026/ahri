@@ -69,7 +69,6 @@ getCircumStatus <- function(Keep) {
       mutate(EverCircum =1)
     dat <- as_tibble(left_join(dat, cdat, by="IIntID"))
     # No surv time before 2009
-    browser()
     dat <- filter(dat, !(Year < 2009))
     dat = mutate(dat,
       IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),

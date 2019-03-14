@@ -17,7 +17,7 @@
 
 readEpisodes <- function(
   inFile=getFiles()$epi_dta,
-  outFile=getFiles()$epifile, Vars="") {
+  outFile=getFiles()$epifile, Vars=" ") {
   #
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
@@ -37,8 +37,6 @@ readEpisodes <- function(
     Year=as.integer(Year))
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
-  # There is an issue here
-  dat <- filter(dat, !(IIntID %in% c(9566, 25413)))
   save(dat, file=file.path(outFile))
   dat
 }

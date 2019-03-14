@@ -63,15 +63,15 @@ getBSMax <- function(
     
   # Identify max expdays per episode
   maxBS <- group_by(dem, IIntID, Year) %>% mutate(
-    MaxDays = max(ExpDays, na.rm=TRUE)) %>%
-    ungroup(maxBS)
+    MaxDays = max(ExpDays, na.rm=TRUE))
+  maxBS <- ungroup(maxBS)
   
   maxBS <- filter(maxBS, MaxDays==ExpDays) %>%
     select(IIntID, Year, BSIntID )
     
   maxBS <- group_by(maxBS, IIntID, Year) %>% 
-    filter(row_number()==1) %>%
-    ungroup(maxBS)
+    filter(row_number()==1)
+  maxBS <- ungroup(maxBS)
 
   save(maxBS, file=file.path(Sys.getenv("HOME"), 
     "Documents/AC_Data/Derived/Other", outFile))
