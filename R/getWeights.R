@@ -12,3 +12,19 @@ getAgeWeights <- function(Args) {
   dat <- getDemResident(Args)
   tapply(dat$Age, dat$Year, mean)
 }
+
+#' @title getAgeYear
+#' 
+#' @description  Calculate Age distribution by year of resident.
+#' 
+#' @param Args.
+#' 
+#' @return 
+#'
+#' @export 
+getAgeYear <- function(Args) {
+  mn_age <- getAgeWeights(Args)
+  data.frame(Age = mn_age, tscale=1,
+    Year = factor(Args$Year, levels = Args$Year, 
+    labels = levels(as.factor(Args$Year))))
+}
