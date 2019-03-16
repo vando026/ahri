@@ -11,7 +11,7 @@
 #' @export 
 
 readHIVData <- function(
-  inFiles=getFiles(), dropTasP=FALSE) {
+  inFiles=getFiles(), dropTasP=TRUE) {
   hiv <- readr::read_csv(inFiles$hivfile,
     col_types=cols_only(
       ResidencyBSIntId="i",

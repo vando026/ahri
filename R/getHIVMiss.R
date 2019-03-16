@@ -145,11 +145,10 @@ getHIVIncEligible <- function(Args, dat=NULL) {
   hdat <- getHIV(Args)
   hdat <- getRTData(hdat)
   hdat <- splitAtEarlyPos(hdat) 
-  bdat <- getBirthDate()
+  bdat <- getBirthDate(Args$inFiles$epifile)
   adat <- setData(hdat, bdat,  Args)
-  inc_n <- group_by(adat, Year) %>%  
-    summarize(IncN=n())
-
+  year_n <- group_by(adat, Year) %>%  
+    summarize(IncN=length(unique(IIntID)))
 
   hArgs = Args
   hArgs$Years  <- c(2003:2017)
@@ -158,47 +157,18 @@ getHIVIncEligible <- function(Args, dat=NULL) {
   early_neg <- mutate(early_neg, YearNeg = fmt(early_neg)) 
   early_pos <- getDatesMin(hiv, "HIVPositive", "early_pos")
   early_pos <- mutate(early_pos, YearPos = fmt(early_pos)) 
-  tdat <- left_join(early_neg, early_pos) %>%
+  tdat <- left_join(early_neg, early_pos, by="IIntID") %>%
     select(IIntID, YearNeg, YearPos) 
-  tdat <- mutate(tdat, End = 2017,
-    EndDate = pmin(End, YearPos, na.rm=TRUE),
-    Event = as.numeric(!is.na(YearPos)))
-  edat <- survSplit(Surv(
-    time=YearNeg,
-    time2=EndDate,
-    event=Event) ~ . , 
-    data=tdat,
-    start="YearStart",
-    end="YearEnd",
-    cut=hArgs$Years)
-   # HIV- eligible only
-   edat <- filter(edat, Event==0) %>% 
-    select(IIntID, Year=YearEnd)
-     
-  dat <- getHIVEligible(hArgs) 
-  dat <- filter(dat, Contact=="Consent") %>% 
-    select(IIntID, Year, Contact)
-  dat <- left_join(edat, dat, by=c("IIntID", "Year"))
-  past_test <- function(dat) {
-   xx <- rep(NA, nrow(dat))
-   for (i in seq_along(dat$Contact)) {
-        if (i >= 2) {
-          xx[i] <- as.numeric(
-            dat$Contact[i-1]=="Consent" ||
-            dat$Contact[i-2]=="Consent")
-        }
-    }
-    dat$Tested <- xx
-    dat
-  }
-  browser()
-  sdat <- split(dat, dat$IIntID)
-  sdat <- lapply(sdat, past_test)
-  sdat <- bind_rows(sdat)
-  # Any negative is eligible
-  Test <- group_by(sdat, Year) %>% 
-    summarize(Tested=sum(Tested, na.rm=TRUE))
 
+  # dat <- getHIVContact(Args)
+  if(is.null(dat)) dat <- setHIVMiss(Args)
+  dat <- left_join(dat, tdat, by=c("IIntID"))
+  dat <- arrange(dat, IIntID, VisitDate) 
+  # Any negative is eligible
+  dat <- group_by(dat, IIntID) %>% mutate(Elig = 
+      as.numeric((Year >= YearNeg & !is.na(YearNeg))))
+  # But before HIV+
+  dat$Elig[dat$Year >= dat$YearPos] <- 0
   elig <- arrange(dat, IIntID, VisitDate) %>%
     group_by(Year) %>% 
     summarize(IncEligN = sum(Elig))
@@ -220,9 +190,7 @@ mkHIVTestTable <- function(Args) {
   fmt <- function(x) trimws(format(x, big.mark=","))
   rnd <- function(x) trimws(format(x, digits=2, nsmall=2))
   # Get testing date
-  browser()
   dat <- setHIVMiss(Args)
-  edat <- getHIVEligible(Args, dat=dat)
   sdat <- getHIVRefused(Args, dat=dat)
   Eligible = with(sdat, paste0(fmt(ContactedN), "/", fmt(EligibleN)))
   EligiblePerc = paste0("(", rnd(sdat$ContactPerc*100), ")")

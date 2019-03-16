@@ -48,7 +48,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
   lines(kmal, col=Blues[5], lwd=2)
   legend("top", 
     c("Men", "Women"),
-    lwd=10, lty=1, col=c(Reds[5], Blues[5]),
+    lwd=10, lty=1, col=c(Blues[5], Reds[5]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
     cex=1.2)
 
