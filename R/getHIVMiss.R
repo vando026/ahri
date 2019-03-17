@@ -199,6 +199,8 @@ mkHIVTestTable <- function(Args) {
   b3 <- getHIVIncEligible(Args, dat=dat)
   b3$Elig <- with(b3, paste0(fmt(IncN), "/", fmt(IncEligN)))
   b3$IncPerc = paste0("(", rnd(b3$IncPerc), ")")
+  b3$Elig[length(b3$Elig)] <- "-" 
+  b3$IncPerc[length(b3$IncPerc)] <- "-" 
   b4 <- getHIVCumTest(Args, dat=dat)
   b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
   data.frame(Year=sdat$Year, Eligible, EligiblePerc,
