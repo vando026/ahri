@@ -130,7 +130,7 @@ plotIncAge <- function(
 #' prev <- prev$adj.rate*100
 #' plotIncPrev(inc, prev) 
 
-plotIncPrev <- function(inc, prev=NULL,
+plotIncPrev <- function(inc, prev=NULL, x, yLim=8, Main="",
   Args=NULL, gfun=png, bwidth=2.5, fname="test") {
   if(!is.null(gfun)) {
     gfun(file.path(output,
@@ -139,27 +139,26 @@ plotIncPrev <- function(inc, prev=NULL,
       res=200, type="cairo")
   }
   par(mar=c(4.0,4.5,3.8,4.5))
+  if (is.null(x))
   x <- as.numeric(rownames(inc))
-  y <- inc$rate
-  plotCI(x, inc$rate, ui=inc$uci, li=inc$lci,
-    ylim=c(0, 5), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
+  plotCI(x, inc$rate, ui=inc$uci, li=inc$lci, main=Main, 
+    ylim=c(0, yLim), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
     xlab="Year", ylab="HIV incidence per 100 person-years", 
-    font.lab=2, cex.axis=1.2, cex.lab=1.2)
+    font.lab=2, cex.axis=1.2, cex.lab=1.2, cex.main=1.4)
   # staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
-  lines(x, y, lty=1, col="blue", lwd=2)
-  abline(v=2011, lty=3)
+  lines(x, inc$rate, lty=1, col="blue", lwd=2)
+  # abline(v=2011, lty=3)
   par(new = T)
-  x <- as.numeric(rownames(inc))
   # ys <- ksmooth(x, prev, "normal", bandwidth=bwidth)
   # ymax = max(ys$y)*1.20
   plot(x, prev, axes=F, type="l", lwd=3,
-    ylim=c(0, 50), xlab=NA, ylab=NA,  col="red")
+    ylim=c(0, 60), xlab=NA, ylab=NA,  col="red")
   axis(side = 4, cex.axis=1.2)
   mtext(side = 4, line = 2, "HIV prevalence (%)", font=2, 
     cex=1.2)
-  legend("top", inset=c(0, -0.12), xpd=TRUE,
+  legend("top", inset=c(0, -0.08), xpd=TRUE,
     c("HIV Incidence", "HIV Prevalence"),
-    lwd=2, pch=c(19, NA), lty=1, cex=1.3,
+    lwd=2, pch=c(19, NA), lty=1, cex=1.2,
     bty="n", ncol=2, col=c("blue", "red"))
   if(!is.null(gfun)) dev.off()
 }

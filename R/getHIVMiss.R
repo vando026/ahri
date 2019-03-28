@@ -166,7 +166,7 @@ getHIVIncEligible <- function(Args, dat=NULL) {
 
 mkHIVTestTable <- function(Args) {
   fmt <- function(x) trimws(format(x, big.mark=","))
-  rnd <- function(x) trimws(format(x, digits=2, nsmall=2))
+  rnd <- function(x) trimws(format(x, digits=1, nsmall=1))
   # Get testing date
   dat <- setHIVMiss(Args)
   sdat <- getHIVRefused(Args, dat=dat)
