@@ -157,7 +157,7 @@ doPoisAge <- function(dat) {
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' setInc(rtdat, bdat, doPoisAge, Args)
-setInc <- function(rtdat, bdat, Args, fun=sfuns) {
+setInc <- function(rtdat, bdat, Args, fun=stdGetFuns) {
   function(i) {
     cat(i, "")
     dat <- getIncData(rtdat, bdat, Args)
@@ -185,7 +185,7 @@ setInc <- function(rtdat, bdat, Args, fun=sfuns) {
 #' dat <- mclapply(seq(Args$nSim), calcInc,
 #'   mc.cores=Args$mcores)
 #' cdat <- combineEst(dat) 
-combineEst <-  function(dat, get_names=NULL) {
+combineEst <-  function(dat, get_names=stdGetNames) {
   getEst <- function(dat, obj) {
     out <- as.matrix(sapply(dat, "[[", obj))
     rownames(out) <- rownames(dat[[1]][[obj[1]]])
@@ -267,7 +267,7 @@ stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
 
 
 # This calculates standard incidence rates
-calcEst <- function(dat, funs) {
+calcEst <- function(dat, funs=stdEstFuns) {
   lapply(funs, function(f) f(dat))
 }
 
@@ -306,6 +306,10 @@ mkIncFun <- function(ifuns, inames, efuns) {
 #' @return  list 
 #'
 #' @export 
+#' @examples 
+#' list(year = AggByYear, 
+#'   crude = calcCrudeInc, 
+#'   age_adj = setPoisYear(getAgeYear(Args)))
 stdGetFuns <- list(
   year = AggByYear, 
   crude = calcCrudeInc, 
