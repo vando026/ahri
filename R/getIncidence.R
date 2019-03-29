@@ -234,6 +234,15 @@ calcRubin <- function(est, se, fun=exp) {
   out
 }
 
+#' @title getMeans
+#' 
+#' @description  Helper function to get means of incidence estimates. 
+#' 
+#' @param dat A data.frame
+#' 
+#' @return 
+#'
+#' @export 
 # Get standard mean estimates 
 getMeans <- function(v1, v2) {
   function(dat) {
@@ -244,7 +253,15 @@ getMeans <- function(v1, v2) {
 }
 agg_inc <- getMeans("sero", "pyears")
 
-# get standard Rubin  calculations
+#' @title getRubin
+#' 
+#' @description  Helper function to get incidence estimates using Rubins rules. 
+#' 
+#' @param dat A data.frame.
+#' 
+#' @return 
+#'
+#' @export 
 getRubin <- function(v1, v2) {
   function(dat) {
     calcRubin(dat[[v1]], dat[[v2]]) 
