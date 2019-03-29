@@ -5,7 +5,7 @@
 \title{readEpisodes}
 \usage{
 readEpisodes(inFile = getFiles()$epi_dta, outFile = getFiles()$epifile,
-  Vars = "")
+  Vars = " ")
 }
 \arguments{
 \item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}

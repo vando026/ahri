@@ -8,6 +8,8 @@ combineEst(dat, get_names = NULL)
 }
 \arguments{
 \item{dat}{Dataset from \code{\link{setInc}}.}
+
+\item{get_names}{Names of the estimates to be collected.}
 }
 \value{
 list

@@ -4,7 +4,7 @@
 \alias{setHIVMiss}
 \title{setHIVMiss}
 \usage{
-setHIVMiss(Args, Root = setRoot())
+setHIVMiss(Args, Root = setRoot(), dropTasP = TRUE)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}

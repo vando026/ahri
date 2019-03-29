@@ -18,46 +18,10 @@
 getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  sdat <- setData(edat, bdat,  Args)
-  sdat <- mutate(sdat, Year = as.factor(Year),
-    tscale = Time/365.25)
-  sdat
+  setData(edat, bdat,  Args)
 }
 
-#' @title setInc
-#' 
-#' @description Sets the data and functions to calculate incidence estimates.
-#' 
-#' @param rtdat Dataset from \code{\link{getRTData}}.
-#' 
-#' @param bdat Dataset from \code{\link{getBirthDate}}, this is needed to set the data by
-#' year and age.
-#' 
-#' @param fun Functions to calculate incidence estimates.
-#' 
-#' @param Args provide arguments from \code{\link{setArgs}}.
-#' 
-#' @return data.frame
-#'
-#' @export
-#' 
-#' @examples
-#' hiv   <- getHIV(Args)
-#' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
-#' setInc(rtdat, bdat, doPoisAge, Args)
-setInc <- function(rtdat, bdat, Args, fun=NULL) {
-  sfuns <- list(
-    year = AggByYear, 
-    crude = calcCrudeInc, 
-    age_adj = setPoisYear(getAgeYear(Args)))
-  fun <- append(sfuns, fun)
-  function(i) {
-    cat(i, "")
-    dat <- getIncData(rtdat, bdat, Args)
-    lapply(fun, function(f) f(dat))
-  }
-}
+
 
 #' @title AggFunc
 #' 
@@ -123,6 +87,7 @@ AggByAge <- AggFunc("AgeCat")
 #' @export 
 calcCrudeInc <- function(dat) {
   dat <- AggByYear(dat)
+  dat <- mutate(dat, Year = as.factor(Year))
   mod <- glm(sero_event ~ - 1 + Year + offset(log(pyears)),
     data=dat, family=poisson)
   data.frame(fit=mod$coef, se.fit=summary(mod)$coef[, 2])
@@ -170,11 +135,43 @@ doPoisAge <- function(dat) {
 }
 
 
+#' @title setInc
+#' 
+#' @description Sets the data and functions to calculate incidence estimates.
+#' 
+#' @param rtdat Dataset from \code{\link{getRTData}}.
+#' 
+#' @param bdat Dataset from \code{\link{getBirthDate}}, this is needed to set the data by
+#' year and age.
+#' 
+#' @param fun Functions to calculate incidence estimates.
+#' 
+#' @param Args provide arguments from \code{\link{setArgs}}.
+#' 
+#' @return data.frame
+#'
+#' @export
+#' 
+#' @examples
+#' hiv   <- getHIV(Args)
+#' rtdat <- getRTData(hiv)
+#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' setInc(rtdat, bdat, doPoisAge, Args)
+setInc <- function(rtdat, bdat, Args, fun=sfuns) {
+  function(i) {
+    cat(i, "")
+    dat <- getIncData(rtdat, bdat, Args)
+    lapply(fun, function(f) f(dat))
+  }
+}
+
+
 #' @title combineEst
 #' 
 #' @description Collect all estimates into single matrix
 #' 
 #' @param dat Dataset from \code{\link{setInc}}.
+#' @param get_names Names of the estimates to be collected. 
 #'
 #' @return list 
 #'
@@ -189,16 +186,8 @@ doPoisAge <- function(dat) {
 #'   mc.cores=Args$mcores)
 #' cdat <- combineEst(dat) 
 combineEst <-  function(dat, get_names=NULL) {
-  standard <- list(
-    sero=c("year", "sero_event"),
-    pyears=c("year", "pyears"),
-    crude_est=c("crude", "fit"),
-    crude_se=c("crude", "se.fit"),
-    adj_est=c("age_adj", "fit"),
-    adj_se=c("age_adj", "se.fit"))
-  get_names <- append(standard, get_names)
   getEst <- function(dat, obj) {
-    out <- sapply(dat, "[[", obj)
+    out <- as.matrix(sapply(dat, "[[", obj))
     rownames(out) <- rownames(dat[[1]][[obj[1]]])
     out
   }
@@ -245,14 +234,99 @@ calcRubin <- function(est, se, fun=exp) {
   out
 }
 
-# This calculates standard incidence rates
-calcEst <- function(cdat) {
-  agg <- cbind(sero=rowMeans(cdat$sero),
-    pyears=rowMeans(cdat$pyears))
-  crude <- calcRubin(cdat$crude_est, cdat$crude_se)
-  adj <- calcRubin(cdat$adj_est, cdat$adj_se)
-  list(agg=agg, crude=crude, age_adj=adj)
+# Get standard mean estimates 
+getMeans <- function(v1, v2) {
+  function(dat) {
+    data.frame(
+      sero = rowMeans(dat[[v1]]),
+      pyears = rowMeans(dat[[v2]]))
+  }
 }
+agg_inc <- getMeans("sero", "pyears")
+
+# get standard Rubin  calculations
+getRubin <- function(v1, v2) {
+  function(dat) {
+    calcRubin(dat[[v1]], dat[[v2]]) 
+  }
+}
+adj_inc <- getRubin("adj_est", "adj_se")
+crude_inc <- getRubin("crude_est", "crude_se")
+
+#' @title stdEstFuns
+#' 
+#' @description  Returns a list of the standard functions to calculate the incidence
+#' rates. New functions can be added to this, which is used for \code{\link{calcEst}}.
+#' 
+#' @return list 
+#'
+#' @export 
+#' @examples
+#' newFuns <- append(stdEstFuns, )
+stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
+
+
+# This calculates standard incidence rates
+calcEst <- function(dat, funs) {
+  lapply(funs, function(f) f(dat))
+}
+
+
+
+#' @title mkIncFun
+#' 
+#' @description Function to add new methods to \code{\link{getIncidence}}. 
+#' 
+#' @param addfun The functions to be added to \code{\link{setInc}}.  
+#' @param name The name of the estimates to be collected by \code{\link{combineEst}}. 
+#' 
+#' @return list
+#'
+#' @export 
+
+mkIncFun <- function(ifuns, inames, efuns) {
+  function(Args) {
+    hiv   <- getHIV(Args)
+    rtdat <- getRTData(hiv)
+    bdat <- getBirthDate()
+    calcInc <- setInc(rtdat, bdat, Args, fun=ifuns)
+    dat <- parallel::mclapply(
+      seq(Args$nSim), calcInc,
+      mc.cores=Args$mcores)
+    cdat <- combineEst(dat, get_names=inames) 
+    calcEst(cdat, efuns)
+  }
+}
+
+#' @title stdGetFuns
+#' 
+#' @description  Standard functions to calculate the incidence rate, used in
+#' \code{\link{setInc}}. 
+#' 
+#' @return  list 
+#'
+#' @export 
+stdGetFuns <- list(
+  year = AggByYear, 
+  crude = calcCrudeInc, 
+  age_adj = setPoisYear(getAgeYear(Args)))
+
+
+#' @title stdGetNames
+#' 
+#' @description  Standard names for collecting inncidence rate estimates, used in
+#' \code{\link{combineEst}}. 
+#' 
+#' @return 
+#'
+#' @export 
+stdGetNames <- list(
+  sero=c("year", "sero_event"),
+  pyears=c("year", "pyears"),
+  crude_est=c("crude", "fit"),
+  crude_se=c("crude", "se.fit"),
+  adj_est=c("age_adj", "fit"),
+  adj_se=c("age_adj", "se.fit"))
 
 
 #' @title getIncidence
@@ -263,19 +337,7 @@ calcEst <- function(cdat) {
 #'
 #' @return data.frame
 #'
-#' @import parallel
-#'
 #' @export
 
-getIncidence <- function(Args) {
-  hiv   <- getHIV(Args)
-  rtdat <- getRTData(hiv)
-  bdat <- getBirthDate()
-  calcInc <- setInc(rtdat, bdat, Args)
-  dat <- mclapply(seq(Args$nSim),
-    calcInc, mc.cores=Args$mcores)
-  cdat <- combineEst(dat) 
-  calcEst(cdat)
-}
-
+getIncidence <- mkIncFun(stdGetFuns, stdGetNames, stdEstFuns)
 
