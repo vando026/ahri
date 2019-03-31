@@ -103,6 +103,7 @@ setData <- function(dat,
   # Further subsetting to take place if needed
   dat <- Args$setFun(dat)
   dat <- rename(dat, Age = AgeAtVisit)
+  dat <- Args$addVars(dat)
   as_tibble(dat)
 }
 
