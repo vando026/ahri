@@ -21,8 +21,6 @@ getIncData <- function(rtdat, bdat, Args) {
   setData(edat, bdat,  Args)
 }
 
-
-
 #' @title AggFunc
 #' 
 #' @description  Get aggregated events and pyears by Var.
