@@ -7,7 +7,8 @@
 setArgs(inFiles = getFiles(), Years = c(2004:2017), Age = list(All =
   c(15, 54)), AgeCat = NULL, AgeBy = 5, ResRule = 0, nSim = 500,
   imputeMethod = imputeRandomPoint, aname = "filename",
-  printout = FALSE, mcores = 1, setFun = identity, MoreArgs = NULL)
+  printout = FALSE, mcores = 1, setFun = identity,
+  addVars = identity, MoreArgs = NULL)
 }
 \arguments{
 \item{inFiles}{list of files to pass to function.}
@@ -33,6 +34,9 @@ setArgs(inFiles = getFiles(), Years = c(2004:2017), Age = list(All =
 \code{\link{getIncidence}}).}
 
 \item{setFun}{a function used by \code{\link{setData}} by which the data can be further subset.}
+
+\item{addVars}{a function used by \code{\link{setData}} by which additional variables
+can be added.}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
 }
