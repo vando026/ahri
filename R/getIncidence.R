@@ -299,7 +299,10 @@ calcEst <- function(dat, funs=stdEstFuns) {
 #'
 #' @export 
 
-mkIncFun <- function(ifuns, inames, efuns) {
+mkIncFun <- function(
+  ifuns=stdGetFuns, 
+  inames=stdGetNames, 
+  efuns=stdEstFuns) {
   function(Args) {
     hiv   <- getHIV(Args)
     rtdat <- getRTData(hiv)

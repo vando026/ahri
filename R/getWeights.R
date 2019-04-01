@@ -24,6 +24,7 @@ getAgeWeights <- function(Args) {
 #' @export 
 getAgeYear <- function(Args) {
   mn_age <- getAgeWeights(Args)
+  mn_age <- mn_age[rownames(mn_age) %in% Args$Year]
   data.frame(Age = mn_age, tscale=1,
     Year = factor(Args$Year, levels = Args$Year, 
     labels = levels(as.factor(Args$Year))))

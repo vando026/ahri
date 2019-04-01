@@ -144,7 +144,7 @@ plotIncPrev <- function(inc, prev=NULL, x, yLim=8, Main="",
   plotCI(x, inc$rate, ui=inc$uci, li=inc$lci, main=Main, 
     ylim=c(0, yLim), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
     xlab="Year", ylab="HIV incidence per 100 person-years", 
-    font.lab=2, cex.axis=1.2, cex.lab=1.2, cex.main=1.4)
+    font.lab=2, cex.axis=1.2, cex.lab=1.5, cex.main=1.4)
   # staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
   lines(x, inc$rate, lty=1, col="blue", lwd=2)
   # abline(v=2011, lty=3)
@@ -155,7 +155,7 @@ plotIncPrev <- function(inc, prev=NULL, x, yLim=8, Main="",
     ylim=c(0, 60), xlab=NA, ylab=NA,  col="red")
   axis(side = 4, cex.axis=1.2)
   mtext(side = 4, line = 2, "HIV prevalence (%)", font=2, 
-    cex=1.2)
+    cex=1.0)
   legend("top", inset=c(0, -0.08), xpd=TRUE,
     c("HIV Incidence", "HIV Prevalence"),
     lwd=2, pch=c(19, NA), lty=1, cex=1.2,
