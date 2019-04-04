@@ -139,7 +139,7 @@ getHIVCumTest <- function(Args, ntest=1, dat=NULL) {
 
 getHIVIncEligible <- function(Args, dat=NULL) {
   # Get HIV inc cohort
-  hiv <- getHIV(Args)
+  hiv <- setHIV(Args)
   rtdat <- getRTData(hiv)
   rtdat <- mutate(rtdat, YearEnter = as.numeric(format(obs_start, "%Y"))) 
   year_in  <- group_by(rtdat, YearEnter) %>% 
@@ -182,7 +182,8 @@ mkHIVTestTable <- function(Args) {
   b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
   data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Consent, ConsentRate, CumTest=b4$CumPerc,
-    IncEnter=b3$N.x, IncTotal=b3$N.y)
+    IncEnter=b3$N.x, IncTotal=b3$N.y,
+    stringsAsFactors=FALSE)
 }
 # debugonce(mkHIVTestTable)
 # mkHIVTestTable(Args)

@@ -71,7 +71,9 @@ calcTrend <- function(
   edat <- do.call("rbind", edat)
   if (fmt==TRUE) edat <- round(edat*100, 2)
   N <- tapply(dat[, Total], dat[, calcBy], sum)
-  data.frame(cbind(N=N, edat))
+  out <- data.frame(cbind(N=N, edat))
+  out$Grp <- rownames(out)
+  out
 }
 
 
