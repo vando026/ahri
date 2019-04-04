@@ -4,12 +4,10 @@
 \alias{getHIVRefused}
 \title{getHIVRefused}
 \usage{
-getHIVRefused(Args, dat = NULL)
+getHIVRefused(dat)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
-
-\item{dat}{Dataset, otherwise made with \code{\link{setHIVMiss}}.}
+\item{dat}{Dataset from \code{\link{getHIVEligible}}.}
 }
 \value{
 data.frame

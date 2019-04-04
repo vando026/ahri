@@ -4,10 +4,10 @@
 \alias{getHIVCumTest}
 \title{getHIVCumTest}
 \usage{
-getHIVCumTest(Args, ntest = 1, dat = NULL)
+getHIVCumTest(dat, ntest = 1)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
+\item{dat}{Dataset from  \code{\link{getHIVEligible}}.}
 
 \item{num_test}{Integer for number of times tested. Use 2 for incidence cohort.}
 }

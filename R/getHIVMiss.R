@@ -9,13 +9,15 @@
 #' @export 
 readHIVSurvYear <- function(inFile, addVars=" ") {
   dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, VisitDate, 
-    Comment=PrematureCompletionReason, HIVRefused, contains(addVars))
-  dat <- mutate(dat, Comment = as.character(haven::as_factor(Comment)))
+    Comment=PrematureCompletionReason, HIVRefused, matches(addVars))
+  dat <- mutate(dat, 
+    Comment = as.character(haven::as_factor(Comment)),
+    HIVRefused = as.character(haven::as_factor(HIVRefused)))
   # replace missing visit dates
   yr <- unique(format(dat$VisitDate[!is.na(dat$VisitDate)], "%Y"))[1]
   dat$VisitDate[is.na(dat$VisitDate)]  <- 
     as.Date(paste0(yr, "-01-01"), origin="1970-01-01")
-  dat$HIVRefused[is.na(dat$HIVRefused)] <- 97 
+  # dat$HIVRefused[is.na(dat$HIVRefused)] <- 97 
   filter(dat, !is.na(IIntID))
 }
 
@@ -32,19 +34,31 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 setHIVMiss <- function(Args, Root=setRoot(), dropTasP=TRUE) {
   filep <- file.path(Root, "Source/HIVSurveillance")
   files <- list.files(filep, pattern=".dta$")
-  adat <- lapply(file.path(filep, files), readHIVSurvYear)
-  adat <- do.call(rbind, adat)
+  # diff vars for 2005--2009
+  set1 <- files[unlist(lapply(files,
+    function(x) grepl("200[5-9]", x)))]
+  dat1 <- lapply(file.path(filep, set1), readHIVSurvYear)
+  dat1 <- do.call(rbind, dat1)
+  # From 2010-2017, HIVRefused changes, depends on FormRefused
+  set2 <- files[unlist(lapply(files,
+    function(x) grepl("201[0-7]", x)))]
+  dat2 <- lapply(file.path(filep, set2), 
+    function(x) readHIVSurvYear(x, addVars="FormRefused$"))
+  dat2 <- do.call(rbind, dat2)
+  dat2 <- mutate(dat2, 
+    FormRefused = as.character(haven::as_factor(FormRefused)))
+  dat2$HIVRefused[dat2$FormRefused=="Yes"] = "Yes"
+  dat2 <- select(dat2, -FormRefused)
+  adat <- rbind(dat1, dat2)
   adat <- mutate(adat, IIntID = as.integer(IIntID),
     Year = as.integer(format(VisitDate, "%Y")))
-  adat <- rename(adat, obs_end=VisitDate)
-  bdat <- getBirthDate(addVars="Female")
-  adat <- setData(adat, bdat, Args)
+  bdat <- ahri::getBirthDate(addVars="Female")
+  adat <- setData(adat, bdat, Args, time2="VisitDate")
   if (dropTasP) {
     bdat <- getBSMax()
     adat <- left_join(adat, bdat, by=c("IIntID", "Year"))
     adat <- dropTasPData(adat)
   }
-  adat <- rename(adat, VisitDate=obs_end)
   adat
 }
 
@@ -52,44 +66,43 @@ setHIVMiss <- function(Args, Root=setRoot(), dropTasP=TRUE) {
 ##' 
 ##' @description  Get eligibility for HIV testing.
 ##' 
-##' @param Args requires Args, see \code{\link{setArgs}}.
-##' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
+##' @param dat Dataset from \code{\link{setHIVMiss}}.
 ##' 
 ##' @return 
 ##'
 ##' @export 
-getHIVEligible <- function(Args, dat=NULL) {
-  if(is.null(dat)) dat <- setHIVMiss(Args)
+getHIVEligible <- function(dat) {
   dat <- mutate(dat, NonContact = as.numeric(
     grepl("Non-[cC]ontact|Refused|Other", Comment)))
-  dat <- mutate(dat, Contact = 
-    ifelse(HIVRefused==1, "Refused",
-    ifelse(HIVRefused==2, "Consent",
-    ifelse(NonContact==1, "NonContact", "NotEligible"))))
-  dat <- filter(dat, Contact != "NotEligible")
-  dat
+  dat$Contact = ""
+  dat$Contact[dat$HIVRefused=="No"] <- "Yes"
+  dat$Contact[dat$HIVRefused=="Yes"] <- "Yes"
+  dat$Contact[dat$NonContact==1] <- "NonContact"
+  dat$Contact[dat$Contact==""] <- "NotEligible"
+  dat$Tested <- dat$Contact
+  dat$Tested[dat$HIVRefused=="Yes"] <- "No"
+  select(dat, -NonContact)
 }
 
 #' @title getHIVRefused
 #' 
 #' @description  Get summary of participants that refused to test. 
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
-#' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
+#' @param dat Dataset from \code{\link{getHIVEligible}}.
 #' 
 #' @return data.frame
 #'
 #' @export 
-getHIVRefused <- function(Args, dat=NULL) {
-  if(is.null(dat)) dat <- setHIVMiss(Args)
-  dat <- getHIVEligible(Args, dat=dat)
+getHIVRefused <- function(dat) {
+  dat <- filter(dat, Contact != "NotEligible")
   eligible <- group_by(dat, Year) %>% 
     summarize(EligibleN = n())
-  non_contact <- filter(dat, Contact=="NonContact") %>% 
+  # Now replace Contact with HIV refused
+  non_contact <- filter(dat, Tested=="NonContact") %>% 
     group_by(Year) %>% summarize(NonContactN=n())
-  consent <- filter(dat, Contact=="Consent") %>% 
+  consent <- filter(dat, Tested=="Yes") %>% 
     group_by(Year) %>% summarize(ConsentN=n())
-  refused <- filter(dat, Contact=="Refused") %>% 
+  refused <- filter(dat, Tested=="No") %>% 
     group_by(Year) %>% summarize(RefusedN=n())
   out <- Reduce(left_join, list(eligible, non_contact, consent, refused))
   out <- mutate(out,
@@ -106,17 +119,15 @@ getHIVRefused <- function(Args, dat=NULL) {
 #' 
 #' @description Get summary of number of times participants test. 
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param dat Dataset from  \code{\link{getHIVEligible}}.
 #' @param num_test Integer for number of times tested. Use 2 for incidence cohort.
 #' 
 #' @return 
 #'
 #' @export 
-getHIVCumTest <- function(Args, ntest=1, dat=NULL) {
-  if(is.null(dat)) dat <- setHIVMiss(Args)
-  # HIVRefusedYes = 1, HIVRefusedNo = 2
-  dat <- filter(dat, HIVRefused %in% c(1, 2))
-  dat <- mutate(dat, HIVTested = as.numeric(HIVRefused==2))
+getHIVCumTest <- function(dat, ntest=1) {
+  dat <- filter(dat, Tested %in% c("Yes", "No"))
+  dat <- mutate(dat, HIVTested = as.numeric(HIVRefused=="Yes"))
   dat <- arrange(dat, IIntID, Year) %>% group_by(IIntID) %>% 
     mutate(CumTest = as.numeric(cumsum(HIVTested)>=ntest))
   dat <- group_by(dat, Year) %>%
@@ -146,7 +157,6 @@ getHIVIncEligible <- function(Args, dat=NULL) {
     summarize(N=n())
   year_in <- filter(year_in, YearEnter %in% Args$Year) %>% 
     rename(Year=YearEnter)
-    
   sdat <- splitAtEarlyPos(rtdat)
   year_n <- group_by(sdat, Year) %>% 
     summarize(N = n())
@@ -169,7 +179,8 @@ mkHIVTestTable <- function(Args) {
   rnd <- function(x) trimws(format(x, digits=1, nsmall=1))
   # Get testing date
   dat <- setHIVMiss(Args)
-  sdat <- getHIVRefused(Args, dat=dat)
+  edat <- getHIVEligible(dat)
+  sdat <- getHIVRefused(edat)
   Eligible = with(sdat, paste0(fmt(ContactedN), "/", fmt(EligibleN)))
   EligiblePerc = paste0("(", rnd(sdat$ContactPerc*100), ")")
   Consent = with(sdat, paste0(fmt(ConsentN), "/", fmt(ContactedN))) 
@@ -178,8 +189,9 @@ mkHIVTestTable <- function(Args) {
   b3$N.x <- fmt(b3$N.x)
   b3$N.x[length(b3$N.x)] <- "-"
   b3$N.y <- fmt(b3$N.y)
-  b4 <- getHIVCumTest(Args, dat=dat)
+  b4 <- getHIVCumTest(edat)
   b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
+  browser()
   data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Consent, ConsentRate, CumTest=b4$CumPerc,
     IncEnter=b3$N.x, IncTotal=b3$N.y,
@@ -199,10 +211,13 @@ mkHIVTestTable <- function(Args) {
 #' @export 
 plotHIVTest <- function(Args, 
   fname=Args$fname, gfun=png) {
-  dat <- getHIVRefused(Args)
-  dat <- filter(dat, Year != 2017)
-  pd <- select(dat, ConsentPerc, RefusePerc, NonContactPerc)
-  rate <- dat$ConsentRate
+  fmx  <- function(x) format(x, nsmall=2, digits=2)
+  dat <- setHIVMiss(Args)
+  edat <- getHIVEligible(dat)
+  sdat <- getHIVRefused(edat)
+  sdat <- filter(sdat, Year != 2017)
+  pd <- select(sdat, ConsentPerc, RefusePerc, NonContactPerc)
+  rate <- sdat$ConsentRate
   px <-  t(as.matrix(pd)) 
 
   if(!is.null(gfun)) {
@@ -213,7 +228,7 @@ plotHIVTest <- function(Args,
   }
   m <- layout(matrix(seq(2), nrow=2), heights=c(8.5, 1))
   YlRed <- RColorBrewer::brewer.pal(9, "YlOrRd")
-  xl <- unique(dat$Year)
+  xl <- Args$Year[Args$Year != 2017]
   xlx <- (seq(length(xl))* 1.2) - 0.5
   par(mar=c(3.8, 4.4, 1.0, 1))
   barplot(px,  col=YlRed[c(4, 6, 8)], width=1, space=0.2,
@@ -223,10 +238,11 @@ plotHIVTest <- function(Args,
   consent = px["ConsentPerc", ]
   refuse = px["RefusePerc", ]
   nonc = px["NonContactPerc", ]
-  text(xlx, y=0.15, labels=round(consent, 2), col="white", font=2, pos=1)
-  text(xlx, y=refuse+consent, labels=round(refuse, 2), col="white", font=2, pos=1)
-  text(xlx, y=1, labels=round(nonc, 2), col="white", font=2, pos=1)
-  text(xlx, y=rate-0.05, labels=round(rate, 2), col=YlRed[9], pos=1, font=2)
+  text(xlx, y=0.15, labels=fmx(consent), col="white", font=2, pos=1)
+  text(xlx, y=refuse+consent, labels=fmx(refuse), col="white", font=2, pos=1)
+  text(xlx, y=1, labels=fmx(nonc), col="white", font=2, pos=1)
+  text(xlx, y=rate+0.01, labels=fmx(rate),
+    col=YlRed[9], pos=3, font=2)
   par(mar=c(1.1, 4.4, 1.0, 1))
   plot.new()
   legend("bottom", c("Consent rate", "Consent", "Refuse", "Non-Contact"),
