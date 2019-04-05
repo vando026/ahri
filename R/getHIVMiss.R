@@ -191,7 +191,6 @@ mkHIVTestTable <- function(Args) {
   b3$N.y <- fmt(b3$N.y)
   b4 <- getHIVCumTest(edat)
   b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
-  browser()
   data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Consent, ConsentRate, CumTest=b4$CumPerc,
     IncEnter=b3$N.x, IncTotal=b3$N.y,
@@ -241,8 +240,7 @@ plotHIVTest <- function(Args,
   text(xlx, y=0.15, labels=fmx(consent), col="white", font=2, pos=1)
   text(xlx, y=refuse+consent, labels=fmx(refuse), col="white", font=2, pos=1)
   text(xlx, y=1, labels=fmx(nonc), col="white", font=2, pos=1)
-  text(xlx, y=rate+0.01, labels=fmx(rate),
-    col=YlRed[9], pos=3, font=2)
+  text(xlx, y=rate+0.01, labels=fmx(rate), col=YlRed[9], pos=3, font=2)
   par(mar=c(1.1, 4.4, 1.0, 1))
   plot.new()
   legend("bottom", c("Consent rate", "Consent", "Refuse", "Non-Contact"),
@@ -251,5 +249,63 @@ plotHIVTest <- function(Args,
   if(!is.null(gfun)) dev.off()
 }
 
+#' @title plotHIVTestYear
+#' 
+#' @description  Function to plot consent rates by age and sex.
+#' 
+#' @param cyear Years to plot.
+#' @param fname Name of file to save. 
+#' 
+#' @export 
+plotHIVTestYear <- function(cyear=c(2005:2017), 
+  fname="ConsentRate.png") {
+
+  Blues <- RColorBrewer::brewer.pal(9, "Blues")
+  Reds <- RColorBrewer::brewer.pal(9, "Reds")
+
+  getConsent <- function(iAge, nm) {
+    Args <- setArgs(Year=cyear, Age=iAge)
+    dat <- setHIVMiss(Args)
+    edat <- getHIVEligible(dat)
+    getHIVRefused(edat)$ConsentRate
+  }
+
+  cmal <- list(
+    getConsent(list(Mal=c(15,19))),
+    getConsent(list(Mal=c(20,24))),
+    getConsent(list(Mal=c(25,29))),
+    getConsent(list(Mal=c(30,35))),
+    getConsent(list(Mal=c(35,39))),
+    getConsent(list(Mal=c(40,54)))
+  )
+
+  cfem <- list(
+    getConsent(list(Fem=c(15,19))),
+    getConsent(list(Fem=c(20,24))),
+    getConsent(list(Fem=c(25,29))),
+    getConsent(list(Fem=c(30,35))),
+    getConsent(list(Fem=c(35,39))),
+    getConsent(list(Fem=c(40,54)))
+  )
+  c_all <- getConsent(list(Fem=c(15, 49), Mal=c(15, 54)))
+
+  ages <- c("15-19", "20-24", "25-29", "30-34", "35-39")
+  agesf <- c(ages, "40-49")
+  agesm <- c(ages, "40-54")
 
 
+  png(filename=file.path(output, fname),
+    units="in", width=7, height=5, pointsize=10, 
+    res=200, type="cairo")
+  par(mar=c(4.0,4.5,1.5,8))
+  plot(cyear, cyear, ylim=c(0, 1),
+    ylab="Proportion", xlab="Year",
+    main="Consent rate", cex.main=1.4,
+    type="n", bty="l", font.lab=2, cex.lab=1.4)
+  lines(cyear, c_all, col="black", lwd=3)
+  lapply(seq(6), function(x) lines(cyear, cmal[[x]], col=Blues[x+3]))
+  lapply(seq(6), function(x) lines(cyear, cfem[[x]], col=Reds[x+3]))
+  legend(2016.8, 0.8, c("All", paste("Male:", agesm), paste("Female:", agesf)), ncol=1,
+    bty="n", lwd=2, lty=1, col=c("black", Blues[4:9], Reds[4:9]), xpd=TRUE)
+  dev.off()
+}

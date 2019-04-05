@@ -8,5 +8,5 @@ License: GPL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: dplyr, tibble, readr, survival, zoo, plotrix, haven
+Imports: dplyr, tibble, readr, survival, zoo, plotrix, haven, RColorBrewer
 Suggests: testthat
