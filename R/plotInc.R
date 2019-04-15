@@ -29,7 +29,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
   # browser()
   labs <- rownames(Mal)
   len <- length(labs)
-  scols <- c(rep(Blues[3], len),rep(Reds[3], len))
+  scols <- c(rep(Blues[8], len),rep(Reds[8], len))
   with(Sex,
     plotrix::plotCI(Grp, y=rate, 
     ui=uci, li=lci, 
@@ -44,11 +44,11 @@ plotIncSex <- function(Mal, Fem, yLim=7,
       labels = labs, cex.axis=1.2, cex.lab=1.3)
   kfem <- ksmooth(Sex$Grp[Sex$sex=="Fem"], Fem$rate, "normal", bandwidth=2.3)
   kmal <- ksmooth(Sex$Grp[Sex$sex=="Mal"], Mal$rate, "normal", bandwidth=2.9)
-  lines(kfem, col=Reds[5], lwd=2)
-  lines(kmal, col=Blues[5], lwd=2)
+  lines(kfem, col=Reds[8], lwd=2)
+  lines(kmal, col=Blues[8], lwd=2)
   legend("top", 
     c("Men", "Women"),
-    lwd=10, lty=1, col=c(Blues[5], Reds[5]),
+    lwd=10, lty=1, col=c(Blues[8], Reds[8]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
     cex=1.2)
 
@@ -130,35 +130,45 @@ plotIncAge <- function(
 #' prev <- prev$adj.rate*100
 #' plotIncPrev(inc, prev) 
 
-plotIncPrev <- function(inc, prev=NULL, x, yLim=8, Main="",
-  Args=NULL, gfun=png, bwidth=2.5, fname="test") {
+plotIncPrev <- function(
+  inc, prev=NULL, x=NULL, yLim=8, Main="", prev_lty=1,
+  Args=NULL, gfun=png, bottom=TRUE, left=TRUE, right=TRUE,
+  bwidth=2.5, fname="test", inc_col="blue", prev_col=Greens[7]) {
+
+  ml <- ifelse(left, 4.5, 3)
+  mr <- ifelse(right, 5, 3)
+  mb <- ifelse(bottom, 4.5, 3)
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.0, height=4.0, pointsize=9, 
       res=200, type="cairo")
   }
-  par(mar=c(4.0,4.5,3.8,4.5))
+  par(mar=c(mb,ml,4.5,mr))
   if (is.null(x))
-  x <- as.numeric(rownames(inc))
-  plotCI(x, inc$rate, ui=inc$uci, li=inc$lci, main=Main, 
-    ylim=c(0, yLim), bty="u", sfrac=0, lwd=2, pch=19, col="blue",
-    xlab="Year", ylab="HIV incidence per 100 person-years", 
-    font.lab=2, cex.axis=1.2, cex.lab=1.5, cex.main=1.4)
-  # staxlab(1, at=(x), labels=x, cex=1.3, line.spacing=1)
-  lines(x, inc$rate, lty=1, col="blue", lwd=2)
+    x <- as.numeric(rownames(inc))
+  plotrix::plotCI(x, inc$rate, ui=inc$uci, li=inc$lci, main=Main, 
+    ylim=c(0, yLim), bty="u", sfrac=0, lwd=2, pch=19, col=inc_col,
+    xlab="", ylab=ifelse(left, "HIV incidence / 100 p-years", ""),
+    font.lab=2, cex.axis=1.4, cex.lab=1.6, cex.main=1.5, axes=FALSE)
+  axis(side=2, cex.axis=1.4)
+  box(bty="u")
+  axis(side=1, at=x, labels=FALSE)
+  plotrix::staxlab(1, at=x, srt=45, labels=x, cex=1.3, line.spacing=1)
+  # axis(side=2, labels=FALSE)
+  lines(x, inc$rate, lty=1, col=inc_col, lwd=2)
   # abline(v=2011, lty=3)
+  mtext(side = 1, line = 3.5, text=ifelse(bottom, "Year", ""),
+    font=2, cex=1.2)
+  par(mar=c(mb,ml,4.5,mr))
   par(new = T)
   # ys <- ksmooth(x, prev, "normal", bandwidth=bwidth)
   # ymax = max(ys$y)*1.20
-  plot(x, prev, axes=F, type="l", lwd=3,
-    ylim=c(0, 60), xlab=NA, ylab=NA,  col="red")
+  plot(x, prev, axes=F, type="l", lwd=3, lty=prev_lty,
+    ylim=c(0, 60), xlab=NA, ylab=NA,  col=prev_col)
   axis(side = 4, cex.axis=1.2)
-  mtext(side = 4, line = 2, "HIV prevalence (%)", font=2, 
-    cex=1.0)
-  legend("top", inset=c(0, -0.08), xpd=TRUE,
-    c("HIV Incidence", "HIV Prevalence"),
-    lwd=2, pch=c(19, NA), lty=1, cex=1.2,
-    bty="n", ncol=2, col=c("blue", "red"))
+  mtext(side = 4, line = 3, 
+    text=ifelse(right, "HIV prevalence (%)", ""),
+    font=2, cex=1.1)
   if(!is.null(gfun)) dev.off()
 }

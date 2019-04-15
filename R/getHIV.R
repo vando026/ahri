@@ -33,7 +33,7 @@ readHIVData <- function(
 
 #' @title getHIV
 #' 
-#' @description  get all valid test results from HIV surveillance.
+#' @description  Get all valid test results >15 yrs age from HIV surveillance.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #'

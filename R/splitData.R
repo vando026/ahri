@@ -5,7 +5,7 @@
 #' @param  dat Dataset must have variables called obs_start, obs_end and event.
 #' 
 #' @return data.frame
-#'
+#D 
 #' @importFrom survival survSplit Surv
 #'
 #' @export 

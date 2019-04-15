@@ -129,4 +129,23 @@ getDemResident <- function(Args=setArgs(), prop=0.5) {
 }
 
 
+#' @title getCensus
+#' 
+#' @description Gets a dataset that is essentially a census of surveillance area. 
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @return  data.frame
+#'
+#' @export 
+
+getCensus <- function(Args=setArgs(), prop=0.5) {
+  dat <- setEpisodes(Args, dropTasP=TRUE)
+  gdat <- group_by(dat, IIntID, Year) %>% 
+    summarize(Perc = sum(ExpDays)/366)
+  dat <- left_join(dat, gdat, by=c("IIntID", "Year"))
+  dat <- filter(dat, Perc>=prop)
+  dat
+}
+
 

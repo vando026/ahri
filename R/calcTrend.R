@@ -49,8 +49,10 @@ calcTrend <- function(
   dat, wdat=NULL,
   Formula="HIVResult ~ Year + AgeCat",
   calcBy="Year", mergeVars=c("AgeCat"),
-  binom=FALSE, fmt=TRUE, ...) {
+  binom=FALSE, fmt=TRUE, 
+  aggName="", aggType=as.integer, ...) {
   Input <- strsplit(Formula,' ')[[1]][1]
+  browser()
   dat <- do.call('data.frame', 
     aggregate(as.formula(Formula), data=dat,
     FUN=function(x) c(Count=sum(x), Total=length(x))))
@@ -72,8 +74,28 @@ calcTrend <- function(
   if (fmt==TRUE) edat <- round(edat*100, 2)
   N <- tapply(dat[, Total], dat[, calcBy], sum)
   out <- data.frame(cbind(N=N, edat))
-  out$Grp <- rownames(out)
+  aggName <- ifelse(aggName=="", calcBy, aggName)
+  out[[aggName]] <- aggType(rownames(out))
   out
 }
 
+#' @title calcTrendYear
+#' 
+#' @description  Simpler fuction to calculate trends by Year.
+#' 
+#' @param RHS The right hand side variable, must be string name.
+#' @param dat A dataset. 
+#' 
+#' @return data.frame
+#'
+#' @export 
+calcTrendYear <- function(RHS="", dat) {
+  dat <- group_by(dat, Year) %>%
+    summarize(Count = sum(get(RHS)), N = n())
+  edat <- epitools::binom.exact(dat$Count, dat$N)
+  edat <- select(edat,
+    crude.rate = proportion, lci=lower, uci=upper )
+  edat <- round(edat*100, 2)
+  cbind(Year=dat$Year, N=dat$N, edat)
+}
 

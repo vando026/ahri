@@ -59,7 +59,6 @@ calcARTCov <- function(Args,
   adat <- mutate(adat, OnART =
     ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
   adat <- setData(adat, Args)
-  out <- calcTrend(adat, Formula=Formula)
-  out
+  calcTrendYear("OnART", adat)
 }
 
