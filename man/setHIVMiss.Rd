@@ -4,11 +4,9 @@
 \alias{setHIVMiss}
 \title{setHIVMiss}
 \usage{
-setHIVMiss(Args, Root = setRoot(), dropTasP = TRUE)
+setHIVMiss(Root = setRoot(), dropTasP = TRUE)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
-
 \item{Root}{The root path to folder containing HIV surveillance datasets.}
 }
 \value{

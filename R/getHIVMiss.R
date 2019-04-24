@@ -8,7 +8,7 @@
 #'
 #' @export 
 readHIVSurvYear <- function(inFile, addVars=" ") {
-  dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, VisitDate, 
+  dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, BSIntID=BSIntId, VisitDate, 
     Comment=PrematureCompletionReason, HIVResult, HIVRefused, matches(addVars))
   dat <- mutate(dat, 
     Comment = as.character(haven::as_factor(Comment)),
@@ -56,13 +56,11 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   dat2 <- select(dat2, -FormRefused)
   adat <- rbind(dat1, dat2)
   adat$HIVRefused[adat$FormRefusedBy %in% c(2:5)] <- "Not Applicable"
-  adat <- mutate(adat, IIntID = as.integer(IIntID),
+  adat <- mutate(adat, 
+    IIntID = as.integer(IIntID),
+    BSIntID = as.integer(BSIntID),
     Year = as.integer(format(VisitDate, "%Y")))
-  if (dropTasP) {
-    bdat <- getBSMax()
-    adat <- left_join(adat, bdat, by=c("IIntID", "Year"))
-    adat <- dropTasPData(adat)
-  }
+  if (dropTasP) adat <- dropTasPData(adat)
   eligible_dat <- select(adat, -FormRefusedBy) %>% 
     arrange(IIntID, VisitDate)
   save(eligible_dat, file=file.path(getFiles()$elifile))
@@ -81,7 +79,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
 getHIVEligible <- function(Args) {
   load(file=file.path(getFiles()$elifile))
   bdat <- ahri::getBirthDate(addVars="Female")
-  dat <- setData(eligible_dat, bdat, Args, time2="VisitDate")
+  dat <- setData(eligible_dat, Args, bdat, time2="VisitDate")
   dat <- mutate(dat, NonContact = as.numeric(
     grepl("Non-[cC]ontact|Refused|Other", Comment)))
   dat$Contact = ""
@@ -148,32 +146,65 @@ getHIVCumTest <- function(dat, ntest=1) {
   out
 }
 
+getNegTest <- function(Args) {
+  dat <- getHIVEligible(Args)
+  dat <- filter(dat, Contact == "Yes")
+  dat <- mutate(dat, 
+    HIVNegative = as.numeric(HIVResult=="Negative" & !is.na(HIVResult)),
+    HIVPositive = as.numeric(HIVResult=="Positive" & !is.na(HIVResult)))
+  dat <- arrange(dat, IIntID, VisitDate) %>% 
+    group_by(IIntID) %>% 
+    mutate(
+      CumNeg = cumsum(HIVNegative), 
+      CumNeg2 = as.numeric(CumNeg >= 2),
+      AnyNeg = as.numeric(any(CumNeg >= 1)),
+      Neg2 = as.numeric(any(CumNeg >= 2)))
+  # Only look at those with HIV- result
+  ndat <- filter(dat, AnyNeg==1)
+  ydat <- filter(ndat, HIVNegative==1) %>% 
+    arrange(IIntID, VisitDate) %>% 
+    summarize(FirstNeg = min(VisitDate, na.rm=TRUE)) %>% 
+    mutate(FirstNeg = as.integer(format(FirstNeg, "%Y")))
+  ydat2 <- filter(ndat, HIVPositive==1) %>% 
+    arrange(IIntID, VisitDate) %>% 
+    summarize(FirstPos = min(VisitDate, na.rm=TRUE)) %>% 
+    mutate(FirstPos = as.integer(format(FirstPos, "%Y")))
+  ndat <- left_join(ndat, ydat, by = "IIntID")    
+  ndat <- left_join(ndat, ydat2, by = "IIntID")    
+  ndat$FirstPos[is.na(ndat$FirstPos)] = 2017
+  ndat <- filter(ndat, Year >= FirstNeg & Year <= FirstPos)
+  ndat
+}    
 
 #' @title getHIVIncEligible
 #' 
 #' @description  Get number of participants eligible for HIV incidence cohort.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
-#' @param dat Dataset, otherwise made with \code{\link{setHIVMiss}}.
 #' 
 #' @return 
 #'
 #' @export 
 
-getHIVIncEligible <- function(Args, dat=NULL) {
-  # Get HIV inc cohort
-  hiv <- setHIV(Args)
+getHIVIncEligible <- function(Args) {
+  # Get person time from rtdata set
+  hiv <- getHIV(Args)
   rtdat <- getRTData(hiv)
-  rtdat <- mutate(rtdat, YearEnter = as.numeric(format(obs_start, "%Y"))) 
-  year_in  <- group_by(rtdat, YearEnter) %>% 
-    summarize(N=n())
-  year_in <- filter(year_in, YearEnter %in% Args$Year) %>% 
-    rename(Year=YearEnter)
-  sdat <- splitAtEarlyPos(rtdat)
-  year_n <- group_by(sdat, Year) %>% 
-    summarize(N = n())
-  year_n <- filter(year_n, Year %in% Args$Year)
-  right_join(year_in, year_n, by="Year")
+  Args$imputeMethod <- imputeMidPoint
+  edat <- Args$imputeMethod(rtdat)
+  edat <- splitAtSeroDate(edat) 
+  edat <- setData(edat, Args)
+  ptime <- group_by(edat, Year) %>% 
+    summarize(Cohort = n())
+  # Get all tested HIV- in current or previous year
+  ndat <- getNegTest(Args)
+  ndat <- group_by(ndat, Year) %>% 
+    summarize(N = sum(HIVNegative))
+  nn = ndat$N + lag(ndat$N, 1)
+  ndat <- data.frame(Year=ndat$Year, Elig=nn)
+  out <- left_join(ndat, ptime)
+  out <- mutate(out, IncPerc = (Cohort/Elig)*100)
+  out
 }
 
 #' @title mkHIVTestTable
@@ -213,14 +244,14 @@ mkHIVTestTable <- function(Args) {
   PresentPerc = paste0("(", rnd(PresentPerc), ")")
   test1 <- getHIVCumTest(edat) 
   Test1 <- rnd(test1$TestedPerc)
-  # b3 <- getHIVIncEligible(Args)
-  # b3$N.x <- fmt(b3$N.x)
-  # b3$N.x[length(b3$N.x)] <- "-"
-  # b3$N.y <- fmt(b3$N.y)
-  # b4$CumPerc = paste0("", rnd(b4$TestedPerc), "")
-  data.frame(Year=eligible$Year, Eligible, EligiblePerc,
-    Present, PresentPerc, Test1,
-    stringsAsFactors=FALSE)
+  inc_elig <- getHIVIncEligible(Args)
+  inc_elig$Elig <- fmt(inc_elig$Elig)
+  inc_elig$Cohort <- fmt(inc_elig$Cohort)
+  inc_elig$IncPerc <- rnd(inc_elig$IncPerc)
+  out <- data.frame(Year=eligible$Year, Eligible, EligiblePerc,
+    Present, PresentPerc, Test1, stringsAsFactors=FALSE)
+  out <- left_join(out, inc_elig)
+  out
 }
 # debugonce(mkHIVTestTable)
 # mkHIVTestTable(Args)

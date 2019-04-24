@@ -4,8 +4,10 @@
 \alias{plotIncPrev}
 \title{plotIncPrev}
 \usage{
-plotIncPrev(inc, prev = NULL, x, yLim = 8, Main = "", Args = NULL,
-  gfun = png, bwidth = 2.5, fname = "test")
+plotIncPrev(inc, prev = NULL, x = NULL, yLim = 8, Main = "",
+  prev_lty = 1, Args = NULL, gfun = png, bottom = TRUE,
+  left = TRUE, right = TRUE, bwidth = 2.5, fname = "test",
+  inc_col = "blue", prev_col = Greens[7])
 }
 \arguments{
 \item{inc}{Incidence data, must include CIs, from \code{\link{getIncidence}}.}

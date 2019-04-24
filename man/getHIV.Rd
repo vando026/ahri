@@ -13,5 +13,5 @@ getHIV(Args)
 data.frame
 }
 \description{
-get all valid test results from HIV surveillance.
+Get all valid test results >15 yrs age from HIV surveillance.
 }

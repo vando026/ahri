@@ -18,7 +18,7 @@
 getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setData(edat, bdat,  Args)
+  setData(edat, Args,  bdat)
 }
 
 #' @title AggFunc
@@ -92,23 +92,24 @@ calcCrudeInc <- function(dat) {
 }
 
 
-#' @title setPoisYear
+#' @title doPoisYear
 #' 
-#' @description Sets data for poisson regression and incidence rates by year.
+#' @description Do poisson regression and incidence rates by year.
 #' 
-#' @param ndata Dataset from a function \code{\link{getAgeYear}}.
+#' @param dat Dataset from a function \code{\link{getAgeYear}}.
 #'
 #' @return data.frame
 #'
 #' @export
-setPoisYear <- function(ndata=getAgeYear(Args)) {
-  function(dat) {
+doPoisYear <- function(dat) {
     dat <- mutate(dat, tscale = Time/365.25,
       Year = as.factor(Year))
+    load(getFiles()$agefile, envir=environment())
+    yrs <- unique(dat$Year)
+    age_dat <- filter(age_dat, Year %in% yrs)
     mod <- glm(sero_event ~ -1 + Year + Age + Year:Age 
       + offset(log(tscale)), data=dat, family=poisson)
-    data.frame(predict.glm(mod, ndata, se.fit=TRUE)[c(1,2)])
-  }
+    data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])
 }
 
 #' @title doPoisAge
@@ -281,12 +282,6 @@ crude_inc <- getRubin("crude_est", "crude_se")
 stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
 
 
-# This calculates standard incidence rates
-calcEst <- function(dat, funs=stdEstFuns) {
-  lapply(funs, function(f) f(dat))
-}
-
-
 
 #' @title mkIncFun
 #' 
@@ -303,6 +298,10 @@ mkIncFun <- function(
   ifuns=stdGetFuns, 
   inames=stdGetNames, 
   efuns=stdEstFuns) {
+  # This calculates standard incidence rates
+  calcEst <- function(dat, funs=stdEstFuns) {
+    lapply(funs, function(f) f(dat))
+  }
   function(Args) {
     hiv   <- getHIV(Args)
     rtdat <- getRTData(hiv)
@@ -327,11 +326,11 @@ mkIncFun <- function(
 #' @examples 
 #' list(year = AggByYear, 
 #'   crude = calcCrudeInc, 
-#'   age_adj = setPoisYear(getAgeYear(Args)))
+#'   age_adj = doPoisYear)
 stdGetFuns <- list(
   year = AggByYear, 
   crude = calcCrudeInc, 
-  age_adj = setPoisYear(getAgeYear(Args)))
+  age_adj = doPoisYear)
 
 
 #' @title stdGetNames

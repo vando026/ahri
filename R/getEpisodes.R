@@ -78,7 +78,7 @@ dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
   # keep if miss BS prior to 2017
   dat <- filter(dat, PIPSA %in% c("S", NA)) 
   # drop if NA in 2017
-  dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
+  # dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
   dat <- select(dat, -c(PIPSA))
   comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
   dat
@@ -100,7 +100,7 @@ dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
 
 setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
   dat <- getEpisodes(getFiles()$epifile)
-  dat <- setData(dat)
+  dat <- setData(dat, Args)
   if (dropTasP==TRUE) 
     dat <- dropTasPData(dat, getFiles()$pipfile)
   dat

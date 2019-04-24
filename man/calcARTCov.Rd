@@ -4,17 +4,13 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(Args, Formula = "OnART ~ Year", cutoff = 9)
+calcARTCov(Args, cutoff = 9)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}
 
 \item{cutoff}{value from 1 and 12, if ART initiation is after this value then no ART
 usage for that entire year. Use cutoff=12 to ignore this argument.}
-
-\item{calcBy}{string variable to calc the estimates by}
-
-\item{fmt}{format to percentage and round to two decimal places}
 }
 \value{
 data.frame

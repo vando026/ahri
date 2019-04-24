@@ -48,6 +48,6 @@ getDemographyData <- function(
 
 setDemographyData <- function(Args) {
   dat <- getDemographyData(Args$inFiles$demfile)
-  setData(dat)
+  setData(dat, Args)
 }
 

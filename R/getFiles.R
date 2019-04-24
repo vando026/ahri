@@ -26,6 +26,7 @@ getFiles <- function(
   epifile="Derived/Episodes/2017/SurveillanceEpisodes.Rdata",
   bsafile="Derived/Other/BS_Area.Rdata",
   parfile="Derived/Other/PartnerDat.Rdata",
+  agefile="Derived/Other/PredictAge.Rdata",
   prvfile="Derived/Other/HIV_Prev_Aug21.csv",
   pipfile="Derived/BoundedStructure/PIPBoundedStructures.xlsx",
   bscfile="Derived/BoundedStructure/BSIntID_Coords.csv",

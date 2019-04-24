@@ -11,7 +11,7 @@
 #' @examples
 #' Args <- setArgs()
 #' hiv <- getHIV(Args)
-#' hiv <- setData(hiv)
+#' hiv <- setData(hiv, Args)
 #' getAggregate(hiv, "IIntID ~ Year + HIVResult")
 getAggregate <- function(dat, 
   Formula = "IIntID ~ Year") {
@@ -52,7 +52,6 @@ calcTrend <- function(
   binom=FALSE, fmt=TRUE, 
   aggName="", aggType=as.integer, ...) {
   Input <- strsplit(Formula,' ')[[1]][1]
-  browser()
   dat <- do.call('data.frame', 
     aggregate(as.formula(Formula), data=dat,
     FUN=function(x) c(Count=sum(x), Total=length(x))))

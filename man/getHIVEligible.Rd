@@ -4,10 +4,10 @@
 \alias{getHIVEligible}
 \title{getHIVEligible}
 \usage{
-getHIVEligible(dat)
+getHIVEligible(Args)
 }
 \arguments{
-\item{dat}{Dataset from \code{\link{setHIVMiss}}.}
+\item{Args}{}
 }
 \value{
 

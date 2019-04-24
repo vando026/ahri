@@ -20,6 +20,6 @@ Gets aggregated numbers by category.
 \examples{
 Args <- setArgs()
 hiv <- getHIV(Args)
-hiv <- setData(hiv)
+hiv <- setData(hiv, Args)
 getAggregate(hiv, "IIntID ~ Year + HIVResult")
 }

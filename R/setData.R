@@ -76,11 +76,10 @@ getBirthDate <- function(
 #' rtdata <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' sdat <- splitAtEarlyPos(rtdat)
-#' adat <- setData(sdat, bdat)
+#' adat <- setData(sdat, Args, bdat)
 
-setData <- function(dat,
-  bdat=getBirthDate(),
-  Args=eval.parent(quote(Args)),
+setData <- function(dat, Args,
+  bdat=getBirthDate(), 
   time2 = "obs_end") {
   # For specific datasets
   if(!("AgeAtVisit" %in% names(dat))) {

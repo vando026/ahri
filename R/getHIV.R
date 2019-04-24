@@ -26,8 +26,7 @@ readHIVData <- function(
     Year = format(VisitDate, "%Y"))
   hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
    select(-Sex) %>% arrange(IIntID, VisitDate)
-  if (dropTasP==TRUE) 
-    hiv <- dropTasPData(hiv, inFile=inFiles$pipfile)
+  if (dropTasP) hiv <- dropTasPData(hiv)
   hiv
 }
 
@@ -47,6 +46,7 @@ getHIV <- function(Args) {
   hiv <- readHIVData(Args$inFiles)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
+  hiv <- filter(hiv, AgeAtVisit %in% c(15:100))
   hiv <- mutate(hiv, 
     HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
     HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
@@ -67,7 +67,7 @@ getHIV <- function(Args) {
 #' @export 
 setHIV <- function(Args) {
   dat <- getHIV(Args)
-  setData(dat)
+  setData(dat, Args)
 }
 
 #' @title getHIVDates
@@ -88,7 +88,7 @@ getHIVDates <- function(Args, surv_date="2005-01-01") {
     !(VisitDate > as.Date(early_pos, "1970-01-01") & !is.na(early_pos)))
   dat <- mutate(dat, event = as.numeric(!is.na(HIVPositive) & VisitDate==HIVPositive))
   dat <- select(dat, IIntID, VisitDate, Year, Female, event)
-  dat <- setData(dat, time2="VisitDate")
+  dat <- setData(dat, Args, time2="VisitDate")
   dat
 }
 
