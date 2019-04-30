@@ -10,6 +10,7 @@
 
 getAgeWeights <- function(Args) {
   dat <- getDemResident(Args)
+  dat <- filter(dat, Year %in% Args$Year)
   tapply(dat$Age, dat$Year, mean)
 }
 
@@ -24,8 +25,9 @@ getAgeWeights <- function(Args) {
 #' @export 
 getAgeYear <- function(Args) {
   mn_age <- getAgeWeights(Args)
-  mn_age <- mn_age[rownames(mn_age) %in% Args$Year]
-  data.frame(Age = mn_age, tscale=1,
+  dat <- data.frame(Age = mn_age, tscale=1,
     Year = factor(Args$Year, levels = Args$Year, 
     labels = levels(as.factor(Args$Year))))
+  rownames(dat) <- Args$Year
+  dat
 }

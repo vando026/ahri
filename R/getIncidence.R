@@ -97,19 +97,18 @@ calcCrudeInc <- function(dat) {
 #' @description Do poisson regression and incidence rates by year.
 #' 
 #' @param dat Dataset from a function \code{\link{getAgeYear}}.
+#' @param age_dat Dataset from function \code{\link{getAgeYear}}.
 #'
 #' @return data.frame
 #'
 #' @export
-doPoisYear <- function(dat) {
-    dat <- mutate(dat, tscale = Time/365.25,
-      Year = as.factor(Year))
-    load(getFiles()$agefile, envir=environment())
-    yrs <- unique(dat$Year)
-    age_dat <- filter(age_dat, Year %in% yrs)
-    mod <- glm(sero_event ~ -1 + Year + Age + Year:Age 
-      + offset(log(tscale)), data=dat, family=poisson)
-    data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])
+doPoisYear <- function(dat, 
+  age_dat=eval.parent(quote(age_dat))) {
+  dat <- mutate(dat, tscale = Time/365.25,
+    Year = as.factor(Year))
+  mod <- glm(sero_event ~ -1 + Year + Age + Year:Age 
+    + offset(log(tscale)), data=dat, family=poisson)
+  data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])
 }
 
 #' @title doPoisAge
@@ -157,6 +156,7 @@ doPoisAge <- function(dat) {
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' setInc(rtdat, bdat, doPoisAge, Args)
 setInc <- function(rtdat, bdat, Args, fun=stdGetFuns) {
+  age_dat <- getAgeYear(Args)
   function(i) {
     cat(i, "")
     dat <- getIncData(rtdat, bdat, Args)
@@ -272,48 +272,15 @@ crude_inc <- getRubin("crude_est", "crude_se")
 #' @title stdEstFuns
 #' 
 #' @description  Returns a list of the standard functions to calculate the incidence
-#' rates. New functions can be added to this, which is used for \code{\link{calcEst}}.
+#' rates using Rubins Rules. New functions can be added to this, which is used for \code{\link{calcEst}}.
 #' 
 #' @return list 
 #'
 #' @export 
 #' @examples
-#' newFuns <- append(stdEstFuns, )
+#' newFuns <- append(stdEstFuns, newFun)
 stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
 
-
-
-#' @title mkIncFun
-#' 
-#' @description Function to add new methods to \code{\link{getIncidence}}. 
-#' 
-#' @param addfun The functions to be added to \code{\link{setInc}}.  
-#' @param name The name of the estimates to be collected by \code{\link{combineEst}}. 
-#' 
-#' @return list
-#'
-#' @export 
-
-mkIncFun <- function(
-  ifuns=stdGetFuns, 
-  inames=stdGetNames, 
-  efuns=stdEstFuns) {
-  # This calculates standard incidence rates
-  calcEst <- function(dat, funs=stdEstFuns) {
-    lapply(funs, function(f) f(dat))
-  }
-  function(Args) {
-    hiv   <- getHIV(Args)
-    rtdat <- getRTData(hiv)
-    bdat <- getBirthDate()
-    calcInc <- setInc(rtdat, bdat, Args, fun=ifuns)
-    dat <- parallel::mclapply(
-      seq(Args$nSim), calcInc,
-      mc.cores=Args$mcores)
-    cdat <- combineEst(dat, get_names=inames) 
-    calcEst(cdat, efuns)
-  }
-}
 
 #' @title stdGetFuns
 #' 
@@ -350,6 +317,38 @@ stdGetNames <- list(
   adj_se=c("age_adj", "se.fit"))
 
 
+#' @title mkIncFun
+#' 
+#' @description Function to add new methods to \code{\link{getIncidence}}. 
+#' 
+#' @param addfun The functions to be added to \code{\link{setInc}}.  
+#' @param name The name of the estimates to be collected by \code{\link{combineEst}}. 
+#' 
+#' @return list
+#'
+#' @export 
+
+mkIncFun <- function(
+  ifuns=stdGetFuns, 
+  inames=stdGetNames, 
+  efuns=stdEstFuns) {
+  # This calculates standard incidence rates
+  calcEst <- function(dat, funs=stdEstFuns) {
+    lapply(funs, function(f) f(dat))
+  }
+  function(Args) {
+    hiv   <- getHIV(Args)
+    rtdat <- getRTData(hiv)
+    bdat <- getBirthDate()
+    calcInc <- setInc(rtdat, bdat, Args, fun=ifuns)
+    dat <- parallel::mclapply(
+      seq(Args$nSim), calcInc,
+      mc.cores=Args$mcores)
+    cdat <- combineEst(dat, get_names=inames) 
+    calcEst(cdat, efuns)
+  }
+}
+
 #' @title getIncidence
 #' 
 #' @description Calculates the crude and adjusted incidence rates.
@@ -361,4 +360,5 @@ stdGetNames <- list(
 #' @export
 
 getIncidence <- mkIncFun(stdGetFuns, stdGetNames, stdEstFuns)
+
 
