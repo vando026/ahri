@@ -341,7 +341,6 @@ getIncidence <- function(Args, Compute=miCompute(),
   dat <- parallel::mclapply(seq(Args$nSim),
     calcInc, mc.cores=Args$mcores)
   cdat <- combineEst(dat, get_names=Combine) 
-  browser()
   lapply(Extract, function(f) f(cdat))
 }
 
