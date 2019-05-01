@@ -4,7 +4,7 @@
 \alias{combineEst}
 \title{combineEst}
 \usage{
-combineEst(dat, get_names = stdGetNames)
+combineEst(dat, get_names = miCombine())
 }
 \arguments{
 \item{dat}{Dataset from \code{\link{setInc}}.}
@@ -21,7 +21,7 @@ Collect all estimates into single matrix
 hiv   <- getHIV(Args)
 rtdat <- getRTData(hiv)
 bdat <- getBirthDate(Args$inFiles$epifile)
-calcInc <- setInc(rtdat, bdat, doPoisAge, Args)
+calcInc <- setInc(rtdat, Args, miCompute())
 dat <- mclapply(seq(Args$nSim), calcInc,
   mc.cores=Args$mcores)
 cdat <- combineEst(dat) 

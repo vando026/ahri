@@ -4,14 +4,21 @@
 \alias{getIncidence}
 \title{getIncidence}
 \usage{
-getIncidence(Args)
+getIncidence(Args, Compute = miCompute(), Combine = miCombine(),
+  Extract = miExtract())
 }
 \arguments{
-\item{Args}{takes list from \code{\link{setArgs}}.}
+\item{Args}{Takes list from \code{\link{setArgs}}.}
+
+\item{Compute}{Takes list from \code{\link{miCompute}}.}
+
+\item{Combine}{Takes list from \code{\link{miCombine}}.}
+
+\item{Extract}{Takes list from \code{\link{miExtract}}.}
 }
 \value{
 data.frame
 }
 \description{
-Calculates the crude and adjusted incidence rates.
+Calculates the incidence rates.
 }
