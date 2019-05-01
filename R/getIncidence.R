@@ -139,12 +139,9 @@ doPoisAge <- function(dat) {
 #' 
 #' @param rtdat Dataset from \code{\link{getRTData}}.
 #' 
-#' @param bdat Dataset from \code{\link{getBirthDate}}, this is needed to set the data by
-#' year and age.
-#' 
-#' @param fun Functions to calculate incidence estimates.
-#' 
 #' @param Args provide arguments from \code{\link{setArgs}}.
+#' 
+#' @param fun A list of functions to compute, default is \link{\code{miCompute}}.
 #' 
 #' @return data.frame
 #'
@@ -155,8 +152,9 @@ doPoisAge <- function(dat) {
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' setInc(rtdat, bdat, doPoisAge, Args)
-setInc <- function(rtdat, bdat, Args, fun=stdGetFuns) {
+setInc <- function(rtdat, Args, fun=miCompute()) {
   age_dat <- getAgeYear(Args)
+  bdat=getBirthDate()
   function(i) {
     cat(i, "")
     dat <- getIncData(rtdat, bdat, Args)
@@ -180,11 +178,11 @@ setInc <- function(rtdat, bdat, Args, fun=stdGetFuns) {
 #' hiv   <- getHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
-#' calcInc <- setInc(rtdat, bdat, doPoisAge, Args)
+#' calcInc <- setInc(rtdat, Args, miCompute())
 #' dat <- mclapply(seq(Args$nSim), calcInc,
 #'   mc.cores=Args$mcores)
 #' cdat <- combineEst(dat) 
-combineEst <-  function(dat, get_names=stdGetNames) {
+combineEst <-  function(dat, get_names=miCombine()) {
   getEst <- function(dat, obj) {
     out <- as.matrix(sapply(dat, "[[", obj))
     rownames(out) <- rownames(dat[[1]][[obj[1]]])
@@ -250,7 +248,6 @@ getMeans <- function(v1, v2) {
       pyears = rowMeans(dat[[v2]]))
   }
 }
-agg_inc <- getMeans("sero", "pyears")
 
 #' @title getRubin
 #' 
@@ -266,26 +263,13 @@ getRubin <- function(v1, v2) {
     calcRubin(dat[[v1]], dat[[v2]]) 
   }
 }
-adj_inc <- getRubin("adj_est", "adj_se")
-crude_inc <- getRubin("crude_est", "crude_se")
 
-#' @title stdEstFuns
+#' @title miCompute
 #' 
-#' @description  Returns a list of the standard functions to calculate the incidence
-#' rates using Rubins Rules. New functions can be added to this, which is used for \code{\link{calcEst}}.
-#' 
-#' @return list 
-#'
-#' @export 
-#' @examples
-#' newFuns <- append(stdEstFuns, newFun)
-stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
-
-
-#' @title stdGetFuns
-#' 
-#' @description  Standard functions to calculate the incidence rate, used in
+#' @description  Compute aggregates of seroevents and person years or incidence rates, used in
 #' \code{\link{setInc}}. 
+#' 
+#' @param flist A list of functions. 
 #' 
 #' @return  list 
 #'
@@ -294,71 +278,72 @@ stdEstFuns <- list(agg=agg_inc, age_adj=adj_inc, crude=crude_inc)
 #' list(year = AggByYear, 
 #'   crude = calcCrudeInc, 
 #'   age_adj = doPoisYear)
-stdGetFuns <- list(
-  year = AggByYear, 
-  crude = calcCrudeInc, 
-  age_adj = doPoisYear)
+miCompute <- function(flist=list(
+  year = AggByYear, crude = calcCrudeInc, 
+  age_adj = doPoisYear)) {
+  return(flist) 
+}
 
-
-#' @title stdGetNames
+#' @title miCombine
 #' 
-#' @description  Standard names for collecting inncidence rate estimates, used in
-#' \code{\link{combineEst}}. 
+#' @description  Combine the results from \code{\link{miCompute}}.
 #' 
-#' @return 
+#' @param slist A list of names.
+#' 
+#' @return  list
 #'
 #' @export 
-stdGetNames <- list(
+miCombine <- function(slist=list(
   sero=c("year", "sero_event"),
   pyears=c("year", "pyears"),
   crude_est=c("crude", "fit"),
   crude_se=c("crude", "se.fit"),
   adj_est=c("age_adj", "fit"),
-  adj_se=c("age_adj", "se.fit"))
+  adj_se=c("age_adj", "se.fit"))) {
+  return(slist)
+}
 
-
-#' @title mkIncFun
+#' @title miExtract
 #' 
-#' @description Function to add new methods to \code{\link{getIncidence}}. 
+#' @description  Extract parameter estimates and standard errors from \link{\code{miCombine}}.
 #' 
-#' @param addfun The functions to be added to \code{\link{setInc}}.  
-#' @param name The name of the estimates to be collected by \code{\link{combineEst}}. 
+#' @param flist A list of functions. 
 #' 
-#' @return list
+#' @return list 
 #'
 #' @export 
 
-mkIncFun <- function(
-  ifuns=stdGetFuns, 
-  inames=stdGetNames, 
-  efuns=stdEstFuns) {
-  # This calculates standard incidence rates
-  calcEst <- function(dat, funs=stdEstFuns) {
-    lapply(funs, function(f) f(dat))
-  }
-  function(Args) {
-    hiv   <- getHIV(Args)
-    rtdat <- getRTData(hiv)
-    bdat <- getBirthDate()
-    calcInc <- setInc(rtdat, bdat, Args, fun=ifuns)
-    dat <- parallel::mclapply(
-      seq(Args$nSim), calcInc,
-      mc.cores=Args$mcores)
-    cdat <- combineEst(dat, get_names=inames) 
-    calcEst(cdat, efuns)
-  }
+miExtract <- function(flist=list(
+  agg=getMeans("sero", "pyears"),
+  crude=getRubin("crude_est", "crude_se"),
+  adj=getRubin("adj_est", "adj_se"))) {
+  return(flist)
 }
 
 #' @title getIncidence
 #' 
-#' @description Calculates the crude and adjusted incidence rates.
+#' @description Calculates the incidence rates.
 #' 
-#' @param Args takes list from \code{\link{setArgs}}.
+#' @param Args Takes list from \code{\link{setArgs}}.
+#' @param Compute Takes list from \code{\link{miCompute}}.
+#' @param Combine Takes list from \code{\link{miCombine}}.
+#' @param Extract Takes list from \code{\link{miExtract}}.
 #'
 #' @return data.frame
 #'
 #' @export
 
-getIncidence <- mkIncFun(stdGetFuns, stdGetNames, stdEstFuns)
+getIncidence <- function(Args, Compute=miCompute(), 
+  Combine=miCombine(), Extract=miExtract()) {
+  hiv   <- getHIV(Args)
+  rtdat <- getRTData(hiv)
+  calcInc <- setInc(rtdat, Args, fun=Compute)
+  dat <- parallel::mclapply(seq(Args$nSim),
+    calcInc, mc.cores=Args$mcores)
+  cdat <- combineEst(dat, get_names=Combine) 
+  browser()
+  lapply(Extract, function(f) f(cdat))
+}
+
 
 

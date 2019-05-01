@@ -21,8 +21,10 @@ splitData2 <- function(
     end="obs_end",
     cut=getYearDates(years))
   vars <- c("obs_start", "obs_end")
-  edat[vars] <- lapply(edat[vars], as.Date)
-  edat <- mutate(edat, Year=as.integer(format(obs_start, "%Y")))
+  edat[vars] <- lapply(edat[vars], 
+    function(x) as.Date(x, origin="1970-01-01"))
+  edat <- mutate(edat, 
+    Year=as.integer(format(obs_start, "%Y")))
   tbl_df(edat)
 }
 
