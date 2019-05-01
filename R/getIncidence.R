@@ -141,7 +141,7 @@ doPoisAge <- function(dat) {
 #' 
 #' @param Args provide arguments from \code{\link{setArgs}}.
 #' 
-#' @param fun A list of functions to compute, default is \link{\code{miCompute}}.
+#' @param fun A list of functions to compute, default is \code{\link{miCompute}}.
 #' 
 #' @return data.frame
 #'
@@ -266,8 +266,7 @@ getRubin <- function(v1, v2) {
 
 #' @title miCompute
 #' 
-#' @description  Compute aggregates of seroevents and person years or incidence rates, used in
-#' \code{\link{setInc}}. 
+#' @description  Compute aggregates of seroevents and person years or incidence rates, used in \code{\link{setInc}}. 
 #' 
 #' @param flist A list of functions. 
 #' 
@@ -305,7 +304,7 @@ miCombine <- function(slist=list(
 
 #' @title miExtract
 #' 
-#' @description  Extract parameter estimates and standard errors from \link{\code{miCombine}}.
+#' @description  Extract parameter estimates and standard errors from \code{\link{miCombine}}.
 #' 
 #' @param flist A list of functions. 
 #' 
