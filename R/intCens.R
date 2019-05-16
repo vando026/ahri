@@ -1,4 +1,4 @@
-#' @title IntCensParse
+#' @title intCensParse
 #' 
 #' @description  Code to get IntCens results from output.
 #' 
@@ -6,7 +6,7 @@
 #'
 #' @export
 #'
-IntCensParse <- function(File=NULL) {
+intCensParse <- function(File=NULL) {
 
   out <- readLines(File)
   out <- gsub("\\t", " ", out)
@@ -62,7 +62,7 @@ intCensImpute <- function(dat, Results, Args) {
   # regression parameter estimates
   betaMeans <- Results$edat[, "Estimate"]
   betaCovariance  <- Results$cdat
-  regParamsSim = rmvnorm(n=Args$nSim,
+  regParamsSim = mvtnorm::rmvnorm(n=Args$nSim,
     mean = betaMeans, sigma = as.matrix(betaCovariance))
 
   # step function for the baseline hazard
@@ -73,17 +73,18 @@ intCensImpute <- function(dat, Results, Args) {
     right=FALSE)
 
   # Work only with HIV+
-  dat <- as.data.frame(dat[!is.infinite(dat$early_pos), ])
-  allIDs = sort(unique(dat$IIntID))
+  dat <- as.data.frame(dat[!is.na(dat$early_pos), ])
+  allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
+    browser()
     # message(sprintf("Running for %s ", oneID))
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
     leftTime <- with(oneIDdata, 
-      as.numeric(difftime(late_neg[1], obs_start0[1], units='days')))
+      as.numeric(difftime(late_neg[1], obs_start[1], units='days')))
     rightTime <- with(oneIDdata,
-      as.numeric(difftime(early_pos[1], obs_start0[1], units='days')))
+      as.numeric(difftime(early_pos[1], obs_start[1], units='days')))
 
     #vector of random seroconversion times
     SeroTimes = rep(NA,Args$nSim)
@@ -105,8 +106,8 @@ intCensImpute <- function(dat, Results, Args) {
       {
         oneVariable = variableNames[i]
         Z = stepfun(x = oneIDdata$Time,
-                    y = c(oneIDdata[,oneVariable],max(oneIDdata[,oneVariable])),
-                    right=FALSE)
+          y = c(oneIDdata[,oneVariable],max(oneIDdata[,oneVariable])),
+          right=FALSE)
         covariateValues[,i] = Z(knots(baselineHazard)[jumpTimesIndices])
       }
       xbase <- knots(baselineHazard)[jumpTimesIndices]
@@ -142,7 +143,9 @@ intCensImpute <- function(dat, Results, Args) {
     names(SeroTimes) <- paste0("s", seq(Args$nSim))
     c(IIntID=oneID, late_neg=leftTime, early_pos=rightTime, SeroTimes) 
   }
-  out <- mclapply(allIDs, function(i) doFunc(i, dat, Args))
+  out <- parallel::mclapply(allIDs, function(i) 
+    doFunc(i, dat, Args),
+    mc.cores=Args$mcores)
   data.frame(do.call("rbind", out))
 }
 
