@@ -42,6 +42,133 @@ IntCensParse <- function(File=NULL) {
   list(sdat=surv_dat, edat=emat, cdat=cmat)
 }
 
+
+#' @title intCensImpute
+#' 
+#' @description  Uses the G-transformation to impute events
+#' 
+#' @param dat A dataset
+#' @param Results Results from \code{\link{IntCensParse}}.
+#' @param Args
+#' 
+#' @return 
+#'
+#' @export 
+
+intCensImpute <- function(dat, Results, Args) {
+  G = function(x)  return(x)
+
+  # simulate from the multivariate normal distribution of the 
+  # regression parameter estimates
+  betaMeans <- Results$edat[, "Estimate"]
+  betaCovariance  <- Results$cdat
+  regParamsSim = rmvnorm(n=Args$nSim,
+    mean = betaMeans, sigma = as.matrix(betaCovariance))
+
+  # step function for the baseline hazard
+  survTime <- Results$sdat[, "Time"]
+  Estimate <- Results$sdat[, "Estimate"]
+  baselineHazard  <-  stepfun(x=c(0, survTime),
+    y=c(0, Estimate, max(Estimate)),
+    right=FALSE)
+
+  # Work only with HIV+
+  dat <- as.data.frame(dat[!is.infinite(dat$early_pos), ])
+  allIDs = sort(unique(dat$IIntID))
+
+  doFunc <- function(oneID, dat, Args) {
+    # message(sprintf("Running for %s ", oneID))
+    oneIDdata <- dat[dat$IIntID==oneID, ]
+    stopifnot(nrow(oneIDdata)>0)
+    leftTime <- with(oneIDdata, 
+      as.numeric(difftime(late_neg[1], obs_start0[1], units='days')))
+    rightTime <- with(oneIDdata,
+      as.numeric(difftime(early_pos[1], obs_start0[1], units='days')))
+
+    #vector of random seroconversion times
+    SeroTimes = rep(NA,Args$nSim)
+
+    # Get all the knots in censor interval
+    jumpTimesIndicesSample = which((knots(baselineHazard)>=leftTime) &
+      (knots(baselineHazard)<=rightTime))
+    jumpTimesIndices = which((knots(baselineHazard)>=0) &
+      (knots(baselineHazard)<=rightTime))
+    variableNames <- Results$edat[, "Covariate"]
+    if(length(jumpTimesIndicesSample)<1) {
+      print(sprintf("=====Issue for %s ", oneID))
+    } else if(length(jumpTimesIndicesSample)>=1) {
+      covariateValues = matrix(data=NA,
+        nrow=length(jumpTimesIndices),
+        ncol=length(variableNames))
+    # Here we assign the covariate value to each knot on ID time
+      for(i in seq_len(length(variableNames)))
+      {
+        oneVariable = variableNames[i]
+        Z = stepfun(x = oneIDdata$Time,
+                    y = c(oneIDdata[,oneVariable],max(oneIDdata[,oneVariable])),
+                    right=FALSE)
+        covariateValues[,i] = Z(knots(baselineHazard)[jumpTimesIndices])
+      }
+      xbase <- knots(baselineHazard)[jumpTimesIndices]
+      Lambda <- c(0, diff(baselineHazard(xbase)))
+      AllSeroTimes = c(knots(baselineHazard)[jumpTimesIndicesSample],rightTime)
+      for(asim in seq_len(Args$nSim))
+        {
+          M = cumsum(exp(as.vector(covariateValues %*% matrix(data=regParamsSim[asim,],ncol=1)))*Lambda)
+          valF = 1 - exp(-G(M))
+          distF = stepfun(x=xbase, y=c(valF,max(valF)), right=FALSE)
+          # exPlot(oneID, distF, baselineHazard, leftTime, rightTime)
+          if (Args$MoreArgs$iSmooth & length(xbase)>=4) {
+            smEst <- smooth.spline(xbase, valF, df=4)
+            valFS <- predict(smEst, xbase)
+            distF  <-  stepfun(x=xbase, y=c(valFS$y, max(valFS$y)), right=FALSE)
+          } 
+          seroDist <- c(0, diff(distF(AllSeroTimes)))
+          # Its likely that the smoothing can give a neg probability
+          seroDist[seroDist<0] <- 0
+          mysum = sum(seroDist)
+          if(0==mysum) {
+            SeroTimes[asim] = sample(x=AllSeroTimes,size=1)
+          } else {
+            seroDist = seroDist/mysum
+            SeroTimes[asim] = sample(x=AllSeroTimes,size=1,prob=seroDist)
+          }
+          if(any(SeroTimes[asim]<leftTime))
+            stop('Random seroconversion time smaller than allowed\n')
+          if(any(SeroTimes[asim]>rightTime))
+            stop('Random seroconversion time larger than allowed\n')
+        }
+    }
+    names(SeroTimes) <- paste0("s", seq(Args$nSim))
+    c(IIntID=oneID, late_neg=leftTime, early_pos=rightTime, SeroTimes) 
+  }
+  out <- mclapply(allIDs, function(i) doFunc(i, dat, Args))
+  data.frame(do.call("rbind", out))
+}
+
+
+#' @title imputeIntCensPoint
+#' 
+#' @description  Imputes the dates from \code{\link{intCensImpute}}.
+#' 
+#' @param dat The imputed dateset.
+#' 
+#' @return 
+#'
+#' @export 
+imputeIntCensPoint <- function(dat) {
+  sdates <- get("sdates", envir=parent.frame())
+  i <- get("i", envir=environment())
+  si <- paste0("s", i)
+  sdates <- sdates[, c("IIntID", si)]
+  names(sdates) <- c("IIntID", "sero_days")
+  dat <- left_join(dat, sdates, by="IIntID")
+  dat <- mutate(dat,
+    sero_date= ifelse(sero_event==1, obs_start + sero_days, NA),
+    sero_date = as.Date(sero_date, origin="1970-01-01"))
+}
+
+
 #' @title UniReg
 #' 
 #' @description  Wrapper for IntCens fuction by Zeng et al 2016.
@@ -85,5 +212,24 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),
         ignore.stdout=ign_stout)
+    }
+}
+
+#' @title SetUniReg
+#' 
+#' @description  Helper function to run \code{\link{UniReg}}.
+#' 
+#' @param  modVars Variables to feed into UniReg model.
+#' 
+#' @return list
+#'
+#' @export 
+SetUniReg <- function(modVars) {
+  function(aname) {
+    UniReg(
+      InFile=file.path(derived, paste0(aname,".txt")), 
+      OutFile=file.path(derived, paste0(aname, "_out.txt")), 
+      Model = paste0("(Time, sero_event) = ", modVars), 
+      ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
     }
 }

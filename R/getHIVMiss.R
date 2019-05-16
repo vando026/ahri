@@ -372,7 +372,38 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
   dev.off()
 }
 
+#' @title getFollowUp
+#' 
+#' @description  Used for inverse probability weights
+#' 
+#' @param x
+#' 
+#' @return 
+#'
+#' @export 
+getFollowUp <- function(x) {
+  xx = vector(length=length(x))
+  for (i in seq(x))
+    if (i < length(x)) 
+      xx[i]  <- as.numeric(x[i+1]=="Yes" & x[i]=="Yes") 
+    else
+      xx[i] <- as.numeric(x[i]=="Yes")
+  xx
+}
 
-
-# dat_all <- setHIVMiss(setArgs(Age=list(All=c(15, 54))))
-# edat_all <- getHIVEligible(dat_all)
+#' @title getDropOut
+#' 
+#' @description  Used for inverse probability weights
+#' 
+#' @param x
+#' 
+#' @return 
+#'
+#' @export 
+getDropOut <- function(x) {
+  xx = vector(length=length(x))
+  lastConsent <- suppressWarnings(max(which(x=="Yes")))
+  for (i in seq(x))
+    xx[i] <- as.numeric(i > lastConsent & x[i]!="Yes")
+  xx
+}
