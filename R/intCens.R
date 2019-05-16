@@ -48,7 +48,7 @@ intCensParse <- function(File=NULL) {
 #' @description  Uses the G-transformation to impute events
 #' 
 #' @param dat A dataset
-#' @param Results Results from \code{\link{IntCensParse}}.
+#' @param Results Results from \code{\link{intCensParse}}.
 #' @param Args
 #' 
 #' @return 
@@ -73,11 +73,10 @@ intCensImpute <- function(dat, Results, Args) {
     right=FALSE)
 
   # Work only with HIV+
-  dat <- as.data.frame(dat[!is.na(dat$early_pos), ])
+  dat <- data.frame(dat[!is.na(dat$early_pos), ])
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    browser()
     # message(sprintf("Running for %s ", oneID))
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
@@ -90,7 +89,7 @@ intCensImpute <- function(dat, Results, Args) {
     SeroTimes = rep(NA,Args$nSim)
 
     # Get all the knots in censor interval
-    jumpTimesIndicesSample = which((knots(baselineHazard)>=leftTime) &
+    jumpTimesIndicesSample = which((knots(baselineHazard)>leftTime) &
       (knots(baselineHazard)<=rightTime))
     jumpTimesIndices = which((knots(baselineHazard)>=0) &
       (knots(baselineHazard)<=rightTime))
@@ -141,35 +140,14 @@ intCensImpute <- function(dat, Results, Args) {
         }
     }
     names(SeroTimes) <- paste0("s", seq(Args$nSim))
-    c(IIntID=oneID, late_neg=leftTime, early_pos=rightTime, SeroTimes) 
+    c(IIntID=oneID, obs_start0=oneIDdata$obs_start[1], 
+      late_neg=leftTime, early_pos=rightTime, SeroTimes) 
   }
-  out <- parallel::mclapply(allIDs, function(i) 
-    doFunc(i, dat, Args),
-    mc.cores=Args$mcores)
+  out <- lapply(allIDs, function(i) doFunc(i, dat, Args))
   data.frame(do.call("rbind", out))
 }
 
 
-#' @title imputeIntCensPoint
-#' 
-#' @description  Imputes the dates from \code{\link{intCensImpute}}.
-#' 
-#' @param dat The imputed dateset.
-#' 
-#' @return 
-#'
-#' @export 
-imputeIntCensPoint <- function(dat) {
-  sdates <- get("sdates", envir=parent.frame())
-  i <- get("i", envir=environment())
-  si <- paste0("s", i)
-  sdates <- sdates[, c("IIntID", si)]
-  names(sdates) <- c("IIntID", "sero_days")
-  dat <- left_join(dat, sdates, by="IIntID")
-  dat <- mutate(dat,
-    sero_date= ifelse(sero_event==1, obs_start + sero_days, NA),
-    sero_date = as.Date(sero_date, origin="1970-01-01"))
-}
 
 
 #' @title UniReg
@@ -235,4 +213,95 @@ SetUniReg <- function(modVars) {
       Model = paste0("(Time, sero_event) = ", modVars), 
       ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
     }
+}
+
+
+
+#' @title imputeIntCensPoint
+#' 
+#' @description  Imputes the dates from \code{\link{intCensImpute}}.
+#' 
+#' @param dat The imputed dateset.
+#' 
+#' @return 
+#'
+#' @export 
+imputeIntCensPoint <- function(rtdat, sdates, i) {
+  sdat <- sdates[, c("IIntID", "obs_start0", paste0("s", i))]
+  names(sdat) <- c("IIntID", "obs_start0", "sero_days")
+  sdat <- mutate(sdat,
+    sero_date =  obs_start0 + sero_days,
+    sero_date = as.Date(sero_date, origin="1970-01-01"),
+    obs_start0 = as.Date(obs_start0, origin="1970-01-01"))
+  left_join(rtdat, sdat, by="IIntID")
+}
+
+
+icCompute <- function(flist=list(
+  year = AggByYear, crude = calcCrudeInc)) {
+  return(flist) 
+}
+
+icCombine <- function(slist=list(
+  sero=c("year", "sero_event"),
+  pyears=c("year", "pyears"),
+  crude_est=c("crude", "fit"),
+  crude_se=c("crude", "se.fit"))) {
+  return(slist)
+}
+
+icExtract <- function(flist=list(
+  agg=getMeans("sero", "pyears"),
+  crude=getRubin("crude_est", "crude_se"))) {
+  return(flist)
+}
+
+#' @title setIncIC
+#' 
+#' @description Sets the data and functions to calculate incidence estimates for IntCens.
+#' 
+#' @param rtdat Dataset from \code{\link{getRTData}}.
+#' 
+#' @param Args provide arguments from \code{\link{setArgs}}.
+#' 
+#' @param fun A list of functions to compute, default is \code{\link{miCompute}}.
+#' 
+#' @return data.frame
+#'
+#' @export
+setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
+  Results <- intCensParse(
+    File=file.path(derived, paste0(Args$aname,"_out.txt")))
+  sdates <- intCensImpute(dat, Results, Args)
+  bdat=getBirthDate()
+  function(i) {
+    cat(i, "")
+    dat <- imputeIntCensPoint(rtdat, sdates, i)
+    dat <- splitAtSeroDate(dat) 
+    dat <- setData(dat, Args,  bdat)
+    lapply(fun, function(f) f(dat))
+  }
+}
+
+
+#' @title getIncidenceIC
+#' 
+#' @description Calculates the incidence rates using IntCens methods.
+#' 
+#' @param Args Takes list from \code{\link{setArgs}}.
+#' @param Compute Takes list from \code{\link{miCompute}}.
+#' @param Combine Takes list from \code{\link{miCombine}}.
+#' @param Extract Takes list from \code{\link{miExtract}}.
+#'
+#' @return data.frame
+#'
+#' @export
+getIncidenceIC <- function(Args, dat, rtdat, 
+  Compute=icCompute(), Combine=icCombine(), 
+  Extract=icExtract()) {
+  calcInc <- setIncIC(dat, rtdat, Args, fun=Compute)
+  dat <- parallel::mclapply(seq(Args$nSim),
+    calcInc, mc.cores=Args$mcores)
+  cdat <- combineEst(dat, get_names=Combine) 
+  lapply(Extract, function(f) f(cdat))
 }

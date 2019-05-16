@@ -274,7 +274,7 @@ getRubin <- function(v1, v2) {
 #'
 #' @export 
 #' @examples 
-#' list(year = AggByYear, 
+#' mi_compute <- list(year = AggByYear, 
 #'   crude = calcCrudeInc, 
 #'   age_adj = doPoisYear)
 miCompute <- function(flist=list(
