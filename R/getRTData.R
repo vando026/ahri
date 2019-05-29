@@ -24,8 +24,8 @@ getRTData <- function(dat, onlyRT=TRUE) {
   late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
   late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
   dat <- distinct(dat, IIntID, Female)
-  dat <- Reduce(left_join, 
-    list(dat, early_neg, late_neg, early_pos, late_pos))
+  dat <- suppressMessages(Reduce(left_join, 
+    list(dat, early_neg, late_neg, early_pos, late_pos)))
 
   # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
   rtdat <- mutate(dat, late_neg_after = ifelse(

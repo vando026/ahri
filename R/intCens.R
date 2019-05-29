@@ -289,9 +289,9 @@ setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
 #' @description Calculates the incidence rates using IntCens methods.
 #' 
 #' @param Args Takes list from \code{\link{setArgs}}.
-#' @param Compute Takes list from \code{\link{miCompute}}.
-#' @param Combine Takes list from \code{\link{miCombine}}.
-#' @param Extract Takes list from \code{\link{miExtract}}.
+#' @param Compute Takes list from \code{\link{icCompute}}.
+#' @param Combine Takes list from \code{\link{icCombine}}.
+#' @param Extract Takes list from \code{\link{icExtract}}.
 #'
 #' @return data.frame
 #'

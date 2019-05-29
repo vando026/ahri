@@ -11,8 +11,8 @@
 #' @export 
 
 readHIVData <- function(
-  inFiles=getFiles(), dropTasP=TRUE) {
-  hiv <- readr::read_csv(inFiles$hivfile,
+  inFile=getFiles()$hivfile, dropTasP=TRUE) {
+  hiv <- readr::read_csv(inFile,
     col_types=cols_only(
       ResidencyBSIntId="i",
       IIntId="i",
@@ -34,7 +34,7 @@ readHIVData <- function(
 #' 
 #' @description  Get all valid test results >15 yrs age from HIV surveillance.
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param inFile from \code{\link{getFiles}}.
 #'
 #' @return data.frame
 #'
@@ -42,8 +42,8 @@ readHIVData <- function(
 #'
 #' @export 
 
-getHIV <- function(Args) {
-  hiv <- readHIVData(Args$inFiles)
+getHIV <- function(inFile=getFiles()$hivfile) {
+  hiv <- readHIVData(inFile)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
   hiv <- filter(hiv, AgeAtVisit %in% c(15:100))
@@ -66,7 +66,7 @@ getHIV <- function(Args) {
 #'
 #' @export 
 setHIV <- function(Args) {
-  dat <- getHIV(Args)
+  dat <- getHIV()
   setData(dat, Args)
 }
 
@@ -81,7 +81,7 @@ setHIV <- function(Args) {
 #' @export 
 
 getHIVDates <- function(Args, surv_date="2005-01-01") {
-  dat <- getHIV(Args)
+  dat <- getHIV()
   early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
   dat <- left_join(dat, early_pos, by="IIntID")
   dat <- filter(dat,

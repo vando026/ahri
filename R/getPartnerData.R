@@ -1,3 +1,5 @@
+
+
 #' @title getPartnerData
 #' 
 #' @description  get data on partners and marital status. 
@@ -39,10 +41,8 @@ getPartnerData <- function(
   pdat <- mutate(pdat, Partner1=replace(Partner1, is.infinite(Partner1), NA))
 
   # MArital = Married or Polygamous
-  mdat <- select(ghdat0, IIntID, Year, CurrentMaritalStatus) %>%  
-    mutate(Married1=
-    ifelse(CurrentMaritalStatus %in% c(1:3, 4, 6:8, 11:16), 1, #married 
-    ifelse(CurrentMaritalStatus %in% c(9, 10, 5, 17), 0, NA))) # single then NA
+  mdat <- select(ghdat0, IIntID, Year, Married) %>%  
+    mutate(Married1=mkMarriedVar(Married))
 
   # Now, carryforward in year only
   mdat <- group_by(mdat, IIntID, Year) %>% mutate(
@@ -116,20 +116,14 @@ makePartnerData <- function(dat,
 #' 
 #' @description  Get the marital status variable.
 #' 
-#' @param dat Dataset from \code{\link{readHealthDataMen}}.
+#' @param dat Dataset from \code{\link{readHealthDataMen/Women}}.
 #' 
-#' @return 
+#' @return variable
 #'
 #' @export 
-getMaritalStatus <- function(dat) {
-  dat <- select(dat, IIntID, Year, Female, Marital)
-  dat <- mutate(dat, MaritalStatus = 
-    ifelse(Marital %in% c(1:4,6:8,11:16), "Married",
-    # ifelse(Marital %in% c(3,12,14), "Polygamous",
-    ifelse(Marital %in% c(5,9,10,17), "Single", NA_character_)))
-  dat <- filter(dat, !is.na(MaritalStatus))
-  dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
-  dat
+getMaritalStatus <- function(var) {
+  ifelse(var %in% c(1:3, 6:8, 11:16), 1, # married 
+    ifelse(var %in% c(4, 5, 9, 10, 17), 0, NA)) # not married
 }
 
 
@@ -144,12 +138,12 @@ getMaritalStatus <- function(dat) {
 #' @return 
 #'
 #' @export 
-addMaritalStatus <- function(dat, mdat) {
-  mdat <- getMaritalStatus(mdat) %>%
-    select(IIntID, Year, MaritalStatus)
+addMaritalStatus <- function(dat, mdat, fun=as.factor) {
+  mdat$MaritalStatus <- getMaritalStatus(mdat$Marital)
+  mdat <- select(mdat, IIntID, Year, MaritalStatus)
   dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
   dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE))
   dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE, fromLast=TRUE))
-  dat <- mutate(dat, MaritalStatus = as.factor(MaritalStatus))
+  dat <- mutate(dat, MaritalStatus = fun(MaritalStatus))
   dat
 }
