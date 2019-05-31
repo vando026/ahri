@@ -143,7 +143,7 @@ addMigrVars <- function(dat, dem=NULL, inFile=getFiles()$demfile) {
 #'
 #' @export
 
-getBSCord <- function(inFile=Args$inFile$bscfile) {
+getBSCord <- function(inFile=getFiles()$bscfile) {
   dat <-  read_csv(inFile)
   mutate(dat, BSIntID=as.integer(BSIntID))
 }

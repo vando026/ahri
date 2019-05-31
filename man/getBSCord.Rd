@@ -4,7 +4,7 @@
 \alias{getBSCord}
 \title{getBSCord}
 \usage{
-getBSCord(inFile = Args$inFile$bscfile)
+getBSCord(inFile = getFiles()$bscfile)
 }
 \arguments{
 \item{inFile}{path to the BSIntID coordinates csv file}

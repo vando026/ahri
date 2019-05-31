@@ -32,13 +32,13 @@ getARTDates <- function(inFile=getFiles()$epifile) {
 #'
 #' @export 
 
-getHIV_ART <- function(Args) {
+getHIV_ART <- function(Args, cutoff=9) {
   # Get HIV+ data only
-  hdat <- getHIV(Args)
+  hdat <- getHIV()
   hpos <- filter(hdat, HIVResult==1) %>% 
     select(IIntID, Year, Female, AgeAtVisit, VisitDate, HIVResult) 
   # Merge with ART data
-  art <- getARTDates(Args$inFiles$epifile)
+  art <- getARTDates()
   adat <- left_join(hpos, art, by="IIntID")
   adat <- arrange(adat, IIntID, Year) 
   adat <- group_by(adat, IIntID) %>% 
@@ -46,8 +46,7 @@ getHIV_ART <- function(Args) {
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
     ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  adat <- setData(adat, Args)
-  calcTrendYear("OnART", adat)
+  setData(adat, Args)
 }
 
 #' @title calcARTCov
@@ -63,21 +62,8 @@ getHIV_ART <- function(Args) {
 #'
 #' @export
 
-calcARTCov <- function(Args, cutoff=9) {
-  # Get HIV+ data only
-  hdat <- getHIV(Args)
-  hpos <- filter(hdat, HIVResult==1) %>% 
-    select(IIntID, Year, Female, AgeAtVisit, VisitDate, HIVResult) 
-  # Merge with ART data
-  art <- getARTDates(Args$inFiles$epifile)
-  adat <- left_join(hpos, art, by="IIntID")
-  adat <- arrange(adat, IIntID, Year) 
-  adat <- group_by(adat, IIntID) %>% 
-    mutate(OnART = as.numeric(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
-  # Ok if month of Init is after cutoff, dont assign OnART to that year
-  adat <- mutate(adat, OnART =
-    ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  adat <- setData(adat, Args)
-  calcTrendYear("OnART", adat)
+calcARTCov <- function(Args) {
+  dat <- getHIV_ART(Args)
+  calcTrendYear("OnART", dat)
 }
 

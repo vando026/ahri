@@ -4,10 +4,10 @@
 \alias{getHIV}
 \title{getHIV}
 \usage{
-getHIV(Args)
+getHIV(inFile = getFiles()$hivfile)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
+\item{inFile}{from \code{\link{getFiles}}.}
 }
 \value{
 data.frame

@@ -4,7 +4,7 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(Args, cutoff = 9)
+calcARTCov(Args)
 }
 \arguments{
 \item{Args}{arguments from \code{\link{setArgs}}.}

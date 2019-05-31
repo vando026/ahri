@@ -4,12 +4,12 @@
 \alias{readHIVData}
 \title{readHIVData}
 \usage{
-readHIVData(inFiles = getFiles(), dropTasP = TRUE)
+readHIVData(inFile = getFiles()$hivfile, dropTasP = TRUE)
 }
 \arguments{
-\item{inFiles}{file paths from \code{\link{setArgs}}.}
-
 \item{dropTasP}{drop TasP surveillance areas from the data.}
+
+\item{inFiles}{file paths from \code{\link{setArgs}}.}
 }
 \value{
 data.frame

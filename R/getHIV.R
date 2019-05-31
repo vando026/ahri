@@ -70,25 +70,3 @@ setHIV <- function(Args) {
   setData(dat, Args)
 }
 
-#' @title getHIVDates
-#' 
-#' @description  Get all the test dates until the first HIV-positive date.
-#' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
-#' 
-#' @return data.frame
-#'
-#' @export 
-
-getHIVDates <- function(Args, surv_date="2005-01-01") {
-  dat <- getHIV()
-  early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
-  dat <- left_join(dat, early_pos, by="IIntID")
-  dat <- filter(dat,
-    !(VisitDate > as.Date(early_pos, "1970-01-01") & !is.na(early_pos)))
-  dat <- mutate(dat, event = as.numeric(!is.na(HIVPositive) & VisitDate==HIVPositive))
-  dat <- select(dat, IIntID, VisitDate, Year, Female, event)
-  dat <- setData(dat, Args, time2="VisitDate")
-  dat
-}
-
