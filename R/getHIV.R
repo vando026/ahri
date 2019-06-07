@@ -2,8 +2,8 @@
 #' 
 #' @description  Reads in AHRI data from csv file
 #' 
-#' @param inFiles file paths from \code{\link{setArgs}}.
-#' @param dropTasP drop TasP surveillance areas from the data. 
+#' @param inFiles File path from \code{\link{getFiles()$hivfile}}.
+#' @param dropTasP Drop TasP surveillance areas from the data. 
 #' 
 #' @return data.frame
 #'
@@ -34,7 +34,7 @@ readHIVData <- function(
 #' 
 #' @description  Get all valid test results >15 yrs age from HIV surveillance.
 #' 
-#' @param inFile from \code{\link{getFiles}}.
+#' @param inFiles File path from \code{\link{getFiles()$hivfile}}.
 #'
 #' @return data.frame
 #'

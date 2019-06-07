@@ -21,6 +21,8 @@ getFiles(root = setRoot(),
   prvfile = "Derived/Other/HIV_Prev_Aug21.csv",
   pipfile = "Derived/BoundedStructure/PIPBoundedStructures.xlsx",
   bscfile = "Derived/BoundedStructure/BSIntID_Coords.csv",
+  fem_art = "Source/ARTemis/2017/ART_Females.csv",
+  mal_art = "Source/ARTemis/2017/ART_Males.csv",
   pvlfile = "Source/CVL_2011_2014/Community Viral Load 2011-2014.dta")
 }
 \arguments{

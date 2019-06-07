@@ -67,3 +67,47 @@ calcARTCov <- function(Args) {
   calcTrendYear("OnART", dat)
 }
 
+
+#' @title readARTCov
+#' 
+#' @description  Read in community ART coverage data from Source path
+#' 
+#' @param Female Read female data (Female = 1) or male data (Female = 0)
+#' 
+#' @return 
+#'
+#' @export 
+
+readARTCov <- function(Female=1) {
+  sex <- ifelse(Female==1, "fem_art", "mal_art")
+  art <- suppressMessages(readr::read_csv(
+    unlist(getFiles()[sex]), na=c("", "-")))
+  art <- tidyr::gather(art, Year, ARTCov, -BSIntID)
+  art <- filter(art, !is.na(ARTCov))
+  art <- suppressWarnings(mutate(art, 
+    Year=as.integer(gsub("[MF]_ART_", "", Year)),
+    ARTCov = as.numeric(ARTCov)*100))
+  art
+}
+
+
+#' @title addARTCov
+#' 
+#' @description  Add community ART cov. 
+#' 
+#' @param dat Dataset to add ART vars to. 
+#' 
+#' @return 
+#'
+#' @export 
+
+addARTCov <- function(dat, Args, oppSex=TRUE) {
+  Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)
+  art <- readARTCov(Sex)
+  dat <- left_join(dat, art, by=c("BSIntID", "Year"))
+  dat
+}
+
+
+
+
