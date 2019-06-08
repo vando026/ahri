@@ -201,18 +201,17 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
 #' @description  Helper function to run \code{\link{UniReg}}.
 #' 
 #' @param  modVars Variables to feed into UniReg model.
+#' @param  aName Name of file to be written.
 #' 
 #' @return list
 #'
 #' @export 
-SetUniReg <- function(modVars) {
-  function(aname) {
-    UniReg(
-      InFile=file.path(derived, paste0(aname,".txt")), 
-      OutFile=file.path(derived, paste0(aname, "_out.txt")), 
-      Model = paste0("(Time, sero_event) = ", modVars), 
-      ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
-    }
+SetUniReg <- function(modVars, aName) {
+  UniReg(
+    InFile=file.path(derived, paste0(aName,".txt")), 
+    OutFile=file.path(derived, paste0(aName, "_out.txt")), 
+    Model = paste0("(Time, sero_event) = ", modVars), 
+    ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
 }
 
 

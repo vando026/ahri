@@ -1,8 +1,9 @@
 #' @title plotIncSex
 #' 
-#' @description  Plot HIV incidence.
+#' @description  Plot HIV incidence with 95% CIs as whiskers.
 #' 
-#' @param dat dataset from \code{\link{getIncidence}}. 
+#' @param Mal data.frame with rate, lci, and uci for men.
+#' @param Fem data.frame with rate, lci, and uci for women.
 #' 
 #' @export
 
@@ -29,7 +30,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
   # browser()
   labs <- rownames(Mal)
   len <- length(labs)
-  scols <- c(rep(Blues[8], len),rep(Reds[8], len))
+  scols <- c(rep(Colors[1], len),rep(Colors[2], len))
   with(Sex,
     plotrix::plotCI(Grp, y=rate, 
     ui=uci, li=lci, 
@@ -48,12 +49,83 @@ plotIncSex <- function(Mal, Fem, yLim=7,
   lines(kmal, col=Blues[8], lwd=2)
   legend("top", 
     c("Men", "Women"),
-    lwd=10, lty=1, col=c(Blues[8], Reds[8]),
+    lwd=10, lty=1, col=c(Colors[1], Colors[2]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
     cex=1.2)
 
   if(!is.null(gfun)) dev.off()
 }
+
+
+#' @title plotIncSexArea
+#' 
+#' @description  Plot HIV incidence with 95% CIs as area.
+#' 
+#' @param Mal data.frame with rate, lci, and uci for men.
+#' @param Fem data.frame with rate, lci, and uci for women.
+#' 
+#' @export
+plotIncSexArea <- function(Mal, Fem, yLim=7,
+  Colors=c("blue", "red"), bwidth=c(2, 2), gfun=png,
+  Title="", fname="year_plot") {
+
+
+  if(!is.null(gfun)) {
+    gfun(file.path(output,
+      paste0(fname, ".", deparse(substitute(gfun)))),
+      units="in", width=5.0, height=5.0, pointsize=9, 
+      res=200, type="cairo")
+  }
+  x <- as.numeric(rownames(Mal))
+
+  if(length(x)>9) {
+    labs <- grep("^20", rownames(Mal), value=TRUE)
+    labs[seq(1, length(Mal[, "rate"]), 2)] <- " "
+  } else {
+    labs <- x 
+  }
+
+  plot(x, Mal[, "rate"], type='n',
+    pch=4, bty="n", xaxt='n',
+    ylim=c(0, yLim), main=Title,
+    cex.axis=1.1, cex.lab=1.2,
+    xlab="Year", font.lab=2,
+    ylab="Incidence Rate per 100 person-years")
+  axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
+
+  renderInc <- function(dat, Colors, bwidth) {
+    uci <- dat[, "uci"]; lci <- dat[, "lci"]
+    lci[is.na(lci)] <- 0
+    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth)
+    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth)
+    polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
+      col=Colors, border=Colors)
+    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
+    lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth[1]), 
+      lwd=1, lty=1, col=gcolor)
+  }
+
+  renderInc(Mal, Colors[1], bwidth[[1]])
+  renderInc(Fem, Colors[2], bwidth[[2]])
+
+  legend("top", 
+    c("Men", "Women"),
+    lwd=10, lty=1, col=c(Colors[1], Colors[2]),
+    ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
+    cex=1.2)
+  if(!is.null(gfun)) dev.off()
+}
+
+
+
+
+
+
+
+
+
+
+
 
 #' @title plotIncAge
 #' 
