@@ -7,7 +7,7 @@
 getHIV(inFile = getFiles()$hivfile)
 }
 \arguments{
-\item{inFiles}{File path from \code{\link{getFiles()$hivfile}}.}
+\item{inFiles}{File path from \code{\link{getFiles}}.}
 }
 \value{
 data.frame

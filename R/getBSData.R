@@ -167,6 +167,7 @@ addBSVars <- function(dat, Vars="IsUrbanOrRural",
   bdat <- select(bdat, BSIntID, matches(Vars))
   dat <- left_join(dat, bdat, by="BSIntID")
   dat <- rename(dat, Area=IsUrbanOrRural)
+  dat$Area[dat$Area=="Peri-Urban"] <- "PeriUrban"
   dat$Area[is.na(dat$Area)] <- 
     sample(sort(unique(dat$Area)),
     size=sum(is.na(dat$Area)),

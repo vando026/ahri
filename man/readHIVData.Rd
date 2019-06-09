@@ -9,7 +9,7 @@ readHIVData(inFile = getFiles()$hivfile, dropTasP = TRUE)
 \arguments{
 \item{dropTasP}{Drop TasP surveillance areas from the data.}
 
-\item{inFiles}{File path from \code{\link{getFiles()$hivfile}}.}
+\item{inFiles}{File path from \code{\link{getFiles}}.}
 }
 \value{
 data.frame

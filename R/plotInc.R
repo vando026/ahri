@@ -66,7 +66,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' 
 #' @export
 plotIncSexArea <- function(Mal, Fem, yLim=7,
-  Colors=c("blue", "red"), bwidth=c(2, 2), gfun=png,
+  Colors=c("blue", "red"), bwidth=c(2.5, 2.5), gfun=png,
   Title="", fname="year_plot") {
 
 
@@ -78,20 +78,14 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
   }
   x <- as.numeric(rownames(Mal))
 
-  if(length(x)>9) {
-    labs <- grep("^20", rownames(Mal), value=TRUE)
-    labs[seq(1, length(Mal[, "rate"]), 2)] <- " "
-  } else {
-    labs <- x 
-  }
-
   plot(x, Mal[, "rate"], type='n',
-    pch=4, bty="n", xaxt='n',
+    pch=4, bty="l", xaxt='n',
     ylim=c(0, yLim), main=Title,
-    cex.axis=1.1, cex.lab=1.2,
+    cex.axis=1.3, cex.lab=1.3,
     xlab="Year", font.lab=2,
     ylab="Incidence Rate per 100 person-years")
-  axis(side = 1, at=labs, labels=labs, cex.axis=1.1)
+  axis(side=1, at=x, cex.axis=1.3)
+  # plotrix::staxlab(side = 1, at=x, labels=x, srt=45, cex.axis=1.1)
 
   renderInc <- function(dat, Colors, bwidth) {
     uci <- dat[, "uci"]; lci <- dat[, "lci"]
@@ -112,7 +106,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
     c("Men", "Women"),
     lwd=10, lty=1, col=c(Colors[1], Colors[2]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
-    cex=1.2)
+    cex=1.4)
   if(!is.null(gfun)) dev.off()
 }
 
