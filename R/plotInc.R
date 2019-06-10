@@ -59,7 +59,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 
 #' @title plotIncSexArea
 #' 
-#' @description  Plot HIV incidence with 95% CIs as area.
+#' @description  Plot HIV incidence with 95\% CIs as area.
 #' 
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
