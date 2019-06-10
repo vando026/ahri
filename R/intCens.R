@@ -47,15 +47,17 @@ intCensParse <- function(File=NULL) {
 #' 
 #' @description  Uses the G-transformation to impute events
 #' 
-#' @param dat A dataset
+#' @param dat A dataset.
 #' @param Results Results from \code{\link{intCensParse}}.
 #' @param Args
+#' @param start_date If null, start_date is the first obs_start date of ID, else it is
+#' same start_date for everyone.
 #' 
 #' @return 
 #'
 #' @export 
 
-intCensImpute <- function(dat, Results, Args) {
+intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   G = function(x)  return(x)
 
   # simulate from the multivariate normal distribution of the 
@@ -77,13 +79,15 @@ intCensImpute <- function(dat, Results, Args) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
+    start_time <- ifelse(is.null(start_date), 
+      oneIDdata$obs_start[1], start_date)
     # message(sprintf("Running for %s ", oneID))
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
-    leftTime <- with(oneIDdata, 
-      as.numeric(difftime(late_neg[1], obs_start[1], units='days')))
-    rightTime <- with(oneIDdata,
-      as.numeric(difftime(early_pos[1], obs_start[1], units='days')))
+    leftTime <- as.numeric(
+      difftime(oneIDdata$late_neg[1], start_time, units='days'))
+    rightTime <- as.numeric(
+      difftime(oneIDdata$early_pos[1], start_time, units='days'))
 
     #vector of random seroconversion times
     SeroTimes = rep(NA,Args$nSim)
@@ -220,19 +224,22 @@ SetUniReg <- function(modVars, aName) {
 #' 
 #' @description  Imputes the dates from \code{\link{intCensImpute}}.
 #' 
-#' @param dat The imputed dateset.
+#' @param rtdat The dataset to impute.
+#' @param sdates The imputed dateset.
+#' @param start_date Date of ID or all.
 #' 
 #' @return 
 #'
 #' @export 
-imputeIntCensPoint <- function(rtdat, sdates, i) {
+imputeIntCensPoint <- function(rtdat, sdates, start_date=NULL, i) {
   sdat <- sdates[, c("IIntID", "obs_start0", paste0("s", i))]
   names(sdat) <- c("IIntID", "obs_start0", "sero_days")
   sdat <- mutate(sdat,
-    sero_date =  obs_start0 + sero_days,
+    start_date = ifelse(is.null(start_date), obs_start0, as.Date(start_date)),
+    sero_date =  start_date + sero_days,
     sero_date = as.Date(sero_date, origin="1970-01-01"),
     obs_start0 = as.Date(obs_start0, origin="1970-01-01"))
-  left_join(rtdat, sdat, by="IIntID")
+  left_join(rtdat, sdat, by="IIntID") 
 }
 
 
@@ -271,11 +278,11 @@ icExtract <- function(flist=list(
 setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
   Results <- intCensParse(
     File=file.path(derived, paste0(Args$aname,"_out.txt")))
-  sdates <- intCensImpute(dat, Results, Args)
+  sdates <- intCensImpute(dat, Results, Args, start_date="2005-01-01")
   bdat=getBirthDate()
   function(i) {
     cat(i, "")
-    dat <- imputeIntCensPoint(rtdat, sdates, i)
+    dat <- imputeIntCensPoint(rtdat, sdates, start_date="2005-01-01", i)
     dat <- splitAtSeroDate(dat) 
     dat <- setData(dat, Args,  bdat)
     lapply(fun, function(f) f(dat))
