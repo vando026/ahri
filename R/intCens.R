@@ -84,9 +84,9 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
     # message(sprintf("Running for %s ", oneID))
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
-    leftTime <- as.numeric(
+    leftTime <- as.integer(
       difftime(oneIDdata$late_neg[1], start_time, units='days'))
-    rightTime <- as.numeric(
+    rightTime <- as.integer(
       difftime(oneIDdata$early_pos[1], start_time, units='days'))
 
     #vector of random seroconversion times
@@ -144,7 +144,10 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
         }
     }
     names(SeroTimes) <- paste0("s", seq(Args$nSim))
-    c(IIntID=oneID, obs_start0=oneIDdata$obs_start[1], 
+    if (oneID==17) print(SeroTimes)
+    c(IIntID=oneID, 
+      start_date=ifelse(!is.null(start_date), as.Date(start_time), start_time),
+      obs_start=oneIDdata$obs_start[1], 
       late_neg=leftTime, early_pos=rightTime, SeroTimes) 
   }
   out <- lapply(allIDs, function(i) doFunc(i, dat, Args))
@@ -226,19 +229,15 @@ SetUniReg <- function(modVars, aName) {
 #' 
 #' @param rtdat The dataset to impute.
 #' @param sdates The imputed dateset.
-#' @param start_date Date of ID or all.
 #' 
 #' @return 
 #'
 #' @export 
-imputeIntCensPoint <- function(rtdat, sdates, start_date=NULL, i) {
-  sdat <- sdates[, c("IIntID", "obs_start0", paste0("s", i))]
-  names(sdat) <- c("IIntID", "obs_start0", "sero_days")
+imputeIntCensPoint <- function(rtdat, sdates, i) {
+  sdat <- sdates[, c("IIntID", "start_date", paste0("s", i))]
+  names(sdat) <- c("IIntID", "start_date", "sero_days")
   sdat <- mutate(sdat,
-    start_date = ifelse(is.null(start_date), obs_start0, as.Date(start_date)),
-    sero_date =  start_date + sero_days,
-    sero_date = as.Date(sero_date, origin="1970-01-01"),
-    obs_start0 = as.Date(obs_start0, origin="1970-01-01"))
+    sero_date =  as.Date(start_date + sero_days, origin="1970-01-01"))
   left_join(rtdat, sdat, by="IIntID") 
 }
 
@@ -282,7 +281,7 @@ setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
   bdat=getBirthDate()
   function(i) {
     cat(i, "")
-    dat <- imputeIntCensPoint(rtdat, sdates, start_date="2005-01-01", i)
+    dat <- imputeIntCensPoint(rtdat, sdates, i)
     dat <- splitAtSeroDate(dat) 
     dat <- setData(dat, Args,  bdat)
     lapply(fun, function(f) f(dat))
