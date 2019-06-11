@@ -71,8 +71,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   survTime <- Results$sdat[, "Time"]
   Estimate <- Results$sdat[, "Estimate"]
   baselineHazard  <-  stepfun(x=c(0, survTime),
-    y=c(0, Estimate, max(Estimate)),
-    right=FALSE)
+    y=c(0, Estimate, max(Estimate)), right=FALSE)
 
   # Work only with HIV+
   dat <- data.frame(dat[!is.na(dat$early_pos), ])
@@ -93,7 +92,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
     SeroTimes = rep(NA,Args$nSim)
 
     # Get all the knots in censor interval
-    jumpTimesIndicesSample = which((knots(baselineHazard)>leftTime) &
+    jumpTimesIndicesSample = which((knots(baselineHazard)>=leftTime) &
       (knots(baselineHazard)<=rightTime))
     jumpTimesIndices = which((knots(baselineHazard)>=0) &
       (knots(baselineHazard)<=rightTime))
@@ -105,8 +104,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
         nrow=length(jumpTimesIndices),
         ncol=length(variableNames))
     # Here we assign the covariate value to each knot on ID time
-      for(i in seq_len(length(variableNames)))
-      {
+      for(i in seq_len(length(variableNames))) {
         oneVariable = variableNames[i]
         Z = stepfun(x = oneIDdata$Time,
           y = c(oneIDdata[,oneVariable],max(oneIDdata[,oneVariable])),
@@ -121,18 +119,10 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
           M = cumsum(exp(as.vector(covariateValues %*% matrix(data=regParamsSim[asim,],ncol=1)))*Lambda)
           valF = 1 - exp(-G(M))
           distF = stepfun(x=xbase, y=c(valF,max(valF)), right=FALSE)
-          # exPlot(oneID, distF, baselineHazard, leftTime, rightTime)
-          if (Args$MoreArgs$iSmooth & length(xbase)>=4) {
-            smEst <- smooth.spline(xbase, valF, df=4)
-            valFS <- predict(smEst, xbase)
-            distF  <-  stepfun(x=xbase, y=c(valFS$y, max(valFS$y)), right=FALSE)
-          } 
           seroDist <- c(0, diff(distF(AllSeroTimes)))
-          # Its likely that the smoothing can give a neg probability
-          seroDist[seroDist<0] <- 0
           mysum = sum(seroDist)
           if(0==mysum) {
-            SeroTimes[asim] = sample(x=AllSeroTimes,size=1)
+            SeroTimes[asim] <- runif(1, leftTime+1, rightTime) 
           } else {
             seroDist = seroDist/mysum
             SeroTimes[asim] = sample(x=AllSeroTimes,size=1,prob=seroDist)
