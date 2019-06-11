@@ -79,11 +79,11 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    start_time <- ifelse(is.null(start_date), 
-      oneIDdata$obs_start[1], start_date)
     # message(sprintf("Running for %s ", oneID))
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
+    start_time <- ifelse(is.null(start_date), 
+      as.character(oneIDdata$obs_start[1]), start_date)
     leftTime <- as.integer(
       difftime(oneIDdata$late_neg[1], start_time, units='days'))
     rightTime <- as.integer(
@@ -144,8 +144,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
         }
     }
     names(SeroTimes) <- paste0("s", seq(Args$nSim))
-    c(IIntID=oneID, 
-      start_date=ifelse(!is.null(start_date), as.Date(start_time), start_time),
+    c(IIntID=oneID, start_date=as.Date(start_time), 
       obs_start=oneIDdata$obs_start[1], 
       late_neg=leftTime, early_pos=rightTime, SeroTimes) 
   }
