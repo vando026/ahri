@@ -144,7 +144,6 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
         }
     }
     names(SeroTimes) <- paste0("s", seq(Args$nSim))
-    if (oneID==17) print(SeroTimes)
     c(IIntID=oneID, 
       start_date=ifelse(!is.null(start_date), as.Date(start_time), start_time),
       obs_start=oneIDdata$obs_start[1], 
@@ -277,7 +276,7 @@ icExtract <- function(flist=list(
 setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
   Results <- intCensParse(
     File=file.path(derived, paste0(Args$aname,"_out.txt")))
-  sdates <- intCensImpute(dat, Results, Args, start_date="2005-01-01")
+  sdates <- intCensImpute(dat, Results, Args, start_date=NULL)
   bdat=getBirthDate()
   function(i) {
     cat(i, "")
