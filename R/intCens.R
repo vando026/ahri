@@ -49,7 +49,7 @@ intCensParse <- function(File=NULL) {
 #' 
 #' @param dat A dataset.
 #' @param Results Results from \code{\link{intCensParse}}.
-#' @param Args
+#' @param Args provide arguments from \code{\link{setArgs}}.
 #' @param start_date If null, start_date is the first obs_start date of ID, else it is
 #' same start_date for everyone.
 #' 
@@ -122,7 +122,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
           seroDist <- c(0, diff(distF(AllSeroTimes)))
           mysum = sum(seroDist)
           if(0==mysum) {
-            SeroTimes[asim] <- runif(1, leftTime+1, rightTime) 
+            SeroTimes[asim] <- as.integer(runif(1, leftTime+1, rightTime))
           } else {
             seroDist = seroDist/mysum
             SeroTimes[asim] = sample(x=AllSeroTimes,size=1,prob=seroDist)

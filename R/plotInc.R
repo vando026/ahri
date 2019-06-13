@@ -59,15 +59,16 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 
 #' @title plotIncSexArea
 #' 
-#' @description  Plot HIV incidence with 95\% CIs as area.
+#' @description  Plot HIV incidence with 95% CIs as area.
 #' 
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
 #' 
 #' @export
 plotIncSexArea <- function(Mal, Fem, yLim=7,
-  Colors=c("blue", "red"), bwidth=c(2.5, 2.5), gfun=png,
-  Title="", fname="year_plot") {
+  Colors=c("blue", "red"), 
+  bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
+  gfun=png, Title="", fname="year_plot") {
 
 
   if(!is.null(gfun)) {
@@ -90,8 +91,8 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
   renderInc <- function(dat, Colors, bwidth) {
     uci <- dat[, "uci"]; lci <- dat[, "lci"]
     lci[is.na(lci)] <- 0
-    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth)
-    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth)
+    ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[2])
+    lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth[2])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
       col=Colors, border=Colors)
     points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
@@ -99,8 +100,8 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
       lwd=1, lty=1, col=gcolor)
   }
 
-  renderInc(Mal, Colors[1], bwidth[[1]])
-  renderInc(Fem, Colors[2], bwidth[[2]])
+  renderInc(Mal, Colors[1], bwidth$mal)
+  renderInc(Fem, Colors[2], bwidth$fem)
 
   legend("top", 
     c("Men", "Women"),

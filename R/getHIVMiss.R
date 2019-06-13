@@ -188,7 +188,7 @@ getNegTest <- function(Args) {
 
 getHIVIncEligible <- function(Args) {
   # Get person time from rtdata set
-  hiv <- getHIV(Args)
+  hiv <- getHIV()
   rtdat <- getRTData(hiv)
   Args$imputeMethod <- imputeMidPoint
   edat <- Args$imputeMethod(rtdat)
