@@ -142,7 +142,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   }
   out <- parallel::mclapply(allIDs, 
     function(i) doFunc(i, dat, Args),
-    mc.cores=1)
+    mc.cores=Args$mcores)
   data.frame(do.call("rbind", out))
 }
 
