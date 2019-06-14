@@ -257,22 +257,20 @@ icExtract <- function(flist=list(
 #' 
 #' @description Sets the data and functions to calculate incidence estimates for IntCens.
 #' 
+#' @param dat Dataset of covariate values.
 #' @param rtdat Dataset from \code{\link{getRTData}}.
-#' 
+#' @param sdates Dataset of imputes events from \code{\link{intCensImpute}}.
+#' @param bdat Dataset of birthdays from \code{\link{getBirthDate}}.
 #' @param Args provide arguments from \code{\link{setArgs}}.
-#' 
 #' @param fun A list of functions to compute, default is \code{\link{miCompute}}.
 #' 
 #' @return data.frame
 #'
 #' @export
-setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
-  Results <- intCensParse(
-    File=file.path(derived, paste0(Args$aname,"_out.txt")))
-  sdates <- intCensImpute(dat, Results, Args, start_date=NULL)
-  bdat=getBirthDate()
+setIncIC <- function(dat, rtdat, 
+  sdates, bdat, Args, fun=miCompute()) {
   function(i) {
-    cat(i, "")
+    message(i)
     dat <- imputeIntCensPoint(rtdat, sdates, i)
     dat <- splitAtSeroDate(dat) 
     dat <- setData(dat, Args,  bdat)
@@ -296,7 +294,12 @@ setIncIC <- function(dat, rtdat, Args, fun=miCompute()) {
 getIncidenceIC <- function(Args, dat, rtdat, 
   Compute=icCompute(), Combine=icCombine(), 
   Extract=icExtract()) {
-  calcInc <- setIncIC(dat, rtdat, Args, fun=Compute)
+  Results <- intCensParse(File=
+    file.path(derived, paste0(Args$aname,"_out.txt")))
+  sdates <- intCensImpute(dat, Results, Args)
+  bdat=getBirthDate()
+  calcInc <- setIncIC(dat, rtdat, sdates, bdat,
+    Args, fun=Compute)
   dat <- parallel::mclapply(seq(Args$nSim),
     calcInc, mc.cores=Args$mcores)
   cdat <- combineEst(dat, get_names=Combine) 
