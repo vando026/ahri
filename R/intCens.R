@@ -80,7 +80,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    # message(sprintf("Running for %s ", oneID))
+    cat(oneID, "")
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
     start_time <- ifelse(is.null(start_date), 
@@ -140,7 +140,9 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
       obs_start=oneIDdata$obs_start[1], 
       late_neg=leftTime, early_pos=rightTime, SeroTimes) 
   }
-  out <- lapply(allIDs, function(i) doFunc(i, dat, Args))
+  out <- parallel::mclapply(allIDs, 
+    function(i) doFunc(i, dat, Args),
+    mc.cores=1)
   data.frame(do.call("rbind", out))
 }
 
