@@ -58,6 +58,8 @@ intCensParse <- function(File=NULL) {
 #' @export 
 
 intCensImpute <- function(dat, Results, Args, start_date=NULL) {
+
+  message("Running intCensImpute...")
   G = function(x)  return(x)
 
   # simulate from the multivariate normal distribution of the 
