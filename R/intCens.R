@@ -269,8 +269,9 @@ icExtract <- function(flist=list(
 #' @export
 setIncIC <- function(dat, rtdat, 
   sdates, bdat, Args, fun=miCompute()) {
+  message('Calculating incidence...')
   function(i) {
-    message(i)
+    cat(i, "")
     dat <- imputeIntCensPoint(rtdat, sdates, i)
     dat <- splitAtSeroDate(dat) 
     dat <- setData(dat, Args,  bdat)

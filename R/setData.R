@@ -124,8 +124,9 @@ setData <- function(dat, Args,
 
 makeAgeVars <- function(dat){
   dat <- mutate(dat, 
-    Age0 = Age - mean(Age), 
-    Age2 = Age0^2, Age3 = Age0^3)
+    Age0 = round(Age - mean(Age), 1),
+    Age2 = round(Age0^2, 1),
+    Age3 = round(Age0^3, 1))
   tbl_df(dat) 
 }
 
