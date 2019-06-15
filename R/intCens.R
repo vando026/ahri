@@ -200,7 +200,7 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
 #' @description  Helper function to run \code{\link{UniReg}}.
 #' 
 #' @param  modVars Variables to feed into UniReg model.
-#' @param  aName Name of file to be written.
+#' @param  aName Name of output txt file.
 #' 
 #' @return list
 #'
@@ -214,6 +214,33 @@ SetUniReg <- function(modVars, aName) {
 }
 
 
+#' @title UniRegOne
+#' 
+#' @description  Run IntCens on each variable and make table
+#' 
+#' @param Args provide arguments from \code{\link{setArgs}}.
+#' @param Vars Vector of RHS character varnames. The file with the IntCens results must
+#' already exist. See \code{\link{intCensParse}}. 
+#'
+#' @export
+#' @examples
+#' UniRegOne(Args, c("Age0", "Age2"))
+
+UniRegOne <- function(Args, Vars) {
+  i <- 1
+  for(vari in Vars) {
+    SetUniReg(vari, Args$aname)
+    res <- intCensParse(File=
+      file.path(derived, paste0(Args$aname,"_out.txt")))
+    res <- res$edat
+    if (i==1)
+      dat <- res
+    else  
+      dat <- rbind(dat, res)
+    i <- i + 1
+  }
+  dat
+}
 
 #' @title imputeIntCensPoint
 #' 
