@@ -2,7 +2,7 @@
 #' 
 #' @description Gets aggregated numbers by category.
 #' 
-#' @param  Args.
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param  Formula. 
 #' 
 #' @return list

@@ -2,21 +2,28 @@
 #' 
 #' @description  Calculates the HIV prevalence of area surrounding BS
 #' 
-#' @param dat
+#' @param dat A dataset to add HIV prevalence variables to. 
+#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param oppSex Make opposite-sex HIV prevalence. Default is FALSE.
 #' 
 #' @return 
 #'
 #' @export 
 
 addHIVPrevBS <- function(dat, 
-  Args=eval.parent(quote(Args))) {
+  Args=eval.parent(quote(Args)),
+  oppSex=FALSE) {
 
   prev <- tbl_df(read.csv(Args$inFiles$prvfile))
   prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
 
   # We need opposite sex prev else all
-  Sex <- ifelse(Args$Sex=="Fem", "Males",
-         ifelse(Args$Sex=="Mal", "Females", "All"))
+  if (oppSex) {
+    Sex <- ifelse(Args$Sex=="Fem", "Males",
+           ifelse(Args$Sex=="Mal", "Females", "All"))
+  } else {
+    Sex <- Args$Sex 
+  }
 
   # Reshape to long
   prev <- select(prev, BSIntID, starts_with(Sex))

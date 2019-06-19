@@ -96,12 +96,14 @@ readARTCov <- function(Female=1) {
 #' @description  Add community ART cov. 
 #' 
 #' @param dat Dataset to add ART vars to. 
+#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param oppSex Make opposite-sex HIV prevalence. Default is FALSE.
 #' 
 #' @return 
 #'
 #' @export 
 
-addARTCov <- function(dat, Args, oppSex=TRUE) {
+addARTCov <- function(dat, Args, oppSex=FALSE) {
   Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)
   art <- readARTCov(Sex)
   dat <- left_join(dat, art, by=c("BSIntID", "Year"))

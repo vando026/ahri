@@ -7,7 +7,7 @@
 getAggregate(dat, Formula = "IIntID ~ Year")
 }
 \arguments{
-\item{Args.}{}
+\item{Args}{requires Args, see \code{\link{setArgs}}.}
 
 \item{Formula.}{}
 }

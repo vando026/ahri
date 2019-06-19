@@ -80,7 +80,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    cat(oneID, "")
+    # cat(oneID, "")
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
     start_time <- ifelse(is.null(start_date), 
@@ -199,17 +199,17 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
 #' 
 #' @description  Helper function to run \code{\link{UniReg}}.
 #' 
-#' @param  modVars Variables to feed into UniReg model.
+#' @param  Vars Variables to feed into UniReg model.
 #' @param  aName Name of output txt file.
 #' 
 #' @return list
 #'
 #' @export 
-SetUniReg <- function(modVars, aName) {
+SetUniReg <- function(Vars, aName) {
   UniReg(
     InFile=file.path(derived, paste0(aName,".txt")), 
     OutFile=file.path(derived, paste0(aName, "_out.txt")), 
-    Model = paste0("(Time, sero_event) = ", modVars), 
+    Model = paste0("(Time, sero_event) = ", Vars), 
     ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
 }
 
@@ -218,15 +218,13 @@ SetUniReg <- function(modVars, aName) {
 #' 
 #' @description  Run IntCens on each variable and make table
 #' 
-#' @param Args provide arguments from \code{\link{setArgs}}.
-#' @param Vars Vector of RHS character varnames. The file with the IntCens results must
-#' already exist. See \code{\link{intCensParse}}. 
+#' @param Vars Vector of RHS character varnames. 
+#' @param aName File name of the IntCens results from \code{\link{intCensParse}}. 
 #'
 #' @export
 #' @examples
-#' UniRegOne(Args, c("Age0", "Age2"))
-
-UniRegOne <- function(Args, Vars) {
+#' UniRegOne(c("Age0", "Age2"), aName="icens_mal")
+UniRegOne <- function(Vars, Args) {
   i <- 1
   for(vari in Vars) {
     SetUniReg(vari, Args$aname)
