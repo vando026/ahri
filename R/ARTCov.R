@@ -22,17 +22,18 @@ getARTDates <- function(inFile=getFiles()$epifile) {
 }
 
 
-#' @title getHIV_ART
+#' @title getOnART
 #' 
 #' @description  Get HIV and ART data.
 #' 
-#' @param Args  arguments from \code{\link{setArgs}}.
+#' @param cutoff Value from 1 and 13, if ART initiation is after this value then no ART
+#' usage for that entire year. Use cutoff=13 to ignore this argument.
 #' 
 #' @return data.frame
 #'
 #' @export 
 
-getHIV_ART <- function(Args, cutoff=9) {
+getOnART <- function(cutoff=13) {
   # Get HIV+ data only
   hdat <- getHIV()
   hpos <- filter(hdat, HIVResult==1) %>% 
@@ -46,24 +47,22 @@ getHIV_ART <- function(Args, cutoff=9) {
   # Ok if month of Init is after cutoff, dont assign OnART to that year
   adat <- mutate(adat, OnART =
     ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  setData(adat, Args)
 }
 
 #' @title calcARTCov
 #' 
 #' @description  Calculate ART coverage for AHRI data.
 #' 
-#' @param Args  arguments from \code{\link{setArgs}}.
-#'
-#' @param cutoff value from 1 and 12, if ART initiation is after this value then no ART
-#' usage for that entire year. Use cutoff=12 to ignore this argument.
+#' @param f  Use function to perform further operation on data, typically 
+#' \code{\link{setData}}.
 #' 
 #' @return data.frame
 #'
 #' @export
 
-calcARTCov <- function(Args) {
-  dat <- getHIV_ART(Args)
+calcARTCov <- function(f, cutoff=13) {
+  dat <- getOnART(cutoff=cutoff)
+  dat <- f(dat)
   calcTrendYear("OnART", dat)
 }
 
