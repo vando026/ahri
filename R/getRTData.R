@@ -79,10 +79,10 @@ getDates <- function(f) {
 #' @export
 #'
 #' @examples
-#' hdat <- getHIV(Args)
-#' getDatesMin <- getDates(min)
-getDatesMin <- getDates(min)
+#' hdat <- getHIV()
+#' getDatesMin(dat, "HIVNegative", "early_neg")
 
+getDatesMin <- getDates(min)
 
 #' @title getDatesMax
 #' 
@@ -98,7 +98,8 @@ getDatesMin <- getDates(min)
 #'
 #' @examples
 #' hdat <- getHIV(Args)
-#' getDatesMax <- getDates(max)
+#' getDatesMax(dat, "HIVNegative", "late_neg")
+
 getDatesMax <- getDates(max)
 
 

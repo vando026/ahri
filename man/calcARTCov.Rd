@@ -4,13 +4,11 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(Args)
+calcARTCov(f, cutoff = 13)
 }
 \arguments{
-\item{Args}{arguments from \code{\link{setArgs}}.}
-
-\item{cutoff}{value from 1 and 12, if ART initiation is after this value then no ART
-usage for that entire year. Use cutoff=12 to ignore this argument.}
+\item{f}{Use function to perform further operation on data, typically 
+\code{\link{setData}}.}
 }
 \value{
 data.frame

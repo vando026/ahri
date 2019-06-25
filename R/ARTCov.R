@@ -13,13 +13,26 @@
 getARTDates <- function(inFile=getFiles()$epifile) {
   dat <- getEpisodes(inFile)
   dat <- filter(dat, !is.na(EarliestARTInitDate))
-  dat <- group_by(dat, IIntID) %>% 
-    summarize(DateOfInitiation=min(EarliestARTInitDate))
+  dat <- distinct(dat, IIntID, EarliestARTInitDate) %>% 
+    rename(DateOfInitiation=EarliestARTInitDate)
   dat <- mutate(dat,
-    YearOfInitiation = as.numeric(format(DateOfInitiation, "%Y")),
-    MonthART = as.numeric(format(DateOfInitiation, "%m")))
+    YearOfInitiation = as.integer(format(DateOfInitiation, "%Y")),
+    MonthART = as.integer(format(DateOfInitiation, "%m")))
   dat
 }
+
+# debugonce(getARTDates)
+# xx=getARTDates()
+# dx(xx$IIntID)
+
+# edat = haven::read_dta(getFiles()$epi_dta)
+# dat1 <- select(edat, IndividualId, StartDate, EarliestARTInitDate, EarliestHIVPos)
+# dat1 <- filter(dat1, !is.na(EarliestHIVPos))
+# dx(dat1$IndividualId)
+# dat2 <- filter(dat1, !is.na(EarliestARTInitDate))
+# dx(dat2$IndividualId)
+# debugonce(getOnART)
+# getOnART()
 
 
 #' @title getOnART
@@ -34,19 +47,24 @@ getARTDates <- function(inFile=getFiles()$epifile) {
 #' @export 
 
 getOnART <- function(cutoff=13) {
+  # Get resident episodes
+  edat <- getEpisodes()
   # Get HIV+ data only
-  hdat <- getHIV()
-  hpos <- filter(hdat, HIVResult==1) %>% 
-    select(IIntID, Year, Female, AgeAtVisit, VisitDate, HIVResult) 
+  early_pos <- getDatesMin(getHIV(), "HIVPositive", "early_pos")
+  early_pos <- mutate(early_pos, early_pos=as.Date(early_pos),
+    YearPos = as.numeric(format(early_pos, "%Y")))
+  hdat <- left_join(edat, early_pos, by="IIntID") %>%
+    filter(!is.na(YearPos))
+  hdat <- filter(hdat, !(Year < YearPos))
   # Merge with ART data
   art <- getARTDates()
-  adat <- left_join(hpos, art, by="IIntID")
-  adat <- arrange(adat, IIntID, Year) 
-  adat <- group_by(adat, IIntID) %>% 
-    mutate(OnART = as.numeric(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
-  # Ok if month of Init is after cutoff, dont assign OnART to that year
-  adat <- mutate(adat, OnART =
-    ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
+  adat <- left_join(hdat, art, by="IIntID")
+  adat <- mutate(adat, OnART = as.integer(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
+  # If month of Init is after cutoff, dont assign OnART to that year
+  # adat <- mutate(adat, OnART =
+    # ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
+  adat <- select(adat, IIntID, Year, Female, AgeAtVisit, OnART)
+  distinct(adat, IIntID, Year, .keep_all=TRUE)
 }
 
 #' @title calcARTCov

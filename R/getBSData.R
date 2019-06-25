@@ -43,39 +43,45 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
-#' @param inFile file path to Demography dataset.
-#' 
+#' @param inFile file path to Episodes dataset (\code{getFiles()$epifile}).
 #' @param outFile file path to write dataset.
+#' @param minDays Value of 1:366 min days spent in DSA to qualify as being a resident in
+#' that year. 
+#' @param dropNonResident Drop all non-residents, default is TRUE.
 #'
 #' @return data.frame
 #'
 #' @export 
 #'
 #' @examples 
-#' hiv <- getBSMax(Args$inFiles$demfile)
+#' hiv <- getBSMax()
 
 getBSMax <- function(
-  inFile=getFiles()$demfile,
-  outFile="MaxBSIntID.Rdata") {
+  inFile=getFiles()$epifile,
+  outFile="MaxBSIntID.Rdata",
+  minDays=0, dropNonResident=TRUE) {
 
-  dem <- getEpisodes() %>% 
-    select(BSIntID, IIntID, Year, ExpDays) 
-    
+  load(inFile)
+  if (dropNonResident)
+    dat <- filter(dat, Resident==1)
+
   # Identify max expdays per episode
-  maxBS <- group_by(dem, IIntID, Year) %>% mutate(
+  dat <- group_by(dat, IIntID, Year) %>% mutate(
     MaxDays = max(ExpDays, na.rm=TRUE))
-  maxBS <- ungroup(maxBS)
+  dat <- ungroup(dat)
   
-  maxBS <- filter(maxBS, MaxDays==ExpDays) %>%
-    select(IIntID, Year, BSIntID )
-    
-  maxBS <- group_by(maxBS, IIntID, Year) %>% 
-    filter(row_number()==1)
-  maxBS <- ungroup(maxBS)
+  dat <- filter(dat, MaxDays==ExpDays)
 
-  save(maxBS, file=file.path(Sys.getenv("HOME"), 
-    "Documents/AC_Data/Derived/Other", outFile))
-  return(maxBS)
+  dat <- group_by(dat, IIntID, Year) %>% 
+    filter(row_number()==1)
+  dat <- ungroup(dat)
+
+  dat <- filter(dat, MaxDays >= minDays) %>% 
+    select(IIntID, Year, BSIntID )
+
+  # save(dat, file=file.path(Sys.getenv("HOME"), 
+    # "Documents/AC_Data/Derived/Other", outFile))
+  return(dat)
 }
 
 #' @title addMigrVars
@@ -154,14 +160,16 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #' 
 #' @param dat An existing dataset.
 #' @param Vars Select variables.
+#' @param dropNonResident Drop all non residents.
+#' @param dropMissBS Drop any missing BS.
 #' 
 #' @return 
 #'
 #' @export 
 
 addBSVars <- function(dat, Vars="IsUrbanOrRural", 
-  dropMissBS=TRUE) {
-  load(getFiles()$bsmfile)
+  dropNonResident=TRUE, dropMissBS=TRUE) {
+  maxBS <- getBSMax(dropNonResident=dropNonResident)
   dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
   bdat <- readBSData()
   bdat <- select(bdat, BSIntID, matches(Vars))
