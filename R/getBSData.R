@@ -47,7 +47,6 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 #' @param outFile file path to write dataset.
 #' @param minDays Value of 1:366 min days spent in DSA to qualify as being a resident in
 #' that year. 
-#' @param dropNonResident Drop all non-residents, default is TRUE.
 #'
 #' @return data.frame
 #'
@@ -59,11 +58,10 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 getBSMax <- function(
   inFile=getFiles()$epifile,
   outFile="MaxBSIntID.Rdata",
-  minDays=0, dropNonResident=TRUE) {
+  minDays=0) {
 
   load(inFile)
-  if (dropNonResident)
-    dat <- filter(dat, Resident==1)
+  dat <- filter(dat, Resident==1)
 
   # Identify max expdays per episode
   dat <- group_by(dat, IIntID, Year) %>% mutate(
@@ -93,49 +91,41 @@ getBSMax <- function(
 #' @return data.frame
 #' @export
 
-addMigrVars <- function(dat, dem=NULL, inFile=getFiles()$demfile) {
+addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
 
   if (is.null(dem))
     dem <- readEpisodes(Vars="^Resident$|Migration")
 
-  # Make resident % rule
-  # Total <- group_by(dem, IIntID, Year) %>% 
-  #   summarize(Total=sum(ExpDays))
-  # TotalIn <- filter(dem, Resident==1) %>%
-  #   group_by(IIntID, Year) %>% 
-  #   summarize(TotalIn=sum(ExpDays))
-  # # Now get prop of days in and out
-  # TimeIn <- left_join(Total, TotalIn, by=c("IIntID", "Year"))
-  # TimeIn <- mutate(TimeIn, 
-  #   TotalIn=ifelse(is.na(TotalIn), 0, TotalIn),
-  #   TimeInProp=TotalIn/Total) %>%
-  #   select(IIntID, Year, TimeInProp)
-  # Count time outside
-  TimeOut <- filter(dem, Resident==0) %>% 
-    group_by(IIntID, Year) %>% 
-    summarize(DaysOut=sum(ExpDays))
+  adat <- distinct(dem, IIntID, Year)
+  mdat <- filter(dem, Resident==1)
+  mdat <- group_by(mdat, IIntID, Year) %>% 
+    summarize(DaysIn=sum(ExpDays))
+  adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
+  adat <- filter(adat, Year %in% keepYear)
+  adat$DaysIn[is.na(adat$DaysIn)] <- 0
+  adat <- mutate(adat, 
+    DaysOut = 366 - DaysIn, DayFull = 366)
+  adat <- group_by(adat, IIntID) %>% 
+    mutate(CumDaysOut = cumsum(DaysOut),
+    CumDays = cumsum(DayFull),
+    CumTimeOut = round(CumDaysOut/CumDays, 2))
+  adat <- ungroup(adat) %>%
+    select(IIntID, Year, CumTimeOut)
 
-  # Count external migr events
-  Migr <- group_by(dem, IIntID) %>% summarize(
-    In=sum(InMigration), Out=sum(OutMigration)) %>%
-    ungroup()
-  Migr <- mutate(Migr, MigrCount=In+Out) %>% 
-    select(IIntID, MigrCount)
+  # # Count external migr events
+  # Migr <- group_by(dem, IIntID) %>% summarize(
+  #   In=sum(InMigration), Out=sum(OutMigration)) %>%
+  #   ungroup()
+  # Migr <- mutate(Migr, MigrCount=In+Out) %>% 
+  #   select(IIntID, MigrCount)
 
   # Now bring all data together
-  # dat <- left_join(dat, TimeIn, by=c("IIntID", "Year"))
-  dat <- left_join(dat, TimeOut, by=c("IIntID", "Year"))
-  dat <- left_join(dat, Migr, by="IIntID")
-  dat <- mutate(dat, 
-    DaysOut=ifelse(is.na(DaysOut), 0, DaysOut),
-    TimeOut=round((DaysOut/365.25)*100,2),
-    DayYear=365.25)
-  dat <- group_by(dat, IIntID) %>%
-    mutate(CumDays=cumsum(DaysOut), 
-      CumDayYear=cumsum(DayYear),
-      CumTimeOut=round((CumDays/CumDayYear)*100, 2))
-  dat <- select(dat, -c(CumDays, DaysOut, DayYear, TimeOut, CumDayYear))
+  dat <- left_join(dat, adat, by=c("IIntID", "Year"))
   dat <- arrange(dat, IIntID, Year)
+  dat <- mutate(dat, 
+    CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE), 
+    CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE, fromLast=TRUE),
+    CumTimeOut = round(CumTimeOut*100))
   dat
 }
 
@@ -168,14 +158,13 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #' @export 
 
 addBSVars <- function(dat, Vars="IsUrbanOrRural", 
-  dropNonResident=TRUE, dropMissBS=TRUE) {
-  maxBS <- getBSMax(dropNonResident=dropNonResident)
+  dropMissBS=TRUE) {
+  maxBS <- getBSMax()
   dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
   bdat <- readBSData()
   bdat <- select(bdat, BSIntID, matches(Vars))
   dat <- left_join(dat, bdat, by="BSIntID")
   dat <- rename(dat, Area=IsUrbanOrRural)
-  dat$Area[dat$Area=="Peri-Urban"] <- "PeriUrban"
   dat$Area[is.na(dat$Area)] <- 
     sample(sort(unique(dat$Area)),
     size=sum(is.na(dat$Area)),

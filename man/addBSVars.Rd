@@ -4,17 +4,16 @@
 \alias{addBSVars}
 \title{addBSVars}
 \usage{
-addBSVars(dat, Vars = "IsUrbanOrRural", dropNonResident = TRUE,
-  dropMissBS = TRUE)
+addBSVars(dat, Vars = "IsUrbanOrRural", dropMissBS = TRUE)
 }
 \arguments{
 \item{dat}{An existing dataset.}
 
 \item{Vars}{Select variables.}
 
-\item{dropNonResident}{Drop all non residents.}
-
 \item{dropMissBS}{Drop any missing BS.}
+
+\item{dropNonResident}{Drop all non residents.}
 }
 \value{
 
