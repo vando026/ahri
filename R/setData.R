@@ -106,27 +106,3 @@ setData <- function(dat, Args,
   as_tibble(dat)
 }
 
-#' @title makeAgeVars
-#' 
-#' @description  Centers age variable and takes square and cube.
-#' 
-#' @param dat dataset for which age is needed at a given episode.
-#'
-#' @return data.frame
-#'
-#' @import dplyr
-#'
-#' @export
-#' 
-#' @examples
-#' adat <- setAge(sdata)
-#' adat <- makeAgeVars(adat)
-
-makeAgeVars <- function(dat){
-  dat <- mutate(dat, 
-    Age0 = round(Age - mean(Age), 1),
-    Age2 = round(Age0^2, 1),
-    Age3 = round(Age0^3, 1))
-  tbl_df(dat) 
-}
-
