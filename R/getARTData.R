@@ -115,23 +115,4 @@ addARTCov <- function(dat, Args, oppSex=FALSE) {
   dat
 }
 
-#' @title addARTClu
-#' 
-#' @description  Add ART clusters from Diego Analysis. 
-#' 
-#' @param dat A dataset to merge.
-#' @param Args 
-#' 
-#' @return 
-#'
-#' @export 
-addARTClu <- function(dat, Args) {
-  art <- readr::read_csv(getFiles()$mal_art)
-  # Opp sex
-  sex <- ifelse(Args$Fem==1, "Clust_Males", "Clust_Females")
-  art <- art[, c("BSIntID", sex)]
-  colnames(art) <- c("BSIntID", "ART") 
-  left_join(dat, art, by="BSIntID")
-}
-
 
