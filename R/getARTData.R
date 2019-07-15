@@ -10,23 +10,18 @@
 #'
 #' @export
 
-getARTDates <- function(inFile=getFiles()$epifile) {
-  dat <- getEpisodes(inFile)
-  # replace if ARTInit & replace if ARTInit < HIVPos
-  dat <- mutate(dat, EarliestHIVPos2 = 
-    ifelse(is.na(dat$EarliestHIVPos) & !is.na(dat$EarliestARTInitDate),
-      EarliestARTInitDate, EarliestHIVPos),
-    EarliestHIVPos2 = ifelse(EarliestARTInitDate <  EarliestHIVPos2,
-      EarliestARTInitDate, EarliestHIVPos2),
-    EarliestHIVPos2 = as.Date(EarliestHIVPos2))
+getARTDates <- function() {
+  dat <- getEpisodes()
   dat <- filter(dat, !is.na(EarliestARTInitDate))
   dat <- distinct(dat, IIntID, EarliestARTInitDate, .keep_all=TRUE) %>% 
-    select(IIntID, EarliestHIVPos2, DateOfInitiation=EarliestARTInitDate)
+    select(IIntID, DateOfInitiation=EarliestARTInitDate)
   dat <- mutate(dat,
     YearOfInitiation = as.integer(format(DateOfInitiation, "%Y")),
     MonthART = as.integer(format(DateOfInitiation, "%m")))
   dat
 }
+
+
 
 
 #' @title getOnART
@@ -44,8 +39,15 @@ getOnART <- function(cutoff=13) {
   edat <- getEpisodes()
   art <- getARTDates()
   adat <- left_join(edat, art, by="IIntID")
-  adat <- filter(adat, !is.na(EarliestHIVPos2))
-  adat <- mutate(adat, YearPos = as.integer(format(EarliestHIVPos2, "%Y")))
+  # replace if ARTInit & replace if ARTInit < HIVPos
+  # adat <- mutate(adat, 
+  #   EarliestHIVPos2 = ifelse(is.na(adat$EarliestHIVPos) & !is.na(adat$EarliestARTInitDate),
+  #     EarliestARTInitDate, EarliestHIVPos),
+  #   EarliestHIVPos2 = ifelse(EarliestARTInitDate <  EarliestHIVPos2,
+  #     EarliestARTInitDate, EarliestHIVPos2),
+  #   EarliestHIVPos2 = as.Date(EarliestHIVPos2))
+  adat <- filter(adat, !is.na(EarliestHIVPos))
+  adat <- mutate(adat, YearPos = as.integer(format(EarliestHIVPos, "%Y")))
   adat <- filter(adat, !(Year < YearPos))
   adat <- mutate(adat, OnART = as.integer(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
   # If month of Init is after cutoff, dont assign OnART to that year
@@ -59,16 +61,17 @@ getOnART <- function(cutoff=13) {
 #' 
 #' @description  Calculate ART coverage for AHRI data.
 #' 
-#' @param f  Use function to perform further operation on data, typically 
-#' \code{\link{setData}}. Default is \code{identity}. 
+#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param cutoff If after month, ART for that year doesn't count, default is 13 for ART in
+#' any month.
 #' 
 #' @return data.frame
 #'
 #' @export
 
-calcARTCov <- function(f=identity, cutoff=13) {
+calcARTCov <- function(Args, cutoff=13) {
   dat <- getOnART(cutoff=cutoff)
-  dat <- f(dat)
+  dat <- setData(dat, Args)
   calcTrendYear("OnART", dat)
 }
 

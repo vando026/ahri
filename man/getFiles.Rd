@@ -22,7 +22,7 @@ getFiles(root = setRoot(),
   pipfile = "Derived/BoundedStructure/PIPBoundedStructures.xlsx",
   bscfile = "Derived/BoundedStructure/BSIntID_Coords.csv",
   fem_art = "Source/ARTemis/2017/ART_Females_Jun21.csv",
-  mal_art = "Source/ARTemis/2017/ART_Clusters.csv",
+  mal_art = "Source/ARTemis/2017/ART_Males_Jun21.csv",
   pvlfile = "Source/CVL_2011_2014/Community Viral Load 2011-2014.dta")
 }
 \arguments{
