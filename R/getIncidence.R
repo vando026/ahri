@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' hiv   <- getHIV(Args)
+#' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' getIncData(rtdat, bdat, Args)
@@ -54,7 +54,7 @@ AggFunc <- function(RHS) {
 #' @examples
 #' # Show for one imputation 
 #' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
-#' hiv   <- getHIV(Args)
+#' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' ydat <- getIncData(rtdat, bdat, Args)
@@ -148,7 +148,7 @@ doPoisAge <- function(dat) {
 #' @export
 #' 
 #' @examples
-#' hiv   <- getHIV(Args)
+#' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' setInc(rtdat, bdat, doPoisAge, Args)
@@ -175,7 +175,7 @@ setInc <- function(rtdat, Args, fun=miCompute()) {
 #' @export
 #'
 #' @examples
-#' hiv   <- getHIV(Args)
+#' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
 #' bdat <- getBirthDate(Args$inFiles$epifile)
 #' calcInc <- setInc(rtdat, Args, miCompute())
@@ -334,7 +334,7 @@ miExtract <- function(flist=list(
 
 getIncidence <- function(Args, Compute=miCompute(), 
   Combine=miCombine(), Extract=miExtract()) {
-  hiv   <- getHIV(Args)
+  hiv   <- getHIV()
   rtdat <- getRTData(hiv)
   calcInc <- setInc(rtdat, Args, fun=Compute)
   dat <- parallel::mclapply(seq(Args$nSim),
