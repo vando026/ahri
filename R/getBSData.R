@@ -86,7 +86,9 @@ getBSMax <- function(
 #' 
 #' @description Gets variables on Migration.
 #' 
-#' @param inFile File path to import Demography dataset.
+#' @param dat Dataset to merge variables to. 
+#' @param dem Dataset from \code{\link{readEpisodes}}.
+#' @param keepYear Years to keep. 
 #' 
 #' @return data.frame
 #' @export
@@ -112,17 +114,20 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
   adat <- ungroup(adat) %>%
     select(IIntID, Year, CumTimeOut)
 
-  # # Count external migr events
-  # Migr <- group_by(dem, IIntID) %>% summarize(
-  #   In=sum(InMigration), Out=sum(OutMigration)) %>%
-  #   ungroup()
-  # Migr <- mutate(Migr, MigrCount=In+Out) %>% 
-  #   select(IIntID, MigrCount)
+  # Count external migr events
+  Migr <- group_by(dem, IIntID) %>% summarize(
+    In=sum(InMigration), Out=sum(OutMigration)) %>%
+    ungroup()
+  Migr <- mutate(Migr, MigrCount=In+Out) %>% 
+    select(IIntID, MigrCount)
 
   # Now bring all data together
   dat <- left_join(dat, adat, by=c("IIntID", "Year"))
+  dat <- left_join(dat, Migr, by=c("IIntID"))
   dat <- arrange(dat, IIntID, Year)
   dat <- mutate(dat, 
+    MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE), 
+    MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE, fromLast=TRUE),
     CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE), 
     CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE, fromLast=TRUE),
     CumTimeOut = round(CumTimeOut*100))

@@ -185,13 +185,16 @@ addCircumVar <- function(dat) {
 #' adat <- setAge(sdata)
 #' adat <- makeAgeVars(adat)
 
-makeAgeVars <- function(dat, age_cut=c(15, 25, 35, 100)){
+makeAgeVars <- function(dat, age_cut=NULL){
   dat <- mutate(dat, 
     Age0 = round(Age - mean(Age), 1),
     Age2 = round(Age0^2, 1),
-    Age3 = round(Age0^3, 1),
-    AgeCat = cut(Age, breaks=age_cut,
-     include.lower=TRUE, right=FALSE, labels=NULL))
+    Age3 = round(Age0^3, 1))
+    if (!is.null(age_cut)) {
+      dat <- mutate(dat, 
+        AgeCat = cut(Age, breaks=age_cut,
+         include.lower=TRUE, right=FALSE, labels=NULL))
+    }
   tbl_df(dat) 
 }
 

@@ -1,5 +1,3 @@
-
-
 #' @title getPartnerData
 #' 
 #' @description  get data on partners and marital status. 
