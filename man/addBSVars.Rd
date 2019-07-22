@@ -12,8 +12,6 @@ addBSVars(dat, Vars = "IsUrbanOrRural", dropMissBS = TRUE)
 \item{Vars}{Select variables.}
 
 \item{dropMissBS}{Drop any missing BS.}
-
-\item{dropNonResident}{Drop all non residents.}
 }
 \value{
 

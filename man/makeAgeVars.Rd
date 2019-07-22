@@ -4,7 +4,7 @@
 \alias{makeAgeVars}
 \title{makeAgeVars}
 \usage{
-makeAgeVars(dat, age_cut = c(15, 25, 35, 100))
+makeAgeVars(dat, age_cut = NULL)
 }
 \arguments{
 \item{dat}{dataset for which age is needed at a given episode.}

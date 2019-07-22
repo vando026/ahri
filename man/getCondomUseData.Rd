@@ -4,15 +4,9 @@
 \alias{getCondomUseData}
 \title{getCondomUseData}
 \usage{
-getCondomUseData(dat)
-}
-\arguments{
-\item{inFile}{Filepath to dataset, default is \code{getFiles()$mghfile}.}
+getCondomUseData()
 }
 \description{
-gets Condom use data from AHRI datasets.
-}
-\examples{
-dat <- readHealthDataMen()
-getCondomUseData(dat)
+gets Condom use data from AHRI datasets. File path must be set in
+\code{\link{getFiles}}.
 }

@@ -18,7 +18,7 @@ list
 Collect all estimates into single matrix
 }
 \examples{
-hiv   <- getHIV(Args)
+hiv   <- getHIV()
 rtdat <- getRTData(hiv)
 bdat <- getBirthDate(Args$inFiles$epifile)
 calcInc <- setInc(rtdat, Args, miCompute())

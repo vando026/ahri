@@ -74,12 +74,12 @@ getBSMax <- function(
     filter(row_number()==1)
   dat <- ungroup(dat)
 
-  dat <- filter(dat, MaxDays >= minDays) %>% 
+  maxBS <- filter(dat, MaxDays >= minDays) %>% 
     select(IIntID, Year, BSIntID )
 
-  # save(dat, file=file.path(Sys.getenv("HOME"), 
-    # "Documents/AC_Data/Derived/Other", outFile))
-  return(dat)
+  save(maxBS, file=file.path(Sys.getenv("HOME"), 
+    "Documents/AC_Data/Derived/Other", outFile))
+  return(maxBS)
 }
 
 #' @title addMigrVars
@@ -115,11 +115,11 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
     select(IIntID, Year, CumTimeOut)
 
   # Count external migr events
-  Migr <- group_by(dem, IIntID) %>% summarize(
-    In=sum(InMigration), Out=sum(OutMigration)) %>%
+  Migr <- group_by(dem, IIntID, Year) %>% summarize(
+    InMigr=sum(InMigration), OutMigr=sum(OutMigration)) %>%
     ungroup()
-  Migr <- mutate(Migr, MigrCount=In+Out) %>% 
-    select(IIntID, MigrCount)
+  Migr <- mutate(Migr, MigrCount=InMigr+OutMigr) %>% 
+    select(IIntID, InMigr, OutMigr, MigrCount)
 
   # Now bring all data together
   dat <- left_join(dat, adat, by=c("IIntID", "Year"))
@@ -155,7 +155,6 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #' 
 #' @param dat An existing dataset.
 #' @param Vars Select variables.
-#' @param dropNonResident Drop all non residents.
 #' @param dropMissBS Drop any missing BS.
 #' 
 #' @return 
@@ -164,7 +163,7 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 
 addBSVars <- function(dat, Vars="IsUrbanOrRural", 
   dropMissBS=TRUE) {
-  maxBS <- getBSMax()
+  load(getFiles()$bsmfile)
   dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
   bdat <- readBSData()
   bdat <- select(bdat, BSIntID, matches(Vars))
@@ -221,3 +220,39 @@ addAIQVar <- function(dat) {
   dat <- mutate(dat, AIQ3 = as.factor(AIQ3))
   dat
 }
+
+#' @title addHIVPrevBS
+#' 
+#' @description  Calculates the HIV prevalence of area surrounding BS
+#' 
+#' @param dat A dataset to add HIV prevalence variables to. 
+#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param Type Males, Females or All for ART coverage. 
+#' 
+#' @return 
+#'
+#' @export 
+
+addHIVPrevBS <- function(dat, 
+  Args=eval.parent(quote(Args)), Type="All") {
+
+  prev <- tbl_df(read.csv(Args$inFiles$prvfile))
+  prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
+
+  # Reshape to long
+  prev <- select(prev, BSIntID, starts_with(Type))
+  long <- tidyr::gather(prev, Year, HIVPrev, starts_with(Type)) 
+  long <- suppressWarnings(mutate(long, 
+    Year=as.integer(gsub("[^[:digit:]]", "", Year)),
+    HIVPrev = as.numeric(HIVPrev)*100))
+
+  dat <- left_join(dat, long, by=c("BSIntID", "Year"))
+  dat <- arrange(dat, BSIntID, Year) 
+  dat <- group_by(dat, BSIntID) %>% mutate(
+      HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE),
+      HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE, fromLast=TRUE))
+  dat$HIVPrev[is.na(dat$HIVPrev)]  <- 
+    runif(sum(is.na(dat$HIVPrev)), 0, 50)
+  dat
+}
+

@@ -1,4 +1,4 @@
-readHealthData <- function(inFile, Fem) {
+readHealthData_ <- function(inFile, Fem) {
   function() {
     dat <- haven::read_dta(inFile) %>%
       select(IIntID=IIntId, VisitDate,
@@ -27,7 +27,7 @@ readHealthData <- function(inFile, Fem) {
 #' @export 
 #' @examples
 #' readHealthDataMen <- readHealthData(getFiles()$mghfile)
-readHealthDataMen <- readHealthData(getFiles()$mghfile, Fem=0)
+readHealthDataMen <- readHealthData_(inFile=getFiles()$mghfile, Fem=0)
 
 
 #' @title readHealthDataWomen
@@ -41,8 +41,25 @@ readHealthDataMen <- readHealthData(getFiles()$mghfile, Fem=0)
 #' @export 
 #' @examples
 #' readHealthWomen <- readHealthData(getFiles()$wghfile)
-readHealthDataWomen <- readHealthData(inFile=getFiles()$wghfile, Fem=1)
+readHealthDataWomen <- readHealthData_(inFile=getFiles()$wghfile, Fem=1)
 
+
+#' @title readHealthData
+#' 
+#' @description  Reads in men and women general health data. 
+#' 
+#' @param inFile Filepath to dataset, default is \code{getFiles()$fghfile}.
+#' 
+#' @return 
+#'
+#' @export 
+#' @examples
+#' readHealthWomen <- readHealthData(getFiles()$wghfile)
+readHealthData <- function() {
+  wdat <- readHealthDataWomen()
+  mdat <- readHealthDataMen()
+  dplyr::bind_rows(wdat, mdat)
+}
 
 #' @title getCircumcisionData
 #' 
@@ -109,17 +126,14 @@ dropCircum <- getCircumStatus(Keep=0)
 
 #' @title getCondomUseData
 #' 
-#' @description  gets Condom use data from AHRI datasets. 
-#' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
+#' @description  gets Condom use data from AHRI datasets. File path must be set in
+#' \code{\link{getFiles}}. 
 #' 
 #' @export
-#' @examples
-#' dat <- readHealthDataMen()
-#' getCondomUseData(dat)
 
-getCondomUseData <- function(dat) {
-  dat <- select(dat, IIntID, Year, Female, EverUsedCondom)
+getCondomUseData <- function() {
+  dat <- readHealthData()
+  dat <- select(dat, IIntID, Year, EverUsedCondom)
   dat <- filter(dat, EverUsedCondom %in% c(1:3))
   dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
   dat
@@ -129,22 +143,30 @@ getCondomUseData <- function(dat) {
 #' 
 #' @description  Adds condom variable.
 #' 
-#' @param dat Exisiting dataset.
+#' @param dat Master dataset to be merged with condom use variable.
 #' 
 #' @return
 #'
 #' @export 
-addCondomVar <- function(dat, cdat) {
-  cdat <- getCondomUseData(cdat) %>% 
-    select(IIntID, Year, EverUsedCondom)
+addCondomVar <- function(dat) {
+  cdat <- getCondomUseData()
+  probs <- prop.table(table(cdat$EverUsedCondom))
   dat <- left_join(dat, cdat, by=c("IIntID", "Year"))
-  dat$EverUsedCondom[is.na(dat$EverUsedCondom)] <- 
-    sample(sort(unique(dat$EverUsedCondom)),
-    size=sum(is.na(dat$EverUsedCondom)),
-    replace=TRUE,
-    prob=prop.table(table(dat$EverUsedCondom)))
+  # First carry forward
+  dat <- group_by(dat, IIntID) %>% mutate( 
+    EverUsedCondom=na.locf(EverUsedCondom, na.rm=FALSE),
+    EverUsedCondom=na.locf(EverUsedCondom, na.rm=FALSE, fromLast=TRUE))
+  idat <- data.frame(IIntID=unique(dat$IIntID[is.na(dat$EverUsedCondom)]))
+  # Some people dont have any condom data, randomly sample
+  idat <- mutate(idat, EverUsedCondom2 =
+    sample(unique(dat$EverUsedCondom[!is.na(dat$EverUsedCondom)]),
+    size=nrow(idat), replace=TRUE,
+    prob=probs))
+  dat <- left_join(dat, idat, by="IIntID")
+  dat <- mutate(dat, EverUsedCondom =
+    ifelse(is.na(EverUsedCondom), EverUsedCondom2, EverUsedCondom))
   dat <- mutate(dat, EverUsedCondom = 
-    ifelse(EverUsedCondom==1, "Always",
+    ifelse(EverUsedCondom==1, "Sometimes",
     ifelse(EverUsedCondom==2, "Sometimes", "Never")))
   dat
 }

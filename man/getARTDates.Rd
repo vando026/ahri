@@ -4,7 +4,7 @@
 \alias{getARTDates}
 \title{getARTDates}
 \usage{
-getARTDates(inFile = getFiles()$epifile)
+getARTDates()
 }
 \arguments{
 \item{inFile}{path to data, typically \code{Args$inFile}.}

@@ -4,11 +4,13 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(f = identity, cutoff = 13)
+calcARTCov(Args, cutoff = 13)
 }
 \arguments{
-\item{f}{Use function to perform further operation on data, typically 
-\code{\link{setData}}. Default is \code{identity}.}
+\item{Args}{requires Args, see \code{\link{setArgs}}}
+
+\item{cutoff}{If after month, ART for that year doesn't count, default is 13 for ART in
+any month.}
 }
 \value{
 data.frame

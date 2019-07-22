@@ -13,12 +13,12 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
   dat <- mutate(dat, 
     Comment = as.character(haven::as_factor(Comment)),
     HIVResult = as.character(haven::as_factor(HIVResult)),
-    HIVRefused = as.character(haven::as_factor(HIVRefused)))
-  # replace missing visit dates
+    HIVRefused = as.character(haven::as_factor(HIVRefused)),
+    IIntID = as.integer(IIntID))
   yr <- unique(format(dat$VisitDate[!is.na(dat$VisitDate)], "%Y"))[1]
   dat$VisitDate[is.na(dat$VisitDate)]  <- 
     as.Date(paste0(yr, "-01-01"), origin="1970-01-01")
-  # dat$HIVRefused[is.na(dat$HIVRefused)] <- 97 
+  dat$HIVRefused[is.na(dat$HIVRefused)] <- 97 
   filter(dat, !is.na(IIntID))
 }
 
@@ -40,7 +40,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   dat1 <- lapply(file.path(filep, set1), 
     function(x) readHIVSurvYear(x, addVars="HIVRefusedBy"))
   dat1 <- do.call(rbind, dat1)
-  dat1 <- rename(dat1, FormRefusedBy = HIVRefusedBy)
+  dat1 <- dplyr::rename(dat1, FormRefusedBy = HIVRefusedBy)
   # From 2010-2017, HIVRefused changes, depends on FormRefused
   set2 <- files[unlist(lapply(files,
     function(x) grepl("201[0-7]", x)))]
@@ -226,9 +226,9 @@ mkHIVTestTable <- function(Args) {
   census <- group_by(edat, Year) %>% 
    summarize(Total=length(unique(IIntID)))
   # Keep only age eligible and eligible
-  edat <- rename(edat, AgeAtVisit=Age)
+  edat <- dplyr::rename(edat, AgeAtVisit=Age)
   edat <- setAge(edat, Args)
-  edat <- rename(edat, Age=AgeAtVisit)
+  edat <- dplyr::rename(edat, Age=AgeAtVisit)
   edat <- filter(edat, Contact != "NotEligible")
   eligible <- group_by(edat, Year) %>% 
    summarize(Total=length(unique(IIntID)))
@@ -258,9 +258,6 @@ mkHIVTestTable <- function(Args) {
 
 
 
-
-
-
 #' @title plotHIVTest
 #' 
 #' @description Make plot of HIV testing rate. 
@@ -273,8 +270,8 @@ mkHIVTestTable <- function(Args) {
 plotHIVTest <- function(Args, 
   fname=Args$fname, gfun=png) {
   fmx  <- function(x) format(x, nsmall=2, digits=2)
-  dat <- setHIVMiss(Args)
-  edat <- getHIVEligible(dat)
+  dat <- setHIVMiss()
+  edat <- getHIVEligible(Args)
   sdat <- getHIVRefused(edat)
   sdat <- filter(sdat, Year != 2017)
   pd <- select(sdat, ConsentPerc, RefusePerc, NonContactPerc)
@@ -327,8 +324,8 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
 
   getConsent <- function(iAge, nm) {
     Args <- setArgs(Year=cyear, Age=iAge)
-    dat <- setHIVMiss(Args)
-    edat <- getHIVEligible(dat)
+    dat <- setHIVMiss()
+    edat <- getHIVEligible(Args)
     getHIVRefused(edat)$ConsentRate
   }
 
@@ -355,7 +352,6 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
   agesf <- c(ages, "40-49")
   agesm <- c(ages, "40-54")
 
-
   png(filename=file.path(output, fname),
     units="in", width=7, height=5, pointsize=10, 
     res=200, type="cairo")
@@ -363,7 +359,7 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
   plot(cyear, cyear, ylim=c(0, 1),
     ylab="Proportion", xlab="Year",
     main="Consent rate", cex.main=1.4,
-    type="n", bty="l", font.lab=2, cex.lab=1.4)
+    type="n", bty="l", font.lab=2, cex.lab=1.2)
   lines(cyear, c_all, col="black", lwd=3)
   lapply(seq(6), function(x) lines(cyear, cmal[[x]], col=Blues[x+3]))
   lapply(seq(6), function(x) lines(cyear, cfem[[x]], col=Reds[x+3]))
@@ -391,6 +387,7 @@ getFollowUp <- function(x) {
   xx
 }
 
+
 #' @title getDropOut
 #' 
 #' @description  Used for inverse probability weights
@@ -407,3 +404,5 @@ getDropOut <- function(x) {
     xx[i] <- as.numeric(i > lastConsent & x[i]!="Yes")
   xx
 }
+
+
