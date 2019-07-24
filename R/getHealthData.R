@@ -133,7 +133,7 @@ dropCircum <- getCircumStatus(Keep=0)
 
 getCondomUseData <- function() {
   dat <- readHealthData()
-  dat <- select(dat, IIntID, Year, EverUsedCondom)
+  dat <- select(dat, IIntID, Year, EverUsedCondom, Female)
   dat <- filter(dat, EverUsedCondom %in% c(1:3))
   dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
   dat

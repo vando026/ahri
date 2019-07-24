@@ -66,7 +66,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' 
 #' @export
 plotIncSexArea <- function(Mal, Fem, yLim=7,
-  Colors=c("blue", "red"), 
+  Colors=c("blue", "red"), gcolor="grey50",
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
   gfun=png, Title="", fname="year_plot") {
 
@@ -94,7 +94,8 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
     ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[2])
     lb_ks <- ksmooth(x, lci, "normal", bandwidth = bwidth[2])
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
-      col=Colors, border=Colors)
+      col=adjustcolor(Colors, alpha.f=0.8), 
+      border=adjustcolor(Colors, alpha.f=0.8))
     points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
     lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth[1]), 
       lwd=1, lty=1, col=gcolor)

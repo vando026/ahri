@@ -190,9 +190,9 @@ getHIVIncEligible <- function(Args) {
   # Get person time from rtdata set
   hiv <- getHIV()
   rtdat <- getRTData(hiv)
-  Args$imputeMethod <- imputeMidPoint
+  Args$imputeMethod <- imputeEndPoint
   edat <- Args$imputeMethod(rtdat)
-  edat <- splitAtSeroDate(edat) 
+  edat <- splitAtEarlyPos(edat) 
   edat <- setData(edat, Args)
   ptime <- group_by(edat, Year) %>% 
     summarize(Cohort = n())
