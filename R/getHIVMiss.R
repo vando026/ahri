@@ -241,8 +241,8 @@ mkHIVTestTable <- function(Args) {
   EligiblePerc = paste0("(", rnd(EligiblePerc), ")")
   pdat <- filter(edat, Contact=="Yes")
   present <- group_by(pdat, Year) %>% 
-   summarize(Total=length(unique(IIntID)))
   present$Total[nrow(present)] <- NA
+   summarize(Total=length(unique(IIntID)))
   Present = paste0(fmt(present$Total), "/", fmt(eligible$Total)) 
   PresentPerc = (present$Total/eligible$Total)*100 
   PresentPerc = paste0("(", rnd(PresentPerc), ")")
