@@ -43,9 +43,9 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   dat1 <- dplyr::rename(dat1, FormRefusedBy = HIVRefusedBy)
   # From 2010-2017, HIVRefused changes, depends on FormRefused
   set2 <- files[unlist(lapply(files,
-    function(x) grepl("201[0-7]", x)))]
+    function(x) grepl("201[0-8]", x)))]
   dat2 <- lapply(file.path(filep, set2), 
-    function(x) readHIVSurvYear(x, addVars="^FormRefused"))
+    function(x) readHIVSurvYear(x, addVars="^FormRefusedBy$|^FormRefused$"))
   dat2 <- do.call(rbind, dat2)
   dat2 <- mutate(dat2, 
     FormRefused = as.character(haven::as_factor(FormRefused)))
@@ -61,7 +61,11 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
     BSIntID = as.integer(BSIntID),
     Year = as.integer(format(VisitDate, "%Y")))
   if (dropTasP) adat <- dropTasPData(adat)
-  eligible_dat <- select(adat, -FormRefusedBy) %>% 
+  # drop not eligible
+  adat <- mutate(adat, NotElig = as.numeric(
+    grepl("Mentally|[Dd]ead|Broken|Non-Functional|deaf|[Ss]ick", Comment)))
+  adat <- filter(adat, NotElig==0)
+  eligible_dat <- select(adat, -c(FormRefusedBy, NotElig)) %>% 
     arrange(IIntID, VisitDate)
   save(eligible_dat, file=file.path(getFiles()$elifile))
   eligible_dat
@@ -270,15 +274,15 @@ mkHIVTestTable <- function(Args) {
 plotHIVTest <- function(Args, 
   fname=Args$fname, gfun=png) {
   fmx  <- function(x) format(x, nsmall=2, digits=2)
-  dat <- setHIVMiss()
   edat <- getHIVEligible(Args)
   sdat <- getHIVRefused(edat)
-  sdat <- filter(sdat, Year != 2017)
   pd <- select(sdat, ConsentPerc, RefusePerc, NonContactPerc)
   rate <- sdat$ConsentRate
   px <-  t(as.matrix(pd)) 
 
   if(!is.null(gfun)) {
+    if (!exists("output", envir=globalenv()))  
+      output <- "~/Downloads"
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.5, height=5.0, pointsize=9, 

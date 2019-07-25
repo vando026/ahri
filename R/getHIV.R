@@ -12,20 +12,16 @@
 
 readHIVData <- function(
   inFile=getFiles()$hivfile, dropTasP=TRUE) {
-  hiv <- readr::read_csv(inFile,
-    col_types=cols_only(
-      ResidencyBSIntId="i",
-      IIntId="i",
-      VisitDate="D",
-      HIVResult="i",
-      Sex="i",
-      AgeAtVisit="i"))
+  hiv <- haven::read_dta(inFile) %>% 
+    select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
+      HIVResult, Sex, AgeAtVisit)
+  hiv <- haven::zap_labels(hiv)
   hiv <- filter(hiv, Sex %in% c(1,2))
   hiv <- mutate(hiv,
-    Female=as.integer(ifelse(Sex==2, 1, 0)),
-    Year = format(VisitDate, "%Y"))
-  hiv <- rename(hiv, IIntID=IIntId, BSIntID=ResidencyBSIntId) %>% 
-   select(-Sex) %>% arrange(IIntID, VisitDate)
+    IIntID = as.integer(IIntID),
+    BSIntID = as.integer(BSIntID),
+    Female=as.integer(ifelse(Sex==2, 1, 0)))
+  hiv <- select(hiv, -Sex) %>% arrange(IIntID, VisitDate)
   if (dropTasP) hiv <- dropTasPData(hiv)
   hiv
 }
