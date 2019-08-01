@@ -74,9 +74,8 @@ getBirthDate <- function(
 #' 
 #' @examples
 #' rtdata <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
 #' sdat <- splitAtEarlyPos(rtdat)
-#' adat <- setData(sdat, Args, bdat)
+#' adat <- setData(sdat, Args)
 
 setData <- function(dat, Args,
   bdat=getBirthDate(), 

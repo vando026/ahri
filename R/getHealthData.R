@@ -144,12 +144,14 @@ getCondomUseData <- function() {
 #' @description  Adds condom variable.
 #' 
 #' @param dat Master dataset to be merged with condom use variable.
+#' @param dropFemale Drop the Female variable. Default is TRUE.
 #' 
 #' @return
 #'
 #' @export 
-addCondomVar <- function(dat) {
+addCondomVar <- function(dat, dropFemale=TRUE) {
   cdat <- getCondomUseData()
+  if (dropFemale) cdat <- select(cdat, -Female)
   probs <- prop.table(table(cdat$EverUsedCondom))
   dat <- left_join(dat, cdat, by=c("IIntID", "Year"))
   # First carry forward

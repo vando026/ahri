@@ -201,7 +201,7 @@ plotIncAge <- function(
 plotIncPrev <- function(
   inc, prev=NULL, x=NULL, yLim=8, Main="", prev_lty=1,
   Args=NULL, gfun=png, bottom=TRUE, left=TRUE, right=TRUE,
-  bwidth=2.5, fname="test", inc_col="blue", prev_col=Greens[7]) {
+  bwidth=2.5, fname="test", inc_col="blue", prev_col="red") {
 
   ml <- ifelse(left, 4.5, 3)
   mr <- ifelse(right, 5, 3)
