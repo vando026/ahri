@@ -14,7 +14,7 @@ readHIVData <- function(
   inFile=getFiles()$hivfile, dropTasP=TRUE) {
   hiv <- haven::read_dta(inFile) %>% 
     select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
-      HIVResult, Sex, AgeAtVisit)
+      HIVResult, Sex, Age=AgeAtVisit)
   hiv <- haven::zap_labels(hiv)
   hiv <- filter(hiv, Sex %in% c(1,2))
   hiv <- mutate(hiv,
@@ -42,7 +42,7 @@ getHIV <- function(inFile=getFiles()$hivfile) {
   hiv <- readHIVData(inFile)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
-  hiv <- filter(hiv, AgeAtVisit %in% c(15:100))
+  hiv <- filter(hiv, Age %in% c(15:100))
   hiv <- mutate(hiv, 
     HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
     HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
@@ -63,6 +63,6 @@ getHIV <- function(inFile=getFiles()$hivfile) {
 #' @export 
 setHIV <- function(Args) {
   dat <- getHIV()
-  setData(dat, Args)
+  setData(dat, Args, time2="VisitDate")
 }
 

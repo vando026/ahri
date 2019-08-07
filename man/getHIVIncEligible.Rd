@@ -4,10 +4,12 @@
 \alias{getHIVIncEligible}
 \title{getHIVIncEligible}
 \usage{
-getHIVIncEligible(Args)
+getHIVIncEligible(Args, f = identity)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
+
+\item{f}{Function to do additional data manipulation.}
 }
 \value{
 

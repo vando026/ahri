@@ -12,16 +12,16 @@
 
 setAge <- function(dat, Args) {
   if ("All" %in% names(Args$Age)) {
-    dat <- filter(dat, !(AgeAtVisit < Args$Age[["All"]][1]) &
-      !(AgeAtVisit > Args$Age[["All"]][2]))
+    dat <- filter(dat, !(Age < Args$Age[["All"]][1]) &
+      !(Age > Args$Age[["All"]][2]))
   } 
   if ("Mal" %in% names(Args$Age)) {
-    dat <- filter(dat, !(Female==0 & AgeAtVisit < Args$Age[["Mal"]][1]) &
-      !(Female==0 & AgeAtVisit > Args$Age[["Mal"]][2]))
+    dat <- filter(dat, !(Female==0 & Age < Args$Age[["Mal"]][1]) &
+      !(Female==0 & Age > Args$Age[["Mal"]][2]))
   } 
   if ("Fem" %in% names(Args$Age)) {
-    dat <- filter(dat, !(Female==1 & AgeAtVisit < Args$Age[["Fem"]][1]) &
-      !(Female==1 & AgeAtVisit > Args$Age[["Fem"]][2]))
+    dat <- filter(dat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
+      !(Female==1 & Age > Args$Age[["Fem"]][2]))
   }
   dat
 }
@@ -54,13 +54,50 @@ getBirthDate <- function(
   dat
 }
 
+
+#' @title makeAgeVars
+#' 
+#' @description  Function for making age variables
+#' 
+#' @param dat dataset for which age is needed at a given episode.
+#' @param visitdate Variable name as string for Date of visit.
+#' @param age_cut Vector of ages to make age categories, if NULL then mean centered age
+#' and age-squared variables made.
+#'
+#' @return data.frame
+#'
+#' @import dplyr
+#'
+#' @export
+#' 
+#' @examples
+#' adat <- setAge(sdata)
+#' adat <- makeAgeVars(adat)
+
+makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL){
+  if(!is.null(visitdate)) {
+    dat <- data.frame(left_join(dat, getBirthDate(), by="IIntID"))
+    dat$Age <- floor(as.numeric(difftime(
+      dat[,visitdate], dat[,"DateOfBirth"], units='weeks'))/52.25)
+    dat <- select(dat, -(DateOfBirth))
+  }
+  if(is.null(age_cut)) {
+    dat <- mutate(dat, 
+      Age0 = round(Age - mean(Age), 1),
+      Age2 = round(Age0^2, 1))
+  } else {
+    dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
+      include.lower=TRUE, right=FALSE, labels=NULL))
+    dat$AgeCat <- droplevels(dat$AgeCat)
+  }
+  tibble::as_tibble(dat) 
+}
+
 #' @title setData
 #' 
 #' @description  Sets data according to values in \code{\link{setArgs}}.
 #' 
 #' @param dat Dataset for which age is needed at a given episode.
-#'
-#' @param bdat Date of Birth variable from \code{\link{getBirthDate}}.
 #'
 #' @param Args takes a list from \code{\link{setArgs}}. 
 #'
@@ -77,30 +114,17 @@ getBirthDate <- function(
 #' sdat <- splitAtEarlyPos(rtdat)
 #' adat <- setData(sdat, Args)
 
-setData <- function(dat, Args,
-  bdat=getBirthDate(), 
-  time2 = "obs_end") {
-  # For specific datasets
-  if(!("AgeAtVisit" %in% names(dat))) {
-    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
-    dat$AgeAtVisit <- floor(as.numeric(difftime(
-      dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
-    dat <- select(dat, -(DateOfBirth))
-  }
+setData <- function(dat, Args, time2 = "obs_end") {
   # Keep sex
   dat <- filter(dat, Female %in% Args$FemCode)
   # Filter by Age limits
+  if (!is.null(time2)) 
+    dat <- makeAgeVars(dat, visitdate=time2, age_cut=Args$AgeCat)
   dat <- setAge(dat, Args)
-  # Make Categories
-  dat <- mutate(dat, AgeCat = 
-    cut(AgeAtVisit, breaks=Args$AgeCat, 
-    labels=NULL, right=FALSE))
-  dat$AgeCat <- droplevels(dat$AgeCat)
   # Filter by year
   dat <- filter(dat, Year %in% Args$Years)
   # Further subsetting to take place if needed
   dat <- Args$setFun(dat)
-  dat <- rename(dat, Age = AgeAtVisit)
   dat <- Args$addVars(dat)
   as_tibble(dat)
 }

@@ -7,7 +7,7 @@
 getFiles(root = setRoot(),
   demfile = "Derived/Demography/2016/RD02-01_ACDIS_Demography.csv",
   indfile = "Derived/Individuals/2016/RD01-01_ACDIS_Individuals.csv",
-  hivfile = "Derived/HIVSurveillance/2017/RD05-99_ACDIS_HIV_All.csv",
+  hivfile = "Derived/HIVSurveillance/2018/RD05-99_ACDIS_HIV_All.dta",
   elifile = "Derived/HIVSurveillance/2017/HIVEligibility.Rdata",
   hsefile = "Derived/HSE/HSE2009_2012.dta",
   wghfile = "Derived/WGH_MGH/2018/RD03-99_ACDIS_WGH_ALL.dta",

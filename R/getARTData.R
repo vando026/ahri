@@ -39,13 +39,6 @@ getOnART <- function(cutoff=13) {
   edat <- getEpisodes()
   art <- getARTDates()
   adat <- left_join(edat, art, by="IIntID")
-  # replace if ARTInit & replace if ARTInit < HIVPos
-  # adat <- mutate(adat, 
-  #   EarliestHIVPos2 = ifelse(is.na(adat$EarliestHIVPos) & !is.na(adat$EarliestARTInitDate),
-  #     EarliestARTInitDate, EarliestHIVPos),
-  #   EarliestHIVPos2 = ifelse(EarliestARTInitDate <  EarliestHIVPos2,
-  #     EarliestARTInitDate, EarliestHIVPos2),
-  #   EarliestHIVPos2 = as.Date(EarliestHIVPos2))
   adat <- filter(adat, !is.na(EarliestHIVPos))
   adat <- mutate(adat, YearPos = as.integer(format(EarliestHIVPos, "%Y")))
   adat <- filter(adat, !(Year < YearPos))

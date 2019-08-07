@@ -7,7 +7,8 @@
 mkHIVTestTable(Args)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
+\item{Args}{requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
+one additional year to compute HIV cohort person time.}
 }
 \value{
 data.frame

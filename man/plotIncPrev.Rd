@@ -7,7 +7,7 @@
 plotIncPrev(inc, prev = NULL, x = NULL, yLim = 8, Main = "",
   prev_lty = 1, Args = NULL, gfun = png, bottom = TRUE,
   left = TRUE, right = TRUE, bwidth = 2.5, fname = "test",
-  inc_col = "blue", prev_col = Greens[7])
+  inc_col = "blue", prev_col = "red")
 }
 \arguments{
 \item{inc}{Incidence data, must include CIs, from \code{\link{getIncidence}}.}

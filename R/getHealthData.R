@@ -192,33 +192,3 @@ addCircumVar <- function(dat) {
   cdat
 }
 
-#' @title makeAgeVars
-#' 
-#' @description  Centers age variable and takes square and cube.
-#' 
-#' @param dat dataset for which age is needed at a given episode.
-#' @param age_cut Vector of ages to make age categories. 
-#'
-#' @return data.frame
-#'
-#' @import dplyr
-#'
-#' @export
-#' 
-#' @examples
-#' adat <- setAge(sdata)
-#' adat <- makeAgeVars(adat)
-
-makeAgeVars <- function(dat, age_cut=NULL){
-  dat <- mutate(dat, 
-    Age0 = round(Age - mean(Age), 1),
-    Age2 = round(Age0^2, 1),
-    Age3 = round(Age0^3, 1))
-    if (!is.null(age_cut)) {
-      dat <- mutate(dat, 
-        AgeCat = cut(Age, breaks=age_cut,
-         include.lower=TRUE, right=FALSE, labels=NULL))
-    }
-  tbl_df(dat) 
-}
-

@@ -4,14 +4,12 @@
 \alias{setData}
 \title{setData}
 \usage{
-setData(dat, Args, bdat = getBirthDate(), time2 = "obs_end")
+setData(dat, Args, time2 = "obs_end")
 }
 \arguments{
 \item{dat}{Dataset for which age is needed at a given episode.}
 
 \item{Args}{takes a list from \code{\link{setArgs}}.}
-
-\item{bdat}{Date of Birth variable from \code{\link{getBirthDate}}.}
 
 \item{time2}{A date variable that is used to calculate age from Birthdate to time2.}
 }
@@ -23,7 +21,6 @@ Sets data according to values in \code{\link{setArgs}}.
 }
 \examples{
 rtdata <- getRTData(hiv)
-bdat <- getBirthDate(Args$inFiles$epifile)
 sdat <- splitAtEarlyPos(rtdat)
-adat <- setData(sdat, Args, bdat)
+adat <- setData(sdat, Args)
 }
