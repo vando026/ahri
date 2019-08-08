@@ -82,8 +82,8 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
 ##' @export 
 getHIVEligible <- function(Args) {
   load(file=file.path(getFiles()$elifile))
-  bdat <- ahri::getBirthDate(addVars="Female")
-  dat <- setData(eligible_dat, Args, bdat, time2="VisitDate")
+  bdat <- getBirthDate(addVars="Female")
+  dat <- setData(eligible_dat, Args, time2="VisitDate", birthdate=bdat)
   dat <- mutate(dat, NonContact = as.numeric(
     grepl("Non-[cC]ontact|Refused|Other", Comment)))
   dat$Contact = ""
@@ -288,7 +288,7 @@ plotHIVTest <- function(Args,
   text(xlx, y=rate+0.01, labels=fmx(rate), col=YlRed[9], pos=3, font=2)
   par(mar=c(1.1, 4.4, 1.0, 1))
   plot.new()
-  legend("bottom", c("Consent rate", "Consent", "Refuse", "Non-Contact"),
+  legend("bottom", c("Consent rate", "Tested", "Refused", "Non-Contact"),
     ncol=4, bty="n", inset=c(0, 0), pch=c(NA, rep(15, 3)), pt.cex=3, 
     lty=c(1, rep(NA, 3)), lwd=6, col=c(YlRed[c(9, 4, 6, 8)]))
   if(!is.null(gfun)) dev.off()
@@ -344,7 +344,7 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
   par(mar=c(4.0,4.5,1.5,8))
   plot(cyear, cyear, ylim=c(0, 1),
     ylab="Proportion", xlab="Year",
-    main="Consent rate", cex.main=1.4,
+    main="HIV tested", cex.main=1.4,
     type="n", bty="l", font.lab=2, cex.lab=1.2)
   lines(cyear, c_all, col="black", lwd=3)
   lapply(seq(6), function(x) lines(cyear, cmal[[x]], col=Blues[x+3]))

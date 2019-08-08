@@ -63,6 +63,7 @@ getBirthDate <- function(
 #' @param visitdate Variable name as string for Date of visit.
 #' @param age_cut Vector of ages to make age categories, if NULL then mean centered age
 #' and age-squared variables made.
+#' @param bdat Dataset of birthdates, if NULL then it uses \code{\link{getBirthDate}}.
 #'
 #' @return data.frame
 #'
@@ -74,9 +75,10 @@ getBirthDate <- function(
 #' adat <- setAge(sdata)
 #' adat <- makeAgeVars(adat)
 
-makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL){
+makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
+  if (is.null(bdat)) bdat <- getBirthDate()
   if(!is.null(visitdate)) {
-    dat <- data.frame(left_join(dat, getBirthDate(), by="IIntID"))
+    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
     dat$Age <- floor(as.numeric(difftime(
       dat[,visitdate], dat[,"DateOfBirth"], units='weeks'))/52.25)
     dat <- select(dat, -(DateOfBirth))
@@ -114,14 +116,14 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL){
 #' sdat <- splitAtEarlyPos(rtdat)
 #' adat <- setData(sdat, Args)
 
-setData <- function(dat, Args, time2 = "obs_end") {
-  # Keep sex
-  dat <- filter(dat, Female %in% Args$FemCode)
+setData <- function(dat, Args, time2=NULL, birthdate=NULL) {
   # Filter by Age limits
-  if (!is.null(time2)) 
-    dat <- makeAgeVars(dat, visitdate=time2, age_cut=Args$AgeCat)
+  if (!is.null(time2)) {
+    dat <- makeAgeVars(dat, visitdate=time2,
+      age_cut=Args$AgeCat, bdat=birthdate)
+  } 
   dat <- setAge(dat, Args)
-  # Filter by year
+  dat <- filter(dat, Female %in% Args$FemCode)
   dat <- filter(dat, Year %in% Args$Years)
   # Further subsetting to take place if needed
   dat <- Args$setFun(dat)

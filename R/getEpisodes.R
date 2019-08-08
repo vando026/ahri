@@ -25,7 +25,7 @@ readEpisodes <- function(
     Year, ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
-    Female=Sex, AgeAtVisit=Age, Resident,
+    Female=Sex, Age, Resident,
     EarliestARTInitDate, DoB, DoD, matches(Vars))
   dat <- haven::zap_labels(dat)
   dat <- haven::zap_formats(dat)
@@ -99,7 +99,7 @@ dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
 #' setEpisodes(setArgs())
 
 setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
-  dat <- getEpisodes(getFiles()$epifile)
+  dat <- getEpisodes()
   dat <- setData(dat, Args)
   if (dropTasP==TRUE) 
     dat <- dropTasPData(dat, getFiles()$pipfile)

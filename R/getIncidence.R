@@ -18,7 +18,7 @@
 getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setData(edat, Args,  bdat)
+  setData(edat, Args, time2="obs_end", birthdate=bdat)
 }
 
 #' @title AggFunc

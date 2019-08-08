@@ -119,11 +119,11 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
     InMigr=sum(InMigration), OutMigr=sum(OutMigration)) %>%
     ungroup()
   Migr <- mutate(Migr, MigrCount=InMigr+OutMigr) %>% 
-    select(IIntID, InMigr, OutMigr, MigrCount)
+    select(IIntID, Year, InMigr, OutMigr, MigrCount)
 
   # Now bring all data together
   dat <- left_join(dat, adat, by=c("IIntID", "Year"))
-  dat <- left_join(dat, Migr, by=c("IIntID"))
+  dat <- left_join(dat, Migr, by=c("IIntID", "Year"))
   dat <- arrange(dat, IIntID, Year)
   dat <- mutate(dat, 
     MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE), 
@@ -233,8 +233,7 @@ addAIQVar <- function(dat) {
 #'
 #' @export 
 
-addHIVPrevBS <- function(dat, 
-  Args=eval.parent(quote(Args)), Type="All") {
+addHIVPrevBS <- function(dat, Args, Type="All") {
 
   prev <- tbl_df(read.csv(Args$inFiles$prvfile))
   prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))

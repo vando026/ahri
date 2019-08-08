@@ -46,7 +46,7 @@ getOnART <- function(cutoff=13) {
   # If month of Init is after cutoff, dont assign OnART to that year
   # adat <- mutate(adat, OnART =
     # ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  adat <- select(adat, IIntID, Year, Female, AgeAtVisit, OnART)
+  adat <- select(adat, IIntID, Year, Female, Age, OnART)
   distinct(adat, IIntID, Year, .keep_all=TRUE)
 }
 
