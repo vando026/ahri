@@ -2,7 +2,7 @@ readHealthData_ <- function(inFile, Fem) {
   function() {
     dat <- haven::read_dta(inFile) %>%
       select(IIntID=IIntId, VisitDate,
-      AgeAtVisit, EverUsedCondom=MRPEverUsedCondoms, 
+      Age=AgeAtVisit, EverUsedCondom=MRPEverUsedCondoms, 
       Marital=CurrentMaritalStatus,
       Partner12=PartnersInLastTwelveMonths,
       matches("IsCircumcised"))
@@ -65,65 +65,56 @@ readHealthData <- function() {
 #' 
 #' @description  gets Circumcision data from MGH AHRI dataset. 
 #' 
-#' @param inFile filepath to dataset, default is \code{getFiles()$mghfile}.
-#' 
 #' @export
-
 getCircumcisionData <- function() {
   dat <- readHealthDataMen() 
   dat <- filter(dat, IsCircumcised %in% c(1, 2))
   dat <- mutate(dat, IsCircumcised=as.numeric(IsCircumcised==1))
-  select(dat, IIntID, VisitDate, Year, AgeAtVisit, IsCircumcised)
+  dat <- filter(dat, IsCircumcised==1)
+  dat <- group_by(dat, IIntID) %>% 
+    summarize(YearCircum = min(Year)) %>% 
+      mutate(EverCircum=1)
+  dat
 }
 
-
-getCircumStatus <- function(Keep) {
+setCircumStatus <- function(Keep) {
   function(dat) {
-    browser()
     cdat <- getCircumcisionData()
-    cdat <- filter(cdat, IsCircumcised==1)
-    cdat <- group_by(cdat, IIntID) %>% 
-      summarize(YearCircum = min(Year)) %>% 
-      mutate(EverCircum =1)
-    dat <- as_tibble(left_join(dat, cdat, by="IIntID"))
-    # No surv time before 2009
-    dat <- filter(dat, !(Year < 2009))
-    dat = mutate(dat,
-      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
-      EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
-    dat <- select(dat, -(YearCircum))
-    dat <- filter(dat, IsCircum %in% Keep)
-    # dat <- filter(dat, EverCircum %in% Keep)
-    dat
+    dat <- left_join(dat, cdat, by="IIntID")
+    dat <- mutate(dat,
+      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)))
+    dat <- filter(dat, EverCircum %in% Keep)
+    select(dat, -(YearCircum))
   }
 }
 
-#' @title getCircumcision
+#' @title getCircum
 #' 
 #' @description gets Circumcision data from MGH AHRI datasets.
 #' 
-#' @param Keep Keeps or drops circumcised men.
+#' @param dat Dataset to make the circumcision status variable.
 #' 
 #' @export
-getCircum <- getCircumStatus(Keep = c(0, 1))
+getCircum <- setCircumStatus(Keep = c(0, 1))
+
 
 #' @title keepCircum
 #' 
 #' @description gets Circumcision data from MGH AHRI datasets.
 #' 
-#' @param Keep Keeps or drops circumcised men.
+#' @param dat Dataset to make the circumcision status variable.
 #' 
 #' @export
-keepCircum <- getCircumStatus(Keep=1)
+keepCircum <- setCircumStatus(Keep=1)
 
 #' @title dropCircum
 #' 
 #' @description gets Circumcision data from MGH AHRI datasets.
 #' 
-#' @param Keep Keeps or drops circumcised men.
+#' @param dat Dataset to make the circumcision status variable.
 #' 
 #' @export
-dropCircum <- getCircumStatus(Keep=0)
+dropCircum <- setCircumStatus(Keep=0)
 
 
 #' @title getCondomUseData

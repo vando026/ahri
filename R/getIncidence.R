@@ -334,7 +334,7 @@ miExtract <- function(flist=list(
 
 getIncidence <- function(Args, Compute=miCompute(), 
   Combine=miCombine(), Extract=miExtract()) {
-  hiv   <- getHIV()
+  hiv <- Args$setFun(getHIV())
   rtdat <- getRTData(hiv)
   calcInc <- setInc(rtdat, Args, fun=Compute)
   dat <- parallel::mclapply(seq(Args$nSim),
