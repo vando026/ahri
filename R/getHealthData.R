@@ -79,6 +79,7 @@ getCircumcisionData <- function() {
 
 getCircumStatus <- function(Keep) {
   function(dat) {
+    browser()
     cdat <- getCircumcisionData()
     cdat <- filter(cdat, IsCircumcised==1)
     cdat <- group_by(cdat, IIntID) %>% 
@@ -91,7 +92,8 @@ getCircumStatus <- function(Keep) {
       IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
       EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
     dat <- select(dat, -(YearCircum))
-    dat <- filter(dat, EverCircum %in% Keep)
+    dat <- filter(dat, IsCircum %in% Keep)
+    # dat <- filter(dat, EverCircum %in% Keep)
     dat
   }
 }
