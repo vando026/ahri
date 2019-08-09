@@ -65,10 +65,10 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   adat <- mutate(adat, NotElig = as.numeric(
     grepl("Mentally|[Dd]ead|Broken|Non-Functional|deaf|[Ss]ick", Comment)))
   adat <- filter(adat, NotElig==0)
-  eligible_dat <- select(adat, -c(FormRefusedBy, NotElig)) %>% 
+  dat <- select(adat, -c(FormRefusedBy, NotElig)) %>% 
     arrange(IIntID, VisitDate)
-  save(eligible_dat, file=file.path(getFiles()$elifile))
-  eligible_dat
+  save(dat, file=file.path(getFiles()$elifile))
+  dat
 }
 
 ##' @title getHIVEligible
@@ -76,14 +76,16 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
 ##' @description  Get eligibility for HIV testing.
 ##' 
 ##' @param Args 
+##' @param dat Default is Null and loads \code{\link{setHIVMiss}}.
 ##' 
 ##' @return 
 ##'
 ##' @export 
-getHIVEligible <- function(Args) {
-  load(file=file.path(getFiles()$elifile))
+getHIVEligible <- function(Args, dat=NULL) {
+  if (is.null(dat))
+    load(file=file.path(getFiles()$elifile))
   bdat <- getBirthDate(addVars="Female")
-  dat <- setData(eligible_dat, Args, time2="VisitDate", birthdate=bdat)
+  dat <- setData(dat, Args, time2="VisitDate", birthdate=bdat)
   dat <- mutate(dat, NonContact = as.numeric(
     grepl("Non-[cC]ontact|Refused|Other", Comment)))
   dat$Contact = ""
@@ -160,7 +162,6 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' @return 
 #'
 #' @export 
-
 getHIVIncEligible <- function(Args, f=identity) {
   edat <- getHIVEligible(Args)
   edat <- f(edat)

@@ -82,7 +82,8 @@ setCircumStatus <- function(Keep) {
     cdat <- getCircumcisionData()
     dat <- left_join(dat, cdat, by="IIntID")
     dat <- mutate(dat,
-      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)))
+      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
+      EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
     dat <- filter(dat, EverCircum %in% Keep)
     select(dat, -(YearCircum))
   }

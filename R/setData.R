@@ -126,6 +126,7 @@ setData <- function(dat, Args, time2=NULL, birthdate=NULL) {
   dat <- filter(dat, Female %in% Args$FemCode)
   dat <- filter(dat, Year %in% Args$Years)
   # further actions to take place
+  dat <- Args$setFun(dat)
   dat <- Args$addVars(dat)
   as_tibble(dat)
 }
