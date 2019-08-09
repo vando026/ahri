@@ -4,7 +4,7 @@
 \alias{makeAgeVars}
 \title{makeAgeVars}
 \usage{
-makeAgeVars(dat, visitdate = NULL, age_cut = NULL)
+makeAgeVars(dat, visitdate = NULL, age_cut = NULL, bdat = NULL)
 }
 \arguments{
 \item{dat}{dataset for which age is needed at a given episode.}
@@ -13,6 +13,8 @@ makeAgeVars(dat, visitdate = NULL, age_cut = NULL)
 
 \item{age_cut}{Vector of ages to make age categories, if NULL then mean centered age
 and age-squared variables made.}
+
+\item{bdat}{Dataset of birthdates, if NULL then it uses \code{\link{getBirthDate}}.}
 }
 \value{
 data.frame

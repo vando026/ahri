@@ -6,9 +6,6 @@
 \usage{
 getCircumcisionData()
 }
-\arguments{
-\item{inFile}{filepath to dataset, default is \code{getFiles()$mghfile}.}
-}
 \description{
 gets Circumcision data from MGH AHRI dataset.
 }

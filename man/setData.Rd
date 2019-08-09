@@ -4,7 +4,7 @@
 \alias{setData}
 \title{setData}
 \usage{
-setData(dat, Args, time2 = "obs_end")
+setData(dat, Args, time2 = NULL, birthdate = NULL)
 }
 \arguments{
 \item{dat}{Dataset for which age is needed at a given episode.}
