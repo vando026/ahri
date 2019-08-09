@@ -264,7 +264,6 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
     getConsent(list(Fem=c(35,39))),
     getConsent(list(Fem=c(40,54)))
   )
-  browser()
   c_all <- getConsent(list(Fem=c(15, 49), Mal=c(15, 54)))
 
   ages <- c("15-19", "20-24", "25-29", "30-34", "35-39")
