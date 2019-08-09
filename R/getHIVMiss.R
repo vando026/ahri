@@ -133,12 +133,11 @@ sumHIVMiss <- function(dat) {
 #' @export 
 getHIVCumTest <- function(dat, ntest=1) {
   dat <- filter(dat, Contact == "Contact")
-  tdat <- arrange(tdat, IIntID, Year) %>% group_by(IIntID) %>% 
+  dat <- arrange(dat, IIntID, Year) %>% group_by(IIntID) %>% 
     mutate(CumTest = as.numeric(cumsum(Tested)>=ntest))
-  out <- group_by(tdat, Year) %>%
+  group_by(dat, Year) %>%
     summarize(TestedN = n(), EverTest = sum(CumTest),
     TestedPerc = round(EverTest/TestedN*100, 2))
-  out
 }
 
 #' @title getHIVIncEligible
@@ -213,7 +212,7 @@ mkHIVTestTable <- function(Args) {
   inc_elig$NegN <- fmt(inc_elig$NegN)
   inc_elig$Perc <- rnd(inc_elig$Perc)
   inc_elig$PTime <- fmt(inc_elig$PTime)
-  out <- data.frame(Year=eligible$Year, Eligible, EligiblePerc,
+  out <- data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Contact, ContactPerc, Tested, TestedPerc, Test1, stringsAsFactors=FALSE)
   out <- left_join(out, inc_elig)
   out <- filter(out, Year %in% Args$Year[-length(Args$Year)])
@@ -237,7 +236,7 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
 
   alainr::getColor()
   dat <- setHIVMiss()
-  edat <- getHIVEligible(Args, dat=sdat)
+  edat <- getHIVEligible(Args)
   bdat <- getBirthDate(addVars="Female")
   getConsent <- function(iAge) {
     Args <- setArgs(Year=cyear, Age=iAge)
@@ -271,18 +270,19 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
   agesm <- c(ages, "40-54")
 
   png(filename=file.path(output, fname),
-    units="in", width=7, height=5, pointsize=10, 
+    units="in", width=8, height=5, pointsize=10, 
     res=200, type="cairo")
-  par(mar=c(4.0,4.5,1.5,8))
+  par(mar=c(4.0,4.5,1.5,11))
   plot(cyear, cyear, ylim=c(0, 1),
-    ylab="Proportion", xlab="Year",
-    main="HIV tested", cex.main=1.4,
+    ylab="Proportion", xlab="Year", cex.axis=1.2,
+    main="HIV tested", cex.main=1.4, xaxt='n',
     type="n", bty="l", font.lab=2, cex.lab=1.2)
+  axis(side=1, at=cyear, cex.axis=1.2)
   lines(cyear, c_all, col="black", lwd=3)
   lapply(seq(6), function(x) lines(cyear, cmal[[x]], col=Blues[x+3]))
   lapply(seq(6), function(x) lines(cyear, cfem[[x]], col=Reds[x+3]))
-  legend(2017.4, 0.8, c("All", paste("Male:", agesm), paste("Female:", agesf)), ncol=1,
-    bty="n", lwd=2, lty=1, col=c("black", Blues[4:9], Reds[4:9]), xpd=TRUE)
+  legend(2017.9, 0.8, c("All", paste("Male:", agesm), paste("Female:", agesf)), ncol=1,
+    bty="n", lwd=2, lty=1, col=c("black", Blues[4:9], Reds[4:9]), xpd=TRUE, cex=1.2)
   dev.off()
 }
 
@@ -299,9 +299,9 @@ getFollowUp <- function(x) {
   xx = vector(length=length(x))
   for (i in seq(x))
     if (i < length(x)) 
-      xx[i]  <- as.numeric(x[i+1]=="Yes" & x[i]=="Yes") 
+      xx[i]  <- as.numeric(x[i+1]=="Contact" & x[i]=="Contact") 
     else
-      xx[i] <- as.numeric(x[i]=="Yes")
+      xx[i] <- as.numeric(x[i]=="Contact")
   xx
 }
 
@@ -317,9 +317,9 @@ getFollowUp <- function(x) {
 #' @export 
 getDropOut <- function(x) {
   xx = vector(length=length(x))
-  lastConsent <- suppressWarnings(max(which(x=="Yes")))
+  lastConsent <- suppressWarnings(max(which(x=="Contact")))
   for (i in seq(x))
-    xx[i] <- as.numeric(i > lastConsent & x[i]!="Yes")
+    xx[i] <- as.numeric(i > lastConsent & x[i]!="Contact")
   xx
 }
 

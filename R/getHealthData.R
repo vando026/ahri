@@ -179,10 +179,8 @@ addCondomVar <- function(dat, dropFemale=TRUE) {
 #' @export 
 addCircumVar <- function(dat) {
   cdat <- getCircumcisionData()
-  cdat <- group_by(cdat, IIntID) %>%
-    summarize(EverCircum = max(IsCircumcised))
-  cdat <- left_join(dat, cdat, by="IIntID")
-  cdat$EverCircum[is.na(cdat$EverCircum)] <- 0
-  cdat
+  dat <- left_join(dat, cdat, by="IIntID")
+  dat$EverCircum[is.na(dat$EverCircum)] <- 0
+  dat
 }
 
