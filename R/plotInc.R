@@ -10,7 +10,7 @@
 plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
   Title="", fname="year_plot") {
-
+  alainr::getColor()
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -221,8 +221,9 @@ plotIncPrev <- function(
     font.lab=2, cex.axis=1.4, cex.lab=1.6, cex.main=1.5, axes=FALSE)
   axis(side=2, cex.axis=1.4)
   box(bty="u")
-  axis(side=1, at=x, labels=FALSE)
-  plotrix::staxlab(1, at=x, srt=45, labels=x, cex=1.3, line.spacing=1)
+  labs  <- x[as.logical(x %% 2)]
+  axis(side=1, at=labs, labels=labs, cex.axis=1.4)
+  # plotrix::staxlab(1, at=labs, srt=45, labels=labs, cex=1.3, line.spacing=1)
   # axis(side=2, labels=FALSE)
   lines(x, inc$rate, lty=1, col=inc_col, lwd=2)
   # abline(v=2011, lty=3)
