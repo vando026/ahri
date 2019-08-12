@@ -53,7 +53,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   # Form refused by someone else
   dat2$FormRefused[dat2$FormRefusedBy %in% c(2:5)] <- "Refused by other"
   # Incorrectly coded, if Form Refused then HIV Refused
-  # dat2$HIVRefused[dat2$FormRefused=="Yes"] = "Yes"
+  dat2$HIVRefused[dat2$FormRefused=="Yes"] = "Yes"
   # dat2 <- select(dat2, -FormRefused)
   adat <- rbind(dat1, dat2)
   adat$HIVRefused[adat$FormRefusedBy %in% c(2:5)] <- "Refused by other"
