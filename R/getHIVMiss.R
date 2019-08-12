@@ -41,7 +41,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
     function(x) readHIVSurvYear(x, addVars="HIVRefusedBy"))
   dat1 <- do.call(rbind, dat1)
   dat1 <- dplyr::rename(dat1, FormRefusedBy = HIVRefusedBy)
-  dat1$FormRefused <- NA
+  dat1$FormRefused <- dat1$HIVRefused
   # From 2010-2017, HIVRefused changes, depends on FormRefused
   set2 <- files[unlist(lapply(files,
     function(x) grepl("201[0-8]", x)))]
@@ -50,12 +50,11 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   dat2 <- do.call(rbind, dat2)
   dat2 <- mutate(dat2, 
     FormRefused = as.character(haven::as_factor(FormRefused)))
-  # Form refused by someone else
-  dat2$FormRefused[dat2$FormRefusedBy %in% c(2:5)] <- "Refused by other"
-  # Incorrectly coded, if Form Refused then HIV Refused
+  # Incorrectly coded from 2010, if Form Refused then HIV Refused
   dat2$HIVRefused[dat2$FormRefused=="Yes"] = "Yes"
   # dat2 <- select(dat2, -FormRefused)
   adat <- rbind(dat1, dat2)
+  # Form refused by someone else
   adat$HIVRefused[adat$FormRefusedBy %in% c(2:5)] <- "Refused by other"
   adat <- mutate(adat, 
     IIntID = as.integer(IIntID),
