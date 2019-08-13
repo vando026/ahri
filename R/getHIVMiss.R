@@ -272,9 +272,9 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
     units="in", width=8, height=5, pointsize=10, 
     res=200, type="cairo")
   par(mar=c(4.0,4.5,1.5,11))
-  plot(cyear, cyear, ylim=c(0, 1),
+  plot(cyear, cyear, ylim=c(0, 0.8),
     ylab="Proportion", xlab="Year", cex.axis=1.2,
-    main="HIV tested", cex.main=1.4, xaxt='n',
+    main="", cex.main=1.4, xaxt='n',
     type="n", bty="l", font.lab=2, cex.lab=1.2)
   axis(side=1, at=cyear, cex.axis=1.2)
   lines(cyear, c_all, col="black", lwd=3)
