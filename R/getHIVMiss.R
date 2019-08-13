@@ -151,31 +151,27 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' @export 
 getHIVIncEligible <- function(Args, f=identity) {
   edat <- getHIVEligible(Args)
-  edat <- f(edat)
+  bdat <- getBirthDate(addVars="Female")
+  edat <- setData(edat, Args, time2="VisitDate", bdat)
   # Get all contacted
   edat <- filter(edat, Contact=="Contact")
   # Year first neg
   edat <- mutate(edat, FirstNeg = 
-    ifelse(HIVResult=="Negative", as.integer(format(VisitDate, "%Y")), 2100))
+    ifelse(HIVResult=="Negative" & !is.na(HIVResult), Year, Inf))
+  edat <- mutate(edat, FirstPos = 
+    ifelse(HIVResult=="Positive" & !is.na(HIVResult), Year, Inf))
   edat <- group_by(edat, IIntID) %>% mutate(FirstNeg = min(FirstNeg))
+  edat <- group_by(edat, IIntID) %>% mutate(FirstPos = min(FirstPos))
   edat <- mutate(edat, HIVNeg = as.numeric(Year >= FirstNeg))
-  edat <- filter(edat, HIVNeg==1)
+  edat <- mutate(edat, HIVPos = as.numeric(!(Year < FirstPos)))
+  # Keep only HIV- 
+  edat <- filter(edat, HIVNeg==1 & HIVPos==0) 
   Elig <- group_by(edat, Year) %>% summarize(Elig = n())
   # Tested Negative
-  hdat <- setHIV(Args)
-  sdat <- filter(hdat, !is.na(HIVNegative))
-  Neg <- group_by(sdat, Year) %>% summarize(NegN = n()) 
-  dat <- left_join(Elig, Neg)
-  dat <- mutate(dat, Perc = round(NegN/Elig*100, 1))
-  # Cohort Person Time
-  hiv <- getHIV()
-  rtdat <- getRTData(hiv)
-  Args$imputeMethod <- imputeEndPoint
-  edat <- Args$imputeMethod(rtdat)
-  edat <- splitAtEarlyPos(edat)
-  ptime <- group_by(edat, Year) %>% 
-    summarize(PTime = n())
-  left_join(dat, ptime)
+  edat <- mutate(edat, HIVNegTest = as.numeric(HIVResult=="Negative" & !is.na(HIVResult)))
+  Neg <- filter(edat, HIVNegTest==1) %>% group_by(Year) %>% summarize(NegN = n()) 
+  Elig <- left_join(Elig, Neg)
+  mutate(Elig, Perc = round(NegN/Elig*100, 1))
 }
 
 #' @title mkHIVTestTable
@@ -210,7 +206,6 @@ mkHIVTestTable <- function(Args) {
   inc_elig$Elig <- fmt(inc_elig$Elig)
   inc_elig$NegN <- fmt(inc_elig$NegN)
   inc_elig$Perc <- rnd(inc_elig$Perc)
-  inc_elig$PTime <- fmt(inc_elig$PTime)
   out <- data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Contact, ContactPerc, Tested, TestedPerc, Test1, stringsAsFactors=FALSE)
   out <- left_join(out, inc_elig)
