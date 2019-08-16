@@ -36,7 +36,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   files <- list.files(filep, pattern=".dta$")
   # diff vars for 2005--2009
   set1 <- files[unlist(lapply(files,
-    function(x) grepl("200[5-9]", x)))]
+    function(x) grepl("200[4-9]", x)))]
   dat1 <- lapply(file.path(filep, set1), 
     function(x) readHIVSurvYear(x, addVars="HIVRefusedBy"))
   dat1 <- do.call(rbind, dat1)
@@ -77,7 +77,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
 ##' @return 
 ##'
 ##' @export 
-getHIVEligible <- function(Args, dat=NULL) {
+getHIVEligible <- function(Args=NULL, dat=NULL) {
   if (is.null(dat))
     load(file=file.path(getFiles()$elifile))
   dat <- mutate(dat, Drop = as.numeric(grepl(
@@ -149,30 +149,38 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' @return 
 #'
 #' @export 
-getHIVIncEligible <- function(Args, f=identity) {
+getHIVIncEligible <- function(Args, ids=NULL) {
+  getN <- function(dat) {
+    function(i) {
+      xx = filter(dat, Year <= i)
+      yy <- length(unique(xx$IIntID))
+      data.frame(Year=i, N=yy)
+    }
+  }
+  oldYear <- Args$Years
+  Args$Years <- 2004:2017
   edat <- getHIVEligible(Args)
   bdat <- getBirthDate(addVars="Female")
+  edat <- filter(edat, HIVResult=="Negative")
   edat <- setData(edat, Args, time2="VisitDate", bdat)
   # Get all contacted
-  edat <- filter(edat, Contact=="Contact")
-  # Year first neg
-  edat <- mutate(edat, FirstNeg = 
-    ifelse(HIVResult=="Negative" & !is.na(HIVResult), Year, Inf))
-  edat <- mutate(edat, FirstPos = 
-    ifelse(HIVResult=="Positive" & !is.na(HIVResult), Year, Inf))
-  edat <- group_by(edat, IIntID) %>% mutate(FirstNeg = min(FirstNeg))
-  edat <- group_by(edat, IIntID) %>% mutate(FirstPos = min(FirstPos))
-  edat <- mutate(edat, HIVNeg = as.numeric(Year >= FirstNeg))
-  edat <- mutate(edat, HIVPos = as.numeric(!(Year < FirstPos)))
-  # Keep only HIV- 
-  edat <- filter(edat, HIVNeg==1 & HIVPos==0) 
-  Elig <- group_by(edat, Year) %>% summarize(Elig = n())
-  # Tested Negative
-  edat <- mutate(edat, HIVNegTest = as.numeric(HIVResult=="Negative" & !is.na(HIVResult)))
-  Neg <- filter(edat, HIVNegTest==1) %>% group_by(Year) %>% summarize(NegN = n()) 
-  Elig <- left_join(Elig, Neg)
-  mutate(Elig, Perc = round(NegN/Elig*100, 1))
+  getElig <- getN(edat)
+  elig <- do.call(rbind, lapply(Args$Year, getElig)) %>% rename(EligN=N)
+  # Tested Cohort
+  Args$Years <- oldYear
+  hiv <- getHIV()
+  rtdat <- getRTData(hiv)
+  sdat <- splitAtEarlyPos(rtdat)
+  sdat <- setData(sdat, Args, time2="obs_end", birthdate=NULL) 
+  if (!is.null(ids))
+    sdat <- sdat[sdat$IIntID %in% ids, ]
+  getRT <- getN(sdat)
+  cohort <- do.call(rbind, lapply(c(2005:2017), getRT))
+  out <- right_join(elig, cohort)
+  out <- mutate(out, Perc=round((N/EligN)*100, 2))
+  out
 }
+
 
 #' @title mkHIVTestTable
 #' 
@@ -180,12 +188,13 @@ getHIVIncEligible <- function(Args, f=identity) {
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
 #' one additional year to compute HIV cohort person time. 
+#' @param IDS Needed to subset dataset in \link{\code{getCohort}}, default is NULL. 
 #' 
 #' @return data.frame
 #'
 #' @export 
 
-mkHIVTestTable <- function(Args) {
+mkHIVTestTable <- function(Args, IDS=NULL) {
   fmt <- function(x) trimws(formatC(x, big.mark=",", format="d"))
   rnd <- function(x) trimws(format(x, digits=1, nsmall=1))
   # Get testing date
@@ -202,15 +211,14 @@ mkHIVTestTable <- function(Args) {
   TestedPerc = paste0("(", rnd(TestedPerc), ")")
   CumTest <- getHIVCumTest(edat) 
   Test1 <- rnd(CumTest$TestedPerc)
-  inc_elig <- getHIVIncEligible(Args)
-  inc_elig$Elig <- fmt(inc_elig$Elig)
-  inc_elig$NegN <- fmt(inc_elig$NegN)
-  inc_elig$Perc <- rnd(inc_elig$Perc)
+  inc_elig <- getHIVIncEligible(Args, ids=IDS)
+  inc_elig$EligN <- fmt(inc_elig$EligN)
+  inc_elig$N <- fmt(inc_elig$N)
+  inc_elig$Perc <- paste0("(", rnd(inc_elig$Perc), ")")
   out <- data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Contact, ContactPerc, Tested, TestedPerc, Test1, stringsAsFactors=FALSE)
   out <- left_join(out, inc_elig)
   out <- filter(out, Year %in% Args$Year[-length(Args$Year)])
-  out[out$Year==Args$Year[1], c("Elig", "NegN", "Perc")] <-  "-"
   out
 }
 # debugonce(mkHIVTestTable)
