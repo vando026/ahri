@@ -12,14 +12,12 @@
 #' readBSData() 
 
 readBSData <- function(inFile=getFiles()$bsifile) {
-  dat <- haven::read_dta(inFile)
-  dat <- mutate(dat, 
-    BSIntId = as.integer(BSIntId),
+  dat <- haven::read_dta(inFile) %>% 
+    select(BSIntID=BSIntId, LocalArea, IsUrbanOrRural)
+  mutate(dat, 
+    BSIntID = as.integer(BSIntID),
     LocalArea = as.character(haven::as_factor(dat$LocalArea)),
-    Isigodi = as.character(haven::as_factor(dat$Isigodi)),
     IsUrbanOrRural = as.character(haven::as_factor(dat$IsUrbanOrRural)))
-  dat <- rename(dat, BSIntID=BSIntId)
-  dat
 }
 
 
