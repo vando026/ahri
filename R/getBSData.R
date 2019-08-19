@@ -75,8 +75,8 @@ getBSMax <- function(
   maxBS <- filter(dat, MaxDays >= minDays) %>% 
     select(IIntID, Year, BSIntID )
 
-  save(maxBS, file=file.path(Sys.getenv("HOME"), 
-    "Documents/AC_Data/Derived/Other", outFile))
+  save(maxBS, file=file.path(setRoot(), 
+    "Derived/Other", outFile))
   return(maxBS)
 }
 
