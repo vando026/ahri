@@ -338,7 +338,8 @@ getIncidence <- function(Args, Compute=miCompute(),
   rtdat <- getRTData(hiv)
   calcInc <- setInc(rtdat, Args, fun=Compute)
   dat <- parallel::mclapply(seq(Args$nSim),
-    calcInc, mc.cores=Args$mcores)
+    calcInc, mc.cores=Args$mcores,
+    mc.set.seed=TRUE)
   cdat <- combineEst(dat, get_names=Combine) 
   lapply(Extract, function(f) f(cdat))
 }
