@@ -207,8 +207,8 @@ combineEst <-  function(dat, get_names=miCombine()) {
 #' s <- c(0.5, 0.5) # m = 2
 #' x <- calcRubin(e, s)
 
-calcRubin <- function(est, se, fun=exp, by100=TRUE) {
-  doCalc <- function(est, se, func=fun) {
+calcRubin <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
+  doCalc <- function(est, se, func=fun, Pval=pval) {
     m <- length(est)
     mn <- mean(est)
     if (m > 1) {
@@ -221,8 +221,12 @@ calcRubin <- function(est, se, fun=exp, by100=TRUE) {
       tdf <- 1.96 
     }
     ci <- func(mn + c(-1, 1) * (tdf * se))
-    pval <- round(2*pnorm(-abs(mn/se)), 4)
-    c(rate=func(mn), lci=ci[1], uci=ci[2], pval=pval)
+    out <- c(rate=func(mn), lci=ci[1], uci=ci[2])
+    if (Pval) {
+      pvalue <- round(2*pnorm(-abs(mn/se)), 4)
+      out <- c(out, pval=pvalue)
+    }
+    return(out)
   }
   est <- split(est, rownames(est))
   se <- split(se, rownames(se))
@@ -259,9 +263,9 @@ getMeans <- function(v1, v2) {
 #' @return 
 #'
 #' @export 
-getRubin <- function(v1, v2, fun=exp, by100=TRUE) {
+getRubin <- function(v1, v2, fun=exp, by100=TRUE, pval=FALSE) {
   function(dat) {
-    calcRubin(dat[[v1]], dat[[v2]], fun=fun, by100=by100) 
+    calcRubin(dat[[v1]], dat[[v2]], fun=fun, by100=by100, pval=pval) 
   }
 }
 
