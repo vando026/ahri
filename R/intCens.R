@@ -172,7 +172,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
 
 
 UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
-  iter=5000, cthresh=0.0001, r=0.0, printout=FALSE, ign_stout=TRUE) {
+  iter=5000, cthresh=0.0001, r=1.0, printout=FALSE, ign_stout=TRUE) {
     InFile <- paste("--in", InFile)
     OutFile <- paste("--out", OutFile)
     Model <- paste("--model", shQuote(Model))
