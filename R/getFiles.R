@@ -29,8 +29,8 @@ getFiles <- function(
   prvfile="Derived/Other/HIV_Prev_Aug21.csv",
   pipfile="Derived/BoundedStructure/PIPBoundedStructures.xlsx",
   bscfile="Derived/BoundedStructure/BSIntID_Coords.csv",
-  fem_art="Derived/ARTemis/2017/ART_Females.csv",
-  mal_art="Derived/ARTemis/2017/ART_Females.csv",
+  fem_art="Derived/ARTemis/2017/ART_All.csv",
+  mal_art="Derived/ARTemis/2017/ART_All.csv",
   pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta") {
   flist <- as.list(environment())
   flist <- lapply(flist, function(x) file.path(root, x))

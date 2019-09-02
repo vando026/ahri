@@ -77,17 +77,11 @@ getBirthDate <- function(
 
 makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
   if (is.null(bdat)) bdat <- getBirthDate()
-  if(!is.null(visitdate)) {
-    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
-    dat$Age <- floor(as.numeric(difftime(
-      dat[,visitdate], dat[,"DateOfBirth"], units='weeks'))/52.25)
-    dat <- select(dat, -(DateOfBirth))
-  }
-  if(is.null(age_cut)) {
-    dat <- mutate(dat, 
-      Age0 = round(Age - mean(Age), 1),
-      Age2 = round(Age0^2, 1))
-  } else {
+  dat <- data.frame(left_join(dat, bdat, by="IIntID"))
+  dat$Age <- floor(as.numeric(difftime(
+    dat[,visitdate], dat[,"DateOfBirth"], units='weeks'))/52.25)
+  dat <- select(dat, -(DateOfBirth))
+  if(!is.null(age_cut)) {
     dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
       include.lower=TRUE, right=FALSE, labels=NULL))
     dat$AgeCat <- droplevels(dat$AgeCat)

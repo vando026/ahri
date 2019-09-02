@@ -299,7 +299,7 @@ setIncIC <- function(dat, rtdat,
     cat(i, "")
     dat <- imputeIntCensPoint(rtdat, sdates, i)
     dat <- splitAtSeroDate(dat) 
-    dat <- setData(dat, Args,  bdat)
+    dat <- setData(dat, Args, time2="obs_end",  bdat)
     lapply(fun, function(f) f(dat))
   }
 }
