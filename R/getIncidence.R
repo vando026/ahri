@@ -156,7 +156,7 @@ setInc <- function(rtdat, Args, fun=miCompute()) {
   age_dat <- getAgeYear(Args)
   bdat=getBirthDate()
   function(i) {
-    at(i, "")
+    cat(i, "")
     dat <- getIncData(rtdat, bdat, Args)
     lapply(fun, function(f) f(dat))
   }
@@ -446,4 +446,45 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
   colnames(out) <- get_names
   rownames(out) <- rownames(dat[[1]])
   out
+}
+
+#' @title doInc
+#' 
+#' @description Helper function for \code{getIncidenceMI}.  
+#' 
+#' @param mdat List of datasets from \code{mitools}.
+#' @param pdat Dataset for predicting values.
+#' @param sformula List of string formulas.
+#' 
+#' @return List
+doInc <- function(mdat, pdat, sformula) {
+  mods <- with(mdat, glm(as.formula(sformula), family=poisson))
+  mres <- MIcombine(mods)
+  MIpredict(mres, pdat, sformula)
+}
+
+#' @title getIncidenceMI
+#' 
+#' @description  Default function for using \code{mitools} to do incidence rate
+#' estimation.
+#' 
+#' @param Args takes list from \code{\link{setArgs}}.
+#' @param formulas A list of formulas for the poisson regression models.
+#' 
+#' @return 
+#'
+#' @export 
+getIncidenceMI <- function(Args, formulas) {
+  hiv <- getHIV()
+  rtdat <- getRTData(hiv)
+  age_dat <- getAgeYear(Args)
+  bdat <- getBirthDate()
+  mdat <- mclapply(seq(Args$nSim), function(i) {
+    cat(i, ""); MIdata(rtdat, Args, bdat)},
+    mc.cores=Args$mcores)
+  mdat <- imputationList(mdat)
+  pois_inc <- lapply(formulas, function(x) doInc(mdat, age_dat, x))
+  agg_inc <- with(mdat, fun=AggByYear)
+  agg_inc <- MIaggregate(agg_inc)
+  list(agg=agg_inc, pois_inc=pois_inc)
 }
