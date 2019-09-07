@@ -367,10 +367,10 @@ getIncidence <- function(Args, Compute=miCompute(),
 #' rtdat <- getRTData(hiv)
 #' age_dat <- getAgeYear(Args)
 #' MIdata(rtdat, Args)
-MIdata <- function(rtdat, Args, f=identity) {
+MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
   dat <- imputeRandomPoint(rtdat)
   edat <- splitAtSeroDate(dat) 
-  out <- setData(edat, Args, time2="obs_end")
+  out <- setData(edat, Args, time2="obs_end", birthdate=bdat)
   out <- dplyr::mutate(out, tscale = Time/365.25, Year = as.factor(Year))
   f(out)
 }
@@ -415,4 +415,35 @@ MIpredict <- function(res, dat, sformula)  {
   data.frame(lapply(out, "*", 100))
 }
 
-
+#' @title MIaggregate
+#' 
+#' @description  Aggregates results after mutiple imputation.
+#' 
+#' @param dat List of results.
+#' @param dat get_names Names used to collect dataset columns into a single matrix.
+#' 
+#' @return 
+#'
+#' @export 
+#' @examples
+#' Args <- setArgs(nSim=8, mcores=1)
+#' hiv <- getHIV()
+#' rtdat <- getRTData(hiv)
+#' age_dat <- getAgeYear(Args)
+#' bdat <- getBirthDate()
+#' mdat <- mclapply(seq(Args$nSim), function(i) {
+#'   cat(i, ""); MIdata(rtdat, Args, bdat)},
+#'   mc.cores=Args$mcores)
+#' mdat <- imputationList(mdat)
+#' inc <- with(mdat, fun=AggByYear)
+#' MIaggregate(inc)
+MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
+  getEst <- function(dat, obj) {
+    out <- as.matrix(sapply(dat, "[[", obj))
+    rowMeans(out)
+  }
+  out <- data.frame(lapply(get_names, function(x) getEst(dat, x)))
+  colnames(out) <- get_names
+  rownames(out) <- rownames(dat[[1]])
+  out
+}
