@@ -5,7 +5,7 @@
 \title{UniReg}
 \usage{
 UniReg(InFile, OutFile, Model, ID = NULL, inf = "Inf", iter = 5000,
-  cthresh = 1e-04, r = 0, printout = FALSE, ign_stout = TRUE)
+  cthresh = 1e-04, r = 1, printout = FALSE, ign_stout = TRUE)
 }
 \arguments{
 \item{InFile}{txt file to be input}

@@ -3,6 +3,8 @@
 export(AggByAge)
 export(AggByYear)
 export(AggFunc)
+export(MIdata)
+export(MIpredict)
 export(SetUniReg)
 export(UniReg)
 export(UniRegOne)

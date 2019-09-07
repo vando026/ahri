@@ -4,11 +4,13 @@
 \alias{mkHIVTestTable}
 \title{mkHIVTestTable}
 \usage{
-mkHIVTestTable(Args)
+mkHIVTestTable(Args, IDS = NULL)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
 one additional year to compute HIV cohort person time.}
+
+\item{IDS}{Needed to subset dataset in \link{\code{getCohort}}, default is NULL.}
 }
 \value{
 data.frame

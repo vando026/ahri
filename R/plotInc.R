@@ -66,11 +66,11 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' 
 #' @export
 plotIncSexArea <- function(Mal, Fem, yLim=7,
-  Colors=c("blue", "red"), gcolor="grey50",
+  Colors=c("blue", "red"), gcolor="grey50", ipoints=TRUE,
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
   gfun=png, Title="", fname="year_plot") {
 
-
+  alainr::getColor()
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -82,10 +82,10 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
   plot(x, Mal[, "rate"], type='n',
     pch=4, bty="l", xaxt='n',
     ylim=c(0, yLim), main=Title,
-    cex.axis=1.3, cex.lab=1.3,
+    cex.axis=1.1, cex.lab=1.3,
     xlab="Year", font.lab=2,
     ylab="Incidence Rate per 100 person-years")
-  axis(side=1, at=x, cex.axis=1.3)
+  axis(side=1, at=x, cex.axis=1.1)
   # plotrix::staxlab(side = 1, at=x, labels=x, srt=45, cex.axis=1.1)
 
   renderInc <- function(dat, Colors, bwidth) {
@@ -96,7 +96,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
     polygon(c(ub_ks$x, rev(ub_ks$x)), c(ub_ks$y, rev(lb_ks$y)), 
       col=adjustcolor(Colors, alpha.f=0.8), 
       border=adjustcolor(Colors, alpha.f=0.8))
-    points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
+    if (ipoints) points(x, dat[, "rate"], pch=4, col=gcolor, cex=0.5)
     lines(ksmooth(x, dat[, "rate"], "normal", bandwidth = bwidth[1]), 
       lwd=1, lty=1, col=gcolor)
   }

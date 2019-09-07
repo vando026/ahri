@@ -4,7 +4,7 @@
 \alias{getHIVEligible}
 \title{getHIVEligible}
 \usage{
-getHIVEligible(Args, dat = NULL)
+getHIVEligible(Args = NULL, dat = NULL)
 }
 \arguments{
 \item{Args}{}
