@@ -477,8 +477,6 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
 #' 
 #' @description  Gets default glm string formulas to run crude and age adjusted incidence.
 #' 
-#' @param 
-#' 
 #' @return list
 #'
 #' @export 
