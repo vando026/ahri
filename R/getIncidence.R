@@ -377,13 +377,14 @@ MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
 
 #' @title MIpois
 #' 
-#' @description Helper function for \code{getIncidenceMI}.  
+#' @description Run poission regressions.
 #' 
 #' @param mdat List of datasets from \code{mitools}.
 #' @param pdat Dataset for predicting values.
 #' @param sformula List of string formulas.
 #' 
 #' @return List
+#' @export
 MIpois <- function(mdat, pdat, sformula) {
   mkVars <- function(dat) 
     transform(dat, tscale = Time/365.25, Year = as.factor(Year))
