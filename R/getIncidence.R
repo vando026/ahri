@@ -371,7 +371,6 @@ MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
   dat <- imputeRandomPoint(rtdat)
   edat <- splitAtSeroDate(dat) 
   out <- setData(edat, Args, time2="obs_end", birthdate=bdat)
-  out <- dplyr::mutate(out, tscale = Time/365.25, Year = as.factor(Year))
   f(out)
 }
 
@@ -404,6 +403,7 @@ MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
 MIpredict <- function(res, dat, sformula)  {
   Terms <- delete.response(terms(as.formula(sformula)))
   mat <- model.matrix(Terms, dat)
+  mat <- mat[which(rowSums(mat) > 0), which(colSums(mat) > 0)] 
   pred <- mat %*% coef(res)
   se <-  sqrt(diag(mat %*% vcov(res) %*% t(mat)))
   fit <- exp(pred)
@@ -412,7 +412,9 @@ MIpredict <- function(res, dat, sformula)  {
   CI <- sapply(Qt, "*", se.fit)
   out <- data.frame(fit=fit, se.fit=se.fit, 
     lci=fit+CI[, 1], uci=fit+CI[, 2])
-  data.frame(lapply(out, "*", 100))
+  out <- data.frame(lapply(out, "*", 100))
+  rownames(out) <- rownames(dat)
+  out
 }
 
 #' @title MIaggregate
@@ -448,7 +450,7 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
   out
 }
 
-#' @title doInc
+#' @title MIpois
 #' 
 #' @description Helper function for \code{getIncidenceMI}.  
 #' 
@@ -457,11 +459,32 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
 #' @param sformula List of string formulas.
 #' 
 #' @return List
-doInc <- function(mdat, pdat, sformula) {
+MIpois <- function(mdat, pdat, sformula) {
+  mkVars <- function(dat) 
+    transform(dat, tscale = Time/365.25, Year = as.factor(Year))
+  mdat <- lapply(mdat, mkVars)
+  mdat <- mitools::imputationList(mdat)
   mods <- with(mdat, glm(as.formula(sformula), family=poisson))
   mres <- mitools::MIcombine(mods)
   MIpredict(mres, pdat, sformula)
 }
+
+
+#' @title getFormula
+#' 
+#' @description  Gets default glm string formulas to run crude and age adjusted incidence.
+#' 
+#' @param 
+#' 
+#' @return list
+#'
+#' @export 
+getFormula <- function() {
+  list(
+    crude = "sero_event ~ -1 + Year + offset(log(tscale))",
+    adj = "sero_event ~ -1 + Year + Age + Year:Age + offset(log(tscale))")
+}
+
 
 #' @title getIncidenceMI
 #' 
@@ -474,7 +497,7 @@ doInc <- function(mdat, pdat, sformula) {
 #' @return 
 #'
 #' @export 
-getIncidenceMI <- function(Args, formulas) {
+getIncidenceMI <- function(Args, formulas=getFormula()) {
   hiv <- getHIV()
   rtdat <- getRTData(hiv)
   age_dat <- getAgeYear(Args)
@@ -482,9 +505,8 @@ getIncidenceMI <- function(Args, formulas) {
   mdat <- parallel::mclapply(seq(Args$nSim), function(i) {
     cat(i, ""); MIdata(rtdat, Args, bdat)},
     mc.cores=Args$mcores)
-  mdat <- mitools::imputationList(mdat)
-  pois_inc <- lapply(formulas, function(x) doInc(mdat, age_dat, x))
-  agg_inc <- with(mdat, fun=AggByYear)
+  pois_inc <- lapply(formulas, function(x) MIpois(mdat, age_dat, x))
+  agg_inc <- lapply(mdat, AggByYear)
   agg_inc <- MIaggregate(agg_inc)
   list(agg=agg_inc, pois_inc=pois_inc)
 }
