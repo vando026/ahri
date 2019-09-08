@@ -375,6 +375,26 @@ MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
 }
 
 
+#' @title MIpois
+#' 
+#' @description Helper function for \code{getIncidenceMI}.  
+#' 
+#' @param mdat List of datasets from \code{mitools}.
+#' @param pdat Dataset for predicting values.
+#' @param sformula List of string formulas.
+#' 
+#' @return List
+MIpois <- function(mdat, pdat, sformula) {
+  mkVars <- function(dat) 
+    transform(dat, tscale = Time/365.25, Year = as.factor(Year))
+  mdat <- lapply(mdat, mkVars)
+  mdat <- mitools::imputationList(mdat)
+  mods <- with(mdat, glm(as.formula(sformula), family=poisson))
+  mres <- mitools::MIcombine(mods)
+  res <- list(mres=mres, object=mods[[1]])
+  MIpredict(res, pdat, sformula)
+}
+
 #' @title MIpredict
 #' 
 #' @description Used with \code{mitools} to get incidence rate estimates after multiple
@@ -401,9 +421,11 @@ MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
 #' MIpredict(yy, age_dat, F1)
 
 MIpredict <- function(res, dat, sformula)  {
-  Terms <- delete.response(terms(as.formula(sformula)))
-  mat <- model.matrix(Terms, dat)
-  mat <- mat[which(rowSums(mat) > 0), which(colSums(mat) > 0)] 
+  obj <- res$object
+  res <- res$mres
+  Terms <- delete.response(terms(obj))
+  m <- model.frame(Terms, dat, xlev = obj$xlevels)
+  mat <- model.matrix(Terms, m, contrasts.arg = obj$contrasts)
   pred <- mat %*% coef(res)
   se <-  sqrt(diag(mat %*% vcov(res) %*% t(mat)))
   fit <- exp(pred)
@@ -448,25 +470,6 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
   colnames(out) <- get_names
   rownames(out) <- rownames(dat[[1]])
   out
-}
-
-#' @title MIpois
-#' 
-#' @description Helper function for \code{getIncidenceMI}.  
-#' 
-#' @param mdat List of datasets from \code{mitools}.
-#' @param pdat Dataset for predicting values.
-#' @param sformula List of string formulas.
-#' 
-#' @return List
-MIpois <- function(mdat, pdat, sformula) {
-  mkVars <- function(dat) 
-    transform(dat, tscale = Time/365.25, Year = as.factor(Year))
-  mdat <- lapply(mdat, mkVars)
-  mdat <- mitools::imputationList(mdat)
-  mods <- with(mdat, glm(as.formula(sformula), family=poisson))
-  mres <- mitools::MIcombine(mods)
-  MIpredict(mres, pdat, sformula)
 }
 
 
