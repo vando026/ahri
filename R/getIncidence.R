@@ -459,7 +459,7 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
 #' @return List
 doInc <- function(mdat, pdat, sformula) {
   mods <- with(mdat, glm(as.formula(sformula), family=poisson))
-  mres <- MIcombine(mods)
+  mres <- mitools::MIcombine(mods)
   MIpredict(mres, pdat, sformula)
 }
 
@@ -479,10 +479,10 @@ getIncidenceMI <- function(Args, formulas) {
   rtdat <- getRTData(hiv)
   age_dat <- getAgeYear(Args)
   bdat <- getBirthDate()
-  mdat <- mclapply(seq(Args$nSim), function(i) {
+  mdat <- parallel::mclapply(seq(Args$nSim), function(i) {
     cat(i, ""); MIdata(rtdat, Args, bdat)},
     mc.cores=Args$mcores)
-  mdat <- imputationList(mdat)
+  mdat <- mitools::imputationList(mdat)
   pois_inc <- lapply(formulas, function(x) doInc(mdat, age_dat, x))
   agg_inc <- with(mdat, fun=AggByYear)
   agg_inc <- MIaggregate(agg_inc)
