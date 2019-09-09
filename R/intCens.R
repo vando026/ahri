@@ -60,7 +60,8 @@ intCensParse <- function(File=NULL) {
 intCensImpute <- function(dat, Results, Args, start_date=NULL) {
 
   message("Running intCensImpute...")
-  G = function(x)  return(x)
+  # G = function(x)  return(x)
+  G = function(x)  return(log(1 + x))
 
   # simulate from the multivariate normal distribution of the 
   # regression parameter estimates
@@ -129,6 +130,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
             seroDist = seroDist/mysum
             SeroTimes[asim] = sample(x=AllSeroTimes,size=1,prob=seroDist)
           }
+          browser()
           if(any(SeroTimes[asim]<leftTime))
             stop('Random seroconversion time smaller than allowed\n')
           if(any(SeroTimes[asim]>rightTime))

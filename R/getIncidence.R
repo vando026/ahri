@@ -367,11 +367,19 @@ getIncidence <- function(Args, Compute=miCompute(),
 #' rtdat <- getRTData(hiv)
 #' age_dat <- getAgeYear(Args)
 #' MIdata(rtdat, Args)
-MIdata <- function(rtdat, Args, bdat=getBirthDate(), f=identity) {
-  dat <- imputeRandomPoint(rtdat)
-  edat <- splitAtSeroDate(dat) 
-  out <- setData(edat, Args, time2="obs_end", birthdate=bdat)
-  f(out)
+MIdata <- function(rtdat, Args, f=identity) {
+  MIget <- function(...) {
+    dat <- imputeRandomPoint(rtdat)
+    edat <- splitAtSeroDate(dat) 
+    out <- setData(edat, Args, time2="obs_end", birthdate=bdat)
+    f(out)
+  }
+  bdat=getBirthDate()
+  parallel::mclapply(seq(Args$nSim),
+    function(i) { 
+      cat(i, "")
+      MIget(rtdat, Args, bdat, f=f)},
+      mc.cores=Args$mcores)
 }
 
 
@@ -503,11 +511,9 @@ getIncidenceMI <- function(Args, formulas=getFormula()) {
   hiv <- getHIV()
   rtdat <- getRTData(hiv)
   age_dat <- getAgeYear(Args)
-  bdat <- getBirthDate()
-  mdat <- parallel::mclapply(seq(Args$nSim), function(i) {
-    cat(i, ""); MIdata(rtdat, Args, bdat)},
-    mc.cores=Args$mcores)
-  pois_inc <- lapply(formulas, function(x) MIpois(mdat, age_dat, x))
+  mdat <- MIdata(rtdat, Args)
+  pois_inc <- lapply(formulas, 
+    function(x) MIpois(mdat, age_dat, x))
   agg_inc <- lapply(mdat, AggByYear)
   agg_inc <- MIaggregate(agg_inc)
   list(agg=agg_inc, pois_inc=pois_inc)
