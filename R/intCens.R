@@ -81,7 +81,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    # cat(oneID, "")
+    cat(oneID, "")
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
     start_time <- ifelse(is.null(start_date), 
@@ -130,7 +130,6 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
             seroDist = seroDist/mysum
             SeroTimes[asim] = sample(x=AllSeroTimes,size=1,prob=seroDist)
           }
-          browser()
           if(any(SeroTimes[asim]<leftTime))
             stop('Random seroconversion time smaller than allowed\n')
           if(any(SeroTimes[asim]>rightTime))
