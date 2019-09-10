@@ -49,7 +49,7 @@ setRoot <- function() {
   if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
     root    <- file.path("/data/AlainData/AC_Data")
   } else if (Sys.getenv("R_PLATFORM")=="x86_64-pc-linux-gnu") { #docker path
-    root = file.path("home/AC_Data") 
+    root = file.path("/home/AC_Data") 
   } else {
     root=file.path(Sys.getenv("HOME"), "Documents/AC_Data")
   }
