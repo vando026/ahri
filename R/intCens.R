@@ -81,7 +81,6 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   allIDs <- sort(unique(dat$IIntID))
 
   doFunc <- function(oneID, dat, Args) {
-    cat(oneID, "")
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
     start_time <- ifelse(is.null(start_date), 
@@ -101,7 +100,8 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
       (knots(baselineHazard)<=rightTime))
     variableNames <- Results$edat[, "Covariate"]
     if(length(jumpTimesIndicesSample)<1) {
-      print(sprintf("=====Issue for %s ", oneID))
+      message(sprintf("=====Issue for %s ", oneID))
+      browser()
     } else if(length(jumpTimesIndicesSample)>=1) {
       covariateValues = matrix(data=NA,
         nrow=length(jumpTimesIndices),
