@@ -101,7 +101,6 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
     variableNames <- Results$edat[, "Covariate"]
     if(length(jumpTimesIndicesSample)<1) {
       message(sprintf("=====Issue for %s ", oneID))
-      browser()
     } else if(length(jumpTimesIndicesSample)>=1) {
       covariateValues = matrix(data=NA,
         nrow=length(jumpTimesIndices),
