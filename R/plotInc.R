@@ -68,7 +68,8 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 plotIncSexArea <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gcolor="grey50", ipoints=TRUE,
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
-  gfun=png, Title="", fname="year_plot") {
+  gfun=png, Title="", fname="year_plot", 
+  output="~/Dropbox/R") {
 
   alainr::getColor()
   if(!is.null(gfun)) {
@@ -111,15 +112,6 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
     cex=1.4)
   if(!is.null(gfun)) dev.off()
 }
-
-
-
-
-
-
-
-
-
 
 
 
