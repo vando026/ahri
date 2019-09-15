@@ -5,7 +5,7 @@ readHealthData_ <- function(inFile, Fem) {
       Age=AgeAtVisit, EverUsedCondom=MRPEverUsedCondoms, 
       Marital=CurrentMaritalStatus,
       Partner12=PartnersInLastTwelveMonths,
-      matches("IsCircumcised"))
+      matches("^IsCircumcised$"))
     dat <- haven::zap_labels(dat)
     dat <- haven::zap_formats(dat)
     dat <- mutate(dat, 
