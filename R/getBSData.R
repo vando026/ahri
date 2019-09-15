@@ -55,7 +55,7 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 
 getBSMax <- function(
   inFile=getFiles()$epifile,
-  outFile="MaxBSIntID.Rdata",
+  outFile=getFiles()$bsmfile,
   minDays=0) {
 
   load(inFile)
@@ -75,8 +75,7 @@ getBSMax <- function(
   maxBS <- filter(dat, MaxDays >= minDays) %>% 
     select(IIntID, Year, BSIntID )
 
-  save(maxBS, file=file.path(setRoot(), 
-    "Derived/Other", outFile))
+  save(maxBS, file=outFile)
   return(maxBS)
 }
 
