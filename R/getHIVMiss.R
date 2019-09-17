@@ -218,7 +218,7 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
   out <- data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Contact, ContactPerc, Tested, TestedPerc, Test1, stringsAsFactors=FALSE)
   out <- left_join(out, inc_elig)
-  out <- filter(out, Year %in% Args$Year[-length(Args$Year)])
+  out <- filter(out, Year %in% Args$Year)
   out
 }
 

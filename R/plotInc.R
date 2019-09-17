@@ -65,11 +65,10 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' @param Fem data.frame with rate, lci, and uci for women.
 #' 
 #' @export
-plotIncSexArea <- function(Mal, Fem, yLim=7,
-  Colors=c("blue", "red"), gcolor="grey50", ipoints=TRUE,
+plotIncSexArea <- function(Mal, Fem, yLim=5.5,
+  Colors=c(Blues[3], Reds[3]), gcolor="grey50", ipoints=TRUE,
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
-  gfun=png, Title="", fname="year_plot", 
-  output="~/Dropbox/R") {
+  gfun=png, Title="", fname="year_plot") {
 
   alainr::getColor()
   if(!is.null(gfun)) {
@@ -80,6 +79,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
   }
   x <- as.numeric(rownames(Mal))
 
+  par(mar=c(4.0,4.5,3.0,0.5))
   plot(x, Mal[, "rate"], type='n',
     pch=4, bty="l", xaxt='n',
     ylim=c(0, yLim), main=Title,
@@ -109,7 +109,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=7,
     c("Men", "Women"),
     lwd=10, lty=1, col=c(Colors[1], Colors[2]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
-    cex=1.4)
+    cex=1.4, inset=c(0, -0.10))
   if(!is.null(gfun)) dev.off()
 }
 
