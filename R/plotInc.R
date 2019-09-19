@@ -68,6 +68,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   Colors=c(Blues[3], Reds[3]), gcolor="grey50", ipoints=TRUE,
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),
+  Legend=c("Men", "Women"),
   gfun=png, Title="", fname="year_plot") {
 
   alainr::getColor()
@@ -90,6 +91,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   # plotrix::staxlab(side = 1, at=x, labels=x, srt=45, cex.axis=1.1)
 
   renderInc <- function(dat, Colors, bwidth) {
+    x <- as.numeric(rownames(dat))
     uci <- dat[, "uci"]; lci <- dat[, "lci"]
     lci[is.na(lci)] <- 0
     ub_ks <- ksmooth(x, uci, "normal", bandwidth = bwidth[2])
@@ -105,8 +107,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   renderInc(Mal, Colors[1], bwidth$mal)
   renderInc(Fem, Colors[2], bwidth$fem)
 
-  legend("top", 
-    c("Men", "Women"),
+  legend("top", Legend, 
     lwd=10, lty=1, col=c(Colors[1], Colors[2]),
     ncol=2, bty="n", pt.lwd=8, xpd=TRUE,
     cex=1.4, inset=c(0, -0.10))

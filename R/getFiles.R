@@ -22,7 +22,6 @@ getFiles <- function(
   bsmfile="Derived/BoundedStructure/2017/MaxBSIntID.Rdata",
   epi_dta="Source/Episodes/2017/SurveillanceEpisodesBasicAgeYrHIV.dta",
   epifile="Derived/Episodes/2017/SurveillanceEpisodes.Rdata",
-  bsafile="Derived/Other/BS_Area.Rdata",
   parfile="Derived/Other/PartnerDat.Rdata",
   prvfile="Derived/Other/HIV_Prev_Aug21.csv",
   pipfile="Derived/BoundedStructure/2017/PIPBoundedStructures.xlsx",

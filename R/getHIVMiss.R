@@ -200,25 +200,32 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
   # Get testing date
   edat <- getHIVEligible(Args)
   sdat <- sumHIVMiss(edat)
+  sdat <- filter(sdat, Year %in% Args$Year)
   Eligible = paste0(fmt(sdat$EligibleN), "/", fmt(sdat$EnumeratedN))
   EligiblePerc = with(sdat, (EligibleN/EnumeratedN)*100)
+  AveEligPerc <- paste0("(", rnd(mean(EligiblePerc)), ")")
   EligiblePerc = paste0("(", rnd(EligiblePerc), ")")
   Contact = paste0(fmt(sdat$ContactN), "/", fmt(sdat$EligibleN)) 
   ContactPerc = with(sdat, (ContactN/EligibleN)*100)
+  AveContactPerc <- paste0("(", rnd(mean(ContactPerc)), ")")
   ContactPerc = paste0("(", rnd(ContactPerc), ")")
   Tested = paste0(fmt(sdat$TestedN), "/", fmt(sdat$ContactN)) 
   TestedPerc = with(sdat, (TestedN/ContactN)*100)
+  AveTestedPerc <- paste0("(", rnd(mean(TestedPerc)), ")")
   TestedPerc = paste0("(", rnd(TestedPerc), ")")
   CumTest <- getHIVCumTest(edat) 
+  CumTest <- filter(CumTest, Year %in% Args$Year)
   Test1 <- rnd(CumTest$TestedPerc)
   inc_elig <- getHIVIncEligible(Args, ids=IDS)
   inc_elig$EligN <- fmt(inc_elig$EligN)
   inc_elig$N <- fmt(inc_elig$N)
+  AveIncElig <- paste0("(", rnd(mean(inc_elig$Perc)), ")")
   inc_elig$Perc <- paste0("(", rnd(inc_elig$Perc), ")")
   out <- data.frame(Year=sdat$Year, Eligible, EligiblePerc,
     Contact, ContactPerc, Tested, TestedPerc, Test1, stringsAsFactors=FALSE)
   out <- left_join(out, inc_elig)
-  out <- filter(out, Year %in% Args$Year)
+  Ave <- c("Average", NA, AveEligPerc, NA, AveContactPerc, NA, AveTestedPerc, NA, NA, NA, AveIncElig)
+  out <- rbind(out, Average=Ave)
   out
 }
 
