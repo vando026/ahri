@@ -183,7 +183,7 @@ getHIVIncEligible <- function(Args, ids=NULL) {
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
 #' one additional year to compute HIV cohort person time. 
-#' @param IDS Needed to subset dataset in \code{\link{getCohort}}, default is NULL. 
+#' @param IDS Needed to subset dataset, default is NULL. 
 #' 
 #' @return data.frame
 #'

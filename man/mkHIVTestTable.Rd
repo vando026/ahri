@@ -10,7 +10,7 @@ mkHIVTestTable(Args, IDS = NULL)
 \item{Args}{requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
 one additional year to compute HIV cohort person time.}
 
-\item{IDS}{Needed to subset dataset in \code{\link{getCohort}}, default is NULL.}
+\item{IDS}{Needed to subset dataset, default is NULL.}
 }
 \value{
 data.frame
