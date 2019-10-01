@@ -9,7 +9,7 @@ getHIVIncEligible(Args, ids = NULL)
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
 
-\item{f}{Function to do additional data manipulation.}
+\item{ids}{keep only IDs.}
 }
 \value{
 

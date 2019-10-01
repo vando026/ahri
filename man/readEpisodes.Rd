@@ -4,7 +4,7 @@
 \alias{readEpisodes}
 \title{readEpisodes}
 \usage{
-readEpisodes(inFile = getFiles()$epi_dta, outFile = getFiles()$epifile,
+readEpisodes(inFile = getFiles()$epi_dta, outFile = getFiles()$epi_rda,
   Vars = " ")
 }
 \arguments{

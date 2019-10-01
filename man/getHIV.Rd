@@ -4,7 +4,7 @@
 \alias{getHIV}
 \title{getHIV}
 \usage{
-getHIV(inFile = getFiles()$hivfile)
+getHIV(inFile = getFiles()$hiv_rda)
 }
 \arguments{
 \item{inFiles}{File path from \code{\link{getFiles}}.}

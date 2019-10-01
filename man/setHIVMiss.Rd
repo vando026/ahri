@@ -4,10 +4,15 @@
 \alias{setHIVMiss}
 \title{setHIVMiss}
 \usage{
-setHIVMiss(Root = setRoot(), dropTasP = TRUE)
+setHIVMiss(inFile = getFiles()$elifile, outFile = getFiles()$eli_rda,
+  dropTasP = TRUE)
 }
 \arguments{
-\item{Root}{The root path to folder containing HIV surveillance datasets.}
+\item{inFile}{The root path to folder containing HIV surveillance datasets.}
+
+\item{outFile}{Path to write new dataset.}
+
+\item{dropTasP}{Drop TasP surveillance areas from the data.}
 }
 \value{
 

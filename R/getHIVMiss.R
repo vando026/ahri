@@ -26,18 +26,22 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 #' 
 #' @description  Gets HIV test dates by merging yearly HIV surveillance datasets.
 #' 
-#' @param Root The root path to folder containing HIV surveillance datasets. 
+#' @param inFile The root path to folder containing HIV surveillance datasets. 
+#' @param outFile Path to write new dataset.
+#' @param dropTasP Drop TasP surveillance areas from the data. 
 #' 
 #' @return 
 #'
 #' @export 
-setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
-  filep <- file.path(Root, "Source/HIVSurveillance")
-  files <- list.files(filep, pattern=".dta$")
+setHIVMiss <- function(
+  inFile=getFiles()$elifile,
+  outFile=getFiles()$eli_rda,
+  dropTasP=TRUE) {
+  files <- list.files(inFile, pattern=".dta$")
   # diff vars for 2005--2009
   set1 <- files[unlist(lapply(files,
     function(x) grepl("200[4-9]", x)))]
-  dat1 <- lapply(file.path(filep, set1), 
+  dat1 <- lapply(file.path(inFile, set1), 
     function(x) readHIVSurvYear(x, addVars="HIVRefusedBy"))
   dat1 <- do.call(rbind, dat1)
   dat1 <- dplyr::rename(dat1, FormRefusedBy = HIVRefusedBy)
@@ -45,7 +49,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   # From 2010-2017, HIVRefused changes, depends on FormRefused
   set2 <- files[unlist(lapply(files,
     function(x) grepl("201[0-8]", x)))]
-  dat2 <- lapply(file.path(filep, set2), 
+  dat2 <- lapply(file.path(inFile, set2), 
     function(x) readHIVSurvYear(x, addVars="^FormRefusedBy$|^FormRefused$"))
   dat2 <- do.call(rbind, dat2)
   dat2 <- mutate(dat2, 
@@ -63,7 +67,7 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
   if (dropTasP) adat <- dropTasPData(adat)
   dat <- select(adat, -c(FormRefusedBy)) %>% 
     arrange(IIntID, VisitDate)
-  save(dat, file=file.path(getFiles()$elifile))
+  saveRDS(dat, outFile)
   dat
 }
 
@@ -71,15 +75,13 @@ setHIVMiss <- function(Root=setRoot(), dropTasP=TRUE) {
 ##' 
 ##' @description  Get eligibility for HIV testing.
 ##' 
-##' @param Args 
-##' @param dat Default is Null or loads \code{\link{setHIVMiss}}.
+##' @param dat Default is Null or loads dataset from \code{\link{setHIVMiss}}.
 ##' 
 ##' @return 
 ##'
 ##' @export 
-getHIVEligible <- function(Args=NULL, dat=NULL) {
-  if (is.null(dat))
-    load(file=file.path(getFiles()$elifile))
+getHIVEligible <- function(dat=NULL) {
+  if (is.null(dat)) dat <- readRDS(getFiles()$eli_rda)
   dat <- mutate(dat, Drop = as.numeric(grepl(
     "OutMigrated|Outmigrat*|[Dd]ead|Broken|Non-Func*|
     Migrated unknown", Comment)))
@@ -144,7 +146,7 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' @description  Get number of participants eligible for HIV incidence cohort.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
-#' @param f Function to do additional data manipulation.
+#' @param ids keep only IDs.
 #' 
 #' @return 
 #'
@@ -157,25 +159,18 @@ getHIVIncEligible <- function(Args, ids=NULL) {
       data.frame(Year=i, N=yy)
     }
   }
-  oldYear <- Args$Years
-  Args$Years <- 2004:2017
-  edat <- getHIVEligible(Args)
-  bdat <- getBirthDate(addVars="Female")
-  edat <- filter(edat, HIVResult=="Negative")
-  edat <- setData(edat, Args, time2="VisitDate", bdat)
-  # Get all contacted
+  hiv <- getHIV()
+  ehiv <- filter(hiv, HIVResult==0)
+  edat <- setData(ehiv, Args, time2="VisitDate")
   getElig <- getN(edat)
   elig <- do.call(rbind, lapply(Args$Year, getElig)) %>% rename(EligN=N)
-  # Tested Cohort
-  Args$Years <- oldYear
-  hiv <- getHIV()
   rtdat <- getRTData(hiv)
   sdat <- splitAtEarlyPos(rtdat)
   sdat <- setData(sdat, Args, time2="obs_end", birthdate=NULL) 
   if (!is.null(ids))
     sdat <- sdat[sdat$IIntID %in% ids, ]
   getRT <- getN(sdat)
-  cohort <- do.call(rbind, lapply(c(2005:2017), getRT))
+  cohort <- do.call(rbind, lapply(c(Args$Year), getRT))
   out <- right_join(elig, cohort)
   out <- mutate(out, Perc=round((N/EligN)*100, 2))
   out

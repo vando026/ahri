@@ -13,7 +13,7 @@
 #' @examples
 #' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate()
 #' getIncData(rtdat, bdat, Args)
 getIncData <- function(rtdat, bdat, Args) {
   dat <- Args$imputeMethod(rtdat)
@@ -56,7 +56,7 @@ AggFunc <- function(RHS) {
 #' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
 #' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate()
 #' ydat <- getIncData(rtdat, bdat, Args)
 #' inc <- AggByYear(ydat)
 AggByYear <- AggFunc("Year")
@@ -150,7 +150,7 @@ doPoisAge <- function(dat) {
 #' @examples
 #' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate()
 #' setInc(rtdat, bdat, doPoisAge, Args)
 setInc <- function(rtdat, Args, fun=miCompute()) {
   age_dat <- getAgeYear(Args)
@@ -177,7 +177,7 @@ setInc <- function(rtdat, Args, fun=miCompute()) {
 #' @examples
 #' hiv   <- getHIV()
 #' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate(Args$inFiles$epifile)
+#' bdat <- getBirthDate()
 #' calcInc <- setInc(rtdat, Args, miCompute())
 #' dat <- mclapply(seq(Args$nSim), calcInc,
 #'   mc.cores=Args$mcores)

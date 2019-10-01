@@ -16,7 +16,7 @@
 getMortalityData <- function(Args, 
   startVar="HIVPositive", dropHIVPos=FALSE) {
   #
-  edat <- getEpisodes(Args$inFiles$epifile)
+  edat <- getEpisodes()
   hiv <- getHIV()
   # Get start date
   if (startVar=="ObservationStart") {
@@ -53,7 +53,7 @@ getMortalityData <- function(Args,
   }
   # split data
   tdat <- splitData2(sdat)
-  bdat <- getBirthDate(Args$inFiles$epifile, addVars="Female") 
+  bdat <- getBirthDate(addVars="Female") 
   tdat <- setData(tdat, Args)
   tdat <- mutate(tdat, Days = as.numeric(obs_end-obs_start))
   if(any(tdat$Days > 366)) stop("Days > 366")

@@ -17,7 +17,7 @@
 
 readEpisodes <- function(
   inFile=getFiles()$epi_dta,
-  outFile=getFiles()$epifile, Vars=" ") {
+  outFile=getFiles()$epi_rda, Vars=" ") {
   #
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
@@ -26,7 +26,8 @@ readEpisodes <- function(
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     Female=Sex, Age, Resident,
-    EarliestARTInitDate, DoB, DoD, matches(Vars))
+    EarliestARTInitDate, DoB, DoD,
+    InMigration, OutMigration, matches(Vars))
   dat <- haven::zap_labels(dat)
   dat <- haven::zap_formats(dat)
   dat <- filter(dat, Female %in% c(1, 2))
@@ -37,7 +38,7 @@ readEpisodes <- function(
     Year=as.integer(Year))
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
-  save(dat, file=file.path(outFile))
+  saveRDS(dat, outFile)
   dat
 }
 
@@ -51,38 +52,10 @@ readEpisodes <- function(
 #' @return data.frame
 #'
 #' @export 
-#'
-#' @examples
-#' Args <- setArgs()
-#' getEpisodes(getFiles$epifile)
-
-getEpisodes <- function(inFile=getFiles()$epifile) {
-  load(inFile, envir=environment())
-  dat
+getEpisodes <- function(inFile=getFiles()$epi_rda) {
+  readRDS(inFile)
 }
 
-#' @title dropTasPData
-#' 
-#' @description  Function to drop individuals who tested in TasP areas.
-#' 
-#' @param dat A dataset.
-#' 
-#' @return data.frame
-#'
-#' @export 
-
-dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
-  pipdat <- readPIPData(inFile)
-  pipdat <- select(pipdat, BSIntID, PIPSA)
-  dat <- left_join(dat, pipdat, by="BSIntID")
-  # keep if miss BS prior to 2017
-  dat <- filter(dat, PIPSA %in% c("S", NA)) 
-  # drop if NA in 2017
-  # dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
-  dat <- select(dat, -c(PIPSA))
-  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
-  dat
-}
 
 #' @title setEpisodes
 #' 

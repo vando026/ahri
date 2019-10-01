@@ -45,7 +45,7 @@ setAge <- function(dat, Args) {
 #' getBirthDate(addVars="Female")
 
 getBirthDate <- function(
-  inFile=getFiles()$epifile, addVars=" ") {
+  inFile=getFiles()$epi_rda, addVars=" ") {
   dat <- getEpisodes(inFile) 
   dat <- select(dat, IIntID, DateOfBirth=DoB, contains(addVars))
   dat <- distinct(dat, IIntID, .keep_all=TRUE)

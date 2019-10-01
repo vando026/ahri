@@ -1,5 +1,17 @@
-readHealthData_ <- function(inFile, Fem) {
-  function() {
+#' @title readHealthData
+#' 
+#' @description  Reads in WGH/MGH data. 
+#' 
+#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
+#' @param outFile Filepath to dataset, default is \code{getFiles()$mgh_rda}.
+#' @param Fem either a 0 or 1 to represent MGH or WGH dataset
+#' 
+#' @return 
+#'
+#' @export 
+#' @examples
+#' readHealthData(getFiles()$mghfile, getFiles()$mgh_rda, Fem=0)
+readHealthData <- function(inFile, outFile, Fem) {
     dat <- haven::read_dta(inFile) %>%
       select(IIntID=IIntId, VisitDate,
       Age=AgeAtVisit, EverUsedCondom=MRPEverUsedCondoms, 
@@ -12,39 +24,45 @@ readHealthData_ <- function(inFile, Fem) {
       Year = as.integer(format(dat$VisitDate, "%Y")),
       IIntID = as.integer(IIntID),
       Female = Fem)
+    saveRDS(dat, outFile)
     dat
-  }
 }
 
-#' @title readHealthDataMen
+#' @title getMGH
 #' 
 #' @description  Reads in men general health data. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
+#' @param inFile Filepath to dataset, default is \code{getFiles()$mgh_rda}.
 #' 
 #' @return 
 #'
 #' @export 
 #' @examples
-#' readHealthDataMen <- readHealthData(getFiles()$mghfile)
-readHealthDataMen <- readHealthData_(inFile=getFiles()$mghfile, Fem=0)
+#' readHealthData(getFiles()$mghfile, getFiles()$mgh_rda, Fem=0)
+#' getMGH()
+getMGH <- function(inFile=getFiles()$mgh_rda) {
+  readRDS(inFile)
+}
 
 
-#' @title readHealthDataWomen
+#' @title getWGH
 #' 
 #' @description  Reads in women general health data. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$fghfile}.
+#' @param inFile Filepath to dataset, default is \code{getFiles()$wgh_rda}.
 #' 
 #' @return 
 #'
 #' @export 
 #' @examples
-#' readHealthWomen <- readHealthData(getFiles()$wghfile)
-readHealthDataWomen <- readHealthData_(inFile=getFiles()$wghfile, Fem=1)
+#' readHealthData(getFiles()$wghfile, getFiles()$wgh_rda, Fem=1)
+#' getWGH()
+getWGH <- function(inFile=getFiles()$wgh_rda) {
+  readRDS(inFile)
+}
 
 
-#' @title readHealthData
+#' @title getWGH_MGH
 #' 
 #' @description  Reads in men and women general health data. 
 #' 
@@ -55,9 +73,9 @@ readHealthDataWomen <- readHealthData_(inFile=getFiles()$wghfile, Fem=1)
 #' @export 
 #' @examples
 #' readHealthWomen <- readHealthData(getFiles()$wghfile)
-readHealthData <- function() {
-  wdat <- readHealthDataWomen()
-  mdat <- readHealthDataMen()
+getWGH_MGH <- function() {
+  wdat <- getWGH()
+  mdat <- getMGH()
   dplyr::bind_rows(wdat, mdat)
 }
 
@@ -67,7 +85,7 @@ readHealthData <- function() {
 #' 
 #' @export
 getCircumcisionData <- function() {
-  dat <- readHealthDataMen() 
+  dat <- getMGH() 
   dat <- filter(dat, IsCircumcised %in% c(1, 2))
   dat <- mutate(dat, IsCircumcised=as.numeric(IsCircumcised==1))
   dat <- filter(dat, IsCircumcised==1)
@@ -126,7 +144,7 @@ dropCircum <- setCircumStatus(Keep=0)
 #' @export
 
 getCondomUseData <- function() {
-  dat <- readHealthData()
+  dat <- getWGH_MGH()
   dat <- select(dat, IIntID, Year, EverUsedCondom, Female)
   dat <- filter(dat, EverUsedCondom %in% c(1:3))
   dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)

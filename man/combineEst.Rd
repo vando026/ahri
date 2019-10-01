@@ -20,7 +20,7 @@ Collect all estimates into single matrix
 \examples{
 hiv   <- getHIV()
 rtdat <- getRTData(hiv)
-bdat <- getBirthDate(Args$inFiles$epifile)
+bdat <- getBirthDate()
 calcInc <- setInc(rtdat, Args, miCompute())
 dat <- mclapply(seq(Args$nSim), calcInc,
   mc.cores=Args$mcores)

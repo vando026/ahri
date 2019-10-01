@@ -4,7 +4,7 @@
 \alias{getBirthDate}
 \title{getBirthDate}
 \usage{
-getBirthDate(inFile = getFiles()$epifile, addVars = " ")
+getBirthDate(inFile = getFiles()$epi_rda, addVars = " ")
 }
 \arguments{
 \item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}}

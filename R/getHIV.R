@@ -11,7 +11,9 @@
 #' @export 
 
 readHIVData <- function(
-  inFile=getFiles()$hivfile, dropTasP=TRUE) {
+  inFile=getFiles()$hivfile,
+  outFile=getFiles()$hiv_rda,
+  dropTasP=TRUE) {
   hiv <- haven::read_dta(inFile) %>% 
     select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
       HIVResult, Sex, Age=AgeAtVisit)
@@ -23,6 +25,16 @@ readHIVData <- function(
     Female=as.integer(ifelse(Sex==2, 1, 0)))
   hiv <- select(hiv, -Sex) %>% arrange(IIntID, VisitDate)
   if (dropTasP) hiv <- dropTasPData(hiv)
+  # Only deal with valid test results
+  hiv <- filter(hiv, HIVResult %in% c(0,1))
+  hiv <- filter(hiv, Age %in% c(15:100))
+  hiv <- mutate(hiv, 
+    HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
+    HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
+  hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
+  Vars <- c("HIVNegative", "HIVPositive")
+  hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
+  saveRDS(hiv, file=outFile)
   hiv
 }
 
@@ -34,22 +46,10 @@ readHIVData <- function(
 #'
 #' @return data.frame
 #'
-#' @import dplyr 
-#'
 #' @export 
 
-getHIV <- function(inFile=getFiles()$hivfile) {
-  hiv <- readHIVData(inFile)
-  # Only deal with valid test results
-  hiv <- filter(hiv, HIVResult %in% c(0,1))
-  hiv <- filter(hiv, Age %in% c(15:100))
-  hiv <- mutate(hiv, 
-    HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
-    HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
-  hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
-  Vars <- c("HIVNegative", "HIVPositive")
-  hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-  hiv 
+getHIV <- function(inFile=getFiles()$hiv_rda) {
+  readRDS(file=inFile)
 }
 
 #' @title setHIV

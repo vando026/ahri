@@ -4,7 +4,8 @@
 \alias{readHIVData}
 \title{readHIVData}
 \usage{
-readHIVData(inFile = getFiles()$hivfile, dropTasP = TRUE)
+readHIVData(inFile = getFiles()$hivfile, outFile = getFiles()$hiv_rda,
+  dropTasP = TRUE)
 }
 \arguments{
 \item{dropTasP}{Drop TasP surveillance areas from the data.}

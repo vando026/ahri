@@ -20,7 +20,7 @@ getCVLData <- function(Args) {
     Year = as.integer(format(SpecimenDate, "%Y")))
   dat <- filter(dat, Year != 2012)
 
-  ind <- getBirthDate(Args$inFile$epifile, addVars="Female")
+  ind <- getBirthDate(addVars="Female")
   dat <- left_join(dat, ind, by="IIntID")
   dat <- mutate(dat, 
     AgeAtVisit = round(as.numeric((SpecimenDate - DateOfBirth)/365.25)))

@@ -4,7 +4,7 @@
 \alias{getEpisodes}
 \title{getEpisodes}
 \usage{
-getEpisodes(inFile = getFiles()$epifile)
+getEpisodes(inFile = getFiles()$epi_rda)
 }
 \arguments{
 \item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
@@ -14,8 +14,4 @@ data.frame
 }
 \description{
 Loads Episodes .Rdata into memory, see \code{\link{readEpisodes}}.
-}
-\examples{
-Args <- setArgs()
-getEpisodes(getFiles$epifile)
 }

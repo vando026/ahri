@@ -4,12 +4,10 @@
 \alias{getHIVEligible}
 \title{getHIVEligible}
 \usage{
-getHIVEligible(Args = NULL, dat = NULL)
+getHIVEligible(dat = NULL)
 }
 \arguments{
-\item{Args}{}
-
-\item{dat}{Default is Null or loads \code{\link{setHIVMiss}}.}
+\item{dat}{Default is Null or loads dataset from \code{\link{setHIVMiss}}.}
 }
 \value{
 

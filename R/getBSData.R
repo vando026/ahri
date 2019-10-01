@@ -1,3 +1,17 @@
+#' @title getBSCord
+#' 
+#' @description  get the GPS coordinates for BSIntID 
+#' 
+#' @param inFile path to the BSIntID coordinates csv file
+#' 
+#' @return data.frame
+#'
+#' @export
+getBSCord <- function(inFile=getFiles()$bscfile) {
+  dat <-  read_csv(inFile)
+  mutate(dat, BSIntID=as.integer(BSIntID))
+}
+
 #' @title readBSData
 #' 
 #' @description  Read in Bounded Structures data.
@@ -10,14 +24,13 @@
 #'
 #' @examples
 #' readBSData() 
-
 readBSData <- function(inFile=getFiles()$bsifile) {
   dat <- haven::read_dta(inFile) %>% 
-    select(BSIntID=BSIntId, LocalArea, IsUrbanOrRural)
+    select(BSIntID=BSIntId, LocalArea, Area=IsUrbanOrRural)
   mutate(dat, 
     BSIntID = as.integer(BSIntID),
     LocalArea = as.character(haven::as_factor(dat$LocalArea)),
-    IsUrbanOrRural = as.character(haven::as_factor(dat$IsUrbanOrRural)))
+    Area = as.character(haven::as_factor(dat$Area)))
 }
 
 
@@ -25,24 +38,67 @@ readBSData <- function(inFile=getFiles()$bsifile) {
 #' 
 #' @description  Read in PIP data to identify ACIDS from TASP area
 #' 
-#' @param inFile
+#' @param inFile 
 #' 
 #' @return data.frame
 #'
 #' @export 
 readPIPData <- function(inFile=getFiles()$pipfile) {
-  dat <- readxl::read_excel(inFile)
-  names(dat)[names(dat)=="BSIntId"] = "BSIntID"
-  dat <- mutate(dat, BSIntID=as.integer(BSIntID))
+  dat <- haven::read_dta(inFile)
+  dat <- select(dat, BSIntID, PIPSA)
+  mutate(dat, BSIntID=as.integer(BSIntID))
+}
+
+#' @title dropTasPData
+#' 
+#' @description  Function to drop individuals who tested in TasP areas.
+#' 
+#' @param dat A dataset.
+#' 
+#' @return data.frame
+#'
+#' @export 
+
+dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
+  pipdat <- readPIPData(inFile)
+  dat <- left_join(dat, pipdat, by="BSIntID")
+  # keep if miss BS prior to 2017
+  dat <- filter(dat, PIPSA %in% c("S", NA)) 
+  # drop if NA in 2017
+  # dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
+  dat <- select(dat, -c(PIPSA))
+  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
   dat
 }
+
+#' @title mkBSData
+#' 
+#' @description  Make a composite of BS data for Analytics dataset
+#' 
+#' @param Args see \code{\link{setArgs}}.
+#' 
+#' @return 
+#'
+#' @export 
+mkBSData <- function(outFile=getFiles()$bsc_rda, dropTasP=TRUE) {
+  pdat <- readPIPData()
+  if (dropTasP) 
+    pdat <- filter(pdat, PIPSA %in% c("S", NA)) 
+  bdat <- readBSData()
+  cdat <- getBSCord()
+  dat <- left_join(pdat, bdat, by="BSIntID")
+  dat <- left_join(dat, cdat, by="BSIntID")
+  saveRDS(dat, outFile)
+  dat
+}
+
 
 #' @title getBSMax
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
 #' @param inFile file path to Episodes dataset (\code{getFiles()$epifile}).
-#' @param outFile file path to write dataset.
+#' @param outFile file path to write dataset (\code{getFiles()$bsm_rda}).
 #' @param minDays Value of 1:366 min days spent in DSA to qualify as being a resident in
 #' that year. 
 #'
@@ -51,14 +107,14 @@ readPIPData <- function(inFile=getFiles()$pipfile) {
 #' @export 
 #'
 #' @examples 
-#' hiv <- getBSMax()
+#' bmax <- getBSMax()
 
 getBSMax <- function(
-  inFile=getFiles()$epifile,
-  outFile=getFiles()$bsmfile,
+  inFile=getFiles()$epi_rda,
+  outFile=getFiles()$bsm_rda,
   minDays=0) {
 
-  load(inFile)
+  dat <- readRDS(inFile)
   dat <- filter(dat, Resident==1)
 
   # Identify max expdays per episode
@@ -75,9 +131,11 @@ getBSMax <- function(
   maxBS <- filter(dat, MaxDays >= minDays) %>% 
     select(IIntID, Year, BSIntID )
 
-  save(maxBS, file=outFile)
-  return(maxBS)
+  saveRDS(maxBS, file=outFile)
+  maxBS
 }
+
+
 
 #' @title addMigrVars
 #' 
@@ -91,10 +149,7 @@ getBSMax <- function(
 #' @export
 
 addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
-
-  if (is.null(dem))
-    dem <- readEpisodes(Vars="^Resident$|Migration")
-
+  if (is.null(dem)) dem <- getEpisodes()
   adat <- distinct(dem, IIntID, Year)
   mdat <- filter(dem, Resident==1)
   mdat <- group_by(mdat, IIntID, Year) %>% 
@@ -131,21 +186,6 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
   dat
 }
 
-#' @title getBSCord
-#' 
-#' @description  get the GPS coordinates for BSIntID 
-#' 
-#' @param inFile path to the BSIntID coordinates csv file
-#' 
-#' @return data.frame
-#'
-#' @export
-
-getBSCord <- function(inFile=getFiles()$bscfile) {
-  dat <-  read_csv(inFile)
-  mutate(dat, BSIntID=as.integer(BSIntID))
-}
-
 #' @title addBSVars
 #' 
 #' @description Add variables from Bounded Structures to existing dataset.
@@ -158,14 +198,13 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #'
 #' @export 
 
-addBSVars <- function(dat, Vars="IsUrbanOrRural", 
+addBSVars <- function(dat, Vars="Area", 
   dropMissBS=TRUE) {
-  load(getFiles()$bsmfile)
+  maxBS <- readRDS(getFiles()$bsm_rda)
   dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
-  bdat <- readBSData()
+  bdat <- readRDS(getFiles()$bsc_rda)
   bdat <- select(bdat, BSIntID, matches(Vars))
   dat <- left_join(dat, bdat, by="BSIntID")
-  dat <- rename(dat, Area=IsUrbanOrRural)
   dat$Area[is.na(dat$Area)] <- 
     sample(sort(unique(dat$Area)),
     size=sum(is.na(dat$Area)),
@@ -187,7 +226,7 @@ addBSVars <- function(dat, Vars="IsUrbanOrRural",
 #' @export 
 readHSEData <- function(inFile=getFiles()$hsefile) {
   dat <- haven::read_dta(inFile)
-  dat <- rename(dat, Year=ExpYear, AIQ=AssetIndexQuintile) %>% 
+  dat <- select(dat, BSIntID, Year=ExpYear, AIQ=AssetIndexQuintile) %>% 
     arrange(BSIntID, Year) 
   dat[] <- lapply(dat[], as.integer)
   dat
@@ -205,7 +244,7 @@ readHSEData <- function(inFile=getFiles()$hsefile) {
 #' @export 
 
 addAIQVar <- function(dat) {
-  hdat <- readHSEData() %>% select(BSIntID, Year, AIQ)
+  hdat <- readHSEData() 
   hdat <- distinct(hdat, BSIntID, Year, .keep_all=TRUE) 
   dat <- left_join(dat, hdat, by=c("BSIntID", "Year"))
   dat <- mutate(dat, 
