@@ -114,7 +114,7 @@ makePartnerData <- function(dat,
 #' 
 #' @description  Get the marital status variable.
 #' 
-#' @param dat Dataset from \code{\link{readHealthDataMen/Women}}.
+#' @param dat WGH or MGH dataset.
 #' 
 #' @return variable
 #'
@@ -131,7 +131,7 @@ getMaritalStatus <- function(var) {
 #' 
 #' @param dat Existing dataset.
 #' 
-#' @param mdat Dataset from \code{\link{readHealthDataMen}}.
+#' @param mdat Dataset from \code{\link{getMGH}}.
 #' 
 #' @return 
 #'
