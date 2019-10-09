@@ -30,7 +30,7 @@ getRTData <- function(dat, onlyRT=TRUE) {
   # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
   rtdat <- mutate(dat, late_neg_after = ifelse(
     (late_neg > early_pos) & is.finite(early_pos) & is.finite(late_neg), 1, 0)) 
-  # ** I just drop these individuals, irreconcilable
+  # I just drop these individuals, irreconcilable
   rtdat <- filter(rtdat, late_neg_after==0) %>% 
     select(-c(late_neg_after, late_pos))
   if (onlyRT) {
@@ -40,7 +40,6 @@ getRTData <- function(dat, onlyRT=TRUE) {
     rtdat <- filter(rtdat, !(early_neg==late_neg & is.na(early_pos)))
   }
   rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
-  # Make for split episodes later rather than in loop to save time
   rtdat <- rename(rtdat, obs_start = early_neg)
   vars <- c("obs_start", "late_neg", "early_pos")
   rtdat[vars] <- lapply(rtdat[vars], as.Date, origin="1970-01-01")
@@ -101,29 +100,6 @@ getDatesMin <- getDates(min)
 #' getDatesMax(dat, "HIVNegative", "late_neg")
 
 getDatesMax <- getDates(max)
-
-
-
-#' @title getHIVDatesLong
-#' 
-#' @description Gets HIV dates and saves in long format. Used mainly for IntCens.  
-#' 
-#' @param dat Dateset from \code{\link{getHIV}}.
-#' 
-#' @return 
-#'
-#' @export 
-
-getHIVDatesLong <- function(dat) {
-  dat <- getHIV(Args)
-  early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
-  early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
-  late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
-  late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
-  dat <- distinct(dat, IIntID, Female)
-  dat <- Reduce(left_join, 
-    list(early_neg, late_neg, early_pos, late_pos))
-}
 
 
 

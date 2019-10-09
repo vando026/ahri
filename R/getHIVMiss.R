@@ -193,7 +193,7 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
   fmt <- function(x) trimws(formatC(x, big.mark=",", format="d"))
   rnd <- function(x) trimws(format(x, digits=1, nsmall=1))
   # Get testing date
-  edat <- getHIVEligible(Args)
+  edat <- getHIVEligible()
   sdat <- sumHIVMiss(edat)
   sdat <- filter(sdat, Year %in% Args$Year)
   Eligible = paste0(fmt(sdat$EligibleN), "/", fmt(sdat$EnumeratedN))
