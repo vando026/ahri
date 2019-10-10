@@ -159,18 +159,20 @@ getHIVIncEligible <- function(Args, ids=NULL) {
       data.frame(Year=i, N=yy)
     }
   }
+  Yrs <- c(2003:2018)
+  Args$Years <- Yrs
   hiv <- getHIV()
   ehiv <- filter(hiv, HIVResult==0)
   edat <- setData(ehiv, Args, time2="VisitDate")
   getElig <- getN(edat)
-  elig <- do.call(rbind, lapply(Args$Year, getElig)) %>% rename(EligN=N)
+  elig <- do.call(rbind, lapply(Yrs, getElig)) %>% rename(EligN=N)
   rtdat <- getRTData(hiv)
   sdat <- splitAtEarlyPos(rtdat)
   sdat <- setData(sdat, Args, time2="obs_end", birthdate=NULL) 
   if (!is.null(ids))
     sdat <- sdat[sdat$IIntID %in% ids, ]
   getRT <- getN(sdat)
-  cohort <- do.call(rbind, lapply(c(Args$Year), getRT))
+  cohort <- do.call(rbind, lapply(c(Yrs), getRT))
   out <- right_join(elig, cohort)
   out <- mutate(out, Perc=round((N/EligN)*100, 2))
   out
