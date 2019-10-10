@@ -54,7 +54,7 @@ getMortalityData <- function(Args,
   # split data
   tdat <- splitData2(sdat)
   bdat <- getBirthDate(addVars="Female") 
-  tdat <- setData(tdat, Args)
+  tdat <- setData(tdat, Args, time2="obs_start", birthdate=bdat)
   tdat <- mutate(tdat, Days = as.numeric(obs_end-obs_start))
   if(any(tdat$Days > 366)) stop("Days > 366")
   tdat
