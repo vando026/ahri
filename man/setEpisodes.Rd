@@ -8,8 +8,6 @@ setEpisodes(Args = setArgs(), dropTasP = TRUE)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
-
-\item{dropTasP}{default is to drop TasP areas.}
 }
 \value{
 data.frame

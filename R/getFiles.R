@@ -28,6 +28,7 @@ getFiles <- function(
   epi_dta="Source/Episodes/2018/SurveillanceEpisodesBasicAgeYrHIV.dta",
   epi_rda="Derived/Analytics/SurveillanceEpisodes.Rda",
   parfile="Derived/Analytics/PartnerDat.Rdata",
+  ind_rda="Derived/Analytics/Individuals.Rda",
   prvfile="Derived/Analytics/HIV_Prev_Aug21.csv",
   pipfile="Derived/Analytics/PIPBoundedStructures2018.dta",
   bscfile="Source/BoundedStructure/BSIntID_Coords.csv",
@@ -57,3 +58,30 @@ setRoot <- function() {
   }
   root
 }
+
+#' @title setHomePath
+#' 
+#' @description  Set paths for PC, Linux, and Docker
+#' 
+#' @param pc PC path
+#' @param linux Path to Linux Redhat
+#' @param docker Path to docker
+#' 
+#' @return 
+#'
+#' @export 
+
+setHomePath <- function(pc=getwd(), linux=getwd(), docker = "/home") {
+  krisp <- "x86_64-redhat-linux-gnu"
+  docker <- "x86_64-pc-linux-gnu"
+  if (Sys.getenv("R_PLATFORM")==krisp) {
+    home <- linux
+  } else if (Sys.getenv("R_PLATFORM")==docker) {
+    home <- docker
+  } else {
+    home <- pc
+  }
+  return(home)
+}
+
+

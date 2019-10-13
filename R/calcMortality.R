@@ -16,7 +16,7 @@
 getMortalityData <- function(Args, 
   startVar="HIVPositive", dropHIVPos=FALSE) {
   #
-  edat <- getEpisodes()
+  edat <- getIndividual()
   hiv <- getHIV()
   # Get start date
   if (startVar=="ObservationStart") {

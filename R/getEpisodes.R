@@ -1,13 +1,12 @@
 #' @title readEpisodes
 #' 
 #' @description  Reads in new Episodes dta dataset which replaces the Demography dataset (for
-#' 2017) and converts it to a .Rdata file.
+#' 2017) and converts it to a .Rda file.
 #' 
 #' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
+#' @param dropTasP default is to drop TasP areas.
 #' 
 #' @return data.frame
-#'
-#' @importFrom haven read_dta
 #'
 #' @export 
 #'
@@ -17,7 +16,8 @@
 
 readEpisodes <- function(
   inFile=getFiles()$epi_dta,
-  outFile=getFiles()$epi_rda, Vars=" ") {
+  outFile=getFiles()$epi_rda, 
+  dropTasP=TRUE, Vars=" ") {
   #
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
@@ -25,23 +25,57 @@ readEpisodes <- function(
     Year, ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
-    Female=Sex, Age, Resident,
-    EarliestARTInitDate, DoB, DoD,
-    InMigration, OutMigration, matches(Vars))
+    Resident, InMigration, 
+    OutMigration, matches(Vars))
+  dat <- filter(dat, Year >= 2004)
   dat <- haven::zap_labels(dat)
   dat <- haven::zap_formats(dat)
-  dat <- filter(dat, Female %in% c(1, 2))
   dat <- mutate(dat, 
-    Female=as.numeric(Female==2),
     IIntID=as.integer(IIntID),
     BSIntID=as.integer(BSIntID),
     Year=as.integer(Year))
+  if (dropTasP==TRUE) 
+    dat <- dropTasPData(dat, getFiles()$pipfile)
   dat <- arrange(dat, IIntID, ObservationStart)
   attributes(dat$BSIntID) <- NULL
   saveRDS(dat, outFile)
   dat
 }
 
+
+#' @title readIndividual
+#' 
+#' @description  Reads in new Episodes dta dataset which replaces the Individuals dataset (for
+#' 2017) and converts it to a .Rda file.
+#' 
+#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
+#' 
+#' @return data.frame
+#'
+#' @export 
+
+readIndividual <- function(
+  inFile=getFiles()$epi_dta,
+  outFile=getFiles()$ind_rda, Vars=" ") {
+  #
+  dat <- haven::read_dta(inFile) 
+  dat <- select(dat,
+    IIntID=IndividualId, 
+    Female=Sex, 
+    EarliestARTInitDate, 
+    BirthDate=DoB, 
+    DoD, matches(Vars))
+  dat <- haven::zap_labels(dat)
+  dat <- haven::zap_formats(dat)
+  dat <- distinct(dat, IIntID, .keep_all=TRUE)
+  dat <- filter(dat, Female %in% c(1, 2))
+  dat <- mutate(dat, 
+    Female=as.numeric(Female==2),
+    IIntID=as.integer(IIntID))
+  dat <- arrange(dat, IIntID)
+  saveRDS(dat, outFile)
+  dat
+}
 
 #' @title getEpisodes
 #' 
@@ -57,12 +91,24 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 }
 
 
+#' @title getInvidual
+#' 
+#' @description  Loads Individuals .Rda into memory, see \code{\link{readIndividuals}}.
+#' 
+#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
+#' 
+#' @return data.frame
+#'
+#' @export 
+getIndividual <- function(inFile=getFiles()$ind_rda) {
+  readRDS(inFile)
+}
+
 #' @title setEpisodes
 #' 
 #' @description  set episodes data according to Args and drops TasP Areas if needed.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
-#' @param dropTasP default is to drop TasP areas.
 #' 
 #' @return data.frame
 #'
@@ -73,9 +119,7 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 
 setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
   dat <- getEpisodes()
-  dat <- setData(dat, Args)
-  if (dropTasP==TRUE) 
-    dat <- dropTasPData(dat, getFiles()$pipfile)
+  dat <- setData(dat, Args, time2="ObservationStart")
   dat
 }
 

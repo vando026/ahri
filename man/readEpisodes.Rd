@@ -5,17 +5,19 @@
 \title{readEpisodes}
 \usage{
 readEpisodes(inFile = getFiles()$epi_dta, outFile = getFiles()$epi_rda,
-  Vars = " ")
+  dropTasP = TRUE, Vars = " ")
 }
 \arguments{
 \item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
+
+\item{dropTasP}{default is to drop TasP areas.}
 }
 \value{
 data.frame
 }
 \description{
 Reads in new Episodes dta dataset which replaces the Demography dataset (for
-2017) and converts it to a .Rdata file.
+2017) and converts it to a .Rda file.
 }
 \examples{
 Args <- setArgs()
