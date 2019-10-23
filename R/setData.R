@@ -44,11 +44,9 @@ setAge <- function(dat, Args) {
 #' Args <- setArgs()
 #' getBirthDate(addVars="Female")
 
-getBirthDate <- function(
-  inFile=getFiles()$epi_rda, addVars=" ") {
-  dat <- getEpisodes(inFile) 
-  dat <- select(dat, IIntID, DateOfBirth=DoB, contains(addVars))
-  dat <- distinct(dat, IIntID, .keep_all=TRUE)
+getBirthDate <- function(addVars=" ") {
+  dat <- getIndividual() 
+  dat <- select(dat, IIntID, DateOfBirth, contains(addVars))
   dat <- filter(dat, !is.na(DateOfBirth))
   dat <- filter(dat, as.numeric(format(DateOfBirth, "%Y")) > 1910)
   dat

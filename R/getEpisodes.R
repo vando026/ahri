@@ -62,12 +62,13 @@ readIndividual <- function(
   dat <- select(dat,
     IIntID=IndividualId, 
     Female=Sex, 
+    EarliestHIVPos,
     EarliestARTInitDate, 
-    BirthDate=DoB, 
+    DateOfBirth=DoB, 
     DoD, matches(Vars))
+  dat <- distinct(dat, IIntID, .keep_all=TRUE)
   dat <- haven::zap_labels(dat)
   dat <- haven::zap_formats(dat)
-  dat <- distinct(dat, IIntID, .keep_all=TRUE)
   dat <- filter(dat, Female %in% c(1, 2))
   dat <- mutate(dat, 
     Female=as.numeric(Female==2),
@@ -119,7 +120,9 @@ getIndividual <- function(inFile=getFiles()$ind_rda) {
 
 setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
   dat <- getEpisodes()
-  dat <- setData(dat, Args, time2="ObservationStart")
+  bdat <- getBirthDate(addVars="Female")
+  dat <- setData(dat, Args, 
+    time2="ObservationStart", birthdate=bdat)
   dat
 }
 
@@ -136,7 +139,7 @@ setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
 #' @export 
 
 getDemResident <- function(Args=setArgs(), prop=0.5) {
-  dat <- setEpisodes(Args, dropTasP=TRUE)
+  dat <- setEpisodes(Args)
   dat <- filter(dat, Resident==1)
   gdat <- group_by(dat, IIntID, Year) %>% 
     summarize(Perc = sum(ExpDays)/366)
@@ -157,7 +160,7 @@ getDemResident <- function(Args=setArgs(), prop=0.5) {
 #' @export 
 
 getCensus <- function(Args=setArgs(), prop=0.5) {
-  dat <- setEpisodes(Args, dropTasP=TRUE)
+  dat <- setEpisodes(Args)
   gdat <- group_by(dat, IIntID, Year) %>% 
     summarize(Perc = sum(ExpDays)/366)
   dat <- left_join(dat, gdat, by=c("IIntID", "Year"))

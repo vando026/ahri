@@ -16,7 +16,8 @@
 getMortalityData <- function(Args, 
   startVar="HIVPositive", dropHIVPos=FALSE) {
   #
-  edat <- getIndividual()
+  edat <- getEpisodes()
+  idat <- getIndividual()
   hiv <- getHIV()
   # Get start date
   if (startVar=="ObservationStart") {
@@ -29,9 +30,8 @@ getMortalityData <- function(Args,
   startdat <- getDatesMin(dat, "obs_start", "obs_start")
   #
   # Get all death dates
-  dodat  <- select(edat, IIntID, DoD) %>% 
-    filter(is.finite(DoD)) %>% 
-    distinct(IIntID, .keep_all=TRUE)
+  dodat  <- select(idat, IIntID, DoD) %>% 
+    filter(is.finite(DoD))
   # Get last observation date
   enddat <- getDatesMax(edat, "ObservationEnd", "end_date")
   # Make obs_end as death or last obs date

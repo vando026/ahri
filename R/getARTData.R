@@ -11,17 +11,15 @@
 #' @export
 
 getARTDates <- function() {
-  dat <- getEpisodes()
+  dat <- getIndividual()
   dat <- filter(dat, !is.na(EarliestARTInitDate))
   dat <- distinct(dat, IIntID, EarliestARTInitDate, .keep_all=TRUE) %>% 
-    select(IIntID, DateOfInitiation=EarliestARTInitDate)
+    select(IIntID, DateOfInitiation=EarliestARTInitDate, )
   dat <- mutate(dat,
     YearOfInitiation = as.integer(format(DateOfInitiation, "%Y")),
     MonthART = as.integer(format(DateOfInitiation, "%m")))
   dat
 }
-
-
 
 
 #' @title getOnART
@@ -37,17 +35,23 @@ getARTDates <- function() {
 
 getOnART <- function(cutoff=13) {
   edat <- getEpisodes()
+  edat <- makeAgeVars(edat, visitdate="ObservationStart")
+  edat <- distinct(edat, IIntID, Year, .keep_all=TRUE)
+  edat <- select(edat, IIntID, Year, Age)
   art <- getARTDates()
+  idat <- getIndividual() %>% select(IIntID, Female, EarliestHIVPos)
   adat <- left_join(edat, art, by="IIntID")
+  adat <- left_join(adat, idat, by="IIntID")
   adat <- filter(adat, !is.na(EarliestHIVPos))
+  # adat <- mutate(adat, EarliestHIVPos = as.Date(ifelse(DateOfInitiation < EarliestHIVPos,
+    # DateOfInitiation, EarliestHIVPos), origin="1970-01-01"))
   adat <- mutate(adat, YearPos = as.integer(format(EarliestHIVPos, "%Y")))
   adat <- filter(adat, !(Year < YearPos))
   adat <- mutate(adat, OnART = as.integer(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
   # If month of Init is after cutoff, dont assign OnART to that year
   # adat <- mutate(adat, OnART =
     # ifelse((YearOfInitiation==Year) & (MonthART >= cutoff) & !is.na(MonthART), 0, OnART))
-  adat <- select(adat, IIntID, Year, Female, Age, OnART)
-  distinct(adat, IIntID, Year, .keep_all=TRUE)
+  adat
 }
 
 #' @title calcARTCov
@@ -64,7 +68,7 @@ getOnART <- function(cutoff=13) {
 
 calcARTCov <- function(Args, cutoff=13) {
   dat <- getOnART(cutoff=cutoff)
-  dat <- setData(dat, Args)
+  dat <- setData(dat, Args, )
   calcTrendYear("OnART", dat)
 }
 
