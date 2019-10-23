@@ -73,10 +73,10 @@ setRoot <- function() {
 
 setHomePath <- function(pc=getwd(), ssh=getwd(), docker = "/home") {
   krisp <- "x86_64-redhat-linux-gnu"
-  docker <- "x86_64-pc-linux-gnu"
+  dock <- "x86_64-pc-linux-gnu"
   if (Sys.getenv("R_PLATFORM")==krisp) {
     home <- ssh
-  } else if (Sys.getenv("R_PLATFORM")==docker) {
+  } else if (Sys.getenv("R_PLATFORM")==dock) {
     home <- docker
   } else {
     home <- pc
