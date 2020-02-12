@@ -16,14 +16,14 @@ readHIVData <- function(
   dropTasP=TRUE) {
   hiv <- haven::read_dta(inFile) %>% 
     select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
-      HIVResult, Sex, Age=AgeAtVisit)
+      HIVResult, Female=Sex, Age=AgeAtVisit)
   hiv <- haven::zap_labels(hiv)
-  hiv <- filter(hiv, Sex %in% c(1,2))
+  hiv <- filter(hiv, Female %in% c(1,2))
   hiv <- mutate(hiv,
     IIntID = as.integer(IIntID),
     BSIntID = as.integer(BSIntID),
-    Female=as.integer(ifelse(Sex==2, 1, 0)))
-  hiv <- select(hiv, -Sex) %>% arrange(IIntID, VisitDate)
+    Female=as.integer(ifelse(Female==2, 1, 0)))
+  hiv <- arrange(hiv, IIntID, VisitDate)
   if (dropTasP) hiv <- dropTasPData(hiv)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))

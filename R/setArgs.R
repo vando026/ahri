@@ -66,6 +66,7 @@ setArgs <- function(
   FemCode=switch(Sex,
     Mal=0,Fem=1,All=c(0, 1))
   #
+  getFiles <- inFiles
   as.list(environment())
 }
 

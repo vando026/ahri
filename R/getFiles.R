@@ -1,17 +1,17 @@
-#' @title getFiles
+#' @title setFiles
 #' 
-#' @description  get/set file paths to AHRI data 
+#' @description  set file paths to AHRI data 
 #' 
-#' @param root file path to derived files
+#' @param root A string that gives the root path
 #'
 #' @return list
 #'
 #' @export
 #'
 #' @examples 
-#' inFiles <- getFiles()
+#' getFiles <- setFiles(root="Path/to/my/datafolder", hivfile="RDO5-99_ACDIS.dta")
 
-getFiles <- function(
+setFiles <- function(
   root=setRoot(),
   hivfile="Derived/HIVSurveillance/2018/RD05-99_ACDIS_HIV_All.dta",
   hiv_rda="Derived/Analytics/RD05-99_ACDIS_HIV_All.Rda",
@@ -37,7 +37,8 @@ getFiles <- function(
   pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta") {
   flist <- as.list(environment())
   flist <- lapply(flist, function(x) file.path(root, x))
-  return(flist[setdiff(names(flist), "root")])
+  function() 
+    return(flist[setdiff(names(flist), "root")])
 }
 
 

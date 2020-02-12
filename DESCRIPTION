@@ -1,12 +1,12 @@
 Package: ahri
 Title: AHRI functions for data management and analysis
-Version: 0.7.6
-Authors@R: person("Alain", "Vandormael", email = "vando026@umn.edu", role = c("aut", "cre"))
+Version: 0.7.7
+Authors@R: person("Alain", "Vandormael", email = "alain.vandormael@uni-heidelberg.de", role = c("aut", "cre"))
 Description: Functions for working with AHRI data.
 Depends: R (>= 3.5.0)
 License: GPL
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Imports: tidyverse, survival, zoo, plotrix, RColorBrewer, mitools, parallel, epitools
 Suggests: testthat
