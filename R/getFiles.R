@@ -1,44 +1,75 @@
 #' @title setFiles
 #' 
-#' @description  set file paths to AHRI data 
+#' @description  Set file paths to the default AHRI datasets, which must be placed into a
+#' single folder. The default datasets are called:
 #' 
-#' @param root A string that gives the root path
+#'  - \code{RD05-99 ACDIS HIV All.dta}
+#' 
+#'  - \code{SurveillanceEpisodesBasicAgeYrHIV.dta}
+#' 
+#'  - \code{RD03-99 ACDIS WGH ALL.dta}
+#' 
+#'  - \code{RD04-99 ACDIS MGH ALL.dta}
+#' 
+#'  - \code{RD01-03 ACDIS BoundedStructures.dta}
+#' 
+#'  - \code{RD06-99 ACDIS HSE-H All.dta}
+#' 
+#' You should not need to change these names. If you do, see the
+#' example below on how to do this.  
+#' The function also sets the names for the .Rda datasets used in other functions. 
+#' You should not need to change these names.  
 #'
-#' @return list
+#' !!! You must assign the \code{setFiles} function to a variable called \code{getFiles},
+#' as in the example below. !!!
+#'
+#' @param folder The path (as a string) to  the folder of default .dta files. If
+#' \code{folder=""}, then The default calls a dialogue box is called to set the folder path.
+#'
+#' @return function
 #'
 #' @export
 #'
 #' @examples 
-#' getFiles <- setFiles(root="Path/to/my/datafolder", hivfile="RDO5-99_ACDIS.dta")
+#' # You must assign the setfiles function to the getFiles name
+#' getFiles <- setFiles(folder="Path/to/my/datafolder")
+#'
+#' # Show an example of how to change the name of the HIV Surveillance dataset
+#' getFiles <- setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
+#'
+#' # print out the file paths and names
+#' getFiles() 
 
 setFiles <- function(
-  root=setRoot(),
-  hivfile="Derived/HIVSurveillance/2018/RD05-99_ACDIS_HIV_All.dta",
-  hiv_rda="Derived/Analytics/RD05-99_ACDIS_HIV_All.Rda",
-  elifile="Source/HIVSurveillance",
-  eli_rda="Derived/Analytics/HIVSurveillanceYear.Rda",
-  hsefile="Derived/Analytics/HSE2009_2012.dta",
-  wghfile="Derived/WGH_MGH/2018/RD03-99_ACDIS_WGH_ALL.dta",
-  wgh_rda="Derived/Analytics/RD03-99_ACDIS_WGH_ALL.Rda",
-  mghfile="Derived/WGH_MGH/2018/RD04-99_ACDIS_MGH_ALL.dta",
-  mgh_rda="Derived/Analytics/RD04-99_ACDIS_MGH_ALL.Rda",
-  bsifile="Derived/BoundedStructure/2017/RD01-03_ACDIS_BoundedStructures.dta",
-  bsm_rda="Derived/Analytics/MaxBSIntID.Rda",
-  bsc_rda="Derived/Analytics/BoundedStructures.Rda",
-  epi_dta="Source/Episodes/2018/SurveillanceEpisodesBasicAgeYrHIV.dta",
-  epi_rda="Derived/Analytics/SurveillanceEpisodes.Rda",
-  parfile="Derived/Analytics/PartnerDat.Rdata",
-  ind_rda="Derived/Analytics/Individuals.Rda",
-  prvfile="Derived/Analytics/HIV_Prev_Aug21.csv",
-  pipfile="Derived/Analytics/PIPBoundedStructures2018.dta",
-  bscfile="Source/BoundedStructure/BSIntID_Coords.csv",
-  fem_art="Derived/ARTemis/2017/ART_All.csv",
-  mal_art="Derived/ARTemis/2017/ART_All.csv",
-  pvlfile="Source/CVL_2011_2014/Community Viral Load 2011-2014.dta") {
+  folder="",
+  hivfile="RD05-99 ACDIS HIV All.dta",
+  epi_dta="SurveillanceEpisodesBasicAgeYrHIV.dta",
+  wghfile="RD03-99 ACDIS WGH ALL.dta",
+  mghfile="RD04-99 ACDIS MGH ALL.dta",
+  bsifile="RD01-03 ACDIS BoundedStructures.dta",
+  hsefile="RD06-99 ACDIS HSE-H All.dta",
+
+  hiv_rda="ACDIS_HIV_All.Rda",
+  epi_rda="SurveillanceEpisodesBasicAgeYrHIV.Rda",
+  wgh_rda="ACDIS_WGH_ALL.Rda",
+  mgh_rda="ACDIS_MGH_ALL.Rda",
+  bsm_rda="MaxBSIntID.Rda",
+  bsc_rda="ACDIS_BoundedStructures.Rda") {
+
+  # parfile="/Analytics/PartnerDat.Rdata",
+  # ind_rda="/Analytics/Individuals.Rda",
+  # prvfile="/Analytics/HIV_Prev_Aug21.csv",
+  # pipfile="/Analytics/PIPBoundedStructures2018.dta",
+  # bscfile="BoundedStructure/BSIntID_Coords.csv",
+  # fem_art="/ARTemis/2017/ART_All.csv",
+  # mal_art="/ARTemis/2017/ART_All.csv",
+  # pvlfile="CVL_2011_2014/Community Viral Load 2011-2014.dta") 
+  if (folder=="") 
+    folder <- choose.dir(caption="Select a folder which contains all the AHRI .dta files") 
   flist <- as.list(environment())
-  flist <- lapply(flist, function(x) file.path(root, x))
+  flist <- lapply(flist, function(x) file.path(folder, x))
   function() 
-    return(flist[setdiff(names(flist), "root")])
+    return(flist[setdiff(names(flist), "folder")])
 }
 
 
