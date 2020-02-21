@@ -4,14 +4,16 @@
 \alias{dropTasPData}
 \title{dropTasPData}
 \usage{
-dropTasPData(dat, inFile = getFiles()$pipfile)
+dropTasPData(dat)
 }
 \arguments{
-\item{dat}{A dataset.}
+\item{dat}{A dataset, which will be merged with the Bounded Structures
+dataset, to determine if observations come from the TasP (northern) areas. 
+If an observation cannot be linked to an area, it is kept.}
 }
 \value{
 data.frame
 }
 \description{
-Function to drop individuals who tested in TasP areas.
+Function to drop obervations from TasP areas.
 }

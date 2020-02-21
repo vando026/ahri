@@ -25,50 +25,30 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #' @examples
 #' readBSData() 
 readBSData <- function(inFile=getFiles()$bsifile) {
-  dat <- haven::read_dta(inFile) %>% 
-    select(BSIntID=BSIntId, LocalArea, Area=IsUrbanOrRural)
-  mutate(dat, 
-    BSIntID = as.integer(BSIntID),
-    LocalArea = as.character(haven::as_factor(dat$LocalArea)),
-    Area = as.character(haven::as_factor(dat$Area)))
-}
-
-
-#' @title readPIPData
-#' 
-#' @description  Read in PIP data to identify ACIDS from TASP area
-#' 
-#' @param inFile 
-#' 
-#' @return data.frame
-#'
-#' @export 
-readPIPData <- function(inFile=getFiles()$pipfile) {
-  dat <- haven::read_dta(inFile)
-  dat <- select(dat, BSIntID, PIPSA)
-  mutate(dat, BSIntID=as.integer(BSIntID))
+  dat <- haven::read_dta(inFile) %>%
+    rename(BSIntID=BSIntId)
+  dat <- mutate(dat, BSIntID = as.integer(BSIntID))
+  return(dat)
 }
 
 #' @title dropTasPData
 #' 
-#' @description  Function to drop individuals who tested in TasP areas.
+#' @description  Function to drop obervations from TasP areas.
 #' 
-#' @param dat A dataset.
+#' @param dat A dataset, which will be merged with the Bounded Structures
+#' dataset, to determine if observations come from the TasP (northern) areas. 
+#' If an observation cannot be linked to an area, it is kept.
 #' 
 #' @return data.frame
 #'
 #' @export 
 
-dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
-  pipdat <- readPIPData(inFile)
-  dat <- left_join(dat, pipdat, by="BSIntID")
-  # keep if miss BS prior to 2017
-  dat <- filter(dat, PIPSA %in% c("S", NA)) 
-  # drop if NA in 2017
-  # dat <- filter(dat, !(is.na(PIPSA) & Year==2017)) 
-  dat <- select(dat, -c(PIPSA))
-  comment(dat) <- "Note: This dataset drops HIV tests from TasP (and NA) areas in 2017"
-  dat
+dropTasPData <- function(dat) {
+  bsdat <- readBSData() %>% select(BSIntID, PIPSA)
+  bsdat$PIPSA <- as.character(haven::as_factor(bsdat$PIPSA))
+  dat <- left_join(dat, bsdat, by="BSIntID")
+  dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
+  return(dat)
 }
 
 #' @title mkBSData
@@ -81,13 +61,11 @@ dropTasPData <- function(dat, inFile=getFiles()$pipfile) {
 #'
 #' @export 
 mkBSData <- function(outFile=getFiles()$bsc_rda, dropTasP=TRUE) {
-  pdat <- readPIPData()
-  if (dropTasP) 
-    pdat <- filter(pdat, PIPSA %in% c("S", NA)) 
   bdat <- readBSData()
+  if (dropTasP) 
+    bdat <- filter(bdat, PIPSA %in% c("Southern PIPSA", NA)) 
   cdat <- getBSCord()
-  dat <- left_join(pdat, bdat, by="BSIntID")
-  dat <- left_join(dat, cdat, by="BSIntID")
+  dat <- left_join(bdat, cdat, by="BSIntID")
   saveRDS(dat, outFile)
   dat
 }

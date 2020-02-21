@@ -13,5 +13,5 @@ setHIV(Args)
 
 }
 \description{
-set HIV data according parameters of Args.
+set HIV data according arguments of \code{\link{setArgs}}.
 }

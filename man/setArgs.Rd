@@ -6,7 +6,7 @@
 \usage{
 setArgs(
   inFiles = getFiles(),
-  Years = c(2004:2017),
+  Years = c(2005:2018),
   Age = list(All = c(15, 54)),
   AgeCat = NULL,
   AgeBy = 5,

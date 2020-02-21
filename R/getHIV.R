@@ -54,7 +54,7 @@ getHIV <- function(inFile=getFiles()$hiv_rda) {
 
 #' @title setHIV
 #' 
-#' @description set HIV data according parameters of Args. 
+#' @description set HIV data according arguments of \code{\link{setArgs}}.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
