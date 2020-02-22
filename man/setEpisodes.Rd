@@ -4,7 +4,7 @@
 \alias{setEpisodes}
 \title{setEpisodes}
 \usage{
-setEpisodes(Args = setArgs(), dropTasP = TRUE)
+setEpisodes(Args = setArgs())
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
@@ -13,7 +13,7 @@ setEpisodes(Args = setArgs(), dropTasP = TRUE)
 data.frame
 }
 \description{
-set episodes data according to Args and drops TasP Areas if needed.
+set episodes data according to Args.
 }
 \examples{
 setEpisodes(setArgs())

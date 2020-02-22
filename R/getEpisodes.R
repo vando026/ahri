@@ -22,58 +22,18 @@ readEpisodes <- function(
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
-    Year, ExpDays=Days,
+    Year,ExpDays=Days, Age, 
+    DateOfBrith=DoB, DateOfDeath=DoD,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
-    Resident, InMigration, 
-    OutMigration, matches(Vars))
-  dat <- filter(dat, Year >= 2004)
-  dat <- haven::zap_labels(dat)
-  dat <- haven::zap_formats(dat)
+    InMigration, OutMigration,
+    Resident, matches(Vars))
   dat <- mutate(dat, 
     IIntID=as.integer(IIntID),
     BSIntID=as.integer(BSIntID),
     Year=as.integer(Year))
-  if (dropTasP==TRUE) 
-    dat <- dropTasPData(dat, getFiles()$pipfile)
+  if (dropTasP==TRUE) dat <- dropTasPData(dat)
   dat <- arrange(dat, IIntID, ObservationStart)
-  attributes(dat$BSIntID) <- NULL
-  saveRDS(dat, outFile)
-  dat
-}
-
-
-#' @title readIndividual
-#' 
-#' @description  Reads in new Episodes dta dataset which replaces the Individuals dataset (for
-#' 2017) and converts it to a .Rda file.
-#' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
-#' 
-#' @return data.frame
-#'
-#' @export 
-
-readIndividual <- function(
-  inFile=getFiles()$epi_dta,
-  outFile=getFiles()$ind_rda, Vars=" ") {
-  #
-  dat <- haven::read_dta(inFile) 
-  dat <- select(dat,
-    IIntID=IndividualId, 
-    Female=Sex, 
-    EarliestHIVPos,
-    EarliestARTInitDate, 
-    DateOfBirth=DoB, 
-    DoD, matches(Vars))
-  dat <- distinct(dat, IIntID, .keep_all=TRUE)
-  dat <- haven::zap_labels(dat)
-  dat <- haven::zap_formats(dat)
-  dat <- filter(dat, Female %in% c(1, 2))
-  dat <- mutate(dat, 
-    Female=as.numeric(Female==2),
-    IIntID=as.integer(IIntID))
-  dat <- arrange(dat, IIntID)
   saveRDS(dat, outFile)
   dat
 }
@@ -92,22 +52,9 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 }
 
 
-#' @title getInvidual
-#' 
-#' @description  Loads Individuals .Rda into memory, see \code{\link{readIndividuals}}.
-#' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
-#' 
-#' @return data.frame
-#'
-#' @export 
-getIndividual <- function(inFile=getFiles()$ind_rda) {
-  readRDS(inFile)
-}
-
 #' @title setEpisodes
 #' 
-#' @description  set episodes data according to Args and drops TasP Areas if needed.
+#' @description  set episodes data according to Args.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
@@ -118,8 +65,11 @@ getIndividual <- function(inFile=getFiles()$ind_rda) {
 #' @examples
 #' setEpisodes(setArgs())
 
-setEpisodes <- function(Args=setArgs(), dropTasP=TRUE) {
+setEpisodes <- function(Args=setArgs()) {
   dat <- getEpisodes()
+
+
+
   bdat <- getBirthDate(addVars="Female")
   dat <- setData(dat, Args, 
     time2="ObservationStart", birthdate=bdat)
