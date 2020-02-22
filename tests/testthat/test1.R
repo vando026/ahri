@@ -33,7 +33,7 @@ test_that("Check N", {
 context("Test readEpisodes dropTasP")
 edat <- readEpisodes(dropTasP=TRUE)
 test_that("Check N", {
-  expect_equal(length(unique(edat$IIntID)), 174447) 
+  expect_equal(length(unique(edat$IIntID)), 174445) 
   expect_equal(length(unique(edat$BSIntID)), 16440) 
   expect_equal(length(edat$Female[edat$Female==0]), 1911066) 
 })
