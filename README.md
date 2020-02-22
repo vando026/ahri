@@ -1,25 +1,40 @@
-# Getting started with the ahri library
+-   [Getting started with the ahri
+    library](#getting-started-with-the-ahri-library)
+    -   [Install the library](#install-the-library)
+    -   [Setting the file paths: the setFiles
+        function](#setting-the-file-paths-the-setfiles-function)
+    -   [Reading in data: readHIVData and readEpisodes
+        functions](#reading-in-data-readhivdata-and-readepisodes-functions)
+-   [Setting the data](#setting-the-data)
+    -   [The setArgs function](#the-setargs-function)
+    -   [The setAge function](#the-setage-function)
+    -   [The getBirthDate function](#the-getbirthdate-function)
+    -   [The setData function](#the-setdata-function)
+
+Getting started with the ahri library
+=====================================
 
 This document serves as a short introduction to the ahri library. For
 this library to work, you will need to request five default datasets
 from the AHRI Data Centre. These default datasets are called:
 
-  - RD05-99 ACDIS HIV All.dta
+-   RD05-99 ACDIS HIV All.dta
 
-  - SurveillanceEpisodesBasicAgeYrHIV.dta
+-   SurveillanceEpisodesBasicAgeYrHIV.dta
 
-  - RD03-99 ACDIS WGH ALL.dta
+-   RD03-99 ACDIS WGH ALL.dta
 
-  - RD04-99 ACDIS MGH ALL.dta
+-   RD04-99 ACDIS MGH ALL.dta
 
-  - RD01-03 ACDIS BoundedStructures.dta
+-   RD01-03 ACDIS BoundedStructures.dta
 
-  - RD06-99 ACDIS HSE-H All.dta
+-   RD06-99 ACDIS HSE-H All.dta
 
 Put all these default .dta (Stata) datasets in the same folder. For
 example, my path to this folder is: `C:\Users\alainv\AHRI_Data`.
 
-## Install the library
+Install the library
+-------------------
 
 The ahri library is in development, which you can download from GitHub.
 First, install the `remotes` package. Second, ask me for the GitHub
@@ -31,7 +46,8 @@ install_github('vando026/ahri', ref="ahri_dev", auth_token="secret_token")
 library(ahri)
 ```
 
-## Setting the file paths: the setFiles function
+Setting the file paths: the setFiles function
+---------------------------------------------
 
 The first thing to do set the file paths to the AHRI datasets. We use
 the `setFiles` function for this and assign it to the name `getFiles`.
@@ -65,7 +81,8 @@ If you ommit the folder argument then `setFiles()` will bring up a
 graphical dialogue box where you can point and click your way to the
 folder.
 
-## Reading in data: readHIVData and readEpisodes functions
+Reading in data: readHIVData and readEpisodes functions
+-------------------------------------------------------
 
 Reading in some of the large AHRI datasets can take time. Two useful
 functions for speeding up this process are: `readHIVData` and
@@ -161,9 +178,11 @@ getFiles()$epi_rda
 [1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesBasicAgeYrHIV.Rda"
 ```
 
-# Setting the data
+Setting the data
+================
 
-## The setArgs function
+The setArgs function
+--------------------
 
 A useful function for setting the data is `setArgs`. The `setArgs`
 function can set the data in a number of ways, for example, by year,
@@ -222,7 +241,8 @@ Min. Max.
   25   40 
 ```
 
-## The setAge function
+The setAge function
+-------------------
 
 You can actually set the age by sex for any dataset, providing it has
 the required `Age` and `Female` variables. The `setAge` function does
@@ -240,7 +260,8 @@ Min. Max.
   15   25 
 ```
 
-## The getBirthDate function
+The getBirthDate function
+-------------------------
 
 A useful function for extracting birth dates is the `getBirthDate`
 function, which extracts the `DoB` variable from the `getEpisodes`
@@ -267,7 +288,8 @@ bdat
 
 This is mainly a helper fuction used elsewhere, as demonstrated below.
 
-## The setData function
+The setData function
+--------------------
 
 For any dataset, the `setData` function will subset by year, age, and
 sex. For this function, the `Year` and `Female` variables are needed. If
@@ -282,6 +304,7 @@ episodes, and you need to recalculate the age by episode. Using the
 data as an argument to `setData`.
 
 ``` r
+epi <- getEpisodes()
 # No Age variable
 epi2 <- select(epi, IIntID, Year, Female, ObservationStart, ObservationEnd)
 names(epi2)
@@ -289,10 +312,10 @@ names(epi2)
 # Keep only episodes where ID is aged 15-35
 Args <- setArgs(Age=list(All=c(15, 35)))
 # Make age at the start of the episode
-epi2 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
-summary(epi2$Age[hiv$Female==0])[c(1, 6)]
+epi3 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
+summary(epi3$Age[hiv$Female==0])[c(1, 6)]
 Min. Max. 
-  25   35 
+  15   35 
 ```
 
 You can also pass on a custom function to `setArgs` to do further data
@@ -305,11 +328,22 @@ dropID <- function(dat) {
   filter(dat, Val==1)
 }
 Args <- setArgs(Age=list(All=c(15, 19)), setFun=dropID)
-epi2 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
-epi2
-# A tibble: 0 x 8
-# ... with 8 variables: IIntID <int>, Year <int>, Female <int>, ObservationStart <date>, ObservationEnd <date>, Age <dbl>, AgeCat <fct>,
-#   Val <int>
+epi4 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
+epi4
+# A tibble: 150,982 x 8
+   IIntID  Year Female ObservationStart ObservationEnd   Age AgeCat    Val
+    <int> <int>  <int> <date>           <date>         <dbl> <fct>   <int>
+ 1     21  2006      0 2006-01-01       2006-04-27        15 [15,20)     1
+ 2     21  2007      0 2007-01-01       2007-04-10        16 [15,20)     1
+ 3     29  2009      0 2009-09-06       2009-12-31        15 [15,20)     1
+ 4     29  2010      0 2010-09-06       2010-12-31        16 [15,20)     1
+ 5     29  2011      0 2011-01-01       2011-06-01        17 [15,20)     1
+ 6     29  2011      0 2011-09-06       2011-12-31        17 [15,20)     1
+ 7     29  2012      0 2012-01-01       2012-09-05        18 [15,20)     1
+ 8     29  2013      0 2013-01-01       2013-03-22        19 [15,20)     1
+ 9     29  2013      0 2013-09-06       2013-10-23        19 [15,20)     1
+10     30  2005      0 2005-01-01       2005-02-15        19 [15,20)     1
+# ... with 150,972 more rows
 ```
 
 This becomes useful when you have to process data in the ith iteration
@@ -328,8 +362,7 @@ unique(hiv$AgeCat)
 Levels: [15,25) [25,35) [35,45) [45,55)
 ```
 
-Or you could create custom age categories
-using:
+Or you could create custom age categories using:
 
 ``` r
 Args <- setArgs(Age=list(All=c(15, 49)), AgeCat=c(15, 20, 25, 30, 40, 50))
