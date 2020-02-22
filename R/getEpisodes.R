@@ -22,16 +22,18 @@ readEpisodes <- function(
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
-    Year,ExpDays=Days, Age, 
-    DateOfBrith=DoB, DateOfDeath=DoD,
+    Female=Sex, Age,  DoB, DoD,
+    Year,ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
     Resident, matches(Vars))
-  dat <- mutate(dat, 
+  dat <- filter(dat, Female %in% c(1,2))
+  dat <- mutate(dat,
     IIntID=as.integer(IIntID),
     BSIntID=as.integer(BSIntID),
-    Year=as.integer(Year))
+    Year=as.integer(Year),
+    Female=as.integer(ifelse(Female==2, 1, 0)))
   if (dropTasP==TRUE) dat <- dropTasPData(dat)
   dat <- arrange(dat, IIntID, ObservationStart)
   saveRDS(dat, outFile)
@@ -67,10 +69,7 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 
 setEpisodes <- function(Args=setArgs()) {
   dat <- getEpisodes()
-
-
-
-  bdat <- getBirthDate(addVars="Female")
+  bdat <- getBirthDate()
   dat <- setData(dat, Args, 
     time2="ObservationStart", birthdate=bdat)
   dat
