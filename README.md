@@ -119,19 +119,19 @@ readEpi <- readEpisodes()
 epidat <- getEpisodes()
 epidat
 # A tibble: 4,063,867 x 17
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration OutMigration Resident
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>    <dbl+lbl> <dbl+lb>
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0            0        1
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31               0            0        1
- 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0            0        1
- 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0            0        1
- 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0            0        1
- 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31               0            0        1
- 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0            0        1
- 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0            0        1
- 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09               0            0        1
-10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12               0            0        1
-# ... with 4,063,857 more rows, and 4 more variables: OnART <dbl+lbl>, ARTInitiation <dbl>, EarliestARTInitDate <date>, PIPSA <chr>
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration OutMigration Resident OnART ARTInitiation
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>    <dbl+lbl> <dbl+lb> <dbl>         <dbl>
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0            0        1    NA            NA
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31               0            0        1    NA            NA
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0            0        1    NA            NA
+ 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0            0        1    NA            NA
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0            0        1    NA            NA
+ 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31               0            0        1    NA            NA
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0            0        1    NA            NA
+ 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0            0        1    NA            NA
+ 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09               0            0        1    NA            NA
+10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12               0            0        1    NA            NA
+# ... with 4,063,857 more rows, and 2 more variables: EarliestARTInitDate <date>, PIPSA <chr>
 ```
 
 In my experience, the Episodes dataset is a bit overwhelming, so by
@@ -141,7 +141,6 @@ variables using the `Vars` argument. For example, let’s say you are
 intersted in adding the ART variables, then:
 
 ``` r
-# The Rda file is here
 readEpi <- readEpisodes(Vars="OnART|ARTInitiation|EarliestARTInitDate")
 ```
 
@@ -235,8 +234,9 @@ summary(epi$Age)
 ```
 
 You can actually set the years, age, and sex for any dataset, providing
-it has the required variables. To subset by Age by Sex, the dataset must
-have an `Age` and `Female` variable. The `setAge` function does this:
+it has the required variables. To subset by age and sex, the dataset
+must have the `Age` and `Female` variables. The `setAge` function does
+this:
 
 ``` r
 hiv <- getHIV()
@@ -266,12 +266,11 @@ summary(epi1$Age)
   15.00   16.00   17.00   17.01   18.00   19.00 
 ```
 
-Let’s pretend you just created a dataset that doesnt have age by
-dataset, and all you have is the start or end date of the episode, and
-the date of birth. You want to get the age, and subset by age, then
-`setData` becomes handy. First, we can get the birth date of the
-participant with the `getBirthDate` function. Then we pass that data to
-an argument in
+Let’s pretend you just created a dataset that doesnt have an age
+variable, and all you have is the start or end date of the episode, and
+the date of birth. You want to get the age at each episode, and then
+subset by age. Using the `getbirthdate` function, we can get the birth
+dates and then pass that data as an argument to
 `setData`.
 
 ``` r
@@ -326,21 +325,21 @@ dropID <- function(dat) {
 Args <- setArgs(Age=list(All=c(15, 19)), setFun=dropID)
 epi2 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
 epi2
-# A tibble: 151,596 x 8
+# A tibble: 151,460 x 8
    IIntID  Year Female ObservationStart ObservationEnd   Age AgeCat    Val
     <int> <int>  <int> <date>           <date>         <dbl> <fct>   <int>
- 1     21  2006      0 2006-01-01       2006-04-27        15 [15,20)     1
- 2     21  2006      0 2006-04-28       2006-12-31        15 [15,20)     1
- 3     21  2007      0 2007-01-01       2007-04-10        16 [15,20)     1
- 4     29  2009      0 2009-01-01       2009-09-05        15 [15,20)     1
- 5     29  2010      0 2010-01-01       2010-09-05        16 [15,20)     1
- 6     29  2011      0 2011-01-01       2011-06-01        17 [15,20)     1
- 7     29  2011      0 2011-06-02       2011-09-05        17 [15,20)     1
- 8     29  2012      0 2012-01-01       2012-09-05        18 [15,20)     1
- 9     29  2012      0 2012-09-06       2012-12-31        18 [15,20)     1
-10     29  2013      0 2013-01-01       2013-03-22        19 [15,20)     1
-# ... with 151,586 more rows
+ 1     21  2007      0 2007-01-01       2007-04-10        16 [15,20)     1
+ 2     29  2009      0 2009-01-01       2009-09-05        15 [15,20)     1
+ 3     29  2009      0 2009-09-06       2009-12-31        15 [15,20)     1
+ 4     29  2010      0 2010-09-06       2010-12-31        16 [15,20)     1
+ 5     29  2011      0 2011-01-01       2011-06-01        17 [15,20)     1
+ 6     29  2011      0 2011-06-02       2011-09-05        17 [15,20)     1
+ 7     29  2012      0 2012-09-06       2012-12-31        18 [15,20)     1
+ 8     29  2013      0 2013-03-23       2013-09-05        19 [15,20)     1
+ 9     29  2013      0 2013-09-06       2013-10-23        19 [15,20)     1
+10     30  2005      0 2005-07-06       2005-12-31        19 [15,20)     1
+# ... with 151,450 more rows
 ```
 
-This becomes useful when you have to process data in the \(i\)th
-iteration of \(i = 1,\dots,K\) iterations.
+This becomes useful when you have to process data in the ith iteration
+of i = 1,…K iterations.

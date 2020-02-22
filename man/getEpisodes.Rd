@@ -13,5 +13,5 @@ getEpisodes(inFile = getFiles()$epi_rda)
 data.frame
 }
 \description{
-Loads Episodes .Rdata into memory, see \code{\link{readEpisodes}}.
+Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
 }

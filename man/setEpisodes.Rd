@@ -13,8 +13,8 @@ setEpisodes(Args = setArgs())
 data.frame
 }
 \description{
-set episodes data according to Args.
+Set the Episodes data according to Arguments.
 }
 \examples{
-setEpisodes(setArgs())
+setEpisodes()
 }

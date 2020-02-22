@@ -1,23 +1,25 @@
 #' @title readEpisodes
 #' 
-#' @description  Reads in new Episodes dta dataset which replaces the Demography dataset (for
-#' 2017) and converts it to a .Rda file.
+#' @description  Reads in the Surveillance Episodes dataset 
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
+#' @param inFile File path to the .dta dataset, default is set to \code{\link{getFiles}}.
+#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{getFiles}}.
 #' @param dropTasP default is to drop TasP areas.
+#' @param Vars A regular expression string.
+#' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return data.frame
 #'
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs()
-#' readEpisodes()
+#' readEpisodes(Vars="ART", dropTasP=TRUE)
 
 readEpisodes <- function(
   inFile=getFiles()$epi_dta,
   outFile=getFiles()$epi_rda, 
-  dropTasP=TRUE, Vars=" ") {
+  dropTasP=TRUE, Vars=" ",
+  write_rda=TRUE) {
   #
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
@@ -36,13 +38,13 @@ readEpisodes <- function(
     Female=as.integer(ifelse(Female==2, 1, 0)))
   if (dropTasP==TRUE) dat <- dropTasPData(dat)
   dat <- arrange(dat, IIntID, ObservationStart)
-  saveRDS(dat, outFile)
+  if (write_rda) saveRDS(dat, outFile)
   dat
 }
 
 #' @title getEpisodes
 #' 
-#' @description  Loads Episodes .Rdata into memory, see \code{\link{readEpisodes}}.
+#' @description  Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
 #' 
 #' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
 #' 
@@ -56,7 +58,7 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 
 #' @title setEpisodes
 #' 
-#' @description  set episodes data according to Args.
+#' @description  Set the Episodes data according to Arguments.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
@@ -65,7 +67,7 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 #' @export 
 #'
 #' @examples
-#' setEpisodes(setArgs())
+#' setEpisodes()
 
 setEpisodes <- function(Args=setArgs()) {
   dat <- getEpisodes()

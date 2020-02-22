@@ -8,22 +8,27 @@ readEpisodes(
   inFile = getFiles()$epi_dta,
   outFile = getFiles()$epi_rda,
   dropTasP = TRUE,
-  Vars = " "
+  Vars = " ",
+  write_rda = TRUE
 )
 }
 \arguments{
-\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
+\item{inFile}{File path to the .dta dataset, default is set to \code{\link{getFiles}}.}
+
+\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{getFiles}}.}
 
 \item{dropTasP}{default is to drop TasP areas.}
+
+\item{Vars}{A regular expression string.}
+
+\item{write_rda}{Default is to write the .Rda file.}
 }
 \value{
 data.frame
 }
 \description{
-Reads in new Episodes dta dataset which replaces the Demography dataset (for
-2017) and converts it to a .Rda file.
+Reads in the Surveillance Episodes dataset
 }
 \examples{
-Args <- setArgs()
-readEpisodes()
+readEpisodes(Vars="ART", dropTasP=TRUE)
 }

@@ -4,14 +4,17 @@
 \alias{getARTDates}
 \title{getARTDates}
 \usage{
-getARTDates()
+getARTDates(dat)
 }
 \arguments{
-\item{inFile}{path to data, typically \code{Args$inFile}.}
+\item{dat}{A dataset from \code{\link{getEpisodes}} which has the ART variables}
 }
 \value{
 data.frame
 }
 \description{
-get ART initiation dates
+Get ART initiation dates
+}
+\examples{
+getARTDates()
 }

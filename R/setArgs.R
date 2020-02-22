@@ -58,7 +58,7 @@ setArgs <- function(
   #
   if (is.null(AgeCat)) {
     AgeCat=seq(min(unlist(Age)),
-      max(unlist(Age))+1, AgeBy)
+      max(unlist(Age)) + AgeBy, AgeBy)
   }
   Sex <- ifelse(
     setequal(names(Age), c("Mal", "Fem")), 
