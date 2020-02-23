@@ -100,7 +100,6 @@ setRoot <- function() {
 #' @param docker Path to docker
 #' 
 #' @return 
-#'
 #' @export 
 
 setHomePath <- function(pc=getwd(), ssh=getwd(), docker = "/home") {

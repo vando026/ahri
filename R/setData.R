@@ -91,13 +91,18 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
 
 #' @title setData
 #' 
-#' @description  Sets data according to values in \code{\link{setArgs}}.
+#' @description  Sets data according to a list of arguments. 
 #' 
-#' @param dat Dataset for which age is needed at a given episode.
+#' @param dat A dataset to subset. 
 #'
-#' @param Args takes a list from \code{\link{setArgs}}. 
+#' @param Args Takes a list of arguments from \code{\link{setArgs}}. 
 #'
-#' @param time2 A date variable that is used to calculate age from Birthdate to time2.
+#' @param time2 A date variable that is used to calculate the Age variable using the
+#' \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
+#' If time2=NULL, the default, then \code{setData} will search for and use an existing Age
+#' variable in \code{dat}. 
+#'
+#' @param birthdate Takes the dataset generated from \code{\link{getBirthDate}}. 
 #'
 #' @return data.frame
 #'
@@ -106,9 +111,15 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
 #' @export
 #' 
 #' @examples
-#' rtdata <- getRTData(hiv)
-#' sdat <- splitAtEarlyPos(rtdat)
-#' adat <- setData(sdat, Args)
+#' hiv <- getHIV()
+#' Args <- setArgs(Age=list(All=c(15, 25)))
+#' # This will use the existing Age variable to subset 
+#' adat <- setData(hiv, Args)
+#' bdat <- getBirthDate() 
+#' This will create a new Age variable using the birthdat and subset by age
+#' adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=bdat)
+#' Note that there will be some discrepancy in the number of observations between adat and
+#' adat1.
 
 setData <- function(dat, Args, time2=NULL, birthdate=NULL) {
   # Filter by Age limits

@@ -2,12 +2,6 @@
 ## Project: 
 ## Author: AV / Created: 28Sep2018 
 
-library(devtools)
-setwd('~/Seafile/Programs/R/ahri')
-load_all()
-
-getFiles <- setFiles(folder=setRoot())
-
 context("Test Bounded Structures data")
 bdat <- readBSData()
 test_that("Check vars", {

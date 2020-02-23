@@ -7,20 +7,31 @@
 setData(dat, Args, time2 = NULL, birthdate = NULL)
 }
 \arguments{
-\item{dat}{Dataset for which age is needed at a given episode.}
+\item{dat}{A dataset to subset.}
 
-\item{Args}{takes a list from \code{\link{setArgs}}.}
+\item{Args}{Takes a list of arguments from \code{\link{setArgs}}.}
 
-\item{time2}{A date variable that is used to calculate age from Birthdate to time2.}
+\item{time2}{A date variable that is used to calculate the Age variable using the
+\code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
+If time2=NULL, the default, then \code{setData} will search for and use an existing Age
+variable in \code{dat}.}
+
+\item{birthdate}{Takes the dataset generated from \code{\link{getBirthDate}}.}
 }
 \value{
 data.frame
 }
 \description{
-Sets data according to values in \code{\link{setArgs}}.
+Sets data according to a list of arguments.
 }
 \examples{
-rtdata <- getRTData(hiv)
-sdat <- splitAtEarlyPos(rtdat)
-adat <- setData(sdat, Args)
+hiv <- getHIV()
+Args <- setArgs(Age=list(All=c(15, 25)))
+# This will use the existing Age variable to subset 
+adat <- setData(hiv, Args)
+bdat <- getBirthDate() 
+This will create a new Age variable using the birthdat and subset by age
+adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=bdat)
+Note that there will be some discrepancy in the number of observations between adat and
+adat1.
 }
