@@ -1,5 +1,4 @@
--   [Getting started with the ahri
-    library](#getting-started-with-the-ahri-library)
+-   [Getting started](#getting-started)
     -   [Install the library](#install-the-library)
     -   [Setting the file paths: the setFiles
         function](#setting-the-file-paths-the-setfiles-function)
@@ -11,8 +10,8 @@
     -   [The getBirthDate function](#the-getbirthdate-function)
     -   [The setData function](#the-setdata-function)
 
-Getting started with the ahri library
-=====================================
+Getting started
+===============
 
 This document serves as a short introduction to the ahri library. For
 this library to work, you will need to request five default datasets
@@ -108,20 +107,20 @@ folder, then you will need to run it again.) Thereafter, you can run
 ``` r
 hiv <- getHIV()
 hiv
-# A tibble: 159,471 x 10
-   IIntID BSIntID VisitDate  HIVResult Female   Age PIPSA          HIVNegative HIVPositive  Year
-    <int>   <int> <date>         <dbl>  <int> <dbl> <chr>          <date>      <date>      <int>
- 1     16    2830 2009-06-02         0      1    56 Southern PIPSA 2009-06-02  NA           2009
- 2     16    2830 2011-05-23         0      1    58 Southern PIPSA 2011-05-23  NA           2011
- 3     17    9274 2004-02-09         0      1    35 Southern PIPSA 2004-02-09  NA           2004
- 4     17    9274 2005-06-02         0      1    36 Southern PIPSA 2005-06-02  NA           2005
- 5     17    9274 2006-06-01         0      1    37 Southern PIPSA 2006-06-01  NA           2006
- 6     17    9274 2010-08-19         0      1    42 Southern PIPSA 2010-08-19  NA           2010
- 7     17    9274 2011-08-06         0      1    43 Southern PIPSA 2011-08-06  NA           2011
- 8     17   18272 2017-10-17         1      1    49 Southern PIPSA NA          2017-10-17   2017
- 9     17   18272 2018-10-03         1      1    50 Southern PIPSA NA          2018-10-03   2018
-10     19    7923 2009-08-04         0      1    69 Southern PIPSA 2009-08-04  NA           2009
-# ... with 159,461 more rows
+# A tibble: 171,082 x 9
+   IIntID BSIntID VisitDate  HIVResult Female   Age HIVNegative HIVPositive  Year
+    <int>   <int> <date>         <dbl>  <int> <dbl> <date>      <date>      <int>
+ 1     16    2830 2009-06-02         0      1    56 2009-06-02  NA           2009
+ 2     16    2830 2011-05-23         0      1    58 2011-05-23  NA           2011
+ 3     17    9274 2004-02-09         0      1    35 2004-02-09  NA           2004
+ 4     17    9274 2005-06-02         0      1    36 2005-06-02  NA           2005
+ 5     17    9274 2006-06-01         0      1    37 2006-06-01  NA           2006
+ 6     17    9274 2010-08-19         0      1    42 2010-08-19  NA           2010
+ 7     17    9274 2011-08-06         0      1    43 2011-08-06  NA           2011
+ 8     17   18272 2017-10-17         1      1    49 NA          2017-10-17   2017
+ 9     17   18272 2018-10-03         1      1    50 NA          2018-10-03   2018
+10     19    7923 2009-08-04         0      1    69 2009-08-04  NA           2009
+# ... with 171,072 more rows
 ```
 
 Similarly with the large Episodes .Rda dataset, you run `readEpisodes`
@@ -330,20 +329,20 @@ dropID <- function(dat) {
 Args <- setArgs(Age=list(All=c(15, 19)), setFun=dropID)
 epi4 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
 epi4
-# A tibble: 150,982 x 8
+# A tibble: 151,734 x 8
    IIntID  Year Female ObservationStart ObservationEnd   Age AgeCat    Val
     <int> <int>  <int> <date>           <date>         <dbl> <fct>   <int>
  1     21  2006      0 2006-01-01       2006-04-27        15 [15,20)     1
  2     21  2007      0 2007-01-01       2007-04-10        16 [15,20)     1
- 3     29  2009      0 2009-09-06       2009-12-31        15 [15,20)     1
- 4     29  2010      0 2010-09-06       2010-12-31        16 [15,20)     1
- 5     29  2011      0 2011-01-01       2011-06-01        17 [15,20)     1
- 6     29  2011      0 2011-09-06       2011-12-31        17 [15,20)     1
- 7     29  2012      0 2012-01-01       2012-09-05        18 [15,20)     1
- 8     29  2013      0 2013-01-01       2013-03-22        19 [15,20)     1
- 9     29  2013      0 2013-09-06       2013-10-23        19 [15,20)     1
-10     30  2005      0 2005-01-01       2005-02-15        19 [15,20)     1
-# ... with 150,972 more rows
+ 3     29  2009      0 2009-01-01       2009-09-05        15 [15,20)     1
+ 4     29  2009      0 2009-09-06       2009-12-31        15 [15,20)     1
+ 5     29  2011      0 2011-09-06       2011-12-31        17 [15,20)     1
+ 6     29  2012      0 2012-09-06       2012-12-31        18 [15,20)     1
+ 7     29  2013      0 2013-09-06       2013-10-23        19 [15,20)     1
+ 8     30  2005      0 2005-01-01       2005-02-15        19 [15,20)     1
+ 9     32  2012      0 2012-05-04       2012-12-31        15 [15,20)     1
+10     32  2013      0 2013-01-01       2013-01-05        16 [15,20)     1
+# ... with 151,724 more rows
 ```
 
 This becomes useful when you have to process data in the ith iteration
