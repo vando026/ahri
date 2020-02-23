@@ -116,9 +116,9 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
 #' # This will use the existing Age variable to subset 
 #' adat <- setData(hiv, Args)
 #' bdat <- getBirthDate() 
-#' This will create a new Age variable using the birthdat and subset by age
+#' # This will create a new Age variable using the birthdat and subset by age
 #' adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=bdat)
-#' Note that there will be some discrepancy in the number of observations between adat and
+#' # Note that there will be some discrepancy in the number of observations between adat and
 #' adat1.
 
 setData <- function(dat, Args, time2=NULL, birthdate=NULL) {
