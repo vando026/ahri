@@ -63,6 +63,6 @@ getHIV <- function(inFile=getFiles()$hiv_rda) {
 #' @export 
 setHIV <- function(Args) {
   dat <- getHIV()
-  setData(dat, Args, time2="VisitDate")
+  setData(dat, Args)
 }
 

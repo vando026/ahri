@@ -71,10 +71,7 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 
 setEpisodes <- function(Args=setArgs()) {
   dat <- getEpisodes()
-  bdat <- getBirthDate()
-  dat <- setData(dat, Args, 
-    time2="ObservationStart", birthdate=bdat)
-  dat
+  setData(dat, Args)
 }
 
 
