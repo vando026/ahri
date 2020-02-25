@@ -4,7 +4,7 @@
 \alias{setHIV}
 \title{setHIV}
 \usage{
-setHIV(Args)
+setHIV(Args = setArgs())
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}

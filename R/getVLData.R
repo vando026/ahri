@@ -7,12 +7,10 @@
 #' @return data.frame
 #'
 #' @import dplyr
-#' @importFrom foreign read.dta
-#' @importFrom readr read_csv cols_only
 
 getVLData <- function(Args) {
 
-  cvl_all <- tbl_df(foreign::read.dta(Args$inFiles$pvlfile))
+  cvl_all <- tbl_df(read.dta(Args$inFiles$pvlfile))
   ind <- read_csv(Args$inFiles$indfile, 
     col_types=cols_only(
     IIntID="i",
@@ -68,8 +66,6 @@ getVLData <- function(Args) {
 #' @return data.frame
 #'
 #' @import dplyr
-#' @importFrom foreign read.dta
-#' @importFrom readr read_csv cols_only
 
 getPVLData <- function(cvl, Args) {
 

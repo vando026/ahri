@@ -61,7 +61,7 @@ getHIV <- function(inFile=getFiles()$hiv_rda) {
 #' @return 
 #'
 #' @export 
-setHIV <- function(Args) {
+setHIV <- function(Args=setArgs()) {
   dat <- getHIV()
   setData(dat, Args)
 }

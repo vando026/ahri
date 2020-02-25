@@ -9,7 +9,6 @@
 #' @export
 #' 
 #' @import dplyr
-#' @import readr
 
 getPartnerData <- function( 
   Args=eval.parent(quote(Args))) {
