@@ -2,8 +2,7 @@
 #' 
 #' @description  Reads the Women (WGH) or Men (MGH) General Health Dataset. 
 #' 
-#' @param Fem Either a value of 0 to read in Men or 1 to read in Women.
-#' @param Vars A regular expression string to select additional variables.
+#' @param Female Either a value of 0 to read in Men or 1 to read in Women.
 #' 
 #' @return 
 #'
@@ -57,21 +56,6 @@ getWGH <- function(inFile=getFiles()$wgh_rda) {
 }
 
 
-#' @title getWGH_MGH
-#' 
-#' @description  Reads in men and women general health data. 
-#' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$fghfile}.
-#' 
-#' @return 
-#'
-#' @examples
-#' readHealthWomen <- readHealthData(getFiles()$wghfile)
-getWGH_MGH <- function() {
-  wdat <- getWGH()
-  mdat <- getMGH()
-  dplyr::bind_rows(wdat, mdat)
-}
 
 #' @title getCircumcisionData
 #' 
@@ -133,7 +117,7 @@ dropCircum <- setCircumStatus(Keep=0)
 #' @title getCondomUseData
 #' 
 #' @description  gets Condom use data from AHRI datasets. File path must be set in
-#' \code{\link{getFiles}}. 
+#' \code{\link{setFiles}}. 
 #' 
 #' @export
 

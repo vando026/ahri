@@ -1,8 +1,9 @@
 #' @title splitData2
 #' 
-#' @description  version 2 of \code{\link{splitData}}.
+#' @description  Function for splitting data into episodes. 
 #' 
 #' @param  dat Dataset must have variables called obs_start, obs_end and event.
+#' @param  years The years by which to split the data.
 #' 
 #' @return data.frame
 #D 
@@ -33,7 +34,7 @@ splitData2 <- function(
 #' 
 #' @description  gets numeric dates for 31DecYYYY.
 #' 
-#' @param Years 
+#' @param  Years The years by which to split the data.
 #' 
 #' @return vector
 #'

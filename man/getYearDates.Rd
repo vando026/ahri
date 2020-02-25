@@ -7,7 +7,7 @@
 getYearDates(Years)
 }
 \arguments{
-\item{Years}{}
+\item{Years}{The years by which to split the data.}
 }
 \value{
 vector

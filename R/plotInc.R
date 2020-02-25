@@ -10,7 +10,8 @@
 plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
   Title="", fname="year_plot") {
-  alainr::getColor()
+
+  list2env(getColor(), env=environment())
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -71,7 +72,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   Legend=c("Men", "Women"),
   gfun=png, Title="", fname="year_plot") {
 
-  alainr::getColor()
+  list2env(getColor(), env=environment())
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),

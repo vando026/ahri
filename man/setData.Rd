@@ -16,6 +16,8 @@ setData(dat, Args, time2 = NULL, age_cut = NULL, birthdate = NULL)
 If time2=NULL, the default, then \code{setData} will use an existing Age
 variable in \code{dat}.}
 
+\item{age_cut}{Vector of ages to make age categories from \code{link{setArgs}}.}
+
 \item{birthdate}{Takes the dataset generated from \code{\link{getBirthDate}}.}
 }
 \value{

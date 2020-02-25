@@ -7,7 +7,7 @@
 getEpisodes(inFile = getFiles()$epi_rda)
 }
 \arguments{
-\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}.}
+\item{inFile}{File path to the dataset, default is set to \code{\link{setFiles}}.}
 }
 \value{
 data.frame

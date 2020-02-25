@@ -238,7 +238,7 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
 plotHIVTestYear <- function(cyear=c(2005:2017), 
   fname="ConsentRate.png") {
 
-  alainr::getColor()
+  list2env(getColor(), env=environment())
   dat <- setHIVMiss()
   edat <- getHIVEligible(Args)
   bdat <- getBirthDate(addVars="Female")

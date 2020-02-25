@@ -8,10 +8,12 @@ splitData2(dat, years = c(2003:2018))
 }
 \arguments{
 \item{dat}{Dataset must have variables called obs_start, obs_end and event.}
+
+\item{years}{The years by which to split the data.}
 }
 \value{
 data.frame
 }
 \description{
-version 2 of \code{\link{splitData}}.
+Function for splitting data into episodes.
 }

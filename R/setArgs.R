@@ -10,6 +10,8 @@
 #'
 #' @param AgeCat numeric vector of age categories, e.g. \code{seq(15, 55, by=5)}.
 #'
+#' @param AgeBy integer value for size age categories.
+#'
 #' @param nSim number of simulations to perform.
 #'
 #' @param ResRule proportion of time spent in DSA, greater than >.
@@ -67,3 +69,17 @@ setArgs <- function(
   as.list(environment())
 }
 
+#' @title getCol
+#' 
+#' @description Save RColorbrewer colors to global environment 
+#' 
+#' @return 
+getColor <- function() {
+  return(list(
+    Blues = RColorBrewer::brewer.pal(9, "Blues"),
+    YlRed = RColorBrewer::brewer.pal(9, "YlOrRd"),
+    Blues = RColorBrewer::brewer.pal(9, "Blues"),
+    Reds =  RColorBrewer::brewer.pal(9, "Reds"),
+    Greens = RColorBrewer::brewer.pal(9, "Greens"),
+    Set1 = RColorBrewer::brewer.pal(9, "Set1")))
+}

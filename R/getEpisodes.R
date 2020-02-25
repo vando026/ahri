@@ -2,8 +2,8 @@
 #' 
 #' @description  Reads in the Surveillance Episodes dataset 
 #' 
-#' @param inFile File path to the .dta dataset, default is set to \code{\link{getFiles}}.
-#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{getFiles}}.
+#' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
+#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
 #' @param dropTasP default is to drop TasP areas.
 #' @param Vars A regular expression string.
 #' @param write_rda Default is to write the .Rda file.
@@ -16,7 +16,7 @@
 #' readEpisodes(Vars="ART", dropTasP=TRUE)
 
 readEpisodes <- function(
-  inFile=getFiles()$epi_dta,
+  inFile=getFiles()$epifile,
   outFile=getFiles()$epi_rda, 
   dropTasP=TRUE, Vars=" ",
   write_rda=TRUE) {
@@ -46,7 +46,7 @@ readEpisodes <- function(
 #' 
 #' @description  Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}.
+#' @param inFile File path to the dataset, default is set to \code{\link{setFiles}}.
 #' 
 #' @return data.frame
 #'

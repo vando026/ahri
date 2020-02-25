@@ -5,7 +5,7 @@
 \title{readEpisodes}
 \usage{
 readEpisodes(
-  inFile = getFiles()$epi_dta,
+  inFile = getFiles()$epifile,
   outFile = getFiles()$epi_rda,
   dropTasP = TRUE,
   Vars = " ",
@@ -13,9 +13,9 @@ readEpisodes(
 )
 }
 \arguments{
-\item{inFile}{File path to the .dta dataset, default is set to \code{\link{getFiles}}.}
+\item{inFile}{File path to the .dta dataset, default is set to \code{\link{setFiles}}.}
 
-\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{getFiles}}.}
+\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.}
 
 \item{dropTasP}{default is to drop TasP areas.}
 

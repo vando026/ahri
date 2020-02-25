@@ -25,6 +25,17 @@
 #'
 #' @param folder The path (as a string) to  the folder of default .dta files. If
 #' \code{folder=""}, then The default calls a dialogue box is called to set the folder path.
+#' @param hivfile Default is RD05-99 ACDIS HIV All.dta
+#' @param epifile Default is SurveillanceEpisodesBasicAgeYrHIV.dta
+#' @param wghfile Default is RD03-99 ACDIS WGH ALL.dta
+#' @param mghfile Default is RD04-99 ACDIS MGH ALL.dta
+#' @param bsifile Default is RD01-03 ACDIS BoundedStructures.dta
+#' @param hsefile Default is RD06-99 ACDIS HSE-H All.dta
+#' @param hiv_rda Default is ACDIS_HIV_All.Rda
+#' @param epi_rda Default is SurveillanceEpisodesBasicAgeYrHIV.Rda
+#' @param wgh_rda Default is ACDIS_WGH_ALL.Rda
+#' @param mgh_rda Default is ACDIS_MGH_ALL.Rda
+#' @param bsc_rda Default is ACDIS_BoundedStructures.Rda
 #'
 #' @return function
 #'
@@ -41,9 +52,9 @@
 #' getFiles() 
 
 setFiles <- function(
-  folder="",
+  folder="C:/Users/alainv/AHRI_Data",
   hivfile="RD05-99 ACDIS HIV All.dta",
-  epi_dta="SurveillanceEpisodesBasicAgeYrHIV.dta",
+  epifile="SurveillanceEpisodesBasicAgeYrHIV.dta",
   wghfile="RD03-99 ACDIS WGH ALL.dta",
   mghfile="RD04-99 ACDIS MGH ALL.dta",
   bsifile="RD01-03 ACDIS BoundedStructures.dta",
@@ -61,49 +72,6 @@ setFiles <- function(
   flist <- lapply(flist, function(x) file.path(folder, x))
   function() 
     return(flist[setdiff(names(flist), "folder")])
-}
-
-
-#' @title setRoot
-#' 
-#' @description Sets the root path to datasets depending on the platform.
-#' 
-#' @return 
-#'
-#' @export 
-setRoot <- function() {
-  if (Sys.getenv("R_PLATFORM")=="x86_64-redhat-linux-gnu") {
-    root    <- file.path("/data/AlainData/AC_Data")
-  } else if (Sys.getenv("R_PLATFORM")=="x86_64-pc-linux-gnu") { #docker path
-    root = file.path("/home/AC_Data") 
-  } else {
-    root=file.path(Sys.getenv("HOME"), "Documents/AC_Data/AHRI_Data")
-  }
-  root
-}
-
-#' @title setHomePath
-#' 
-#' @description  Set paths for PC, Linux, and Docker
-#' 
-#' @param pc PC path
-#' @param linux Path to Linux Redhat
-#' @param docker Path to docker
-#' 
-#' @return 
-#' @export 
-
-setHomePath <- function(pc=getwd(), ssh=getwd(), docker = "/home") {
-  krisp <- "x86_64-redhat-linux-gnu"
-  dock <- "x86_64-pc-linux-gnu"
-  if (Sys.getenv("R_PLATFORM")==krisp) {
-    home <- ssh
-  } else if (Sys.getenv("R_PLATFORM")==dock) {
-    home <- docker
-  } else {
-    home <- pc
-  }
-  return(home)
 }
 
 

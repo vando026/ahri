@@ -8,7 +8,7 @@ License: GPL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
-Imports: tidyverse, survival, zoo, plotrix, RColorBrewer, mitools, parallel, epitools, foreign
+Imports: tidyverse, dplyr, survival, zoo, plotrix, RColorBrewer, mitools, parallel, epitools, haven, readr, stats, utils, mvtnorm, tibble, tidyr 
 Suggests: testthat
 URL: http://github.com/vando026/ahri
 BugReports: http://github.com/vando026/ahri/issues

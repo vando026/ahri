@@ -160,7 +160,7 @@ addBSVars <- function(dat, Vars="Area",
 #' 
 #' @description Read HSE data.
 #' 
-#' @param inFile. File path from \code{\link{getFiles}}.
+#' @param inFile. File path from \code{\link{setFiles}}.
 #' 
 #' @return 
 #'

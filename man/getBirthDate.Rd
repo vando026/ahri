@@ -8,8 +8,6 @@ getBirthDate(addVars = " ")
 }
 \arguments{
 \item{addVars}{String for a regular expression to select additional vars}
-
-\item{inFile}{File path to the dataset, default is set to \code{\link{getFiles}}}
 }
 \value{
 data.frame

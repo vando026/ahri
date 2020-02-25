@@ -30,8 +30,6 @@ setAge <- function(dat, Args) {
 #' 
 #' @description  Gets birth dates from \code{\link{getEpisodes}} data
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{getFiles}}
-#'
 #' @param addVars String for a regular expression to select additional vars
 #' 
 #' @return data.frame
@@ -104,6 +102,7 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
 #' If time2=NULL, the default, then \code{setData} will use an existing Age
 #' variable in \code{dat}. 
 #'
+#' @param age_cut Vector of ages to make age categories from \code{link{setArgs}}.
 #' @param birthdate Takes the dataset generated from \code{\link{getBirthDate}}. 
 #'
 #' @return data.frame
