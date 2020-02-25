@@ -2,8 +2,8 @@
 ## Project: 
 ## Author: AV / Created: 28Sep2018 
 
-context("Test Bounded Structures data")
-bdat <- readBSData()
+context("Test getBSData")
+bdat <- getBSData()
 test_that("Check vars", {
   expect_equal(length(unique(bdat$BSIntID)), 30776)
   expect_equal(sum(bdat$PIPSA[bdat$PIPSA==1], na.rm=TRUE), 18058)
@@ -17,14 +17,14 @@ test_that("Check vars", {
   expect_equal(length(unique(hdat2$IIntID)), 53563)
 })
 
-context("Test getHIV dropTasP")
+context("Test getHIV with dropTasP")
 hiv <- getHIV()
 test_that("Check N", {
   expect_equal(length(unique(hiv$IIntID)), 53563) 
 })
 
 
-context("Test readEpisodes dropTasP")
+context("Test readEpisodes with dropTasP")
 edat <- readEpisodes(dropTasP=TRUE)
 test_that("Check N", {
   expect_equal(length(unique(edat$IIntID)), 174445) 
@@ -34,6 +34,7 @@ test_that("Check N", {
 
 
 context("Test makeAgeVars")
+Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
 hiv <- getHIV()
 hiv1 <- makeAgeVars(hiv)
 hiv2 <- makeAgeVars(hiv, age_cut=Args$AgeCat)

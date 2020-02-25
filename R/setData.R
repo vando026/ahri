@@ -77,8 +77,8 @@ getBirthDate <- function(addVars=" ") {
 
 makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
   if (!is.null(time2)) {
-    if (is.null(bdat)) bdat <- getBirthDate()
-    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
+    if (is.null(birthdate)) birthdate <- getBirthDate()
+    dat <- data.frame(left_join(dat, birthdate, by="IIntID"))
     dat$Age <- floor(as.numeric(difftime(
       dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
     dat <- select(dat, -(DateOfBirth))
