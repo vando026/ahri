@@ -9,7 +9,7 @@ makePartnerData(dat, Args = eval.parent(quote(Args)))
 \arguments{
 \item{dat}{data.frame to which partner data is merged.}
 
-\item{inFile}{path to data which is typically set using \code{\link{getFiles}}.}
+\item{inFile}{path to data which is typically set using \code{\link{setFiles}}.}
 }
 \value{
 data.frame

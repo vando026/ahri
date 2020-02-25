@@ -78,18 +78,6 @@ test_that("Check N", {
 })
 
 
-
-
-context("Test readHealth Data ")
-wgh0 = readHealthData(Female=1)
-mgh0 = readHealthData(Female=0)
-test_that("Check N", {
-  expect_equal(length(unique(mgh0$IIntID)), 37787)
-  expect_equal(length(unique(wgh0$IIntID)), 50563)
-  expect_equal(sum(mgh0$Age), 4732753)
-  expect_equal(sum(wgh0$Age), 8471355)
-})
-
 context("Test getWGH getMGH")
 wgh <- getWGH()
 mgh <- getMGH()

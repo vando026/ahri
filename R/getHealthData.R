@@ -8,7 +8,7 @@
 #'
 #' @export 
 #' @examples
-#' readHealthData(Fem=0)
+#' readHealthData(Female=0)
 readHealthData <- function(Female=1) {
   inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
   outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)

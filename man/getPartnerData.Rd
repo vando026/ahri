@@ -7,7 +7,7 @@
 getPartnerData(Args = eval.parent(quote(Args)))
 }
 \arguments{
-\item{inFile}{path to data which is typically set using \code{\link{getFiles}}}
+\item{inFile}{path to data which is typically set using \code{\link{setFiles}}}
 }
 \value{
 data.frame
