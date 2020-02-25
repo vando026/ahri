@@ -109,7 +109,7 @@ save as corresponding .Rda datasets.
 
 These two functions also drop or keep observations from the TasP
 (Northern PIPSA) study area. In 2017, TasP areas were added to the
-datasets. If you don’t want to include the TasP study areas then set
+datasets. If you want to include the TasP study areas then set
 `dropTasP=FALSE`.
 
 ``` r
@@ -118,9 +118,10 @@ readHIV <- readHIVData(dropTasP=TRUE)
 
 You need only to run the `readHIVData` function once, which will save an
 .Rda dataset to the same folder with your default .dta datasets.
-(However, if you download an updated HIV surveillance to the default
-folder, then you will need to run it again.) Thereafter, you can run
-`getHIV` to load in the data quickly and repeatedly.
+(However, if you download an updated RD05-99 ACDIS HIV All.dta to the
+default folder, then you will need to run `readHIVData` again.)
+Thereafter, you can run `getHIV` to load in the data quickly and
+repeatedly.
 
 ``` r
 hiv <- getHIV()
@@ -151,8 +152,9 @@ getFiles()$hiv_rda
 The readEpisodes function
 -------------------------
 
-Similarly with the large Episodes .Rda dataset, you run `readEpisodes`
-once, and load its corresponding .Rda data file with `getEpisodes`.
+Similarly with the large `SurveillanceEpisodesBasicAgeYrHIV.dta`
+dataset, you run `readEpisodes` once, and load its corresponding .Rda
+data file with `getEpisodes`.
 
 ``` r
 readEpi <- readEpisodes()
@@ -162,27 +164,27 @@ readEpi <- readEpisodes()
 epidat <- getEpisodes()
 epidat
 # A tibble: 4,063,867 x 14
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>        
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09    
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31    
- 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09    
- 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31    
- 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09    
- 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31    
- 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09    
- 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31    
- 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09    
-10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12    
-# ... with 4,063,857 more rows, and 4 more variables: InMigration <dbl+lbl>, OutMigration <dbl+lbl>,
-#   Resident <dbl+lbl>, PIPSA <chr>
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31               0
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0
+ 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0
+ 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31               0
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0
+ 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0
+ 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09               0
+10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12               0
+# ... with 4,063,857 more rows, and 3 more variables: OutMigration <dbl+lbl>, Resident <dbl+lbl>, PIPSA <chr>
 ```
 
-In my experience, the Episodes dataset is a bit overwhelming, so by
-default the `readEpisodes` keeps only variables related to migration,
-for which this dataset is best suited. You can however include addtional
-variables using the `Vars` argument. For example, let’s say you are
-intersted in adding the ART variables, then:
+In my experience, the `SurveillanceEpisodesBasicAgeYrHIV.dta` dataset is
+a bit overwhelming, so by default the `readEpisodes` keeps only
+variables related to migration, for which this dataset is best suited.
+You can however include addtional variables using the `Vars` argument.
+For example, let’s say you are intersted in adding the ART variables,
+then:
 
 ``` r
 readEpi <- readEpisodes(Vars="OnART|ARTInitiation|EarliestARTInitDate")
@@ -208,8 +210,10 @@ The readHealthData function
 
 AHRI has seperate health datasets for men and women. We can use the
 `readHealthData` function to read in these datasets. Lets read in the
-men and then the women. Again, the default .dta dataset is read and the
-corresponding .Rda file is saved.
+men and then the women. Again, the default
+`RD03-99 ACDIS WGH/MGH ALL.dta` dataset is read and the corresponding
+.Rda file is saved. Set `Female=1` to read in the women’s version
+otherwise `Female=0` for the men’s version.
 
 ``` r
 mgh <- readHealthData(Female=0)
@@ -220,7 +224,7 @@ getFiles()$wgh_rda
 [1] "C:/Users/alainv/AHRI_Data/ACDIS_WGH_ALL.Rda"
 ```
 
-We can load the .Rda dataset into memory quickly using:
+We can load the men or women’s .Rda dataset into memory quickly using:
 
 ``` r
 mgh_dat <- getMGH()
@@ -230,7 +234,8 @@ wgh_dat <- getWGH()
 The getBSData and getBSMax functions
 ------------------------------------
 
-We can read and load the Bounded Structures dataset using `getBSData`.
+We can read and load the `RD01-03 ACDIS BoundedStructures.dta` dataset
+using the `getBSData` function.
 
 ``` r
 bs_dat <- getBSData()
@@ -249,9 +254,8 @@ bs_dat
  9      19 2000-01-01           22 2018-09-20        10       4        24     2              2     1
 10      20 2000-01-01           22 2014-09-03        32       7        39    15              3     1
 # ... with 30,766 more rows, and 8 more variables: NearestClinic <dbl+lbl>, KmToNearestClinic <dbl>,
-#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>,
-#   NearestPrimarySchool <dbl+lbl>, KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>,
-#   KmToNearestLevel2Road <dbl>
+#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>, NearestPrimarySchool <dbl+lbl>,
+#   KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>, KmToNearestLevel2Road <dbl>
 ```
 
 A participant can reside in multiple bounded structures (BS). For a
