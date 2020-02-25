@@ -9,6 +9,43 @@ test_that("Check vars", {
   expect_equal(sum(bdat$PIPSA[bdat$PIPSA==1], na.rm=TRUE), 18058)
 })
 
+
+context("Test readHIV 0")
+hiv <- haven::read_dta(getFiles()$hivfile) %>% 
+  select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
+    HIVResult, Female=Sex, Age=AgeAtVisit)
+test_that("Check N", {
+  expect_equal(length(unique(hiv$IIntID)), 97352)
+})
+hiv <- haven::zap_labels(hiv)
+hiv <- filter(hiv, Female %in% c(1,2))
+test_that("Check Sex", {
+  expect_equal(length(unique(hiv$IIntID)), 97352)
+})
+hiv <- mutate(hiv,
+  IIntID = as.integer(IIntID),
+  BSIntID = as.integer(BSIntID),
+  Female=as.integer(ifelse(Female==2, 1, 0)))
+hiv <- arrange(hiv, IIntID, VisitDate)
+hiv <- filter(hiv, HIVResult %in% c(0,1))
+test_that("Check Result", {
+  expect_equal(length(unique(hiv$IIntID)), 63065)
+})
+hiv <- filter(hiv, Age %in% c(15:100))
+test_that("Check Age", {
+  expect_equal(length(unique(hiv$IIntID)), 63004)
+})
+hiv <- mutate(hiv, 
+  HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
+  HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
+hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
+Vars <- c("HIVNegative", "HIVPositive")
+hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
+test_that("Check End", {
+  expect_equal(length(unique(hiv$IIntID)), 63004)
+})
+
+
 context("Test getHIVData")
 hdat1 <- readHIVData(dropTasP=FALSE)
 hdat2 <- readHIVData(dropTasP=TRUE)
