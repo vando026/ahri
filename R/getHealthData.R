@@ -1,31 +1,26 @@
 #' @title readHealthData
 #' 
-#' @description  Reads in WGH/MGH data. 
+#' @description  Reads the Women (WGH) or Men (MGH) General Health Dataset. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mghfile}.
-#' @param outFile Filepath to dataset, default is \code{getFiles()$mgh_rda}.
-#' @param Fem either a 0 or 1 to represent MGH or WGH dataset
+#' @param Fem Either a value of 0 to read in Men or 1 to read in Women.
+#' @param Vars A regular expression string to select additional variables.
 #' 
 #' @return 
 #'
 #' @export 
 #' @examples
-#' readHealthData(getFiles()$mghfile, getFiles()$mgh_rda, Fem=0)
-readHealthData <- function(inFile, outFile, Fem) {
-    dat <- haven::read_dta(inFile) %>%
-      select(IIntID=IIntId, VisitDate,
-      Age=AgeAtVisit, EverUsedCondom=MRPEverUsedCondoms, 
-      Marital=CurrentMaritalStatus,
-      Partner12=PartnersInLastTwelveMonths,
-      matches("^IsCircumcised$"))
-    dat <- haven::zap_labels(dat)
-    dat <- haven::zap_formats(dat)
-    dat <- mutate(dat, 
-      Year = as.integer(format(dat$VisitDate, "%Y")),
-      IIntID = as.integer(IIntID),
-      Female = Fem)
-    saveRDS(dat, outFile)
-    dat
+#' readHealthData(Fem=0)
+readHealthData <- function(Female=1) {
+  inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
+  outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
+  dat <- haven::read_dta(inFile) %>%
+    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+  dat <- mutate(dat, 
+    Year = as.integer(format(dat$VisitDate, "%Y")),
+    IIntID = as.integer(IIntID),
+    Female = Female)
+  saveRDS(dat, outFile)
+  dat
 }
 
 #' @title getMGH
@@ -70,7 +65,6 @@ getWGH <- function(inFile=getFiles()$wgh_rda) {
 #' 
 #' @return 
 #'
-#' @export 
 #' @examples
 #' readHealthWomen <- readHealthData(getFiles()$wghfile)
 getWGH_MGH <- function() {

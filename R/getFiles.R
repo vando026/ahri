@@ -53,17 +53,8 @@ setFiles <- function(
   epi_rda="SurveillanceEpisodesBasicAgeYrHIV.Rda",
   wgh_rda="ACDIS_WGH_ALL.Rda",
   mgh_rda="ACDIS_MGH_ALL.Rda",
-  bsm_rda="MaxBSIntID.Rda",
   bsc_rda="ACDIS_BoundedStructures.Rda") {
 
-  # parfile="/Analytics/PartnerDat.Rdata",
-  # ind_rda="/Analytics/Individuals.Rda",
-  # prvfile="/Analytics/HIV_Prev_Aug21.csv",
-  # pipfile="/Analytics/PIPBoundedStructures2018.dta",
-  # bscfile="BoundedStructure/BSIntID_Coords.csv",
-  # fem_art="/ARTemis/2017/ART_All.csv",
-  # mal_art="/ARTemis/2017/ART_All.csv",
-  # pvlfile="CVL_2011_2014/Community Viral Load 2011-2014.dta") 
   if (folder=="") 
     folder <- choose.dir(caption="Select a folder which contains all the AHRI .dta files") 
   flist <- as.list(environment())

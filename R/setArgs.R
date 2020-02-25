@@ -41,7 +41,6 @@
 #' Args <- setArgs(inFiles, Years=c(2004:2015), MoreArgs=list(knots=2))
 
 setArgs <- function( 
-  inFiles=getFiles(),
   Years=c(2005:2018),
   Age=list(All=c(15, 54)),
   AgeCat=NULL,
@@ -65,8 +64,6 @@ setArgs <- function(
     "All", names(Age))
   FemCode=switch(Sex,
     Mal=0,Fem=1,All=c(0, 1))
-  #
-  getFiles <- inFiles
   as.list(environment())
 }
 

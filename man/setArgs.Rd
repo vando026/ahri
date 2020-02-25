@@ -5,7 +5,6 @@
 \title{setArgs}
 \usage{
 setArgs(
-  inFiles = getFiles(),
   Years = c(2005:2018),
   Age = list(All = c(15, 54)),
   AgeCat = NULL,
@@ -22,8 +21,6 @@ setArgs(
 )
 }
 \arguments{
-\item{inFiles}{list of files to pass to function.}
-
 \item{Years}{numeric vector of years.}
 
 \item{Age}{list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.}
@@ -50,6 +47,8 @@ setArgs(
 can be added.}
 
 \item{MoreArgs}{a list, which adds more arguments if needed.}
+
+\item{inFiles}{list of files to pass to function.}
 }
 \value{
 list

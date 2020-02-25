@@ -1,18 +1,4 @@
-#' @title getBSCord
-#' 
-#' @description  get the GPS coordinates for BSIntID 
-#' 
-#' @param inFile path to the BSIntID coordinates csv file
-#' 
-#' @return data.frame
-#'
-#' @export
-getBSCord <- function(inFile=getFiles()$bscfile) {
-  dat <-  read_csv(inFile)
-  mutate(dat, BSIntID=as.integer(BSIntID))
-}
-
-#' @title readBSData
+#' @title getBSData
 #' 
 #' @description  Read in Bounded Structures data.
 #' 
@@ -23,8 +9,8 @@ getBSCord <- function(inFile=getFiles()$bscfile) {
 #' @export 
 #'
 #' @examples
-#' readBSData() 
-readBSData <- function(inFile=getFiles()$bsifile) {
+#' getBSData() 
+getBSData <- function(inFile=getFiles()$bsifile) {
   dat <- haven::read_dta(inFile) %>%
     rename(BSIntID=BSIntId)
   dat <- mutate(dat, BSIntID = as.integer(BSIntID))
@@ -44,39 +30,18 @@ readBSData <- function(inFile=getFiles()$bsifile) {
 #' @export 
 
 dropTasPData <- function(dat) {
-  bsdat <- readBSData() %>% select(BSIntID, PIPSA)
+  bsdat <- getBSData() %>% select(BSIntID, PIPSA)
   bsdat$PIPSA <- as.character(haven::as_factor(bsdat$PIPSA))
   dat <- left_join(dat, bsdat, by="BSIntID")
   dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
   return(dat)
 }
 
-#' @title mkBSData
-#' 
-#' @description  Make a composite of BS data for Analytics dataset
-#' 
-#' @param Args see \code{\link{setArgs}}.
-#' 
-#' @return 
-#'
-#' @export 
-mkBSData <- function(outFile=getFiles()$bsc_rda, dropTasP=TRUE) {
-  bdat <- readBSData()
-  if (dropTasP) 
-    bdat <- filter(bdat, PIPSA %in% c("Southern PIPSA", NA)) 
-  cdat <- getBSCord()
-  dat <- left_join(bdat, cdat, by="BSIntID")
-  saveRDS(dat, outFile)
-  dat
-}
-
-
 #' @title getBSMax
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
-#' @param inFile file path to Episodes dataset (\code{getFiles()$epifile}).
-#' @param outFile file path to write dataset (\code{getFiles()$bsm_rda}).
+#' @param inFile file path to Episodes dataset (\code{getFiles()$epi_rda}).
 #' @param minDays Value of 1:366 min days spent in DSA to qualify as being a resident in
 #' that year. 
 #'
@@ -89,7 +54,6 @@ mkBSData <- function(outFile=getFiles()$bsc_rda, dropTasP=TRUE) {
 
 getBSMax <- function(
   inFile=getFiles()$epi_rda,
-  outFile=getFiles()$bsm_rda,
   minDays=0) {
 
   dat <- readRDS(inFile)
@@ -109,7 +73,6 @@ getBSMax <- function(
   maxBS <- filter(dat, MaxDays >= minDays) %>% 
     select(IIntID, Year, BSIntID )
 
-  saveRDS(maxBS, file=outFile)
   maxBS
 }
 

@@ -2,13 +2,13 @@
     -   [Install the library](#install-the-library)
     -   [Setting the file paths: the setFiles
         function](#setting-the-file-paths-the-setfiles-function)
-    -   [Reading in data: readHIVData and readEpisodes
-        functions](#reading-in-data-readhivdata-and-readepisodes-functions)
--   [Setting the data](#setting-the-data)
-    -   [The setArgs function](#the-setargs-function)
-    -   [The setAge function](#the-setage-function)
-    -   [The getBirthDate function](#the-getbirthdate-function)
-    -   [The setData function](#the-setdata-function)
+    -   [Help and documentation](#help-and-documentation)
+-   [Reading in data](#reading-in-data)
+    -   [The readHIVData function](#the-readhivdata-function)
+    -   [The readEpisodes function](#the-readepisodes-function)
+    -   [The readHealthData function](#the-readhealthdata-function)
+    -   [The getBSData and getBSMax
+        functions](#the-getbsdata-and-getbsmax-functions)
 
 Getting started
 ===============
@@ -80,8 +80,26 @@ If you ommit the folder argument then `setFiles()` will bring up a
 graphical dialogue box where you can point and click your way to the
 folder.
 
-Reading in data: readHIVData and readEpisodes functions
--------------------------------------------------------
+Help and documentation
+----------------------
+
+-   The README files provide an overview of the `ahri` library. Please
+    use these as a guide to getting started.
+-   The `ahri` package has help files and documentation. Type `?ahri` to
+    get to the help pages. For more information on a specific function,
+    for example `setFiles`, type `?setFiles`.
+-   Please consult the issues page on this Github site for more
+    information and for answers to questions someone before you may have
+    already asked.
+-   If you have questions, post them as an issue so that I or others can
+    answer.
+    (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
+
+Reading in data
+===============
+
+The readHIVData function
+------------------------
 
 Reading in some of the large AHRI datasets can take time. Two useful
 functions for speeding up this process are: `readHIVData` and
@@ -107,21 +125,31 @@ folder, then you will need to run it again.) Thereafter, you can run
 ``` r
 hiv <- getHIV()
 hiv
-# A tibble: 171,082 x 9
-   IIntID BSIntID VisitDate  HIVResult Female   Age HIVNegative HIVPositive  Year
-    <int>   <int> <date>         <dbl>  <int> <dbl> <date>      <date>      <int>
- 1     16    2830 2009-06-02         0      1    56 2009-06-02  NA           2009
- 2     16    2830 2011-05-23         0      1    58 2011-05-23  NA           2011
- 3     17    9274 2004-02-09         0      1    35 2004-02-09  NA           2004
- 4     17    9274 2005-06-02         0      1    36 2005-06-02  NA           2005
- 5     17    9274 2006-06-01         0      1    37 2006-06-01  NA           2006
- 6     17    9274 2010-08-19         0      1    42 2010-08-19  NA           2010
- 7     17    9274 2011-08-06         0      1    43 2011-08-06  NA           2011
- 8     17   18272 2017-10-17         1      1    49 NA          2017-10-17   2017
- 9     17   18272 2018-10-03         1      1    50 NA          2018-10-03   2018
-10     19    7923 2009-08-04         0      1    69 2009-08-04  NA           2009
-# ... with 171,072 more rows
+# A tibble: 159,471 x 10
+   IIntID BSIntID VisitDate  HIVResult Female   Age PIPSA          HIVNegative HIVPositive  Year
+    <int>   <int> <date>         <dbl>  <int> <dbl> <chr>          <date>      <date>      <int>
+ 1     16    2830 2009-06-02         0      1    56 Southern PIPSA 2009-06-02  NA           2009
+ 2     16    2830 2011-05-23         0      1    58 Southern PIPSA 2011-05-23  NA           2011
+ 3     17    9274 2004-02-09         0      1    35 Southern PIPSA 2004-02-09  NA           2004
+ 4     17    9274 2005-06-02         0      1    36 Southern PIPSA 2005-06-02  NA           2005
+ 5     17    9274 2006-06-01         0      1    37 Southern PIPSA 2006-06-01  NA           2006
+ 6     17    9274 2010-08-19         0      1    42 Southern PIPSA 2010-08-19  NA           2010
+ 7     17    9274 2011-08-06         0      1    43 Southern PIPSA 2011-08-06  NA           2011
+ 8     17   18272 2017-10-17         1      1    49 Southern PIPSA NA          2017-10-17   2017
+ 9     17   18272 2018-10-03         1      1    50 Southern PIPSA NA          2018-10-03   2018
+10     19    7923 2009-08-04         0      1    69 Southern PIPSA 2009-08-04  NA           2009
+# ... with 159,461 more rows
 ```
+
+The file path of the .Rda file is:
+
+``` r
+getFiles()$hiv_rda
+[1] "C:/Users/alainv/AHRI_Data/ACDIS_HIV_All.Rda"
+```
+
+The readEpisodes function
+-------------------------
 
 Similarly with the large Episodes .Rda dataset, you run `readEpisodes`
 once, and load its corresponding .Rda data file with `getEpisodes`.
@@ -133,21 +161,21 @@ readEpi <- readEpisodes()
 ``` r
 epidat <- getEpisodes()
 epidat
-# A tibble: 4,063,867 x 19
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration OutMigration Resident
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>    <dbl+lbl> <dbl+lb>
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0            0        1
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31               0            0        1
- 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0            0        1
- 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0            0        1
- 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0            0        1
- 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31               0            0        1
- 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0            0        1
- 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0            0        1
- 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09               0            0        1
-10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12               0            0        1
-# ... with 4,063,857 more rows, and 6 more variables: ResidentStart <dbl+lbl>, MembershipStart <dbl+lbl>, OnART <dbl+lbl>,
-#   ARTInitiation <dbl>, EarliestARTInitDate <date>, PIPSA <chr>
+# A tibble: 4,063,867 x 14
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>        
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09    
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31    
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09    
+ 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31    
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09    
+ 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31    
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09    
+ 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31    
+ 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09    
+10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12    
+# ... with 4,063,857 more rows, and 4 more variables: InMigration <dbl+lbl>, OutMigration <dbl+lbl>,
+#   Resident <dbl+lbl>, PIPSA <chr>
 ```
 
 In my experience, the Episodes dataset is a bit overwhelming, so by
@@ -168,205 +196,86 @@ the common substring, you could achieve the same outcome using:
 readEpi <- readEpisodes(Vars="ART")
 ```
 
-You can see the file paths and names of the .Rda datasets as follows:
+The file path of the .Rda file is:
 
 ``` r
-getFiles()$hiv_rda
-[1] "C:/Users/alainv/AHRI_Data/ACDIS_HIV_All.Rda"
 getFiles()$epi_rda
 [1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesBasicAgeYrHIV.Rda"
 ```
 
-Setting the data
-================
+The readHealthData function
+---------------------------
 
-The setArgs function
---------------------
-
-A useful function for setting the data is `setArgs`. The `setArgs`
-function can set the data in a number of ways, for example, by year,
-sex, and age. Let’s see how this works with the HIV surveillance
-dataset, where we select years 2010 to 2018 for men and women aged 14 to
-49 years.
+AHRI has seperate health datasets for men and women. We can use the
+`readHealthData` function to read in these datasets. Lets read in the
+men and then the women. Again, the default .dta dataset is read and the
+corresponding .Rda file is saved.
 
 ``` r
-Args <- setArgs(Years=c(2010:2018), 
-  Age=list(All=c(15, 49)))
-hiv <- setHIV(Args)
-sort(unique(hiv$Year))
-[1] 2010 2011 2012 2013 2014 2015 2016 2017 2018
-unique(hiv$Female)
-[1] 1 0
-summary(hiv$Age)[c(1, 6)]
-Min. Max. 
-  15   49 
+mgh <- readHealthData(Female=0)
+getFiles()$mgh_rda
+[1] "C:/Users/alainv/AHRI_Data/ACDIS_MGH_ALL.Rda"
+wgh <- readHealthData(Female=1)
+getFiles()$wgh_rda
+[1] "C:/Users/alainv/AHRI_Data/ACDIS_WGH_ALL.Rda"
 ```
 
-We restrict the data to men aged 15 to 25 years as follows.
+We can load the .Rda dataset into memory quickly using:
 
 ``` r
-Args <- setArgs(Years=c(2010:2018), 
-  Age=list(Mal=c(15, 25)))
-hiv <- setHIV(Args)
-unique(hiv$Female)
-[1] 0
-summary(hiv$Age)[c(1, 6)]
-Min. Max. 
-  15   25 
+mgh_dat <- getMGH()
+wgh_dat <- getWGH()
 ```
 
-We can set different ages for men and women:
+The getBSData and getBSMax functions
+------------------------------------
+
+We can read and load the Bounded Structures dataset using `getBSData`.
 
 ``` r
-Args <- setArgs(Years=c(2010:2018), 
-  Age=list(Mal=c(15, 25), Fem=c(15, 35)))
-hiv <- setHIV(Args)
-summary(hiv$Age[hiv$Female==1])[c(1, 6)]
-Min. Max. 
-  15   35 
-summary(hiv$Age[hiv$Female==0])[c(1, 6)]
-Min. Max. 
-  15   25 
+bs_dat <- getBSData()
+bs_dat
+# A tibble: 30,776 x 18
+   BSIntID BSStartDate BSStartType BSEndDate  BSEndType Isigodi LocalArea  Ward IsUrbanOrRural PIPSA
+     <int> <date>        <dbl+lbl> <date>     <dbl+lbl> <dbl+l> <dbl+lbl> <dbl>      <dbl+lbl> <dbl>
+ 1      11 2000-01-01           22 2018-02-10        10       5        32     1              4     1
+ 2      12 2000-01-01           22 9997-01-01       200       5        32     1              4     1
+ 3      13 2000-01-01           22 2009-03-17        10       5        32     1              4     1
+ 4      14 2000-01-01           22 9997-01-01       200       5        32     1              4     1
+ 5      15 2000-01-01           22 2018-09-12        10       5        32     1              4     1
+ 6      16 2000-01-01           22 2018-05-31        10       5        33     1              4     1
+ 7      17 2000-01-01           22 2018-10-30        10      16       107    14              3     1
+ 8      18 2000-01-01           22 2018-10-30        10      16       107    14              3     1
+ 9      19 2000-01-01           22 2018-09-20        10       4        24     2              2     1
+10      20 2000-01-01           22 2014-09-03        32       7        39    15              3     1
+# ... with 30,766 more rows, and 8 more variables: NearestClinic <dbl+lbl>, KmToNearestClinic <dbl>,
+#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>,
+#   NearestPrimarySchool <dbl+lbl>, KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>,
+#   KmToNearestLevel2Road <dbl>
 ```
 
-We can also use the `setArgs` function for the Episodes dataset.
+A participant can reside in multiple bounded structures (BS). For a
+given year, it is useful to identify the BS that the participant spent
+the most time in, which is what the `getBSMax` function does. The
+`getBSMax` function is often used to produce an input dataset for
+geospatial analyses, where for a single year, only one residence per
+participant is allowed.
 
 ``` r
-Args <- setArgs(Years=c(2005:2018),
-  Age=list(All=c(25, 40)))
-epi <- setEpisodes(Args)
-summary(epi$Age)[c(1, 6)]
-Min. Max. 
-  25   40 
-```
-
-The setAge function
--------------------
-
-You can actually set the age by sex for any dataset, providing it has
-the required `Age` and `Female` variables. The `setAge` function does
-this:
-
-``` r
-hiv <- getHIV()
-Args <- setArgs(Age=list(Fem=c(15, 19), Mal=c(15, 25)))
-hiv <- setAge(hiv, Args)
-summary(hiv$Age[hiv$Female==1])[c(1, 6)]
-Min. Max. 
-  15   19 
-summary(hiv$Age[hiv$Female==0])[c(1, 6)]
-Min. Max. 
-  15   25 
-```
-
-The getBirthDate function
--------------------------
-
-A useful function for extracting birth dates is the `getBirthDate`
-function, which extracts the `DoB` variable from the `getEpisodes`
-dataset.
-
-``` r
-bdat <- getBirthDate()
-bdat
-# A tibble: 174,293 x 2
-   IIntID DateOfBirth
-    <int> <date>     
- 1     11 1945-01-10 
- 2     12 1940-12-26 
- 3     13 1961-03-07 
- 4     14 1974-12-24 
- 5     15 1977-08-05 
- 6     16 1952-11-16 
- 7     17 1968-06-05 
- 8     18 1979-04-05 
- 9     19 1939-08-18 
-10     20 1973-06-25 
-# ... with 174,283 more rows
-```
-
-This is mainly a helper fuction used elsewhere, as demonstrated below.
-
-The setData function
---------------------
-
-For any dataset, the `setData` function will subset by year, age, and
-sex. For this function, the `Year` and `Female` variables are needed. If
-the `Age` variable is not available, then `setData` will create one for
-you.
-
-For example, pretend you just created a dataset that doesnt have an age
-variable, and all you have is the start or end date of the episode, and
-the date of birth. This is typically the case when you split data into
-episodes, and you need to recalculate the age by episode. Using the
-`getBirthDate` function, we can get the birth dates and then pass that
-data as an argument to `setData`.
-
-``` r
-epi <- getEpisodes()
-# No Age variable
-epi2 <- select(epi, IIntID, Year, Female, ObservationStart, ObservationEnd)
-names(epi2)
-[1] "IIntID"           "Year"             "Female"           "ObservationStart" "ObservationEnd"  
-# Keep only episodes where ID is aged 15-35
-Args <- setArgs(Age=list(All=c(15, 35)))
-# Make age at the start of the episode
-epi3 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
-summary(epi3$Age[hiv$Female==0])[c(1, 6)]
-Min. Max. 
-  15   35 
-```
-
-You can also pass on a custom function to `setArgs` to do further data
-processing. For example, let’s drop participants according to some
-criteria defined in the custom function.
-
-``` r
-dropID <- function(dat) {
-  dat <- mutate(dat, Val = rbinom(nrow(dat), 1, 0.4))
-  filter(dat, Val==1)
-}
-Args <- setArgs(Age=list(All=c(15, 19)), setFun=dropID)
-epi4 <- setData(epi2, Args, time2="ObservationStart", birthdate=bdat)
-epi4
-# A tibble: 151,216 x 8
-   IIntID  Year Female ObservationStart ObservationEnd   Age AgeCat    Val
-    <int> <int>  <int> <date>           <date>         <dbl> <fct>   <int>
- 1     21  2005      0 2005-05-19       2005-12-31        15 [15,20)     1
- 2     21  2006      0 2006-04-28       2006-12-31        15 [15,20)     1
- 3     29  2009      0 2009-09-06       2009-12-31        15 [15,20)     1
- 4     29  2011      0 2011-09-06       2011-12-31        17 [15,20)     1
- 5     29  2013      0 2013-03-23       2013-09-05        19 [15,20)     1
- 6     32  2013      0 2013-01-01       2013-01-05        16 [15,20)     1
- 7     32  2013      0 2013-01-06       2013-05-03        16 [15,20)     1
- 8     32  2014      0 2014-01-01       2014-01-04        17 [15,20)     1
- 9     32  2014      0 2014-01-05       2014-05-03        17 [15,20)     1
-10     32  2014      0 2014-05-04       2014-12-31        17 [15,20)     1
-# ... with 151,206 more rows
-```
-
-This becomes useful when you have to process data in the ith iteration
-of i = 1,…K iterations.
-
-Notice how you get a free `AgeCat` variable. Whenever you call
-`setData`, an `AgeCat` variable will be generated. The default
-categories are 5 years, but you can change this in `setArgs`. For
-example, let’s say we want 10 year age categories.
-
-``` r
-Args <- setArgs(Age=list(All=c(15, 49)), AgeBy=10)
-hiv <- setHIV(Args)
-unique(hiv$AgeCat)
-[1] [35,45) [45,55) [25,35) [15,25)
-Levels: [15,25) [25,35) [35,45) [45,55)
-```
-
-Or you could create custom age categories using:
-
-``` r
-Args <- setArgs(Age=list(All=c(15, 49)), AgeCat=c(15, 20, 25, 30, 40, 50))
-hiv <- setHIV(Args)
-unique(hiv$AgeCat)
-[1] [30,40) [40,50) [25,30) [15,20) [20,25)
-Levels: [15,20) [20,25) [25,30) [30,40) [40,50)
+bmax <- getBSMax()
+bmax
+# A tibble: 1,403,031 x 3
+   IIntID  Year BSIntID
+    <int> <int>   <int>
+ 1     11  2000    2830
+ 2     11  2001    2830
+ 3     11  2002    2830
+ 4     11  2003    2830
+ 5     11  2004    2830
+ 6     12  2000    2460
+ 7     12  2001    2460
+ 8     12  2002    2460
+ 9     12  2003    2460
+10     12  2004    2460
+# ... with 1,403,021 more rows
 ```

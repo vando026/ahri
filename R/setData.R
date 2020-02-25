@@ -57,13 +57,13 @@ getBirthDate <- function(addVars=" ") {
 
 #' @title makeAgeVars
 #' 
-#' @description  Function for making age variables
+#' @description  Function for making Age and AgeCat variables
 #' 
-#' @param dat dataset for which age is needed at a given episode.
-#' @param visitdate Variable name as string for Date of visit.
-#' @param age_cut Vector of ages to make age categories, if NULL then mean centered age
-#' and age-squared variables made.
-#' @param bdat Dataset of birthdates, if NULL then it uses \code{\link{getBirthDate}}.
+#' @param dat A dataset 
+#' @param time2 The name of a date variable that is used to calculate the Age variable using the
+#' \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
+#' @param age_cut Vector of ages to make age categories from \code{link{setArgs}}.
+#' @param birthdate Dataset of birthdates, if NULL it uses \code{\link{getBirthDate}}.
 #'
 #' @return data.frame
 #'
@@ -75,12 +75,14 @@ getBirthDate <- function(addVars=" ") {
 #' adat <- setAge(sdata)
 #' adat <- makeAgeVars(adat)
 
-makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
-  if (is.null(bdat)) bdat <- getBirthDate()
-  dat <- data.frame(left_join(dat, bdat, by="IIntID"))
-  dat$Age <- floor(as.numeric(difftime(
-    dat[,visitdate], dat[,"DateOfBirth"], units='weeks'))/52.25)
-  dat <- select(dat, -(DateOfBirth))
+makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
+  if (!is.null(time2)) {
+    if (is.null(bdat)) bdat <- getBirthDate()
+    dat <- data.frame(left_join(dat, bdat, by="IIntID"))
+    dat$Age <- floor(as.numeric(difftime(
+      dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
+    dat <- select(dat, -(DateOfBirth))
+  }
   if(!is.null(age_cut)) {
     dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
       include.lower=TRUE, right=FALSE, labels=NULL))
@@ -97,9 +99,9 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
 #'
 #' @param Args Takes a list of arguments from \code{\link{setArgs}}. 
 #'
-#' @param time2 A date variable that is used to calculate the Age variable using the
+#' @param time2 The name of a date variable that is used to calculate the Age variable using the
 #' \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
-#' If time2=NULL, the default, then \code{setData} will search for and use an existing Age
+#' If time2=NULL, the default, then \code{setData} will use an existing Age
 #' variable in \code{dat}. 
 #'
 #' @param birthdate Takes the dataset generated from \code{\link{getBirthDate}}. 
@@ -115,24 +117,21 @@ makeAgeVars <- function(dat, visitdate=NULL, age_cut=NULL, bdat=NULL){
 #' Args <- setArgs(Age=list(All=c(15, 25)))
 #' # This will use the existing Age variable to subset 
 #' adat <- setData(hiv, Args)
-#' bdat <- getBirthDate() 
 #' # This will create a new Age variable using the birthdat and subset by age
-#' adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=bdat)
+#' adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=getBirthDate())
 #' # Note that there will be some discrepancy in the number of observations between adat and
 #' adat1.
 
-setData <- function(dat, Args, time2=NULL, birthdate=NULL) {
+setData <- function(dat, Args, time2=NULL, age_cut=NULL, birthdate=NULL) {
+  dat <- makeAgeVars(dat, time2=time2,
+    age_cut=Args$AgeCat, birthdate=birthdate)
   # Filter by Age limits
-  if (!is.null(time2)) {
-    dat <- makeAgeVars(dat, visitdate=time2,
-      age_cut=Args$AgeCat, bdat=birthdate)
-  } 
   dat <- setAge(dat, Args)
   dat <- filter(dat, Female %in% Args$FemCode)
   dat <- filter(dat, Year %in% Args$Years)
   # further actions to take place
   dat <- Args$setFun(dat)
   dat <- Args$addVars(dat)
-  as_tibble(dat)
+  tibble::as_tibble(dat)
 }
 

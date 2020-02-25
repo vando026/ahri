@@ -4,23 +4,23 @@
 \alias{makeAgeVars}
 \title{makeAgeVars}
 \usage{
-makeAgeVars(dat, visitdate = NULL, age_cut = NULL, bdat = NULL)
+makeAgeVars(dat, time2 = NULL, age_cut = NULL, birthdate = NULL)
 }
 \arguments{
-\item{dat}{dataset for which age is needed at a given episode.}
+\item{dat}{A dataset}
 
-\item{visitdate}{Variable name as string for Date of visit.}
+\item{time2}{The name of a date variable that is used to calculate the Age variable using the
+\code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.}
 
-\item{age_cut}{Vector of ages to make age categories, if NULL then mean centered age
-and age-squared variables made.}
+\item{age_cut}{Vector of ages to make age categories from \code{link{setArgs}}.}
 
-\item{bdat}{Dataset of birthdates, if NULL then it uses \code{\link{getBirthDate}}.}
+\item{birthdate}{Dataset of birthdates, if NULL it uses \code{\link{getBirthDate}}.}
 }
 \value{
 data.frame
 }
 \description{
-Function for making age variables
+Function for making Age and AgeCat variables
 }
 \examples{
 adat <- setAge(sdata)
