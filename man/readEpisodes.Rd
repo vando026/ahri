@@ -19,9 +19,9 @@ readEpisodes(
 
 \item{dropTasP}{default is to drop TasP areas.}
 
-\item{Vars}{A regular expression string.}
-
 \item{write_rda}{Default is to write the .Rda file.}
+
+\item{addVars}{A regular expression string representing the variables to be added.}
 }
 \value{
 data.frame
@@ -30,5 +30,5 @@ data.frame
 Reads in the Surveillance Episodes dataset
 }
 \examples{
-readEpisodes(Vars="ART", dropTasP=TRUE)
+readEpisodes(addVars="ART", dropTasP=TRUE)
 }

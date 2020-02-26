@@ -4,10 +4,14 @@
 \alias{setEpisodes}
 \title{setEpisodes}
 \usage{
-setEpisodes(Args = setArgs())
+setEpisodes(Args = setArgs(), dat = NULL)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
+
+\item{dat}{A dataset generated from \code{\link{readEpisodes}}, which exists in the
+global environment. If NULL, it reads in the corresponding .Rda file (see
+\code{\link{setFiles}}.}
 }
 \value{
 data.frame
@@ -16,5 +20,8 @@ data.frame
 Set the Episodes data according to Arguments.
 }
 \examples{
-setEpisodes()
+Args <- setArgs(Years=c(2005:2010))
+setEpisodes(Args)
+epidat <- readEpisodes(write_rda=FALSE)
+setEpisodes(Args, epidat)
 }

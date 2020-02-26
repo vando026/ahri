@@ -5,7 +5,7 @@
 #' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
 #' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
 #' @param dropTasP default is to drop TasP areas.
-#' @param Vars A regular expression string.
+#' @param addVars A regular expression string representing the variables to be added. 
 #' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return data.frame
@@ -13,7 +13,7 @@
 #' @export 
 #'
 #' @examples
-#' readEpisodes(Vars="ART", dropTasP=TRUE)
+#' readEpisodes(addVars="ART", dropTasP=TRUE)
 
 readEpisodes <- function(
   inFile=getFiles()$epifile,
@@ -29,7 +29,7 @@ readEpisodes <- function(
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
-    Resident, matches(Vars))
+    Resident, matches(addVars))
   dat <- filter(dat, Female %in% c(1,2))
   dat <- mutate(dat,
     IIntID=as.integer(IIntID),
@@ -61,16 +61,22 @@ getEpisodes <- function(inFile=getFiles()$epi_rda) {
 #' @description  Set the Episodes data according to Arguments.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param dat A dataset generated from \code{\link{readEpisodes}}, which exists in the
+#' global environment. If NULL, it reads in the corresponding .Rda file (see
+#' \code{\link{setFiles}}.  
 #' 
 #' @return data.frame
 #'
 #' @export 
 #'
 #' @examples
-#' setEpisodes()
+#' Args <- setArgs(Years=c(2005:2010))
+#' setEpisodes(Args)
+#' epidat <- readEpisodes(write_rda=FALSE)
+#' setEpisodes(Args, epidat)
 
-setEpisodes <- function(Args=setArgs()) {
-  dat <- getEpisodes()
+setEpisodes <- function(Args=setArgs(), dat=NULL) {
+  if (is.null(dat)) dat <- getEpisodes()
   setData(dat, Args)
 }
 

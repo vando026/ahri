@@ -18,7 +18,6 @@
 #' @param wghfile RD03-99 ACDIS WGH ALL.dta
 #' @param mghfile RD04-99 ACDIS MGH ALL.dta
 #' @param bsifile RD01-03 ACDIS BoundedStructures.dta
-#' @param hsefile RD06-99 ACDIS HSE-H All.dta
 #' @param hiv_rda ACDIS_HIV_All.Rda
 #' @param epi_rda SurveillanceEpisodesBasicAgeYrHIV.Rda
 #' @param wgh_rda ACDIS_WGH_ALL.Rda
@@ -42,14 +41,13 @@
 setFiles <- function(
   folder="C:/Users/alainv/AHRI_Data",
   hivfile="RD05-99 ACDIS HIV All.dta",
-  epifile="SurveillanceEpisodesBasicAgeYrHIV.dta",
+  epifile="SurveillanceEpisodesExtended.dta",
   wghfile="RD03-99 ACDIS WGH ALL.dta",
   mghfile="RD04-99 ACDIS MGH ALL.dta",
   bsifile="RD01-03 ACDIS BoundedStructures.dta",
-  hsefile="RD06-99 ACDIS HSE-H All.dta",
 
   hiv_rda="ACDIS_HIV_All.Rda",
-  epi_rda="SurveillanceEpisodesBasicAgeYrHIV.Rda",
+  epi_rda="SurveillanceEpisodesExtended.Rda",
   wgh_rda="ACDIS_WGH_ALL.Rda",
   mgh_rda="ACDIS_MGH_ALL.Rda",
   bsc_rda="ACDIS_BoundedStructures.Rda") {
