@@ -8,7 +8,7 @@ readEpisodes(
   inFile = getFiles()$epifile,
   outFile = getFiles()$epi_rda,
   dropTasP = TRUE,
-  Vars = " ",
+  addVars = " ",
   write_rda = TRUE
 )
 }
@@ -19,9 +19,9 @@ readEpisodes(
 
 \item{dropTasP}{default is to drop TasP areas.}
 
-\item{write_rda}{Default is to write the .Rda file.}
-
 \item{addVars}{A regular expression string representing the variables to be added.}
+
+\item{write_rda}{Default is to write the .Rda file.}
 }
 \value{
 data.frame

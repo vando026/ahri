@@ -18,7 +18,7 @@
 readEpisodes <- function(
   inFile=getFiles()$epifile,
   outFile=getFiles()$epi_rda, 
-  dropTasP=TRUE, Vars=" ",
+  dropTasP=TRUE, addVars=" ",
   write_rda=TRUE) {
   #
   dat <- haven::read_dta(inFile) 
