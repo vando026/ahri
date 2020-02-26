@@ -19,7 +19,7 @@ from the AHRI Data Centre. These default datasets are called:
 
 -   RD05-99 ACDIS HIV All.dta
 
--   SurveillanceEpisodesBasicAgeYrHIV.dta
+-   SurveillanceEpisodesExtended.dta
 
 -   RD03-99 ACDIS WGH ALL.dta
 
@@ -63,8 +63,8 @@ getFiles()[1:5]
 $hivfile
 [1] "C:/Users/alainv/AHRI_Data/RD05-99 ACDIS HIV All.dta"
 
-$epi_dta
-[1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesBasicAgeYrHIV.dta"
+$epifile
+[1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesExtended.dta"
 
 $wghfile
 [1] "C:/Users/alainv/AHRI_Data/RD03-99 ACDIS WGH ALL.dta"
@@ -101,27 +101,27 @@ Reading in data
 The readHIVData function
 ------------------------
 
-Reading in some of the large AHRI datasets can take time. Two useful
-functions for speeding up this process are: `readHIVData` and
-`readEpisodes`. These read in the corresponding default .dta files, do
-some data processing, harmonize variable names for future merging, and
-save as corresponding .Rda datasets.
-
-These two functions also drop or keep observations from the TasP
-(Northern PIPSA) study area. In 2017, TasP areas were added to the
-datasets. If you want to include the TasP study areas then set
-`dropTasP=FALSE`.
+The `readHIVData` reads in the `RD05-99 ACDIS HIV All.dta` dataset, does
+some basic data processing, and harmonizes variable names for future
+merging.
 
 ``` r
-readHIV <- readHIVData(dropTasP=TRUE)
+readHIV <- readHIVData()
 ```
 
 You need only to run the `readHIVData` function once, which will save an
 .Rda dataset to the same folder with your default .dta datasets.
-(However, if you download an updated RD05-99 ACDIS HIV All.dta to the
-default folder, then you will need to run `readHIVData` again.)
-Thereafter, you can run `getHIV` to load in the data quickly and
-repeatedly.
+(However, if you download an updated `RD05-99 ACDIS HIV All.dta` to the
+default folder, then you will need to run `readHIVData` again.) The file
+path of the .Rda file is:
+
+``` r
+getFiles()$hiv_rda
+[1] "C:/Users/alainv/AHRI_Data/ACDIS_HIV_All.Rda"
+```
+
+Once you have generated the .Rda file, you can run `getHIV` to load in
+the data quickly and repeatedly.
 
 ``` r
 hiv <- getHIV()
@@ -142,67 +142,89 @@ hiv
 # ... with 159,461 more rows
 ```
 
-The file path of the .Rda file is:
+If you don’t want `readHIVData` to write to file, then you can do:
 
 ``` r
-getFiles()$hiv_rda
-[1] "C:/Users/alainv/AHRI_Data/ACDIS_HIV_All.Rda"
+readHIV <- readHIVData(dropTasP=TRUE, write_rda=FALSE)
+```
+
+which will assign the dataset to the gobal environment.
+
+The default setting of `readHIVData` is to drop observations from the
+TasP (Northern PIPSA) study area. In 2017, TasP areas were added to the
+datasets. If you want to include the TasP study areas then set
+`dropTasP=FALSE`.
+
+``` r
+readHIV <- readHIVData(dropTasP=FALSE)
 ```
 
 The readEpisodes function
 -------------------------
 
-Similarly with the large `SurveillanceEpisodesBasicAgeYrHIV.dta`
-dataset, you run `readEpisodes` once, and load its corresponding .Rda
-data file with `getEpisodes`.
+With the large `SurveillanceEpisodesExtended.dta` dataset, you run
+`readEpisodes`:
 
 ``` r
 readEpi <- readEpisodes()
+# Or if you want to keep TasP obs.
+readEpi <- readEpisodes(dropTasP=FALSE)
 ```
+
+On my system, it takes almost a minute to read in the
+`SurveillanceEpisodesExtended.dta` dataset. Once the corresponding .Rda
+data file has been generated it takes less than a second or two to load
+it into memory `getEpisodes`.
 
 ``` r
 epidat <- getEpisodes()
 epidat
-# A tibble: 4,063,867 x 14
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000     357 2000-01-10       2000-12-31               0
- 3     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0
- 4     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0
- 5     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0
- 6     11    2830      0    57 1945-01-10 2004-12-12  2002     356 2002-01-10       2002-12-31               0
- 7     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0
- 8     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0
- 9     11    2830      0    58 1945-01-10 2004-12-12  2004       9 2004-01-01       2004-01-09               0
-10     11    2830      0    59 1945-01-10 2004-12-12  2004     338 2004-01-10       2004-12-12               0
-# ... with 4,063,857 more rows, and 3 more variables: OutMigration <dbl+lbl>, Resident <dbl+lbl>, PIPSA <chr>
+# A tibble: 5,612,161 x 14
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>        
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09    
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000      33 2000-01-10       2000-02-11    
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2000     324 2000-02-12       2000-12-31    
+ 4     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09    
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31    
+ 6     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09    
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2002     172 2002-01-10       2002-06-30    
+ 8     11    2830      0    57 1945-01-10 2004-12-12  2002     184 2002-07-01       2002-12-31    
+ 9     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09    
+10     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31    
+# ... with 5,612,151 more rows, and 4 more variables: InMigration <dbl+lbl>, OutMigration <dbl+lbl>,
+#   Resident <dbl+lbl>, PIPSA <chr>
 ```
 
-In my experience, the `SurveillanceEpisodesBasicAgeYrHIV.dta` dataset is
-a bit overwhelming, so by default the `readEpisodes` keeps only
-variables related to migration, for which this dataset is best suited.
-You can however include addtional variables using the `Vars` argument.
-For example, let’s say you are intersted in adding the ART variables,
-then:
+The `SurveillanceEpisodesExtended.dta` dataset is a bit overwhelming, so
+by default the `readEpisodes` keeps only variables related to migration,
+for which this dataset is best suited. You can however include addtional
+variables using the `addVars` argument. For example, let’s say you are
+intersted in adding the ART variables, then:
 
 ``` r
-readEpi <- readEpisodes(Vars="OnART|ARTInitiation|EarliestARTInitDate")
+readEpi <- readEpisodes(addVars="OnART|ARTInitiation|EarliestARTInitDate")
 ```
 
-Behind the hood, the `Vars` argument is a regular expression, hence
+Behind the hood, the `addVars` argument is a regular expression, hence
 variable names must be separated as shown above. However, since “ART” is
 the common substring, you could achieve the same outcome using:
 
 ``` r
-readEpi <- readEpisodes(Vars="ART")
+readEpi <- readEpisodes(addVars="ART")
 ```
 
 The file path of the .Rda file is:
 
 ``` r
 getFiles()$epi_rda
-[1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesBasicAgeYrHIV.Rda"
+[1] "C:/Users/alainv/AHRI_Data/SurveillanceEpisodesExtended.Rda"
+```
+
+If you do not want `readEpisodes` to write to file, then do:
+
+``` r
+epidat <- readEpisodes(dropTasP=TRUE, write_rda=FALSE)
 ```
 
 The readHealthData function
@@ -254,8 +276,9 @@ bs_dat
  9      19 2000-01-01           22 2018-09-20        10       4        24     2              2     1
 10      20 2000-01-01           22 2014-09-03        32       7        39    15              3     1
 # ... with 30,766 more rows, and 8 more variables: NearestClinic <dbl+lbl>, KmToNearestClinic <dbl>,
-#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>, NearestPrimarySchool <dbl+lbl>,
-#   KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>, KmToNearestLevel2Road <dbl>
+#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>,
+#   NearestPrimarySchool <dbl+lbl>, KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>,
+#   KmToNearestLevel2Road <dbl>
 ```
 
 A participant can reside in multiple bounded structures (BS). For a

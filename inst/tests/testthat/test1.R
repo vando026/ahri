@@ -149,7 +149,7 @@ Args <- setArgs(Years=c(2005:2018))
 ydat <- setEpisodes(Args)
 test_that("Check N", {
   expect_equal(length(unique(ydat$IIntID)), 97477)
-  expect_equal(nrow(ydat), 1818654)
+  expect_equal(nrow(ydat), 2613221)
 })
 
 
