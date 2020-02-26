@@ -14,12 +14,12 @@
 #' @param folder The path (as a string) to  the folder of default .dta files. If
 #' \code{folder=""}, then The default calls a dialogue box is called to set the folder path.
 #' @param hivfile RD05-99 ACDIS HIV All.dta
-#' @param epifile SurveillanceEpisodesBasicAgeYrHIV.dta
+#' @param epifile SurveillanceEpisodesExtended.dta
 #' @param wghfile RD03-99 ACDIS WGH ALL.dta
 #' @param mghfile RD04-99 ACDIS MGH ALL.dta
 #' @param bsifile RD01-03 ACDIS BoundedStructures.dta
 #' @param hiv_rda ACDIS_HIV_All.Rda
-#' @param epi_rda SurveillanceEpisodesBasicAgeYrHIV.Rda
+#' @param epi_rda SurveillanceEpisodesExtended.Rda
 #' @param wgh_rda ACDIS_WGH_ALL.Rda
 #' @param mgh_rda ACDIS_MGH_ALL.Rda
 #' @param bsc_rda ACDIS_BoundedStructures.Rda

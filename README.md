@@ -112,8 +112,8 @@ readHIV <- readHIVData()
 You need only to run the `readHIVData` function once, which will save an
 .Rda dataset to the same folder with your default .dta datasets.
 (However, if you download an updated `RD05-99 ACDIS HIV All.dta` to the
-default folder, then you will need to run `readHIVData` again.) The file
-path of the .Rda file is:
+default folder, then you will need to run `readHIVData` again.) The .Rda
+file path is:
 
 ``` r
 getFiles()$hiv_rda
@@ -174,7 +174,7 @@ readEpi <- readEpisodes(dropTasP=FALSE)
 On my system, it takes almost a minute to read in the
 `SurveillanceEpisodesExtended.dta` dataset. Once the corresponding .Rda
 data file has been generated it takes less than a second or two to load
-it into memory `getEpisodes`.
+it into memory.
 
 ``` r
 epidat <- getEpisodes()
@@ -224,7 +224,7 @@ getFiles()$epi_rda
 If you do not want `readEpisodes` to write to file, then do:
 
 ``` r
-epidat <- readEpisodes(dropTasP=TRUE, write_rda=FALSE)
+epidat <- readEpisodes(write_rda=FALSE)
 ```
 
 The readHealthData function
