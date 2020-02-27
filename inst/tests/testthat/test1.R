@@ -4,64 +4,64 @@
 
 context("Test getBSData")
 bdat <- getBSData()
-test_that("Check vars", {
+test_that("Check readBSData N", {
   expect_equal(length(unique(bdat$BSIntID)), 30776)
   expect_equal(sum(bdat$PIPSA[bdat$PIPSA==1], na.rm=TRUE), 18058)
 })
 
 
-# context("Test readHIV 01")
-# hiv <- haven::read_dta(getFiles()$hivfile) %>% 
-#   select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
-#     HIVResult, Female=Sex, Age=AgeAtVisit)
-# test_that("Check N", {
-#   expect_equal(length(unique(hiv$IIntID)), 97352)
-# })
-# # hiv <- haven::zap_labels(hiv)
-# hiv <- filter(hiv, Female %in% c(1,2))
-# test_that("Check Sex", {
-#   expect_equal(length(unique(hiv$IIntID)), 97352)
-# })
-# hiv <- mutate(hiv,
-#   IIntID = as.integer(IIntID),
-#   BSIntID = as.integer(BSIntID),
-#   Female=as.integer(ifelse(Female==2, 1, 0)))
-# test_that("Check Sex", {
-#   expect_equal(length(unique(hiv$IIntID)), 97352)
-# })
-# hiv <- arrange(hiv, IIntID, VisitDate)
-# hiv <- filter(hiv, HIVResult %in% c(0,1))
-# test_that("Check Result", {
-#   expect_equal(length(unique(hiv$IIntID)), 63065)
-# })
-# hiv <- filter(hiv, Age %in% c(15:100))
-# test_that("Check Age", {
-#   expect_equal(length(unique(hiv$IIntID)), 63004)
-# })
-# hiv <- mutate(hiv, 
-#   HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
-#   HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
-# hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
-# Vars <- c("HIVNegative", "HIVPositive")
-# hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-# test_that("Check End", {
-#   expect_equal(length(unique(hiv$IIntID)), 63004)
-# })
+context("Test readHIV 01")
+hiv <- haven::read_dta(getFiles()$hivfile) %>% 
+  select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
+    HIVResult, Female=Sex, Age=AgeAtVisit)
+test_that("Check N", {
+  expect_equal(length(unique(hiv$IIntID)), 97352)
+})
+# hiv <- haven::zap_labels(hiv)
+hiv <- filter(hiv, Female %in% c(1,2))
+test_that("Check Sex", {
+  expect_equal(length(unique(hiv$IIntID)), 97352)
+})
+hiv <- mutate(hiv,
+  IIntID = as.integer(IIntID),
+  BSIntID = as.integer(BSIntID),
+  Female=as.integer(ifelse(Female==2, 1, 0)))
+test_that("Check readHIV Sex", {
+  expect_equal(length(unique(hiv$IIntID)), 97352)
+})
+hiv <- arrange(hiv, IIntID, VisitDate)
+hiv <- filter(hiv, HIVResult %in% c(0,1))
+test_that("Check readHIV Result", {
+  expect_equal(length(unique(hiv$IIntID)), 63687)
+})
+hiv <- filter(hiv, Age %in% c(15:100))
+test_that("Check readHIV Age", {
+  expect_equal(length(unique(hiv$IIntID)), 63625)
+})
+hiv <- mutate(hiv, 
+  HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
+  HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
+hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
+Vars <- c("HIVNegative", "HIVPositive")
+hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
+test_that("Check readHIV End", {
+  expect_equal(length(unique(hiv$IIntID)), 63625)
+})
 
 
-# context("Test getHIVData")
-# hdat1 <- readHIVData(dropTasP=FALSE)
-# hdat2 <- readHIVData(dropTasP=TRUE)
-# test_that("Check vars", {
-#   expect_equal(length(unique(hdat1$IIntID)), 63004)
-#   expect_equal(length(unique(hdat2$IIntID)), 53563)
-# })
+context("Test getHIVData")
+hdat1 <- readHIVData(dropTasP=FALSE)
+hdat2 <- readHIVData(dropTasP=TRUE)
+test_that("Check getHIVData N", {
+  expect_equal(length(unique(hdat1$IIntID)), 63625)
+  expect_equal(length(unique(hdat2$IIntID)), 53800)
+})
 
-# context("Test getHIV with dropTasP")
-# hiv <- getHIV()
-# test_that("Check N", {
-#   expect_equal(length(unique(hiv$IIntID)), 53563) 
-# })
+context("Test getHIV with dropTasP")
+hiv <- getHIV()
+test_that("Check getHIV dropTasP N", {
+  expect_equal(length(unique(hiv$IIntID)), 53800) 
+})
 
 
 context("Test readEpisodes 0")
@@ -74,7 +74,7 @@ edat <- select(edat,
   ObservationEnd=EndDate,
   InMigration, OutMigration,
   Resident)
-test_that("Check N 1", {
+test_that("Check readEpisodes N 1", {
   expect_equal(length(unique(edat$IIntID)), 220648) 
   expect_equal(length(unique(edat$BSIntID)), 24520) 
   expect_equal(length(edat$Female[edat$Female==1]), 2750897) 
@@ -86,7 +86,7 @@ edat <- mutate(edat,
   Year=as.integer(Year),
   Female=as.integer(ifelse(Female==2, 1, 0)))
 edat <- arrange(edat, IIntID, ObservationStart)
-test_that("Check N 2", {
+test_that("Check readEpisodes N 2", {
   expect_equal(length(unique(edat$IIntID)), 220646) 
   expect_equal(length(unique(edat$BSIntID)), 24520) 
   expect_equal(length(edat$Female[edat$Female==0]), 2750897) 
@@ -97,7 +97,7 @@ context("Test readEpisodes with dropTasP")
 edat <- readEpisodes(dropTasP=TRUE)
 Args = setArgs(Years=c(2000:2020), Age = list(All=c(0, 150)))
 ydat <- setEpisodes(Args, dat=edat)
-test_that("Check N", {
+test_that("Check readEpisodes dropTasP N", {
   expect_equal(length(unique(edat$IIntID)), 174445) 
   expect_equal(length(unique(ydat$IIntID)), 174445) 
   expect_equal(length(unique(edat$BSIntID)), 16440) 
@@ -108,46 +108,46 @@ test_that("Check N", {
 
 
 
-# context("Test makeAgeVars")
-# Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
-# hiv <- getHIV()
-# hiv1 <- makeAgeVars(hiv)
-# hiv2 <- makeAgeVars(hiv, age_cut=Args$AgeCat)
-# hiv3 <- makeAgeVars(hiv, age_cut=Args$AgeCat, time2="VisitDate")
-# test_that("Check N", {
-#   expect_equal(sum(hiv1$Age), 5769477) 
-#   expect_equal(sum(hiv2$Age), 5769477) 
-#   expect_equal(sum(hiv3$Age, na.rm=TRUE), 5755001) 
-# })
+context("Test makeAgeVars")
+Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
+hiv <- getHIV()
+hiv1 <- makeAgeVars(hiv)
+hiv2 <- makeAgeVars(hiv, age_cut=Args$AgeCat)
+hiv3 <- makeAgeVars(hiv, age_cut=Args$AgeCat, time2="VisitDate")
+test_that("Check makeAgeVars N", {
+  expect_equal(sum(hiv1$Age), 5822611) 
+  expect_equal(sum(hiv2$Age), 5822611) 
+  expect_equal(sum(hiv3$Age, na.rm=TRUE), 5807805) 
+})
 
 
-# context("Test setData")
-# Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
-# hiv <- getHIV()
-# hiv1 <- setData(hiv, Args)
-# hiv2 <- setData(hiv, Args, time2="VisitDate")
-# Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15, 54)))
-# hiv3 <- setData(hiv, Args, time2="VisitDate")
-# test_that("Check N", {
-#   expect_equal(sum(hiv1$Age), 5769477) 
-#   expect_equal(sum(hiv2$Age), 5754931) 
-#   expect_equal(sum(hiv3$Age), 3332202) 
-# })
+context("Test setData")
+Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
+hiv <- getHIV()
+hiv1 <- setData(hiv, Args)
+hiv2 <- setData(hiv, Args, time2="VisitDate")
+Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15, 54)))
+hiv3 <- setData(hiv, Args, time2="VisitDate")
+test_that("Check setData N", {
+  expect_equal(sum(hiv1$Age), 5822611) 
+  expect_equal(sum(hiv2$Age), 5807721) 
+  expect_equal(sum(hiv3$Age), 3361665) 
+})
 
 
-# context("Test setHIV")
-# Args <- setArgs(Years=c(2005:2017))
-# hiv <- setHIV(Args)
-# test_that("Check N", {
-#   expect_equal(length(unique(hiv$IIntID)), 41609) 
-#   expect_equal(sum(hiv$Age), 3079186) 
-# })
+context("Test setHIV")
+Args <- setArgs(Years=c(2005:2017))
+hiv <- setHIV(Args)
+test_that("Check setHIV N", {
+  expect_equal(length(unique(hiv$IIntID)), 41609) 
+  expect_equal(sum(hiv$Age), 3079186) 
+})
 
 
 context("Test setEpisodes")
 Args <- setArgs(Years=c(2005:2018))
 ydat <- setEpisodes(Args)
-test_that("Check N", {
+test_that("Check setEpisodes N", {
   expect_equal(length(unique(ydat$IIntID)), 97477)
   expect_equal(nrow(ydat), 2613221)
 })
@@ -177,7 +177,7 @@ test_that("Check N", {
 })
 
 
-
+#####################################################################
 
 # context("Test RTDates")
 # testDates <- function(dat=NULL) {

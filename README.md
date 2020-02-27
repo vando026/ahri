@@ -80,6 +80,17 @@ If you ommit the folder argument then `setFiles()` will bring up a
 graphical dialogue box where you can point and click your way to the
 folder.
 
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>NOTE: Following best data practices, the <code>ahri</code> package will never overwrite the default .dta datasets. If you for some reason change a default. dta dataset, make sure you save it as a different file to a different folder.</td>
+</tr>
+</tbody>
+</table>
+
 Help and documentation
 ----------------------
 
@@ -111,9 +122,9 @@ readHIV <- readHIVData()
 
 You need only to run the `readHIVData` function once, which will save an
 .Rda dataset to the same folder with your default .dta datasets.
-(However, if you download an updated `RD05-99 ACDIS HIV All.dta` to the
-default folder, then you will need to run `readHIVData` again.) The .Rda
-file path is:
+(However, if you want to update the `RD05-99 ACDIS HIV All.dta` dataset,
+for example, from 2019 to 2020, then you will need to run `readHIVData`
+again.) The .Rda file path is:
 
 ``` r
 getFiles()$hiv_rda
@@ -126,7 +137,7 @@ the data quickly and repeatedly.
 ``` r
 hiv <- getHIV()
 hiv
-# A tibble: 159,471 x 10
+# A tibble: 160,836 x 10
    IIntID BSIntID VisitDate  HIVResult Female   Age PIPSA          HIVNegative HIVPositive  Year
     <int>   <int> <date>         <dbl>  <int> <dbl> <chr>          <date>      <date>      <int>
  1     16    2830 2009-06-02         0      1    56 Southern PIPSA 2009-06-02  NA           2009
@@ -139,7 +150,7 @@ hiv
  8     17   18272 2017-10-17         1      1    49 Southern PIPSA NA          2017-10-17   2017
  9     17   18272 2018-10-03         1      1    50 Southern PIPSA NA          2018-10-03   2018
 10     19    7923 2009-08-04         0      1    69 Southern PIPSA 2009-08-04  NA           2009
-# ... with 159,461 more rows
+# ... with 160,826 more rows
 ```
 
 If you don’t want `readHIVData` to write to file, then you can do:
@@ -180,20 +191,19 @@ it into memory.
 epidat <- getEpisodes()
 epidat
 # A tibble: 5,612,161 x 14
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>        
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09    
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000      33 2000-01-10       2000-02-11    
- 3     11    2830      0    55 1945-01-10 2004-12-12  2000     324 2000-02-12       2000-12-31    
- 4     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09    
- 5     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31    
- 6     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09    
- 7     11    2830      0    57 1945-01-10 2004-12-12  2002     172 2002-01-10       2002-06-30    
- 8     11    2830      0    57 1945-01-10 2004-12-12  2002     184 2002-07-01       2002-12-31    
- 9     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09    
-10     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31    
-# ... with 5,612,151 more rows, and 4 more variables: InMigration <dbl+lbl>, OutMigration <dbl+lbl>,
-#   Resident <dbl+lbl>, PIPSA <chr>
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000      33 2000-01-10       2000-02-11               0
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2000     324 2000-02-12       2000-12-31               0
+ 4     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0
+ 6     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2002     172 2002-01-10       2002-06-30               0
+ 8     11    2830      0    57 1945-01-10 2004-12-12  2002     184 2002-07-01       2002-12-31               0
+ 9     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0
+10     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0
+# ... with 5,612,151 more rows, and 3 more variables: OutMigration <dbl+lbl>, Resident <dbl+lbl>, PIPSA <chr>
 ```
 
 The `SurveillanceEpisodesExtended.dta` dataset is a bit overwhelming, so
@@ -263,22 +273,21 @@ using the `getBSData` function.
 bs_dat <- getBSData()
 bs_dat
 # A tibble: 30,776 x 18
-   BSIntID BSStartDate BSStartType BSEndDate  BSEndType Isigodi LocalArea  Ward IsUrbanOrRural PIPSA
-     <int> <date>        <dbl+lbl> <date>     <dbl+lbl> <dbl+l> <dbl+lbl> <dbl>      <dbl+lbl> <dbl>
- 1      11 2000-01-01           22 2018-02-10        10       5        32     1              4     1
- 2      12 2000-01-01           22 9997-01-01       200       5        32     1              4     1
- 3      13 2000-01-01           22 2009-03-17        10       5        32     1              4     1
- 4      14 2000-01-01           22 9997-01-01       200       5        32     1              4     1
- 5      15 2000-01-01           22 2018-09-12        10       5        32     1              4     1
- 6      16 2000-01-01           22 2018-05-31        10       5        33     1              4     1
- 7      17 2000-01-01           22 2018-10-30        10      16       107    14              3     1
- 8      18 2000-01-01           22 2018-10-30        10      16       107    14              3     1
- 9      19 2000-01-01           22 2018-09-20        10       4        24     2              2     1
-10      20 2000-01-01           22 2014-09-03        32       7        39    15              3     1
-# ... with 30,766 more rows, and 8 more variables: NearestClinic <dbl+lbl>, KmToNearestClinic <dbl>,
-#   NearestSecondarySchool <dbl+lbl>, KmToNearestSecondarySchool <dbl>,
-#   NearestPrimarySchool <dbl+lbl>, KmToNearestPrimarySchool <dbl>, KmToNearestLevel1Road <dbl>,
-#   KmToNearestLevel2Road <dbl>
+   BSIntID BSStartDate BSStartType BSEndDate  BSEndType Isigodi LocalArea  Ward IsUrbanOrRural PIPSA NearestClinic
+     <int> <date>        <dbl+lbl> <date>     <dbl+lbl> <dbl+l> <dbl+lbl> <dbl>      <dbl+lbl> <dbl>     <dbl+lbl>
+ 1      11 2000-01-01           22 2018-02-10        10       5        32     1              4     1             3
+ 2      12 2000-01-01           22 9997-01-01       200       5        32     1              4     1             3
+ 3      13 2000-01-01           22 2009-03-17        10       5        32     1              4     1             3
+ 4      14 2000-01-01           22 9997-01-01       200       5        32     1              4     1             3
+ 5      15 2000-01-01           22 2018-09-12        10       5        32     1              4     1             3
+ 6      16 2000-01-01           22 2018-05-31        10       5        33     1              4     1             3
+ 7      17 2000-01-01           22 2018-10-30        10      16       107    14              3     1             9
+ 8      18 2000-01-01           22 2018-10-30        10      16       107    14              3     1             9
+ 9      19 2000-01-01           22 2018-09-20        10       4        24     2              2     1             3
+10      20 2000-01-01           22 2014-09-03        32       7        39    15              3     1             4
+# ... with 30,766 more rows, and 7 more variables: KmToNearestClinic <dbl>, NearestSecondarySchool <dbl+lbl>,
+#   KmToNearestSecondarySchool <dbl>, NearestPrimarySchool <dbl+lbl>, KmToNearestPrimarySchool <dbl>,
+#   KmToNearestLevel1Road <dbl>, KmToNearestLevel2Road <dbl>
 ```
 
 A participant can reside in multiple bounded structures (BS). For a
