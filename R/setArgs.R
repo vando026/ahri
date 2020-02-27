@@ -2,8 +2,6 @@
 #' 
 #' @description  Set the arguments for functions. 
 #' 
-#' @param inFiles list of files to pass to function.
-#' 
 #' @param Years numeric vector of years.
 #'
 #' @param Age list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.
@@ -39,8 +37,8 @@
 #'
 #' @examples
 #' inFiles <- getFiles()
-#' Args <- setArgs(inFiles, Years=c(2004:2015), All=list(Mal=c(15, 54)))
-#' Args <- setArgs(inFiles, Years=c(2004:2015), MoreArgs=list(knots=2))
+#' Args <- setArgs(Years=c(2004:2015), All=list(Mal=c(15, 54)))
+#' Args <- setArgs(Years=c(2004:2015), MoreArgs=list(knots=2))
 
 setArgs <- function( 
   Years=c(2005:2018),

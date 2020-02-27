@@ -4,13 +4,8 @@
 \alias{plotIncAge}
 \title{plotIncAge}
 \usage{
-plotIncAge(
-  age_mal,
-  age_fem,
-  Colors = c("grey50", "grey80"),
-  fname = "age_plot",
-  TIFF = TRUE
-)
+plotIncAge(age_mal, age_fem, Colors = c("grey50", "grey80"),
+  fname = "age_plot", TIFF = TRUE)
 }
 \arguments{
 \item{dat}{dataset from \code{\link{getIncidence}}.}

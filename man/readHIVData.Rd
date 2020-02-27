@@ -4,11 +4,8 @@
 \alias{readHIVData}
 \title{readHIVData}
 \usage{
-readHIVData(
-  inFile = getFiles()$hivfile,
-  outFile = getFiles()$hiv_rda,
-  dropTasP = TRUE
-)
+readHIVData(inFile = getFiles()$hivfile, outFile = getFiles()$hiv_rda,
+  dropTasP = TRUE)
 }
 \arguments{
 \item{inFile}{File path to .dta, see \code{\link{setFiles}}.}
