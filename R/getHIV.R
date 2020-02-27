@@ -2,9 +2,10 @@
 #' 
 #' @description  Reads in AHRI data from csv file
 #' 
-#' @param inFile File path to .dta, see \code{\link{setFiles}}.
-#' @param outFile File path to save .Rda, see \code{\link{setFiles}}.
+#' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
+#' @param outFile File path to save .Rda, default is set by \code{\link{setFiles}}.
 #' @param dropTasP Drop TasP surveillance areas from the data. 
+#' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return data.frame
 #'
@@ -14,7 +15,7 @@
 readHIVData <- function(
   inFile=getFiles()$hivfile,
   outFile=getFiles()$hiv_rda,
-  dropTasP=TRUE) {
+  dropTasP=TRUE, write_rda=TRUE) {
   hiv <- haven::read_dta(inFile) %>% 
     select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
       HIVResult, Female=Sex, Age=AgeAtVisit)
@@ -35,7 +36,7 @@ readHIVData <- function(
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-  saveRDS(hiv, file=outFile)
+  if (write_rda) saveRDS(hiv, file=outFile)
   hiv
 }
 

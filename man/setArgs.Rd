@@ -4,11 +4,21 @@
 \alias{setArgs}
 \title{setArgs}
 \usage{
-setArgs(Years = c(2005:2018), Age = list(All = c(15, 54)),
-  AgeCat = NULL, AgeBy = 5, ResRule = 0, nSim = 500,
-  imputeMethod = imputeRandomPoint, aname = "filename",
-  printout = FALSE, mcores = 1, setFun = identity,
-  addVars = identity, MoreArgs = NULL)
+setArgs(
+  Years = c(2005:2018),
+  Age = list(All = c(15, 54)),
+  AgeCat = NULL,
+  AgeBy = 5,
+  ResRule = 0,
+  nSim = 500,
+  imputeMethod = imputeRandomPoint,
+  aname = "filename",
+  printout = FALSE,
+  mcores = 1,
+  setFun = identity,
+  addVars = identity,
+  MoreArgs = NULL
+)
 }
 \arguments{
 \item{Years}{numeric vector of years.}

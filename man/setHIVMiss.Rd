@@ -4,8 +4,11 @@
 \alias{setHIVMiss}
 \title{setHIVMiss}
 \usage{
-setHIVMiss(inFile = getFiles()$elifile, outFile = getFiles()$eli_rda,
-  dropTasP = TRUE)
+setHIVMiss(
+  inFile = getFiles()$elifile,
+  outFile = getFiles()$eli_rda,
+  dropTasP = TRUE
+)
 }
 \arguments{
 \item{inFile}{The root path to folder containing HIV surveillance datasets.}

@@ -10,6 +10,7 @@
 #' 
 #' @return data.frame
 #'
+#' @import dplyr
 #' @export 
 #'
 #' @examples

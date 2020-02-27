@@ -14,7 +14,7 @@ Getting started
 ===============
 
 This document serves as a short introduction to the ahri library. For
-this library to work, you will need to request five default datasets
+this library \# to work, you will need to request five default datasets
 from the AHRI Data Centre. These default datasets are called:
 
 -   RD05-99 ACDIS HIV All.dta
@@ -191,19 +191,19 @@ it into memory.
 epidat <- getEpisodes()
 epidat
 # A tibble: 5,612,161 x 14
-   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration
-    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>
- 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0
- 2     11    2830      0    55 1945-01-10 2004-12-12  2000      33 2000-01-10       2000-02-11               0
- 3     11    2830      0    55 1945-01-10 2004-12-12  2000     324 2000-02-12       2000-12-31               0
- 4     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0
- 5     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0
- 6     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0
- 7     11    2830      0    57 1945-01-10 2004-12-12  2002     172 2002-01-10       2002-06-30               0
- 8     11    2830      0    57 1945-01-10 2004-12-12  2002     184 2002-07-01       2002-12-31               0
- 9     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0
-10     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0
-# ... with 5,612,151 more rows, and 3 more variables: OutMigration <dbl+lbl>, Resident <dbl+lbl>, PIPSA <chr>
+   IIntID BSIntID Female   Age DoB        DoD         Year ExpDays ObservationStart ObservationEnd InMigration OutMigration
+    <int>   <int>  <int> <dbl> <date>     <date>     <int>   <dbl> <date>           <date>           <dbl+lbl>    <dbl+lbl>
+ 1     11    2830      0    54 1945-01-10 2004-12-12  2000       9 2000-01-01       2000-01-09               0            0
+ 2     11    2830      0    55 1945-01-10 2004-12-12  2000      33 2000-01-10       2000-02-11               0            0
+ 3     11    2830      0    55 1945-01-10 2004-12-12  2000     324 2000-02-12       2000-12-31               0            0
+ 4     11    2830      0    55 1945-01-10 2004-12-12  2001       9 2001-01-01       2001-01-09               0            0
+ 5     11    2830      0    56 1945-01-10 2004-12-12  2001     356 2001-01-10       2001-12-31               0            0
+ 6     11    2830      0    56 1945-01-10 2004-12-12  2002       9 2002-01-01       2002-01-09               0            0
+ 7     11    2830      0    57 1945-01-10 2004-12-12  2002     172 2002-01-10       2002-06-30               0            0
+ 8     11    2830      0    57 1945-01-10 2004-12-12  2002     184 2002-07-01       2002-12-31               0            0
+ 9     11    2830      0    57 1945-01-10 2004-12-12  2003       9 2003-01-01       2003-01-09               0            0
+10     11    2830      0    58 1945-01-10 2004-12-12  2003     356 2003-01-10       2003-12-31               0            0
+# ... with 5,612,151 more rows, and 2 more variables: Resident <dbl+lbl>, PIPSA <chr>
 ```
 
 The `SurveillanceEpisodesExtended.dta` dataset is a bit overwhelming, so

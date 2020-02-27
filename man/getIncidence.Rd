@@ -4,8 +4,12 @@
 \alias{getIncidence}
 \title{getIncidence}
 \usage{
-getIncidence(Args, Compute = miCompute(), Combine = miCombine(),
-  Extract = miExtract())
+getIncidence(
+  Args,
+  Compute = miCompute(),
+  Combine = miCombine(),
+  Extract = miExtract()
+)
 }
 \arguments{
 \item{Args}{Takes list from \code{\link{setArgs}}.}

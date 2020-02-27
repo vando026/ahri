@@ -4,8 +4,12 @@
 \alias{readHIVData}
 \title{readHIVData}
 \usage{
-readHIVData(inFile = getFiles()$hivfile, outFile = getFiles()$hiv_rda,
-  dropTasP = TRUE)
+readHIVData(
+  inFile = getFiles()$hivfile,
+  outFile = getFiles()$hiv_rda,
+  dropTasP = TRUE,
+  write_rda = TRUE
+)
 }
 \arguments{
 \item{inFile}{File path to .dta, see \code{\link{setFiles}}.}
@@ -13,6 +17,8 @@ readHIVData(inFile = getFiles()$hivfile, outFile = getFiles()$hiv_rda,
 \item{outFile}{File path to save .Rda, see \code{\link{setFiles}}.}
 
 \item{dropTasP}{Drop TasP surveillance areas from the data.}
+
+\item{write_rda}{Default is to write the .Rda file.}
 }
 \value{
 data.frame

@@ -4,9 +4,18 @@
 \alias{calcTrend}
 \title{calcTrend}
 \usage{
-calcTrend(dat, wdat = NULL, Formula = "HIVResult ~ Year + AgeCat",
-  calcBy = "Year", mergeVars = c("AgeCat"), binom = FALSE,
-  fmt = TRUE, aggName = "", aggType = as.integer, ...)
+calcTrend(
+  dat,
+  wdat = NULL,
+  Formula = "HIVResult ~ Year + AgeCat",
+  calcBy = "Year",
+  mergeVars = c("AgeCat"),
+  binom = FALSE,
+  fmt = TRUE,
+  aggName = "",
+  aggType = as.integer,
+  ...
+)
 }
 \arguments{
 \item{dat}{dataset for computing trends.}

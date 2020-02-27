@@ -4,8 +4,13 @@
 \alias{readEpisodes}
 \title{readEpisodes}
 \usage{
-readEpisodes(inFile = getFiles()$epifile, outFile = getFiles()$epi_rda,
-  dropTasP = TRUE, addVars = " ", write_rda = TRUE)
+readEpisodes(
+  inFile = getFiles()$epifile,
+  outFile = getFiles()$epi_rda,
+  dropTasP = TRUE,
+  addVars = " ",
+  write_rda = TRUE
+)
 }
 \arguments{
 \item{inFile}{File path to the .dta dataset, default is set to \code{\link{setFiles}}.}
