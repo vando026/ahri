@@ -183,9 +183,11 @@ readHSEData <- function(inFile=getFiles()$hsefile) {
 #' @return 
 #'
 #' @export 
+#' #cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5),
+#' #na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
 
 addAIQVar <- function(dat) {
-  hdat <- readHSEData() 
+  hdat <- getEpisodes() 
   hdat <- distinct(hdat, BSIntID, Year, .keep_all=TRUE) 
   dat <- left_join(dat, hdat, by=c("BSIntID", "Year"))
   dat <- mutate(dat, 

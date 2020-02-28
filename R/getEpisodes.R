@@ -14,7 +14,8 @@
 #' @export 
 #'
 #' @examples
-#' readEpisodes(addVars="ART", dropTasP=TRUE)
+#' readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
+#' readEpisodes(dropTasP=FALSE, addVars="Employ")
 
 readEpisodes <- function(
   inFile=getFiles()$epifile,
@@ -30,7 +31,9 @@ readEpisodes <- function(
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
-    Resident, matches(addVars))
+    Resident, AssetIndex=ModerntAssetIdx
+    EarliestARTInitDate, OnART,
+    matches(addVars))
   dat <- filter(dat, Female %in% c(1,2))
   dat <- mutate(dat,
     IIntID=as.integer(IIntID),
