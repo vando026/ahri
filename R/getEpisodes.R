@@ -31,7 +31,7 @@ readEpisodes <- function(
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
-    Resident, AssetIndex=ModerntAssetIdx
+    Resident, AssetIndex=ModerntAssetIdx,
     EarliestARTInitDate, OnART,
     matches(addVars))
   dat <- filter(dat, Female %in% c(1,2))
