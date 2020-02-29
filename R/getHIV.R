@@ -4,6 +4,7 @@
 #' 
 #' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
 #' @param outFile File path to save .Rda, default is set by \code{\link{setFiles}}.
+#' @param addVars A regular expression string representing the variables to be added. 
 #' @param dropTasP Drop TasP surveillance areas from the data. 
 #' @param write_rda Default is to write the .Rda file.
 #' 
@@ -17,8 +18,10 @@ readHIVData <- function(
   outFile=getFiles()$hiv_rda,
   dropTasP=TRUE, write_rda=TRUE) {
   hiv <- haven::read_dta(inFile) %>% 
-    select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
-      HIVResult, Female=Sex, Age=AgeAtVisit)
+    select(IIntID=IIntId, 
+      BSIntID=ResidencyBSIntId, VisitDate, 
+      HIVResult, Female=Sex, Age=AgeAtVisit,
+      matches(addVars))
   hiv <- haven::zap_labels(hiv)
   hiv <- filter(hiv, Female %in% c(1,2))
   hiv <- mutate(hiv,
