@@ -13,11 +13,11 @@ follows:
   - Getting started, which describes which AHRI datasets to request and
     where to put them. It also shows how to set the paths to these
     datasets and how to read them in.
-    <https://github.com/vando026/ahri_help/wiki/Getting_started>
+    <https://github.com/vando026/ahri_help/wiki/Getting-started>
 
   - Set functions, which describes a range of functions for processing
     the data, subsetting the data, and other data tasks.
-    <https://github.com/vando026/ahri_help/wiki/Set_functions>
+    <https://github.com/vando026/ahri_help/wiki/Set-functions>
 
   - HIV files, which describes functions used to make the HIV incidence
     datasets, impute the seroconversion dates, perform multiple
