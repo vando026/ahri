@@ -1,12 +1,18 @@
-## AHRI R library: help and documentation
+## AHRI R library
+
+The `ahri` R library contains several functions for working with the
+Africa Health Research Institute (AHRI) datasets. Some useful functions
+include reading in the datasets, subsetting the data according to a list
+of arguments, adding standard variables, and calculating HIV incidence
+and other trends such as HIV prevalence and ART coverage.
 
 The wiki help pages serve as a short introduction to the `ahri` library.
 These can be found in the links below. The help files are organised as
 follows:
 
   - Getting started, which describes which AHRI datasets to request and
-    where to put the downloaded .dta datasets. It also shows how to set
-    the path to your datasets and read in the .dta datasets.
+    where to put them. It also shows how to set the paths to these
+    datasets and how to read them in.
     <https://github.com/vando026/ahri_help/wiki/Getting_started>
 
   - Set functions, which describes a range of functions for processing
@@ -28,3 +34,7 @@ There are other sources of help:
   - If you have questions, post them as an issue so that I or others can
     answer.
     (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
+
+|                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Disclaimer: This is not an official AHRI site. The `ahri` library is a collaboration between researchers using the AHRI datasets. Decisions made in the code about how to manage and analyze the data are independent of the views, opinions, and policy of AHRI and its employees. |
