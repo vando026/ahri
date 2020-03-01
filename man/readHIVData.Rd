@@ -12,13 +12,15 @@ readHIVData(
 )
 }
 \arguments{
-\item{inFile}{File path to .dta, see \code{\link{setFiles}}.}
+\item{inFile}{File path to .dta, default is set by \code{\link{setFiles}}.}
 
-\item{outFile}{File path to save .Rda, see \code{\link{setFiles}}.}
+\item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
 
 \item{dropTasP}{Drop TasP surveillance areas from the data.}
 
 \item{write_rda}{Default is to write the .Rda file.}
+
+\item{addVars}{A regular expression string representing the variables to be added.}
 }
 \value{
 data.frame

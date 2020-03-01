@@ -30,5 +30,6 @@ data.frame
 Reads in the Surveillance Episodes dataset
 }
 \examples{
-readEpisodes(addVars="ART", dropTasP=TRUE)
+readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
+readEpisodes(dropTasP=FALSE, addVars="Employ")
 }

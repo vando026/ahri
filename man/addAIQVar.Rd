@@ -11,9 +11,6 @@ addAIQVar(dat)
 
 \item{Vars}{Select variables.}
 }
-\value{
-
-}
 \description{
 Add variables from Bounded Structures to existing dataset.
 }

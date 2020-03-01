@@ -39,7 +39,7 @@
 #' getFiles() 
 
 setFiles <- function(
-  folder="C:/Users/alainv/AHRI_Data",
+  folder="",
   hivfile="RD05-99 ACDIS HIV All.dta",
   epifile="SurveillanceEpisodesExtended.dta",
   wghfile="RD03-99 ACDIS WGH ALL.dta",
@@ -53,7 +53,7 @@ setFiles <- function(
   bsc_rda="ACDIS_BoundedStructures.Rda") {
 
   if (folder=="") 
-    folder <- choose.dir(caption="Select a folder which contains all the AHRI .dta files") 
+    folder <- utils::choose.dir(caption="Select a folder which contains all the AHRI .dta files") 
   flist <- as.list(environment())
   flist <- lapply(flist, function(x) file.path(folder, x))
   function() 

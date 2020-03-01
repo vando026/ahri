@@ -180,11 +180,9 @@ readHSEData <- function(inFile=getFiles()$hsefile) {
 #' @param dat An existing dataset.
 #' @param Vars Select variables.
 #' 
-#' @return 
-#'
 #' @export 
-#' #cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5),
-#' #na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
+
+##cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
 
 addAIQVar <- function(dat) {
   hdat <- getEpisodes() 
