@@ -13,15 +13,16 @@ follows:
   - Getting started, which describes which AHRI datasets to request and
     where to put them. It also shows how to set the paths to these
     datasets and how to read them in.
-    <https://github.com/vando026/ahri_help/wiki/Getting-started>
+    <https://github.com/vando026/ahri_help/wiki/1-Getting-started>
 
   - Set functions, which describes a range of functions for processing
     the data, subsetting the data, and other data tasks.
-    <https://github.com/vando026/ahri_help/wiki/Set-functions>
+    <https://github.com/vando026/ahri_help/wiki/2-Set-functions>
 
   - HIV files, which describes functions used to make the HIV incidence
     datasets, impute the seroconversion dates, perform multiple
     imputation, and calculate annual HIV incidence.
+    <https://github.com/vando026/ahri_help/wiki/3-HIV-functions>
 
 There are other sources of help:
 
@@ -35,6 +36,6 @@ There are other sources of help:
     answer.
     (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
 
-|                                                                                                                                                                                                                                                                                     |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Disclaimer: This is not an official AHRI site. The `ahri` library is a collaboration between researchers using the AHRI datasets. Decisions made in the code about how to manage and analyze the data are independent of the views, opinions, and policy of AHRI and its employees. |
+|                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Disclaimer: This is not an official AHRI site. The `ahri` library is a collaboration between researchers using the AHRI datasets. Decisions made in the code about how to manage and analyze the data are independent of the views, opinions, and policies of AHRI and its employees. |

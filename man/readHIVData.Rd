@@ -8,6 +8,7 @@ readHIVData(
   inFile = getFiles()$hivfile,
   outFile = getFiles()$hiv_rda,
   dropTasP = TRUE,
+  addVars = " ",
   write_rda = TRUE
 )
 }
@@ -18,9 +19,9 @@ readHIVData(
 
 \item{dropTasP}{Drop TasP surveillance areas from the data.}
 
-\item{write_rda}{Default is to write the .Rda file.}
-
 \item{addVars}{A regular expression string representing the variables to be added.}
+
+\item{write_rda}{Default is to write the .Rda file.}
 }
 \value{
 data.frame
