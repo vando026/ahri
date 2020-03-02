@@ -14,7 +14,7 @@ addBSVars(dat, Vars = "Area", dropMissBS = TRUE)
 \item{dropMissBS}{Drop any missing BS.}
 }
 \value{
-
+data.frame
 }
 \description{
 Add variables from Bounded Structures to existing dataset.

@@ -10,7 +10,7 @@ readHSEData(inFile = getFiles()$hsefile)
 \item{inFile.}{File path from \code{\link{setFiles}}.}
 }
 \value{
-
+data.frame
 }
 \description{
 Read HSE data.

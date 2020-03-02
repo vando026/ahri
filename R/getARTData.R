@@ -2,7 +2,8 @@
 #' 
 #' @description  Get ART initiation dates
 #' 
-#' @param dat A dataset from \code{\link{getEpisodes}} which has the ART variables
+#' @param dat A dataset which has a variable called \code{EarliestARTInitDate}. If
+#' NULL, the function calls \code{\link{getEpisodes}} with that variable name.
 #'
 #' @return data.frame
 #'
@@ -12,8 +13,8 @@
 #' @examples
 #' getARTDates()
 
-getARTDates <- function(dat) {
-  dat <- readEpisodes(Vars="ART", write_rda=FALSE)
+getARTDates <- function(dat=NULL) {
+  if (is.null) dat <- getEpisodes()
   dat <- filter(dat, !is.na(EarliestARTInitDate))
   dat <- distinct(dat, IIntID, EarliestARTInitDate, .keep_all=TRUE) %>% 
     select(IIntID, DateOfInitiation=EarliestARTInitDate)
@@ -26,19 +27,18 @@ getARTDates <- function(dat) {
 
 #' @title getOnART
 #' 
-#' @description  Creates an OnART dataset and OnART2 variable using a different method
+#' @description  Creates an OnART2 variable using a different method
 #' than used for the OnART variable in the Episodes dataset.
 #' 
 #' @param cutoff Value from 1 and 13, if ART initiation is after this value then no ART
 #' usage for that entire year. Use cutoff=13 to ignore this argument.
 #' 
 #' @return data.frame
-#'
+#' @import dplyr
 #' @export 
 
 getOnART <- function(cutoff=13) {
-  dat <- readEpisodes(Vars="ART|EarliestHIVPos", write_rda=FALSE)
-  dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
+  dat <- getEpisodes()
   dat <- filter(dat, !is.na(EarliestHIVPos))
   dat <- select(dat, IIntID, Year, Age, Female,
     DateOfInitiation=EarliestARTInitDate, EarliestHIVPos, OnART)
@@ -58,8 +58,6 @@ getOnART <- function(cutoff=13) {
 #' any month.
 #' 
 #' @return data.frame
-#'
-#' @export
 
 calcARTCov <- function(Args, cutoff=13) {
   dat <- getOnART(cutoff=cutoff)
@@ -74,7 +72,7 @@ calcARTCov <- function(Args, cutoff=13) {
 #' 
 #' @param Female Read female data (Female = 1) or male data (Female = 0)
 #' 
-#' @return 
+#' @return data.frame
 
 readARTCov <- function(Female=1) {
   sex <- ifelse(Female==1, "fem_art", "mal_art")
@@ -97,9 +95,7 @@ readARTCov <- function(Female=1) {
 #' @param Args requires Args, see \code{\link{setArgs}}
 #' @param oppSex Make opposite-sex HIV prevalence. Default is FALSE.
 #' 
-#' @return 
-#'
-#' @export 
+#' @return data.frame
 
 addARTCov <- function(dat, Args, oppSex=FALSE) {
   Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)

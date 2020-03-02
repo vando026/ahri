@@ -8,7 +8,7 @@
 #' 
 #'  - \code{RD05-99 ACDIS HIV All.dta}
 #' 
-#'  - \code{SurveillanceEpisodesBasicAgeYrHIV.dta}
+#'  - \code{SurveillanceEpisodesExtended.dta}
 #' 
 #'  - \code{RD03-99 ACDIS WGH ALL.dta}
 #' 
@@ -16,12 +16,12 @@
 #' 
 #'  - \code{RD01-03 ACDIS BoundedStructures.dta}
 #' 
-#'  - \code{RD06-99 ACDIS HSE-H All.dta}
-#'
 #' @section setFile function:
 #' You can set the filepaths to the default .dta datasets using the \code{\link{setFiles}} function.  
 #' 
-#' @seealso https://github.com/vando026/ahri 
+#' @seealso https://github.com/vando026/ahri_help/wiki/1-Getting-started
+#' @seealso https://github.com/vando026/ahri_help/wiki/2-Set-functions
+#' @seealso https://github.com/vando026/ahri_help/wiki/3-HIV-functions
 #' @docType package
 #' @name ahri
 NULL

@@ -4,10 +4,11 @@
 \alias{getARTDates}
 \title{getARTDates}
 \usage{
-getARTDates(dat)
+getARTDates(dat = NULL)
 }
 \arguments{
-\item{dat}{A dataset from \code{\link{getEpisodes}} which has the ART variables}
+\item{dat}{A dataset which has a variable called \code{EarliestARTInitDate}. If
+NULL, the function calls \code{\link{getEpisodes}} with that variable name.}
 }
 \value{
 data.frame

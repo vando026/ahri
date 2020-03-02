@@ -87,7 +87,6 @@ getBSMax <- function(
 #' @param keepYear Years to keep. 
 #' 
 #' @return data.frame
-#' @export
 
 addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
   if (is.null(dem)) dem <- getEpisodes()
@@ -135,9 +134,7 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
 #' @param Vars Select variables.
 #' @param dropMissBS Drop any missing BS.
 #' 
-#' @return 
-#'
-#' @export 
+#' @return data.frame
 
 addBSVars <- function(dat, Vars="Area", 
   dropMissBS=TRUE) {
@@ -162,7 +159,7 @@ addBSVars <- function(dat, Vars="Area",
 #' 
 #' @param inFile. File path from \code{\link{setFiles}}.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 readHSEData <- function(inFile=getFiles()$hsefile) {
@@ -179,8 +176,6 @@ readHSEData <- function(inFile=getFiles()$hsefile) {
 #' 
 #' @param dat An existing dataset.
 #' @param Vars Select variables.
-#' 
-#' @export 
 
 ##cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
 
@@ -206,9 +201,7 @@ addAIQVar <- function(dat) {
 #' @param Args requires Args, see \code{\link{setArgs}}
 #' @param Type Males, Females or All for ART coverage. 
 #' 
-#' @return 
-#'
-#' @export 
+#' @return data.frame
 
 addHIVPrevBS <- function(dat, Args, Type="All") {
 
