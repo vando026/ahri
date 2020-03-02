@@ -3,13 +3,14 @@
 #' @description  Reads the Women (WGH) or Men (MGH) General Health Dataset. 
 #' 
 #' @param Female Either a value of 0 to read in Men or 1 to read in Women.
+#' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return 
 #'
 #' @export 
 #' @examples
 #' readHealthData(Female=0)
-readHealthData <- function(Female=1) {
+readHealthData <- function(Female=1, write_rda=TRUE) {
   inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
   outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
   dat <- haven::read_dta(inFile) %>%
@@ -18,7 +19,7 @@ readHealthData <- function(Female=1) {
     Year = as.integer(format(dat$VisitDate, "%Y")),
     IIntID = as.integer(IIntID),
     Female = Female)
-  saveRDS(dat, outFile)
+  if (write_rda) saveRDS(dat, file=outFile) 
   dat
 }
 

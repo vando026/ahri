@@ -1,28 +1,29 @@
 #' @title setFiles
 #' 
 #' @description  Set file paths to the default AHRI datasets, which must be placed into a
-#' single folder. The names of the default .dta datasets are shown below:
+#' single folder. The names of the default .dta datasets must be exactly the same as
+#' described below:
 #' 
-#' You should not need to change these names. If you do, see the
-#' example below on how to do this.  
 #' The function also sets the names for the .Rda datasets used in other functions. 
-#' You should not need to change these names.  
+#' You should change these names only if you know what you are doing (assume that you
+#' don't). The \code{ahri} package will never overwrite the default. dta datasets.   
 #'
-#' !!! You must assign the \code{setFiles} function to a variable called \code{getFiles},
-#' as in the example below. !!!
+#' !!! You must assign the \code{setFiles} function to a name called \code{getFiles},
+#' as in \code{getFiles <- setFiles()}. See the examples below. !!!
 #'
 #' @param folder The path (as a string) to  the folder of default .dta files. If
-#' \code{folder=""}, then The default calls a dialogue box is called to set the folder path.
-#' @param hivfile RD05-99 ACDIS HIV All.dta
-#' @param epifile SurveillanceEpisodesExtended.dta
-#' @param wghfile RD03-99 ACDIS WGH ALL.dta
-#' @param mghfile RD04-99 ACDIS MGH ALL.dta
-#' @param bsifile RD01-03 ACDIS BoundedStructures.dta
-#' @param hiv_rda ACDIS_HIV_All.Rda
-#' @param epi_rda SurveillanceEpisodesExtended.Rda
-#' @param wgh_rda ACDIS_WGH_ALL.Rda
-#' @param mgh_rda ACDIS_MGH_ALL.Rda
-#' @param bsc_rda ACDIS_BoundedStructures.Rda
+#' \code{folder=""}, then the default is to call a dialogue box for you to point and click
+#' to the folder path.
+#' @param hivfile Reads the file RD05-99 ACDIS HIV All.dta
+#' @param epifile Reads the file SurveillanceEpisodesExtended.dta
+#' @param wghfile Reads the file RD03-99 ACDIS WGH ALL.dta
+#' @param mghfile Reads the file RD04-99 ACDIS MGH ALL.dta
+#' @param bsifile Reads the file RD01-03 ACDIS BoundedStructures.dta
+#' @param hiv_rda Writes the file ACDIS_HIV_All.Rda
+#' @param epi_rda Writes the file SurveillanceEpisodesExtended.Rda
+#' @param wgh_rda Writes the file ACDIS_WGH_ALL.Rda
+#' @param mgh_rda Writes the file ACDIS_MGH_ALL.Rda
+#' @param bsc_rda Writes the file ACDIS_BoundedStructures.Rda
 #'
 #' @return function
 #'
@@ -32,7 +33,7 @@
 #' # You must assign the setfiles function to the getFiles name
 #' getFiles <- setFiles(folder="Path/to/my/datafolder")
 #'
-#' # Show an example of how to change the name of the HIV Surveillance dataset
+#' # If for some reason your HIV surveillance .dta file is named differently
 #' getFiles <- setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 #'
 #' # print out the file paths and names
@@ -60,4 +61,12 @@ setFiles <- function(
     return(flist[setdiff(names(flist), "folder")])
 }
 
-
+#' @title ahri_error
+#' 
+#' @description  Warns user that they did not set getFiles, see \code{\link{getFiles}}.
+#' 
+#' @export 
+ahri_error <- function() {
+  if (!exists("getFiles", env=globalenv())) 
+    stop("The  getFiles function doesn't exist, you need to set it. See ?setFiles for help.")
+}
