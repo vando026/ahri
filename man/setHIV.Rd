@@ -4,14 +4,25 @@
 \alias{setHIV}
 \title{setHIV}
 \usage{
-setHIV(Args = setArgs())
+setHIV(Args = setArgs(), dat = NULL)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
+
+\item{dat}{A dataset generated from \code{\link{readHIVData}}, which exists in the
+global environment. If NULL, it reads in the .Rda file from
+\code{getFiles()$hiv_rda}.}
 }
 \value{
 data.frame
 }
 \description{
-set HIV data according arguments of \code{\link{setArgs}}.
+set HIV data by arguments.
+}
+\examples{
+Args <- setArgs() 
+set_hiv <- setHIV(Args)
+# Pass in existing data as an argument
+hdat <- readHIVData(write_rda=FALSE)
+hdat1 <- setHIV(Args, dat=hdat)
 }

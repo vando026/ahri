@@ -29,3 +29,11 @@ data.frame
 \description{
 Reads in AHRI data from csv file
 }
+\examples{
+# Writes .Rda to file
+readHIVData()
+# Saves to global environment 
+hdat <- readHIVData(write_rda=FALSE)
+# Add variables
+hdat <- readHIVData(addVars="HIVRefused|WhereLastTested", write_rda=FALSE)
+}

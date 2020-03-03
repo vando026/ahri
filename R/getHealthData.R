@@ -36,7 +36,7 @@ readHealthData <- function(Female=1, write_rda=TRUE) {
 getMGH <- function(inFile=NULL) {
   if(is.null(inFile)) {
     check_getFiles()
-    inFile=getFiles()$mgd_rda
+    inFile <- getFiles()$mgh_rda
   }
   readRDS(inFile)
 }
@@ -55,7 +55,7 @@ getMGH <- function(inFile=NULL) {
 getWGH <- function(inFile=NULL) {
   if(is.null(inFile)) {
     check_getFiles()
-    inFile=getFiles()$wgd_rda
+    inFile=getFiles()$wgh_rda
   }
   readRDS(inFile)
 }

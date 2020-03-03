@@ -12,6 +12,13 @@
 #'
 #' @import dplyr
 #' @export 
+#' @examples
+#' # Writes .Rda to file
+#' readHIVData()
+#' # Saves to global environment 
+#' hdat <- readHIVData(write_rda=FALSE)
+#' # Add variables
+#' hdat <- readHIVData(addVars="HIVRefused|WhereLastTested", write_rda=FALSE)
 
 readHIVData <- function(
   inFile=NULL, outFile=NULL,
@@ -74,15 +81,25 @@ getHIV <- function(inFile=NULL) {
 
 #' @title setHIV
 #' 
-#' @description set HIV data according arguments of \code{\link{setArgs}}.
+#' @description set HIV data by arguments.
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @param dat A dataset generated from \code{\link{readHIVData}}, which exists in the
+#' global environment. If NULL, it reads in the .Rda file from
+#' \code{getFiles()$hiv_rda}.  
 #' 
 #' @return data.frame
 #'
 #' @export 
-setHIV <- function(Args=setArgs()) {
-  dat <- getHIV()
+#' @examples
+#' Args <- setArgs() 
+#' set_hiv <- setHIV(Args)
+#' # Pass in existing data as an argument
+#' hdat <- readHIVData(write_rda=FALSE)
+#' hdat1 <- setHIV(Args, dat=hdat)
+setHIV <- function(Args=setArgs(), dat=NULL) {
+  if (is.null(dat)) dat <- getHIV()
   setData(dat, Args)
 }
 

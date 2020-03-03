@@ -6,8 +6,8 @@
 #' 
 #' @return data.frame
 #'
-#' @export 
 #' @keywords internal
+#' @export 
 readHIVSurvYear <- function(inFile, addVars=" ") {
   dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, BSIntID=BSIntId, VisitDate, 
     Comment=PrematureCompletionReason, HIVResult, HIVRefused, matches(addVars))
@@ -33,8 +33,8 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 #' 
 #' @return 
 #'
-#' @export 
 #' @keywords internal
+#' @export 
 setHIVMiss <- function(
   inFile=getFiles()$elifile,
   outFile=getFiles()$eli_rda,

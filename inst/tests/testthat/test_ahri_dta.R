@@ -18,7 +18,7 @@ test_that("Check getHIVData N", {
   expect_equal(length(unique(hdat2$IIntID)), 53800)
 })
 
-context("Test readHIV 01")
+context("Test readHIVData (internal)")
 hiv <- haven::read_dta(getFiles()$hivfile) %>% 
   select(IIntID=IIntId, BSIntID=ResidencyBSIntId, VisitDate, 
     HIVResult, Female=Sex, Age=AgeAtVisit)
@@ -57,7 +57,7 @@ test_that("Check readHIV End", {
 })
 
 
-context("Test readEpisodes 0")
+context("Test readEpisodes (internal)")
 edat <- haven::read_dta(getFiles()$epifile) 
 edat <- select(edat,
   IIntID=IndividualId, BSIntID=LocationId, 
@@ -95,7 +95,7 @@ test_that("Check readEpisodes dropTasP N", {
 })
 
 
-context("Test getWGH getMGH")
+context("Test getWGH + getMGH")
 wgh0 <- readHealthData(Female=1, write_rda=FALSE)
 mgh0 <- readHealthData(Female=0, write_rda=FALSE)
 test_that("Check WGH/MGH N and Age", {

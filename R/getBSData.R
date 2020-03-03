@@ -92,6 +92,7 @@ getBSMax <- function(
 #' 
 #' @return data.frame
 #' @keywords internal
+#' @export 
 
 addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
   if (is.null(dem)) dem <- getEpisodes()
@@ -141,6 +142,7 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
 #' 
 #' @return data.frame
 #' @keywords internal
+#' @export 
 
 addBSVars <- function(dat, Vars="Area", 
   dropMissBS=TRUE) {
