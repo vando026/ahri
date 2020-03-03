@@ -4,14 +4,15 @@
 #' tests will generate summary values from each of the datasets and check if they match
 #' expected values defined in the test. 
 #' 
-#' @param year The release year that you want to perform the tests on. Currently, test years include 2018 only.
+#' @param year The release year that you want to perform the tests on. Currently, tests
+#' include 2019 release year only.
 #' @param How to display results, can be "minimal", "summary", "progress". 
 #' 
 #' @return NULL
 #'
 #' @export 
 
-test_ahri_dta <- function(year="2018", report='progress') {
+test_ahri_dta <- function(year="2019", report='progress') {
   check_getFiles()
   message(sprintf('Running tests on %s data release...', year))
   testthat::test_package('ahri', filter=paste0('ahri_dta_', year), reporter=report)
@@ -29,7 +30,7 @@ test_ahri_dta <- function(year="2018", report='progress') {
 #'
 #' @export 
 
-test_ahri_func <- function(year="2018", report='progress') {
+test_ahri_func <- function(year="2019", report='progress') {
   check_getFiles()
   message(sprintf('Running tests on %s data release...', year))
   testthat::test_package('ahri', filter=paste0('ahri_funcs_', year), reporter=report)
