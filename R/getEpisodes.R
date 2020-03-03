@@ -18,11 +18,18 @@
 #' readEpisodes(dropTasP=FALSE, addVars="Employ")
 
 readEpisodes <- function(
-  inFile=getFiles()$epifile,
-  outFile=getFiles()$epi_rda, 
+  inFile=NULL, outFile=NULL, 
   dropTasP=TRUE, addVars=" ",
   write_rda=TRUE) {
   #
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$epifile
+  }
+  if(is.null(outFile)) {
+    check_getFiles()
+    outFile=getFiles()$epi_rda
+  }
   dat <- haven::read_dta(inFile) 
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
@@ -50,12 +57,16 @@ readEpisodes <- function(
 #' 
 #' @description  Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
 #' 
-#' @param inFile File path to the dataset, default is set to \code{\link{setFiles}}.
+#' @param inFile File path to the dataset, default is set to \code{getFiles()$epi_rda}.
 #' 
 #' @return data.frame
 #'
 #' @export 
-getEpisodes <- function(inFile=getFiles()$epi_rda) {
+getEpisodes <- function(inFile=NULL) {
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$epi_rda
+  }
   readRDS(inFile)
 }
 

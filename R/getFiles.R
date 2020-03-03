@@ -66,7 +66,7 @@ setFiles <- function(
 #' @description  Warns user that they did not set getFiles, see \code{\link{getFiles}}.
 #' 
 #' @export 
-ahri_error <- function() {
+check_getFiles <- function() {
   if (!exists("getFiles", env=globalenv())) 
     stop("The  getFiles function doesn't exist, you need to set it. See ?setFiles for help.")
 }

@@ -11,6 +11,7 @@
 #' @examples
 #' readHealthData(Female=0)
 readHealthData <- function(Female=1, write_rda=TRUE) {
+  check_getFiles()
   inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
   outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
   dat <- haven::read_dta(inFile) %>%
@@ -25,34 +26,37 @@ readHealthData <- function(Female=1, write_rda=TRUE) {
 
 #' @title getMGH
 #' 
-#' @description  Reads in men general health data. 
+#' @description  Reads in Men's general health data. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$mgh_rda}.
-#' 
-#' @return 
+#' @param inFile Filepath to .rda dataset, default is \code{getFiles()$mgh_rda}. Leave as
+#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
+#' @return  data.frame
 #'
 #' @export 
-#' @examples
-#' readHealthData(getFiles()$mghfile, getFiles()$mgh_rda, Fem=0)
-#' getMGH()
-getMGH <- function(inFile=getFiles()$mgh_rda) {
+getMGH <- function(inFile=NULL) {
+  if(is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$mgd_rda
+  }
   readRDS(inFile)
 }
 
 
 #' @title getWGH
 #' 
-#' @description  Reads in women general health data. 
+#' @description  Reads in Women's general health data. 
 #' 
-#' @param inFile Filepath to dataset, default is \code{getFiles()$wgh_rda}.
+#' @param inFile Filepath to .rda dataset, default is \code{getFiles()$wgh_rda}. Leave as
+#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
-#' @examples
-#' readHealthData(getFiles()$wghfile, getFiles()$wgh_rda, Fem=1)
-#' getWGH()
-getWGH <- function(inFile=getFiles()$wgh_rda) {
+getWGH <- function(inFile=NULL) {
+  if(is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$wgd_rda
+  }
   readRDS(inFile)
 }
 
@@ -60,7 +64,7 @@ getWGH <- function(inFile=getFiles()$wgh_rda) {
 
 #' @title getCircumcisionData
 #' 
-#' @description  gets Circumcision data from MGH AHRI dataset. 
+#' @description  Gets circumcision data from MGH dataset. 
 #' 
 #' @export
 getCircumcisionData <- function() {

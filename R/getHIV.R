@@ -14,10 +14,18 @@
 #' @export 
 
 readHIVData <- function(
-  inFile=getFiles()$hivfile,
-  outFile=getFiles()$hiv_rda,
+  inFile=NULL, outFile=NULL,
   dropTasP=TRUE, addVars=" ", 
   write_rda=TRUE) {
+  #
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$hivfile
+  }
+  if(is.null(outFile)) {
+    check_getFiles()
+    outFile=getFiles()$hiv_rda
+  }
   #
   hiv <- haven::read_dta(inFile) %>% 
     select(IIntID=IIntId, 
@@ -47,15 +55,20 @@ readHIVData <- function(
 
 #' @title getHIV
 #' 
-#' @description  Get all valid test results >15 yrs age from HIV surveillance.
+#' @description  Load in the .rda version of the HIV surveillance dataset. 
 #' 
-#' @param inFile File path from \code{\link{setFiles}}.
+#' @param inFile File path to .rda dataset, default is \code{\link{getFiles()$hiv_rda}}. Leave as
+#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
 #'
 #' @return data.frame
 #'
 #' @export 
 
-getHIV <- function(inFile=getFiles()$hiv_rda) {
+getHIV <- function(inFile=NULL) {
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$hiv_rda
+  }
   readRDS(file=inFile)
 }
 
@@ -65,7 +78,7 @@ getHIV <- function(inFile=getFiles()$hiv_rda) {
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 setHIV <- function(Args=setArgs()) {
