@@ -15,3 +15,4 @@ getHIVEligible(dat = NULL)
 \description{
 Get eligibility for HIV testing.
 }
+\keyword{internal}

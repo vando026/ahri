@@ -15,3 +15,4 @@ table
 \description{
 Calculates annual mortality rates from \code{\link{getMortalityData}}.
 }
+\keyword{internal}

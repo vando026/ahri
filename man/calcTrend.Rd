@@ -40,3 +40,4 @@ data.frame
 \description{
 Multipurpose function to calc trends over time.
 }
+\keyword{internal}

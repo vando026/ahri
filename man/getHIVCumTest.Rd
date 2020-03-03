@@ -17,3 +17,4 @@ getHIVCumTest(dat, ntest = 1)
 \description{
 Get summary of number of times participants test.
 }
+\keyword{internal}

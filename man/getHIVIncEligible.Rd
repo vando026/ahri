@@ -17,3 +17,4 @@ getHIVIncEligible(Args, ids = NULL)
 \description{
 Get number of participants eligible for HIV incidence cohort.
 }
+\keyword{internal}

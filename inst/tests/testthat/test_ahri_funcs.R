@@ -10,14 +10,12 @@ test_that("Check getHIV dropTasP N", {
 
 context("Test readEpisodes with dropTasP")
 Args = setArgs(Years=c(2000:2020), Age = list(All=c(0, 150)))
-ydat <- setEpisodes(Args, dat=edat)
+ydat <- setEpisodes(Args)
 test_that("Check readEpisodes dropTasP N", {
   expect_equal(length(unique(ydat$IIntID)), 174445) 
   expect_equal(length(unique(ydat$BSIntID)), 16440) 
-  expect_equal(length(edat$Female[ydat$Female==0]), 2645718) 
+  expect_equal(length(ydat$Female[ydat$Female==0]), 2645718) 
 })
-
-
 
 
 context("Test makeAgeVars")

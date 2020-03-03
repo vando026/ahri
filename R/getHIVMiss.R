@@ -7,6 +7,7 @@
 #' @return data.frame
 #'
 #' @export 
+#' @keywords internal
 readHIVSurvYear <- function(inFile, addVars=" ") {
   dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, BSIntID=BSIntId, VisitDate, 
     Comment=PrematureCompletionReason, HIVResult, HIVRefused, matches(addVars))
@@ -33,6 +34,7 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 #' @return 
 #'
 #' @export 
+#' @keywords internal
 setHIVMiss <- function(
   inFile=getFiles()$elifile,
   outFile=getFiles()$eli_rda,
@@ -71,15 +73,16 @@ setHIVMiss <- function(
   dat
 }
 
-##' @title getHIVEligible
-##' 
-##' @description  Get eligibility for HIV testing.
-##' 
-##' @param dat Default is Null or loads dataset from \code{\link{setHIVMiss}}.
-##' 
-##' @return 
-##'
-##' @export 
+#' @title getHIVEligible
+#' 
+#' @description  Get eligibility for HIV testing.
+#' 
+#' @param dat Default is Null or loads dataset from \code{\link{setHIVMiss}}.
+#' 
+#' @return 
+#'
+#' @keywords internal
+#' @export 
 getHIVEligible <- function(dat=NULL) {
   if (is.null(dat)) dat <- readRDS(getFiles()$eli_rda)
   dat <- mutate(dat, Drop = as.numeric(grepl(
@@ -108,6 +111,7 @@ getHIVEligible <- function(dat=NULL) {
 #' 
 #' @return data.frame
 #'
+#' @keywords internal
 #' @export 
 sumHIVMiss <- function(dat) {
   Enumerated <- group_by(dat, Year) %>% 
@@ -131,6 +135,7 @@ sumHIVMiss <- function(dat) {
 #' 
 #' @return 
 #'
+#' @keywords internal
 #' @export 
 getHIVCumTest <- function(dat, ntest=1) {
   dat <- filter(dat, Contact == "Contact")
@@ -150,6 +155,7 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' 
 #' @return 
 #'
+#' @keywords internal
 #' @export 
 getHIVIncEligible <- function(Args, ids=NULL) {
   getN <- function(dat) {
@@ -189,6 +195,7 @@ getHIVIncEligible <- function(Args, ids=NULL) {
 #' 
 #' @return data.frame
 #'
+#' @keywords internal
 #' @export 
 
 mkHIVTestTable <- function(Args, IDS=NULL) {
@@ -234,6 +241,7 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
 #' @param cyear Years to plot.
 #' @param fname Name of file to save. 
 #' 
+#' @keywords internal
 #' @export 
 plotHIVTestYear <- function(cyear=c(2005:2017), 
   fname="ConsentRate.png") {
@@ -298,6 +306,7 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
 #' 
 #' @return 
 #'
+#' @keywords internal
 #' @export 
 getFollowUp <- function(x) {
   xx = vector(length=length(x))
@@ -318,6 +327,7 @@ getFollowUp <- function(x) {
 #' 
 #' @return 
 #'
+#' @keywords internal
 #' @export 
 getDropOut <- function(x) {
   xx = vector(length=length(x))

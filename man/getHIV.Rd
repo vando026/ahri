@@ -4,14 +4,15 @@
 \alias{getHIV}
 \title{getHIV}
 \usage{
-getHIV(inFile = getFiles()$hiv_rda)
+getHIV(inFile = NULL)
 }
 \arguments{
-\item{inFile}{File path from \code{\link{setFiles}}.}
+\item{inFile}{File path to .rda dataset, default is \code{\link{getFiles()$hiv_rda}}. Leave as
+NULL if you don't know what to do or see \code{\link{setFiles}}.}
 }
 \value{
 data.frame
 }
 \description{
-Get all valid test results >15 yrs age from HIV surveillance.
+Load in the .rda version of the HIV surveillance dataset.
 }

@@ -66,6 +66,7 @@ getWGH <- function(inFile=NULL) {
 #' 
 #' @description  Gets circumcision data from MGH dataset. 
 #' 
+#' @keywords internal
 #' @export
 getCircumcisionData <- function() {
   dat <- getMGH() 
@@ -96,6 +97,7 @@ setCircumStatus <- function(Keep) {
 #' 
 #' @param dat Dataset to make the circumcision status variable.
 #' 
+#' @keywords internal
 #' @export
 getCircum <- setCircumStatus(Keep = c(0, 1))
 
@@ -106,6 +108,7 @@ getCircum <- setCircumStatus(Keep = c(0, 1))
 #' 
 #' @param dat Dataset to make the circumcision status variable.
 #' 
+#' @keywords internal
 #' @export
 keepCircum <- setCircumStatus(Keep=1)
 
@@ -115,6 +118,7 @@ keepCircum <- setCircumStatus(Keep=1)
 #' 
 #' @param dat Dataset to make the circumcision status variable.
 #' 
+#' @keywords internal
 #' @export
 dropCircum <- setCircumStatus(Keep=0)
 
@@ -124,6 +128,7 @@ dropCircum <- setCircumStatus(Keep=0)
 #' @description  gets Condom use data from AHRI datasets. File path must be set in
 #' \code{\link{setFiles}}. 
 #' 
+#' @keywords internal
 #' @export
 
 getCondomUseData <- function() {
@@ -143,6 +148,7 @@ getCondomUseData <- function() {
 #' 
 #' @return
 #'
+#' @keywords internal
 #' @export 
 addCondomVar <- function(dat, dropFemale=TRUE) {
   cdat <- getCondomUseData()
@@ -177,6 +183,7 @@ addCondomVar <- function(dat, dropFemale=TRUE) {
 #' 
 #' @return 
 #'
+#' @keywords internal
 #' @export 
 addCircumVar <- function(dat) {
   cdat <- getCircumcisionData()

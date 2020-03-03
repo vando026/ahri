@@ -10,7 +10,11 @@
 #'
 #' @examples
 #' getBSData() 
-getBSData <- function(inFile=getFiles()$bsifile) {
+getBSData <- function(inFile=NULL) {
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile=getFiles()$bsifile
+  }
   dat <- haven::read_dta(inFile) %>%
     rename(BSIntID=BSIntId)
   dat <- mutate(dat, BSIntID = as.integer(BSIntID))
@@ -87,6 +91,7 @@ getBSMax <- function(
 #' @param keepYear Years to keep. 
 #' 
 #' @return data.frame
+#' @keywords internal
 
 addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
   if (is.null(dem)) dem <- getEpisodes()
@@ -135,6 +140,7 @@ addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
 #' @param dropMissBS Drop any missing BS.
 #' 
 #' @return data.frame
+#' @keywords internal
 
 addBSVars <- function(dat, Vars="Area", 
   dropMissBS=TRUE) {
@@ -176,6 +182,7 @@ readHSEData <- function(inFile=getFiles()$hsefile) {
 #' 
 #' @param dat An existing dataset.
 #' @param Vars Select variables.
+#' @keywords internal
 
 ##cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
 
@@ -202,6 +209,9 @@ addAIQVar <- function(dat) {
 #' @param Type Males, Females or All for ART coverage. 
 #' 
 #' @return data.frame
+#' @keywords internal
+#' @export 
+
 
 addHIVPrevBS <- function(dat, Args, Type="All") {
 

@@ -5,8 +5,8 @@
 \title{readEpisodes}
 \usage{
 readEpisodes(
-  inFile = getFiles()$epifile,
-  outFile = getFiles()$epi_rda,
+  inFile = NULL,
+  outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
   write_rda = TRUE

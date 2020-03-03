@@ -4,10 +4,10 @@
 \alias{getEpisodes}
 \title{getEpisodes}
 \usage{
-getEpisodes(inFile = getFiles()$epi_rda)
+getEpisodes(inFile = NULL)
 }
 \arguments{
-\item{inFile}{File path to the dataset, default is set to \code{\link{setFiles}}.}
+\item{inFile}{File path to the dataset, default is set to \code{getFiles()$epi_rda}.}
 }
 \value{
 data.frame

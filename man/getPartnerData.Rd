@@ -15,3 +15,4 @@ data.frame
 \description{
 get data on partners and marital status.
 }
+\keyword{internal}

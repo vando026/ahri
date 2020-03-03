@@ -18,3 +18,4 @@ data.frame
 Adds partner data from \code{\link{getPartnerData}} to existing dataset.
 Missing values are inputed or carried forward.
 }
+\keyword{internal}

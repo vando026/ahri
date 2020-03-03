@@ -7,6 +7,8 @@
 #' @return data.frame
 #'
 #' @import dplyr
+#' @keywords internal
+#' @export 
 
 getVLData <- function(Args) {
 
@@ -66,6 +68,8 @@ getVLData <- function(Args) {
 #' @return data.frame
 #'
 #' @import dplyr
+#' @keywords internal
+#' @export 
 
 getPVLData <- function(cvl, Args) {
 

@@ -18,3 +18,4 @@ data.frame
 \description{
 Make a table of HIV test participation.
 }
+\keyword{internal}

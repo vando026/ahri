@@ -19,3 +19,4 @@ data.frame
 \description{
 gets mortality data.
 }
+\keyword{internal}

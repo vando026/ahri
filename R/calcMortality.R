@@ -10,7 +10,7 @@
 #' @return data.frame
 #'
 #' @import dplyr
-#' @export 
+#' @keywords internal
 
 
 getMortalityData <- function(Args, 
@@ -69,6 +69,7 @@ getMortalityData <- function(Args,
 #' @return table
 #'
 #' @import epitools
+#' @keywords internal
 #' @export 
 
 calcMortality <- function(dat) {

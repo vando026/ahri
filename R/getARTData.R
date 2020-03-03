@@ -9,6 +9,7 @@
 #'
 #' @import dplyr
 #'
+#' @keywords internal
 #' @export
 #' @examples
 #' getARTDates()
@@ -35,6 +36,7 @@ getARTDates <- function(dat=NULL) {
 #' 
 #' @return data.frame
 #' @import dplyr
+#' @keywords internal
 #' @export 
 
 getOnART <- function(cutoff=13) {
@@ -58,6 +60,8 @@ getOnART <- function(cutoff=13) {
 #' any month.
 #' 
 #' @return data.frame
+#' @keywords internal
+#' @export 
 
 calcARTCov <- function(Args, cutoff=13) {
   dat <- getOnART(cutoff=cutoff)
@@ -73,6 +77,8 @@ calcARTCov <- function(Args, cutoff=13) {
 #' @param Female Read female data (Female = 1) or male data (Female = 0)
 #' 
 #' @return data.frame
+#' @keywords internal
+#' @export 
 
 readARTCov <- function(Female=1) {
   sex <- ifelse(Female==1, "fem_art", "mal_art")
@@ -96,6 +102,7 @@ readARTCov <- function(Female=1) {
 #' @param oppSex Make opposite-sex HIV prevalence. Default is FALSE.
 #' 
 #' @return data.frame
+#' @keywords internal
 
 addARTCov <- function(dat, Args, oppSex=FALSE) {
   Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)

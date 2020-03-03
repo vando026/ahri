@@ -7,6 +7,7 @@
 #' @return 
 #'
 #' @export 
+#' @keywords internal
 
 getAgeWeights <- function(Args) {
   dat <- getDemResident(Args)

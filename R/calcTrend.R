@@ -8,6 +8,7 @@
 #' @return list
 #'
 #' @export 
+#' @keywords internal
 #' @examples
 #' Args <- setArgs()
 #' hiv <- getHIV(Args)
@@ -44,6 +45,7 @@ getAggregate <- function(dat,
 #' @return data.frame
 #'
 #' @export
+#' @keywords internal
 
 calcTrend <- function(
   dat, wdat=NULL,
@@ -87,6 +89,7 @@ calcTrend <- function(
 #' 
 #' @return data.frame
 #'
+#' @keywords internal
 #' @export 
 calcTrendYear <- function(RHS="", dat) {
   dat <- group_by(dat, Year) %>%

@@ -7,5 +7,6 @@
 getCircumcisionData()
 }
 \description{
-gets Circumcision data from MGH AHRI dataset.
+Gets circumcision data from MGH dataset.
 }
+\keyword{internal}

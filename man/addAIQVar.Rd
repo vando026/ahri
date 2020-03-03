@@ -14,3 +14,4 @@ addAIQVar(dat)
 \description{
 Add variables from Bounded Structures to existing dataset.
 }
+\keyword{internal}

@@ -23,3 +23,4 @@ setHIVMiss(
 \description{
 Gets HIV test dates by merging yearly HIV surveillance datasets.
 }
+\keyword{internal}

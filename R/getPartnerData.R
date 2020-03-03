@@ -9,6 +9,7 @@
 #' @export
 #' 
 #' @import dplyr
+#' @keywords internal
 
 getPartnerData <- function( 
   Args=eval.parent(quote(Args))) {
@@ -74,6 +75,7 @@ getPartnerData <- function(
 #' 
 #' @import dplyr
 #' @import zoo
+#' @keywords internal
 
 makePartnerData <- function(dat,
   Args=eval.parent(quote(Args))) {
@@ -118,6 +120,7 @@ makePartnerData <- function(dat,
 #' @return variable
 #'
 #' @export 
+#' @keywords internal
 getMaritalStatus <- function(var) {
   ifelse(var %in% c(1:3, 6:8, 11:16), 1, # married 
     ifelse(var %in% c(4, 5, 9, 10, 17), 0, NA)) # not married
@@ -135,6 +138,7 @@ getMaritalStatus <- function(var) {
 #' @return 
 #'
 #' @export 
+#' @keywords internal
 addMaritalStatus <- function(dat, mdat, fun=as.factor) {
   mdat$MaritalStatus <- getMaritalStatus(mdat$Marital)
   mdat <- select(mdat, IIntID, Year, MaritalStatus)

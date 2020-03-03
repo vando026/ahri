@@ -10,7 +10,7 @@ setHIV(Args = setArgs())
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
 }
 \value{
-
+data.frame
 }
 \description{
 set HIV data according arguments of \code{\link{setArgs}}.

@@ -5,8 +5,8 @@
 \title{readHIVData}
 \usage{
 readHIVData(
-  inFile = getFiles()$hivfile,
-  outFile = getFiles()$hiv_rda,
+  inFile = NULL,
+  outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
   write_rda = TRUE

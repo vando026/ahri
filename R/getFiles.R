@@ -61,7 +61,7 @@ setFiles <- function(
     return(flist[setdiff(names(flist), "folder")])
 }
 
-#' @title ahri_error
+#' @title check_getFiles
 #' 
 #' @description  Warns user that they did not set getFiles, see \code{\link{getFiles}}.
 #' 

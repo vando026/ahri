@@ -18,3 +18,4 @@ data.frame
 \description{
 Calculate ART coverage for AHRI data.
 }
+\keyword{internal}

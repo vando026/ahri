@@ -10,3 +10,4 @@ getCondomUseData()
 gets Condom use data from AHRI datasets. File path must be set in
 \code{\link{setFiles}}.
 }
+\keyword{internal}

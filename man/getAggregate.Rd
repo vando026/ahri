@@ -23,3 +23,4 @@ hiv <- getHIV(Args)
 hiv <- setData(hiv, Args)
 getAggregate(hiv, "IIntID ~ Year + HIVResult")
 }
+\keyword{internal}
