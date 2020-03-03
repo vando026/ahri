@@ -95,7 +95,7 @@ test_that("Check readEpisodes dropTasP N", {
 })
 
 
-context("Test getWGH + getMGH")
+context("Test readMGH readWGH")
 wgh0 <- readHealthData(Female=1, write_rda=FALSE)
 mgh0 <- readHealthData(Female=0, write_rda=FALSE)
 test_that("Check WGH/MGH N and Age", {
