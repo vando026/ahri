@@ -13,16 +13,20 @@ follows:
   - Getting started, which describes which AHRI datasets to request and
     where to put them. It also shows how to set the paths to these
     datasets and how to read them in.
-    <https://github.com/vando026/ahri_help/wiki/1-Getting-started>
+    <https://github.com/vando026/ahri/wiki/1-Getting-started>
 
   - Set functions, which describes a range of functions for processing
     the data, subsetting the data, and other data tasks.
-    <https://github.com/vando026/ahri_help/wiki/2-Set-functions>
+    <https://github.com/vando026/ahri/wiki/2-Set-functions>
 
   - HIV files, which describes functions used to make the HIV incidence
     datasets, impute the seroconversion dates, perform multiple
     imputation, and calculate annual HIV incidence.
-    <https://github.com/vando026/ahri_help/wiki/3-HIV-functions>
+    <https://github.com/vando026/ahri/wiki/3-HIV-functions>
+
+  - Test files, which describes functions used to test that the data and
+    code works as exected.
+    <https://github.com/vando026/ahri/wiki/4-Test-dataset-and-functions>
 
 There are other sources of help:
 
@@ -35,6 +39,9 @@ There are other sources of help:
   - If you have questions, post them as an issue so that I or others can
     answer.
     (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
+
+The development branch is at
+<https://github.com/vando026/ahri_dev>.
 
 |                                                                                                                                                                                                                                                                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
