@@ -26,7 +26,7 @@ follows:
 
   - Test files, which describes functions used to test that the data and
     code works as exected.
-    <https://github.com/vando026/ahri/wiki/4-Test-dataset-and-functions>
+    <https://github.com/vando026/ahri/wiki/4-Test-datasets-and-functions>
 
 There are other sources of help:
 
