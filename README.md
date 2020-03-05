@@ -10,10 +10,10 @@ The wiki help pages serve as a short introduction to the `ahri` library.
 These can be found in the links below. The help files are organised as
 follows:
 
-  - Getting started, which describes which AHRI datasets to request and
-    where to put them. It also shows how to set the paths to these
-    datasets and how to read them in.
-    <https://github.com/vando026/ahri/wiki/1-Getting-started>
+  - Getting started, which describes how to install the `ahri` library,
+    which AHRI datasets to request and where to put them. It also shows
+    how to set the paths to these datasets and how to read/load them
+    into R. <https://github.com/vando026/ahri/wiki/1-Getting-started>
 
   - Set functions, which describes a range of functions for processing
     the data, subsetting the data, and other data tasks.
@@ -26,7 +26,7 @@ follows:
 
   - Test files, which describes functions used to test that the data and
     code works as exected.
-    <https://github.com/vando026/ahri/wiki/4-Test-datasets-and-functions>
+    <https://github.com/vando026/ahri/wiki/4-Test-dataset-and-functions>
 
 There are other sources of help:
 
