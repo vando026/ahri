@@ -19,9 +19,7 @@
 #' @section setFile function:
 #' You can set the filepaths to the default .dta datasets using the \code{\link{setFiles}} function.  
 #' 
-#' @seealso https://github.com/vando026/ahri_help/wiki/1-Getting-started
-#' @seealso https://github.com/vando026/ahri_help/wiki/2-Set-functions
-#' @seealso https://github.com/vando026/ahri_help/wiki/3-HIV-functions
+#' @seealso https://github.com/vando026/ahri
 #' @docType package
 #' @name ahri
 NULL
