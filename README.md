@@ -24,7 +24,7 @@ follows:
 
   - Set functions, which describes a range of functions for processing
     the data, subsetting the data, and other data tasks.
-    <https://github.com/vando026/ahri/wiki/2-Set-functions>
+    <https://github.com/vando026/ahri/wiki/3-Set-functions>
 
   - Make and get variables, which describes a range of functions for
     performing these operations. (Documentation ongoing.)
@@ -33,7 +33,7 @@ follows:
   - HIV files, which describes functions used to make the HIV incidence
     datasets, impute the seroconversion dates, perform multiple
     imputation, and calculate annual HIV incidence. (Documentation
-    ongoing. ) <https://github.com/vando026/ahri/wiki/3-HIV-functions>
+    ongoing. ) <https://github.com/vando026/ahri/wiki/5-HIV-functions>
 
 There are other sources of help:
 
