@@ -17,8 +17,7 @@
 #' rtdat <- getRTData(hiv)
 
 getRTData <- function(dat, onlyRT=TRUE) {
-
-  # function  get dates 
+  # get dates 
   early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
   early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
   late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
@@ -27,7 +26,6 @@ getRTData <- function(dat, onlyRT=TRUE) {
   dat <- suppressMessages(Reduce(left_join, 
     list(dat, early_neg, late_neg, early_pos, late_pos)))
 
-  # We have LatestNegativeDate after EarliestHIVPositive. 02May2016:  101 individuals
   rtdat <- mutate(dat, late_neg_after = ifelse(
     (late_neg > early_pos) & is.finite(early_pos) & is.finite(late_neg), 1, 0)) 
   # I just drop these individuals, irreconcilable
@@ -41,8 +39,6 @@ getRTData <- function(dat, onlyRT=TRUE) {
   }
   rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(early_pos), 1, 0))
   rtdat <- rename(rtdat, obs_start = early_neg)
-  vars <- c("obs_start", "late_neg", "early_pos")
-  rtdat[vars] <- lapply(rtdat[vars], as.Date, origin="1970-01-01")
   rtdat
 }
 
@@ -61,7 +57,8 @@ getDates <- function(f) {
     dates <- tapply(dat[, Var], dat[, "IIntID"], f)
     out <- data.frame(as.integer(names(dates)), dates)
     colnames(out) <- c("IIntID", Name)
-    out
+    out[, Name] <- as.Date(out[, Name], origin="1970-01-01")
+    tibble::as_tibble(out)
   }
 }
 

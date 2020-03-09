@@ -1,6 +1,6 @@
-## Description: Test incidence code
-## Project: 
-## Author: AV / Created: 28Sep2018 
+## Description: Test read code and dta
+## Project: ahri
+## Author: AV / Created: 06 March 2020
 
 context("Test getBSData")
 bdat <- getBSData()

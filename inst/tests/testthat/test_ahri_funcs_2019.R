@@ -1,3 +1,7 @@
+## Description: Test functions
+## Project: ahri
+## Author: AV / Created: 06Mar2020 
+
 edat0 <- readEpisodes(dropTasP=TRUE, write_rda=FALSE)
 hiv0 <- readHIVData(dropTasP=TRUE, write_rda=FALSE)
 

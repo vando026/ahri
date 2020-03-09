@@ -4,7 +4,7 @@
 \alias{splitAtSeroDate}
 \title{splitAtSeroDate}
 \usage{
-splitAtSeroDate(dat = NULL, splitYears = c(2003:2018))
+splitAtSeroDate(dat = NULL, splitYears = c(2003:2019))
 }
 \arguments{
 \item{dat}{a dataset}

@@ -63,7 +63,7 @@ getYearDates <- function(Years) {
 #' splitAtSeroDate(sdat, splitYears=Args$Years)
 
 splitAtSeroDate <- function(
-  dat=NULL,  splitYears=c(2003:2018)) {
+  dat=NULL,  splitYears=c(2003:2019)) {
   dat <- rename(dat, event = sero_event)
   dat <- mutate(dat, obs_end=ifelse(event==1, sero_date, late_neg))
   edat <- splitData2(dat, years=splitYears)
