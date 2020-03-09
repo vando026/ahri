@@ -74,7 +74,7 @@ AggByYear <- AggFunc("Year")
 AggByAge <- AggFunc("AgeCat")
 
 
-#' @title calcCrudeInc
+#' @title doPoisCrude
 #' 
 #' @description  Calculates crude incidence rates by year using poisson regression.
 #' 
@@ -83,12 +83,38 @@ AggByAge <- AggFunc("AgeCat")
 #' @return 
 #'
 #' @export 
-calcCrudeInc <- function(dat) {
+doPoisCrude <- function(dat) {
   dat <- AggByYear(dat)
   dat <- mutate(dat, Year = as.factor(Year))
   mod <- glm(sero_event ~ - 1 + Year + offset(log(pyears)),
     data=dat, family=poisson)
   data.frame(fit=mod$coef, se.fit=summary(mod)$coef[, 2])
+}
+
+
+#' @title calcPoisExact 
+#' 
+#' @description  Calculate crude incidence rates using the Poisson exact method. 
+#' 
+#' @param dat A dataset from \code{\link{AggByYear}} or \code{\link{AggByAge}}.
+#' @param byVar Either "AgeCat" or "Year".
+#' @param fmt If TRUE, format by 100 person-years and round off to two decimal places. 
+#' 
+#' @return 
+#'
+#' @import epitools
+#' @export 
+calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
+  dat <- split(dat, dat[, byVar])
+  dat <- do.call(rbind, lapply(dat, function(x)
+    pois.exact(x$sero_event, x$pyears)))
+  if (fmt==TRUE) {
+    vars <- c("rate", "lower", "upper")
+    dat[vars] <- lapply(dat[vars], function(x) round(x*100, 2))
+  }
+  dat <- dplyr::rename(dat, sero_event=x, 
+    pyears=pt, lci=lower, uci=upper)
+  dat
 }
 
 
@@ -210,14 +236,16 @@ combineEst <-  function(dat, get_names=miCombine()) {
 calcRubin <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
   doCalc <- function(est, se, func=fun, Pval=pval) {
     m <- length(est)
-    mn <- mean(est)
     if (m > 1) {
+      mn <- mean(est)
       var_with <- mean(se^2)
       var_betw <- sum((est - mn)^2)/(m-1)
       se <- sqrt(var_with + var_betw*(1 + (1/m)))
       rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
       tdf <- qt(1 - (0.05/2), rdf)
     } else {
+      mn <- unlist(est)
+      se <- unlist(se)
       tdf <- 1.96 
     }
     ci <- func(mn + c(-1, 1) * (tdf * se))
@@ -280,10 +308,10 @@ getRubin <- function(v1, v2, fun=exp, by100=TRUE, pval=FALSE) {
 #' @export 
 #' @examples 
 #' mi_compute <- list(year = AggByYear, 
-#'   crude = calcCrudeInc, 
+#'   crude =doPoisCrude, 
 #'   age_adj = doPoisYear)
 miCompute <- function(flist=list(
-  year = AggByYear, crude = calcCrudeInc, 
+  year = AggByYear, crude=doPoisCrude, 
   age_adj = doPoisYear)) {
   return(flist) 
 }

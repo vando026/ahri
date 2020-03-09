@@ -260,7 +260,7 @@ imputeIntCensPoint <- function(rtdat, sdates, i) {
 
 
 icCompute <- function(flist=list(
-  year = AggByYear, crude = calcCrudeInc)) {
+  year = AggByYear, crude =doPoisCrude)) {
   return(flist) 
 }
 
