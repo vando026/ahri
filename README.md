@@ -4,12 +4,10 @@ The `ahri` R library contains several functions for working with the
 Africa Health Research Institute (AHRI) datasets. Some useful functions
 include reading in the datasets, subsetting the data according to a list
 of arguments, adding standard variables, and calculating HIV incidence
-and other trends such as HIV prevalence and ART
-coverage.
+and other trends such as HIV prevalence and ART coverage.
 
-|                                                                                  |
-| -------------------------------------------------------------------------------- |
-| The R code is at the development branch: <https://github.com/vando026/ahri_dev>. |
+The R code is at the development branch:
+<https://github.com/vando026/ahri_dev>.
 
 The wiki help pages serve as a short introduction to the `ahri` library.
 These can be found in the links below. The help files are organised as
