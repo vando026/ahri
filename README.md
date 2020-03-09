@@ -33,7 +33,7 @@ follows:
   - HIV files, which describes functions used to make the HIV incidence
     datasets, impute the seroconversion dates, perform multiple
     imputation, and calculate annual HIV incidence. (Documentation
-    ongoing. ) <https://github.com/vando026/ahri/wiki/5-HIV-functions>
+    ongoing. ) <https://github.com/vando026/ahri/wiki/5A-HIV-functions>
 
 There are other sources of help:
 
