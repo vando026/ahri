@@ -159,37 +159,34 @@ doPoisAge <- function(dat) {
 }
 
 
-#' @title calcRubin
+#' @title calcPoisCI
 #' 
-#' @description  Calculates standard error according to Rubin's rules. 
+#' @description  Calculates standard errors for Poisson estimates from a single imputed
+#' dataset.
 #' 
-#' @param est Estimates from m imputations
-#' @param se Estimates from m imputations
+#' @param est Estimates from m imputations, must be a data.frame[, "fit", drop=FALSE]
+#' @param se Estimates from m imputations, must be a data.frame[, "se.fit", drop=FALSE]
 #' 
 #' @return 
 #'
 #' @export 
 #'
 #' @examples
-#' e <- c(2, 4) # m = 2
-#' s <- c(0.5, 0.5) # m = 2
-#' x <- calcRubin(e, s)
+#' Args <- setArgs(Years=c(2008:2018), 
+#'   Age=list(All=c(15, 45)),
+#'   imputeMethod=imputeRandomPoint)
+#' hiv <- getHIV()
+#' rtdat <- getRTData(hiv)
+#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
+#' pois_yr <- doPoisYear(idat, age_dat)
+#' calcPoisCI(est=pois_yr[, "fit", drop=FALSE], se=pois_yr[, "se.fit", drop=FALSE])
 
-calcRubin <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
+calcPoisCI <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
   doCalc <- function(est, se, func=fun, Pval=pval) {
     m <- length(est)
-    if (m > 1) {
-      mn <- mean(est)
-      var_with <- mean(se^2)
-      var_betw <- sum((est - mn)^2)/(m-1)
-      se <- sqrt(var_with + var_betw*(1 + (1/m)))
-      rdf <- (m - 1) * (1 + (var_with/((1+ (1/m)) * var_betw)))^2
-      tdf <- qt(1 - (0.05/2), rdf)
-    } else {
-      mn <- unlist(est)
-      se <- unlist(se)
-      tdf <- 1.96 
-    }
+    mn <- unlist(est)
+    se <- unlist(se)
+    tdf <- 1.96 
     ci <- func(mn + c(-1, 1) * (tdf * se))
     out <- c(rate=func(mn), lci=ci[1], uci=ci[2])
     if (Pval) {
@@ -205,6 +202,7 @@ calcRubin <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
   if (by100) out[] <- lapply(out[], `*`, 100)
   out
 }
+
 
 #' @title MIdata
 #' 
@@ -350,18 +348,19 @@ getFormula <- function() {
 }
 
 
-#' @title getIncidenceMI
+#' @title getIncidence
 #' 
 #' @description  Default function for using \code{mitools} to do incidence rate
 #' estimation.
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
-#' @param formulas A list of formulas for the poisson regression models.
+#' @param formulas A list of formulas for the poisson regression models, see
+#' \code{\link{getFormula}}.
 #' 
 #' @return 
 #'
 #' @export 
-getIncidenceMI <- function(Args, formulas=getFormula()) {
+getIncidence <- function(Args, formulas=getFormula()) {
   hiv <- getHIV()
   rtdat <- getRTData(hiv)
   age_dat <- getAgeYear(Args)
