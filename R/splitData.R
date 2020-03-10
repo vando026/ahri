@@ -57,19 +57,20 @@ getYearDates <- function(Years) {
 #' @export 
 #'
 #' @examples
-#' hiv <- getHIV(Args)
+#' Args <- setArgs(Years=c(2008:2018))
+#' hiv <- setHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)
 #' splitAtSeroDate(sdat, splitYears=Args$Years)
 
 splitAtSeroDate <- function(
   dat=NULL,  splitYears=c(2003:2019)) {
-  dat <- rename(dat, event = sero_event)
-  dat <- mutate(dat, obs_end=ifelse(event==1, sero_date, late_neg))
+  dat <- rename(dat, event = .data$sero_event)
+  dat <- mutate(dat, obs_end=ifelse(.data$event==1, .data$sero_date, .data$late_neg))
   edat <- splitData2(dat, years=splitYears)
-  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start))
+  edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
   if(any(edat$Time>366)) stop("Days > 366")
-  edat <- rename(edat, sero_event = event)
+  edat <- rename(edat, sero_event = .data$event)
   tbl_df(edat)
 }
 
@@ -85,19 +86,19 @@ splitAtSeroDate <- function(
 #' @export 
 #'
 #' @examples
-#' hiv <- getHIV(Args)
+#' Args <- setArgs(Years=c(2008:2018))
+#' hiv <- setHIV(Args)
 #' rtdat <- getRTData(hiv)
-#' sdat <- imputeMidPoint(rtdat)
-#' splitAtEarlyPos(sdat, splitYears=Args$Years)
+#' splitAtEarlyPos(rtdat, splitYears=Args$Years)
 
 splitAtEarlyPos <- function(
   dat=NULL,  splitYears=c(2003:2018)) {
-  dat <- mutate(dat, obs_end=ifelse(sero_event==1, early_pos, late_neg))
-  dat <- rename(dat, event = sero_event)
+  dat <- mutate(dat, obs_end=ifelse(.data$sero_event==1, .data$early_pos, .data$late_neg))
+  dat <- rename(dat, event = .data$sero_event)
   edat <- splitData2(dat, years=splitYears)
-  edat <- mutate(edat, Time = as.numeric(obs_end - obs_start))
+  edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
   if(any(edat$Time > 366)) stop("Days > 366")
-  edat <- rename(edat, sero_event = event)
+  edat <- rename(edat, sero_event = .data$event)
   tbl_df(edat)
 }
 

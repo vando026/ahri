@@ -31,6 +31,7 @@ plotIncPrev(
 Plots incidence and prevalence.
 }
 \examples{
+\donttest{
 inc <- getIncidence(Args)$adj$Year
 hiv <- setHIV(Args) 
 prev <-  calcTrend(hiv, 
@@ -38,3 +39,5 @@ prev <-  calcTrend(hiv,
 prev <- prev$adj.rate*100
 plotIncPrev(inc, prev) 
 }
+}
+\keyword{internal}

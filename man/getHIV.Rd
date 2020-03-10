@@ -7,7 +7,7 @@
 getHIV(inFile = NULL)
 }
 \arguments{
-\item{inFile}{File path to .rda dataset, default is \code{\link{getFiles()$hiv_rda}}. Leave as
+\item{inFile}{File path to .rda dataset, default is \code{getFiles()$hiv_rda}. Leave as
 NULL if you don't know what to do or see \code{\link{setFiles}}.}
 }
 \value{

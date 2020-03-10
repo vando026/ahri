@@ -63,10 +63,10 @@ setFiles <- function(
 
 #' @title check_getFiles
 #' 
-#' @description  Warns user that they did not set getFiles, see \code{\link{getFiles}}.
+#' @description  Warns user that they did not set getFiles, see \code{\link{setFiles}}.
 #' 
 #' @export 
 check_getFiles <- function() {
-  if (!exists("getFiles", env=globalenv())) 
+  if (!exists("getFiles", envir=globalenv())) 
     stop("The  getFiles function doesn't exist, you need to set it. See ?setFiles for help.")
 }

@@ -31,7 +31,9 @@ Reads in AHRI data from csv file
 }
 \examples{
 # Writes .Rda to file
+\donttest{
 readHIVData()
+}
 # Saves to global environment 
 hdat <- readHIVData(write_rda=FALSE)
 # Add variables

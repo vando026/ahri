@@ -16,6 +16,5 @@ data.frame
 Gets birth dates from \code{\link{getEpisodes}} data
 }
 \examples{
-Args <- setArgs()
 getBirthDate(addVars="Female")
 }

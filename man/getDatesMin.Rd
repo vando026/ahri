@@ -20,6 +20,5 @@ data.frame
 Function to get earliest test dates
 }
 \examples{
-hdat <- getHIV()
-getDatesMin(dat, "HIVNegative", "early_neg")
+getDatesMin(dat=getHIV(), "HIVNegative", "early_neg")
 }

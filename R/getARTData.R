@@ -12,7 +12,9 @@
 #' @keywords internal
 #' @export
 #' @examples
-#' getARTDates()
+#' \donttest{
+#' getARTDates(dat=getEpisodes())
+#' } 
 
 getARTDates <- function(dat=NULL) {
   if (is.null) dat <- getEpisodes()

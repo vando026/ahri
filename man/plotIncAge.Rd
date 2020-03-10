@@ -18,3 +18,4 @@ plotIncAge(
 \description{
 Plot HIV incidence by Age.
 }
+\keyword{internal}

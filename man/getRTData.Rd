@@ -18,6 +18,5 @@ data.frame
 Get all repeat testers from HIV surveillance.
 }
 \examples{
-hiv <- getHIV(Args)
-rtdat <- getRTData(hiv)
+rtdat <- getRTData(dat=getHIV())
 }

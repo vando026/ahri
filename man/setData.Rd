@@ -34,5 +34,5 @@ adat <- setData(hiv, Args)
 # This will create a new Age variable using the birthdat and subset by age
 adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=getBirthDate())
 # Note that there will be some discrepancy in the number of observations between adat and
-adat1.
+adat1
 }

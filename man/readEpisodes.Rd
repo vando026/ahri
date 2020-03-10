@@ -30,6 +30,8 @@ data.frame
 Reads in the Surveillance Episodes dataset
 }
 \examples{
+\donttest{
 readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
-readEpisodes(dropTasP=FALSE, addVars="Employ")
+eadEpisodes(dropTasP=FALSE, addVars="Employ")
+}
 }

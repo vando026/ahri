@@ -246,12 +246,12 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
 plotHIVTestYear <- function(cyear=c(2005:2017), 
   fname="ConsentRate.png") {
 
-  list2env(getColor(), env=environment())
+  list2env(getColor(), envir=environment())
   dat <- setHIVMiss()
   edat <- getHIVEligible(Args)
   bdat <- getBirthDate(addVars="Female")
   getConsent <- function(iAge) {
-    Args <- setArgs(Year=cyear, Age=iAge)
+    Args <- setArgs(Years=cyear, Age=iAge)
     sdat <- setData(edat, Args, time2="VisitDate", birthdate=bdat)
     sdat <- sumHIVMiss(sdat)
     sdat <- filter(sdat, Year %in% cyear)

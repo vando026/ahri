@@ -20,8 +20,6 @@ data.frame
 Function that imputes sero date, splits at censoring date and set the age.
 }
 \examples{
-hiv   <- getHIV()
-rtdat <- getRTData(hiv)
-bdat <- getBirthDate()
-getIncData(rtdat, bdat, Args)
+rtdat <- getRTData(getHIV())
+getIncData(rtdat, bdat=getBirthDate(), Args)
 }

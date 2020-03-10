@@ -11,7 +11,7 @@
 #' @keywords internal
 #' @examples
 #' Args <- setArgs()
-#' hiv <- getHIV(Args)
+#' hiv <- getHIV()
 #' hiv <- setData(hiv, Args)
 #' getAggregate(hiv, "IIntID ~ Year + HIVResult")
 getAggregate <- function(dat, 

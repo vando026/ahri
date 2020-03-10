@@ -22,6 +22,8 @@ Set the Episodes data according to Arguments.
 \examples{
 Args <- setArgs(Years=c(2005:2010))
 setEpisodes(Args)
+\donttest{
 epidat <- readEpisodes(write_rda=FALSE)
 setEpisodes(Args, epidat)
+}
 }

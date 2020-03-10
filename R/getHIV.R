@@ -14,7 +14,9 @@
 #' @export 
 #' @examples
 #' # Writes .Rda to file
+#' \donttest{
 #' readHIVData()
+#' }
 #' # Saves to global environment 
 #' hdat <- readHIVData(write_rda=FALSE)
 #' # Add variables
@@ -64,7 +66,7 @@ readHIVData <- function(
 #' 
 #' @description  Load in the .rda version of the HIV surveillance dataset. 
 #' 
-#' @param inFile File path to .rda dataset, default is \code{\link{getFiles()$hiv_rda}}. Leave as
+#' @param inFile File path to .rda dataset, default is \code{getFiles()$hiv_rda}. Leave as
 #' NULL if you don't know what to do or see \code{\link{setFiles}}. 
 #'
 #' @return data.frame

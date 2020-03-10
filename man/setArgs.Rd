@@ -57,7 +57,5 @@ list
 Set the arguments for functions.
 }
 \examples{
-inFiles <- getFiles()
-Args <- setArgs(Years=c(2004:2015), All=list(Mal=c(15, 54)))
-Args <- setArgs(Years=c(2004:2015), MoreArgs=list(knots=2))
+Args <- setArgs(Years=c(2004:2015), Age=list(Mal=c(15, 54), Fem=c(15, 49)))
 }

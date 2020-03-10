@@ -19,9 +19,9 @@ getAgeWeights <- function(Args) {
 #' 
 #' @description  Calculate Age distribution by year of resident.
 #' 
-#' @param Args.
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 getAgeYear <- function(Args) {

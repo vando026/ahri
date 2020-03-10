@@ -18,7 +18,8 @@ data.frame
 Split data at the imputed seroconversion date.
 }
 \examples{
-hiv <- getHIV(Args)
+Args <- setArgs(Years=c(2008:2018))
+hiv <- setHIV(Args)
 rtdat <- getRTData(hiv)
 sdat <- imputeMidPoint(rtdat)
 splitAtSeroDate(sdat, splitYears=Args$Years)

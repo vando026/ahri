@@ -5,13 +5,14 @@
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
 #' 
+#' @keywords internal
 #' @export
 
 plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
   Title="", fname="year_plot") {
 
-  list2env(getColor(), env=environment())
+  list2env(getColor(), envir=environment())
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -65,6 +66,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
 #' 
+#' @keywords internal
 #' @export
 plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   Colors=c(Blues[3], Reds[3]), gcolor="grey50", ipoints=TRUE,
@@ -72,7 +74,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   Legend=c("Men", "Women"),
   gfun=png, Title="", fname="year_plot") {
 
-  list2env(getColor(), env=environment())
+  list2env(getColor(), envir=environment())
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),
@@ -125,6 +127,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
 #' 
 #' @importFrom plotrix plotCI 
 #' 
+#' @keywords internal
 #' @export  
 
 
@@ -183,14 +186,17 @@ plotIncAge <- function(
 #' @param inc Incidence data, must include CIs, from \code{\link{getIncidence}}. 
 #' @param prev Prevalence data, only a vector. 
 #' 
+#' @keywords internal
 #' @export 
 #' @examples
+#' \donttest{
 #' inc <- getIncidence(Args)$adj$Year
 #' hiv <- setHIV(Args) 
 #' prev <-  calcTrend(hiv, 
 #'   Formula = "HIVResult ~ Year", fmt=FALSE)
 #' prev <- prev$adj.rate*100
 #' plotIncPrev(inc, prev) 
+#' }
 
 plotIncPrev <- function(
   inc, prev=NULL, x=NULL, yLim=8, Main="", prev_lty=1,

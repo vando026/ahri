@@ -14,9 +14,10 @@
 #' @export 
 #'
 #' @examples
+#' \donttest{
 #' readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
-#' readEpisodes(dropTasP=FALSE, addVars="Employ")
-
+#' eadEpisodes(dropTasP=FALSE, addVars="Employ")
+#' }
 readEpisodes <- function(
   inFile=NULL, outFile=NULL, 
   dropTasP=TRUE, addVars=" ",
@@ -87,9 +88,10 @@ getEpisodes <- function(inFile=NULL) {
 #' @examples
 #' Args <- setArgs(Years=c(2005:2010))
 #' setEpisodes(Args)
+#' \donttest{
 #' epidat <- readEpisodes(write_rda=FALSE)
 #' setEpisodes(Args, epidat)
-
+#' }
 setEpisodes <- function(Args=setArgs(), dat=NULL) {
   if (is.null(dat)) dat <- getEpisodes()
   setData(dat, Args)
@@ -128,12 +130,12 @@ getDemResident <- function(Args=setArgs(), prop=0.5) {
 #'
 #' @export 
 
-getCensus <- function(Args=setArgs(), prop=0.5) {
+getCensus <- function(Args=setArgs()) {
   dat <- setEpisodes(Args)
   gdat <- group_by(dat, IIntID, Year) %>% 
     summarize(Perc = sum(ExpDays)/366)
   dat <- left_join(dat, gdat, by=c("IIntID", "Year"))
-  dat <- filter(dat, Perc>=prop)
+  dat <- filter(dat, Perc>=Args$ResRule)
   dat
 }
 

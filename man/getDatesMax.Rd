@@ -20,6 +20,5 @@ data.frame
 Function to get latest test dates
 }
 \examples{
-hdat <- getHIV(Args)
-getDatesMax(dat, "HIVNegative", "late_neg")
+getDatesMax(dat=getHIV(), "HIVNegative", "late_neg")
 }

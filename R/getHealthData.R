@@ -9,7 +9,9 @@
 #'
 #' @export 
 #' @examples
+#' \donttest{
 #' readHealthData(Female=0)
+#' }
 readHealthData <- function(Female=1, write_rda=TRUE) {
   check_getFiles()
   inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)

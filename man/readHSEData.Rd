@@ -7,7 +7,7 @@
 readHSEData(inFile = getFiles()$hsefile)
 }
 \arguments{
-\item{inFile.}{File path from \code{\link{setFiles}}.}
+\item{inFile}{File path from \code{\link{setFiles}}.}
 }
 \value{
 data.frame

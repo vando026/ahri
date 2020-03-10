@@ -54,7 +54,7 @@ dropTasPData <- function(dat) {
 #' @export 
 #'
 #' @examples 
-#' bmax <- getBSMax()
+#' getBSMax()
 
 getBSMax <- function(
   inFile=getFiles()$epi_rda,
@@ -165,7 +165,7 @@ addBSVars <- function(dat, Vars="Area",
 #' 
 #' @description Read HSE data.
 #' 
-#' @param inFile. File path from \code{\link{setFiles}}.
+#' @param inFile File path from \code{\link{setFiles}}.
 #' 
 #' @return data.frame
 #'

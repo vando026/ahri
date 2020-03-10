@@ -1,6 +1,6 @@
 Package: ahri
 Title: R functions for AHRI dataset management and analysis
-Version: 0.8.6
+Version: 0.8.7
 Authors@R: person("Alain", "Vandormael", email = "alain.vandormael@uni-heidelberg.de", role = c("aut", "cre"))
 Description: Functions for working with AHRI data.
 Depends: R (>= 3.5.0)

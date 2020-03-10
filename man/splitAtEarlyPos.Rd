@@ -18,8 +18,8 @@ data.frame
 Split data at the earliest HIV-positive date.
 }
 \examples{
-hiv <- getHIV(Args)
+Args <- setArgs(Years=c(2008:2018))
+hiv <- setHIV(Args)
 rtdat <- getRTData(hiv)
-sdat <- imputeMidPoint(rtdat)
-splitAtEarlyPos(sdat, splitYears=Args$Years)
+splitAtEarlyPos(rtdat, splitYears=Args$Years)
 }

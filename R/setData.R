@@ -39,7 +39,6 @@ setAge <- function(dat, Args) {
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs()
 #' getBirthDate(addVars="Female")
 
 getBirthDate <- function(addVars=" ") {
@@ -60,7 +59,8 @@ getBirthDate <- function(addVars=" ") {
 #' @param dat A dataset 
 #' @param time2 The name of a date variable that is used to calculate the Age variable using the
 #' \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
-#' @param age_cut Vector of ages to make age categories from \code{link{setArgs}}.
+#' @param age_cut Vector of ages to make age categories, default is to use values from
+#' \code{AgeCat} in \code{link{setArgs}}.
 #' @param birthdate Dataset of birthdates, if NULL it uses \code{\link{getBirthDate}}.
 #'
 #' @return data.frame
@@ -70,8 +70,7 @@ getBirthDate <- function(addVars=" ") {
 #' @export
 #' 
 #' @examples
-#' adat <- setAge(sdata)
-#' adat <- makeAgeVars(adat)
+#' hiv <- makeAgeVars(dat=getHIV(), age_cut=c(15, 20, 25, 30, 40, 50))
 
 makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
   if (!is.null(time2)) {
@@ -119,7 +118,7 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
 #' # This will create a new Age variable using the birthdat and subset by age
 #' adat1 <- setData(hiv, Args, time2="VisitDate", birthdate=getBirthDate())
 #' # Note that there will be some discrepancy in the number of observations between adat and
-#' adat1.
+#' adat1
 
 setData <- function(dat, Args, time2=NULL, age_cut=NULL, birthdate=NULL) {
   dat <- makeAgeVars(dat, time2=time2,

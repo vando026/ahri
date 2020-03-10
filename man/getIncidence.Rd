@@ -9,11 +9,11 @@ getIncidence(Args, formulas = getFormula())
 \arguments{
 \item{Args}{takes list from \code{\link{setArgs}}.}
 
-\item{formulas}{A list of formulas for the poisson regression models, for the default see
+\item{formulas}{A list of formulas for the poisson regression models, see
 \code{\link{getFormula}}.}
 }
 \value{
-
+list
 }
 \description{
 Default function for using \code{mitools} to do incidence rate
