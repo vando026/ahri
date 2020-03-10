@@ -15,9 +15,9 @@ getBSData <- function(inFile=NULL) {
     check_getFiles()
     inFile=getFiles()$bsifile
   }
-  dat <- haven::read_dta(inFile) %>%
+  dat <- haven::read_dta(inFile) %>% 
     rename(BSIntID=BSIntId)
-  dat <- mutate(dat, BSIntID = as.integer(BSIntID))
+  dat <- mutate(dat, BSIntID = as.integer(.data$BSIntID))
   return(dat)
 }
 
@@ -61,21 +61,21 @@ getBSMax <- function(
   minDays=0) {
 
   dat <- readRDS(inFile)
-  dat <- filter(dat, Resident==1)
+  dat <- filter(dat, .data$Resident==1)
 
   # Identify max expdays per episode
-  dat <- group_by(dat, IIntID, Year) %>% mutate(
-    MaxDays = max(ExpDays, na.rm=TRUE))
+  dat <- group_by(dat, .data$IIntID, .data$Year) %>% mutate(
+    MaxDays = max(.data$ExpDays, na.rm=TRUE))
   dat <- ungroup(dat)
   
-  dat <- filter(dat, MaxDays==ExpDays)
+  dat <- filter(dat, MaxDays==.data$ExpDays)
 
-  dat <- group_by(dat, IIntID, Year) %>% 
+  dat <- group_by(dat, .data$IIntID, .data$Year) %>% 
     filter(row_number()==1)
   dat <- ungroup(dat)
 
-  maxBS <- filter(dat, MaxDays >= minDays) %>% 
-    select(IIntID, Year, BSIntID )
+  maxBS <- filter(dat, MaxDays >= .data$minDays) %>% 
+    select(.data$IIntID, .data$Year, .data$BSIntID )
 
   maxBS
 }

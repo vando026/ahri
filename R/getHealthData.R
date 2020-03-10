@@ -5,7 +5,7 @@
 #' @param Female Either a value of 0 to read in Men or 1 to read in Women.
 #' @param write_rda Default is to write the .Rda file.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 #' @examples
