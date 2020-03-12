@@ -1,4 +1,4 @@
-## The development repository for the ahri R library
+## The development repository for the AHRI R library
 
 This is a private repository that contains the R code for the `ahri`
 library.
