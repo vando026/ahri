@@ -51,6 +51,7 @@ There are other sources of help:
   (https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue)
 
 
+![demo1](demo.gif)
 
 +---------------------------------------------------------------------------------------+
 |Disclaimer: This is not an official AHRI site. The `ahri` library is a collaboration   |
