@@ -4,18 +4,17 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(Args, cutoff = 13)
+calcARTCov(dat = getEverART(), Args = setArgs())
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}}
+\item{dat}{A dataset from \code{\link{getEverART}}.}
 
-\item{cutoff}{If after month, ART for that year doesn't count, default is 13 for ART in
-any month.}
+\item{Args}{requires Args, see \code{\link{setArgs}}}
 }
 \value{
 data.frame
 }
 \description{
-Calculate ART coverage for AHRI data.
+Calculate ART coverage for AHRI data. (This is a very crude measure of
+ART coverage. More work needed on an appropriate measure.)
 }
-\keyword{internal}

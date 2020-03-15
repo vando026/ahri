@@ -21,11 +21,17 @@ getIncData <- function(rtdat, bdat, Args) {
 
 #' @title AggFunc
 #' 
-#' @description  Get aggregated events and pyears by Var.
+#' @description  A function factory for creating specific AggByFuncs, see for example
+#' \code{\code{AggByYear}}.
 #' 
-#' @param RHS RHS of formula.
+#' @param RHS The variable name as string that you want to aggregate by.
 #' 
 #' @export 
+#' @examples
+#' \donttest{
+#' AggByYear <- AggFunc("Year")
+#' }
+
 AggFunc <- function(RHS) {
   function(dat) {
     F1 <- stats::as.formula(paste(
