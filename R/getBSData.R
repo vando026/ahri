@@ -68,13 +68,13 @@ getBSMax <- function(
     MaxDays = max(.data$ExpDays, na.rm=TRUE))
   dat <- ungroup(dat)
   
-  dat <- filter(dat, MaxDays==.data$ExpDays)
+  dat <- filter(dat, .data$MaxDays==.data$ExpDays)
 
   dat <- group_by(dat, .data$IIntID, .data$Year) %>% 
     filter(row_number()==1)
   dat <- ungroup(dat)
 
-  maxBS <- filter(dat, MaxDays >= .data$minDays) %>% 
+  maxBS <- filter(dat, .data$MaxDays >= minDays) %>% 
     select(.data$IIntID, .data$Year, .data$BSIntID )
 
   maxBS

@@ -17,8 +17,5 @@ data.frame
 Get ART initiation dates
 }
 \examples{
-\donttest{
-getARTDates(dat=getEpisodes())
-} 
+getARTDates()
 }
-\keyword{internal}

@@ -9,66 +9,60 @@
 #'
 #' @import dplyr
 #'
-#' @keywords internal
 #' @export
 #' @examples
-#' \donttest{
-#' getARTDates(dat=getEpisodes())
-#' } 
+#' getARTDates()
 
 getARTDates <- function(dat=NULL) {
-  if (is.null) dat <- getEpisodes()
-  dat <- filter(dat, !is.na(EarliestARTInitDate))
-  dat <- distinct(dat, IIntID, EarliestARTInitDate, .keep_all=TRUE) %>% 
-    select(IIntID, DateOfInitiation=EarliestARTInitDate)
+  if (is.null(dat)) dat <- getEpisodes()
+  dat <- filter(dat, !is.na(.data$EarliestARTInitDate))
+  dat <- distinct(dat, .data$IIntID, .data$EarliestARTInitDate, .keep_all=TRUE) %>% 
+    select(IIntID, DateOfInitiation=.data$EarliestARTInitDate)
   dat <- mutate(dat,
-    YearOfInitiation = as.integer(format(DateOfInitiation, "%Y")),
-    MonthART = as.integer(format(DateOfInitiation, "%m")))
+    YearOfInitiation = as.integer(format(.data$DateOfInitiation, "%Y")),
+    MonthART = as.integer(format(.data$DateOfInitiation, "%m")))
   dat
 }
 
 
-#' @title getOnART
+#' @title getEverART
 #' 
-#' @description  Creates an OnART2 variable using a different method
-#' than used for the OnART variable in the Episodes dataset.
+#' @description  Creates an Ever on ART variable.
 #' 
-#' @param cutoff Value from 1 and 13, if ART initiation is after this value then no ART
-#' usage for that entire year. Use cutoff=13 to ignore this argument.
+#' @param dat A dataset from \code{\link{getEpisodes}}.
 #' 
 #' @return data.frame
 #' @import dplyr
-#' @keywords internal
 #' @export 
+#' @examples
+#' getEverART()
 
-getOnART <- function(cutoff=13) {
-  dat <- getEpisodes()
-  dat <- filter(dat, !is.na(EarliestHIVPos))
-  dat <- select(dat, IIntID, Year, Age, Female,
-    DateOfInitiation=EarliestARTInitDate, EarliestHIVPos, OnART)
-  dat <- mutate(dat, YearPos = as.integer(format(EarliestHIVPos, "%Y")),
-    YearOfInitiation = as.integer(format(DateOfInitiation, "%Y")))
-  dat <- filter(dat, !(Year < YearPos))
-  dat <- mutate(dat, OnART2 = as.integer(!(Year < YearOfInitiation | is.na(YearOfInitiation))))
+getEverART <- function(dat=getEpisodes()) {
+  dat <- filter(dat, !is.na(.data$EarliestHIVPos))
+  dat <- select(dat, .data$IIntID,.data$Year, .data$Age, .data$Female,
+    DateOfInitiation=.data$EarliestARTInitDate, .data$EarliestHIVPos, .data$OnART)
+  dat <- mutate(dat, YearPos = as.integer(format(.data$EarliestHIVPos, "%Y")),
+    YearOfInitiation = as.integer(format(.data$DateOfInitiation, "%Y")))
+  dat <- filter(dat, !(.data$Year < .data$YearPos))
+  dat <- mutate(dat,
+    EverART = as.integer(!(.data$Year < .data$YearOfInitiation | is.na(.data$YearOfInitiation))))
   dat
 }
 
 #' @title calcARTCov
 #' 
-#' @description  Calculate ART coverage for AHRI data.
+#' @description  Calculate ART coverage for AHRI data. (This is a very crude measure of
+#' ART coverage. More work needed on an appropriate measure.)
 #' 
+#' @param dat A dataset from \code{\link{getEverART}}.
 #' @param Args requires Args, see \code{\link{setArgs}}
-#' @param cutoff If after month, ART for that year doesn't count, default is 13 for ART in
-#' any month.
 #' 
 #' @return data.frame
-#' @keywords internal
 #' @export 
 
-calcARTCov <- function(Args, cutoff=13) {
-  dat <- getOnART(cutoff=cutoff)
-  dat <- setData(dat, Args, )
-  calcTrendYear("OnART2", dat)
+calcARTCov <- function(dat=getEverART(), Args=setArgs()) {
+  dat <- setData(dat, Args)
+  calcTrendYear("EverART", dat)
 }
 
 
