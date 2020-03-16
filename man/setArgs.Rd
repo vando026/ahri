@@ -10,7 +10,7 @@ setArgs(
   AgeCat = NULL,
   AgeBy = 5,
   ResRule = 0,
-  nSim = 500,
+  nSim = 1,
   imputeMethod = imputeRandomPoint,
   aname = "filename",
   printout = FALSE,

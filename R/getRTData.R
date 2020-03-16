@@ -15,8 +15,8 @@
 #' @examples 
 #' rtdat <- getRTData(dat=getHIV())
 
-getRTData <- function(dat, onlyRT=TRUE) {
-  # get dates 
+getRTData <- function(dat=NULL, onlyRT=TRUE) {
+  if (is.null(dat)) dat <- getHIV()
   early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
   early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
   late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")

@@ -4,7 +4,7 @@
 \alias{getRTData}
 \title{getRTData}
 \usage{
-getRTData(dat, onlyRT = TRUE)
+getRTData(dat = NULL, onlyRT = TRUE)
 }
 \arguments{
 \item{dat}{dataset from \code{\link{getHIV}}.}

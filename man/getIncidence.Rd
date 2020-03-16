@@ -4,7 +4,7 @@
 \alias{getIncidence}
 \title{getIncidence}
 \usage{
-getIncidence(Args, formulas = getFormula())
+getIncidence(Args = setArgs(), formulas = getFormula())
 }
 \arguments{
 \item{Args}{takes list from \code{\link{setArgs}}.}
@@ -16,6 +16,6 @@ getIncidence(Args, formulas = getFormula())
 list
 }
 \description{
-Default function for using \code{mitools} to do incidence rate
-estimation.
+Calculate annual HIV incidence rates using the single random-point
+approach and multiple imputation.
 }

@@ -1,3 +1,11 @@
+test_func <- function(testfile) {
+  function(year="2019", report='progress') {
+    check_getFiles()
+    message(sprintf('Running tests on %s data release...', year))
+    testthat::test_package('ahri', filter=paste0(testfile, year), reporter=report)
+  }
+}
+
 #' @title test_ahri_dta
 #' 
 #' @description  Tests to see if you are using the correct default .dta datasets. The
@@ -12,13 +20,9 @@
 #'
 #' @export 
 
-test_ahri_dta <- function(year="2019", report='progress') {
-  check_getFiles()
-  message(sprintf('Running tests on %s data release...', year))
-  testthat::test_package('ahri', filter=paste0('ahri_dta_', year), reporter=report)
-}
+test_ahri_dta <- test_func('ahri_dta_')
 
-#' @title test_ahri_func
+#' @title test_ahri_set
 #' 
 #' @description  Tests to see if your version of the \code{ahri} functions will produce
 #' the correct results.  The tests will generate summary values of selected variables in
@@ -33,9 +37,21 @@ test_ahri_dta <- function(year="2019", report='progress') {
 #'
 #' @export 
 
-test_ahri_func <- function(year="2019", report='progress') {
-  check_getFiles()
-  message(sprintf('Running tests on %s data release...', year))
-  testthat::test_package('ahri', filter=paste0('ahri_funcs_', year), reporter=report)
-}
+test_ahri_set <- test_func('ahri_set_')
 
+#' @title test_ahri_hiv
+#' 
+#' @description  Tests to see if the range of HIV incidence functions produce
+#' the correct results.  The tests will generate summary values of selected variables in
+#' several datasets and check if they match expected values defined in the test. 
+#' 
+#' @param year The release year that you want to perform the tests on. Currently, tests
+#' include 2019 release year only.  
+#' @param report How to display results, can be
+#' "minimal", "summary", "progress". 
+#' 
+#' @return NULL
+#'
+#' @export 
+
+test_ahri_func <- test_func('ahri_hiv_')

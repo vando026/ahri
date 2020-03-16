@@ -4,12 +4,11 @@
 \alias{getDemResident}
 \title{getDemResident}
 \usage{
-getDemResident(Args = setArgs(), prop = 0.5)
+getDemResident(Args)
 }
 \arguments{
-\item{Args}{requires Args, see \code{\link{setArgs}}.}
-
-\item{prop}{proportion time spent in DSA to be included in analysis.}
+\item{Args}{requires Args, see \code{\link{setArgs}}. Note that the function will drop
+residents according to \code{Args$ResRule}.}
 }
 \value{
 data.frame

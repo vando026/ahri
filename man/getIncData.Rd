@@ -4,7 +4,7 @@
 \alias{getIncData}
 \title{getIncData}
 \usage{
-getIncData(rtdat, bdat, Args)
+getIncData(rtdat, bdat, Args, func = identity)
 }
 \arguments{
 \item{rtdat}{dataset from \code{\link{getRTData}}.}
@@ -12,6 +12,8 @@ getIncData(rtdat, bdat, Args)
 \item{bdat}{dataset from \code{\link{getBirthDate}}.}
 
 \item{Args}{takes list from \code{\link{setArgs}}.}
+
+\item{func}{Function to perform additional operation.}
 }
 \value{
 data.frame
@@ -20,6 +22,6 @@ data.frame
 Function that imputes sero date, splits at censoring date and set the age.
 }
 \examples{
-rtdat <- getRTData(getHIV())
+rtdat <- getRTData(dat=getHIV())
 getIncData(rtdat, bdat=getBirthDate(), Args)
 }

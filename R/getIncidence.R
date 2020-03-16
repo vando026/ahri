@@ -5,24 +5,27 @@
 #' @param rtdat dataset from \code{\link{getRTData}}. 
 #' @param bdat dataset from \code{\link{getBirthDate}}. 
 #' @param Args takes list from \code{\link{setArgs}}.
+#' @param func Function to perform additional operation. 
 #'
 #' @return data.frame
 #' 
 #' @export
 #'
 #' @examples
-#' rtdat <- getRTData(getHIV())
+#' rtdat <- getRTData(dat=getHIV())
 #' getIncData(rtdat, bdat=getBirthDate(), Args)
-getIncData <- function(rtdat, bdat, Args) {
+getIncData <- function(rtdat, bdat, Args, func=identity) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  setData(edat, Args, time2="obs_end", birthdate=bdat)
+  edat <- setData(edat, Args, time2="obs_end", birthdate=bdat)
+  edat <- mutate(edat, tscale = Time/365.25, Year = as.factor(Year))
+  func(edat)
 }
 
 #' @title AggFunc
 #' 
 #' @description  A function factory for creating specific AggByFuncs, see for example
-#' \code{\code{AggByYear}}.
+#' \code{\link{AggByYear}}.
 #' 
 #' @param RHS The variable name as string that you want to aggregate by.
 #' 
@@ -76,6 +79,40 @@ AggByYear <- AggFunc("Year")
 #' @export 
 AggByAge <- AggFunc("AgeCat")
 
+#' @title calcPoisExact 
+#' 
+#' @description  Calculate crude incidence rates using the Poisson exact method. 
+#' 
+#' @param dat A dataset from \code{\link{AggByYear}} or \code{\link{AggByAge}}.
+#' @param byVar Either "AgeCat" or "Year".
+#' @param fmt If TRUE, format by 100 person-years and round off to three decimal places. 
+#' 
+#' @return data.frame
+#'
+#' @import epitools
+#' @export 
+#' Args <- setArgs(Years=c(2008:2018), 
+#'   Age=list(All=c(15, 45)),
+#'   imputeMethod=imputeRandomPoint)
+#' hiv <- getHIV()
+#' rtdat <- getRTData(hiv)
+#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
+#' idat_yr <- AggByYear(idat)
+#' calcPoisExact(idat_yr, byVar="Year")
+
+calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
+  dat <- split(dat, dat[, byVar])
+  dat <- do.call(rbind, lapply(dat, function(x)
+    pois.exact(x$sero_event, x$pyears)))
+  if (fmt==TRUE) {
+    vars <- c("rate", "lower", "upper")
+    dat[vars] <- lapply(dat[vars], function(x) round(x*100, 3))
+  }
+  dat <- dplyr::rename(dat, sero_event=x, 
+    pyears=pt, lci=lower, uci=upper)
+  dat
+}
+
 
 #' @title doPoisCrude
 #' 
@@ -95,29 +132,19 @@ doPoisCrude <- function(dat) {
 }
 
 
-#' @title calcPoisExact 
+#' @title getAgeYear
 #' 
-#' @description  Calculate crude incidence rates using the Poisson exact method. 
+#' @description  Calculate mean age by year. 
 #' 
-#' @param dat A dataset from \code{\link{AggByYear}} or \code{\link{AggByAge}}.
-#' @param byVar Either "AgeCat" or "Year".
-#' @param fmt If TRUE, format by 100 person-years and round off to three decimal places. 
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
 #' @return data.frame
 #'
-#' @import epitools
 #' @export 
-calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
-  dat <- split(dat, dat[, byVar])
-  dat <- do.call(rbind, lapply(dat, function(x)
-    pois.exact(x$sero_event, x$pyears)))
-  if (fmt==TRUE) {
-    vars <- c("rate", "lower", "upper")
-    dat[vars] <- lapply(dat[vars], function(x) round(x*100, 3))
-  }
-  dat <- dplyr::rename(dat, sero_event=x, 
-    pyears=pt, lci=lower, uci=upper)
-  dat
+getAgeYear <- function(dat) {
+  group_by(dat, Year) %>% 
+  summarize(Age = mean(Age)) %>% 
+  mutate(Year = factor(Year), tscale=1)
 }
 
 
@@ -133,8 +160,6 @@ calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
 #' @export
 doPoisYear <- function(dat, 
   age_dat=eval.parent(quote(age_dat))) {
-  dat <- mutate(dat, tscale = Time/365.25,
-    Year = as.factor(Year))
   mod <- stats::glm(sero_event ~ -1 + Year + Age + Year:Age 
     + offset(log(tscale)), data=dat, family=poisson)
   data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])
@@ -150,7 +175,6 @@ doPoisYear <- function(dat,
 #'
 #' @export
 doPoisAge <- function(dat) {
-  dat$tscale <- dat$Time/365.25
   mod <- stats::glm(sero_event ~ AgeCat + offset(log(tscale)),
     data=dat, family=poisson)
   nage <- seq(unique(dat$AgeCat))
@@ -180,30 +204,19 @@ doPoisAge <- function(dat) {
 #' Args <- setArgs(Years=c(2008:2018), 
 #'   Age=list(All=c(15, 45)),
 #'   imputeMethod=imputeRandomPoint)
-#' hiv <- getHIV()
-#' rtdat <- getRTData(hiv)
+#' age_dat <- getAgeYear(dat=setHIV(Args))
+#' rtdat <- getRTData(dat=getHIV())
 #' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
 #' pois_yr <- doPoisYear(idat, age_dat)
-#' calcPoisCI(est=pois_yr[, "fit", drop=FALSE], se=pois_yr[, "se.fit", drop=FALSE])
+#' calcPoisCI(pois_yr)
 
-calcPoisCI <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
-  doCalc <- function(est, se, func=fun, Pval=pval) {
-    m <- length(est)
-    mn <- unlist(est)
-    se <- unlist(se)
-    tdf <- 1.96 
-    ci <- func(mn + c(-1, 1) * (tdf * se))
-    out <- c(rate=func(mn), lci=ci[1], uci=ci[2])
-    if (Pval) {
-      pvalue <- round(2*pnorm(-abs(mn/se)), 4)
-      out <- c(out, pval=pvalue)
-    }
-    return(out)
-  }
-  est <- split(est, rownames(est))
-  se <- split(se, rownames(se))
-  out <- Map(doCalc, est, se)
-  out <- data.frame(do.call(rbind, out))
+calcPoisCI <- function(dat, func=exp, by100=TRUE, pval=FALSE) {
+  tdf <- 1.96 
+  lci <- func(dat$fit - (tdf * dat$se.fit))
+  uci <- func(dat$fit + (tdf * dat$se.fit))
+  mn <- func(dat$fit)
+  out <- data.frame(rate=mn, lci, uci)
+  if (pval)  out$pvalue <- round(2*pnorm(-abs(dat$fit/dat$se.fit)), 4)
   if (by100) out[] <- lapply(out[], `*`, 100)
   out
 }
@@ -225,17 +238,11 @@ calcPoisCI <- function(est, se, fun=exp, by100=TRUE, pval=FALSE) {
 #' rtdat <- getRTData(dat=getHIV())
 #' MIdata(rtdat, Args)
 MIdata <- function(rtdat, Args, f=identity) {
-  MIget <- function(...) {
-    dat <- imputeRandomPoint(rtdat)
-    edat <- splitAtSeroDate(dat) 
-    out <- setData(edat, Args, time2="obs_end", birthdate=bdat)
-    f(out)
-  }
   bdat=getBirthDate()
   parallel::mclapply(seq(Args$nSim),
     function(i) { 
       cat(i, "")
-      MIget(rtdat, Args, bdat, f=f)},
+      getIncData(rtdat, bdat, Args, func=f)},
       mc.cores=Args$mcores)
 }
 
@@ -251,14 +258,10 @@ MIdata <- function(rtdat, Args, f=identity) {
 #' @return List
 #' @export
 MIpois <- function(mdat, pdat, sformula) {
-  mkVars <- function(dat) 
-    dplyr::mutate(dat, tscale = .data$Time/365.25, Year = as.factor(.data$Year))
-  mdat <- lapply(mdat, mkVars)
   mdat <- mitools::imputationList(mdat)
   mods <- with(mdat, stats::glm(as.formula(sformula), family=poisson))
   mres <- mitools::MIcombine(mods)
-  res <- list(mres=mres, object=mods[[1]])
-  MIpredict(res, pdat, sformula)
+  MIpredict(mres, mods[[1]], pdat)
 }
 
 #' @title MIpredict
@@ -267,8 +270,8 @@ MIpois <- function(mdat, pdat, sformula) {
 #' person-years after multiple imputation.
 #' 
 #' @param res Results from the object generated by \code{MIcombine}.
+#' @param obj The first set of results from the glm call (under dev).
 #' @param dat Dataframe of values for prediction.
-#' @param sformula String formula to build model matrix.
 #' 
 #' @return data.frame
 #'
@@ -277,21 +280,15 @@ MIpois <- function(mdat, pdat, sformula) {
 #' rtdat <- getRTData(dat=getHIV())
 #' Args <- setArgs(nSim=2)
 #' mdat <- MIdata(rtdat, Args)
-#' mkVars <- function(dat) 
-#'    dplyr::mutate(dat, tscale = .data$Time/365.25, Year = as.factor(.data$Year))
-#' mdat <- lapply(mdat, mkVars)
 #' mdat <- mitools::imputationList(mdat)
 #' F1 <- "sero_event ~ -1 + Year + Age + Year:Age + offset(log(tscale))" 
 #' mods <- with(mdat, glm(as.formula(F1), family=poisson))
 #' betas <- mitools::MIextract(mods,fun=coef)
 #' vars <- mitools::MIextract(mods, fun=vcov)
 #' res <-  mitools::MIcombine(betas, vars) 
-#' res <- list(mres=res, object=mods[[1]])
-#' MIpredict(res, dat=getAgeYear(Args), F1)
+#' MIpredict(res, mods[[1]], dat=getAgeYear(setHIV(Args)))
 
-MIpredict <- function(res, dat, sformula)  {
-  obj <- res$object
-  res <- res$mres
+MIpredict <- function(res, obj,  dat)  {
   Terms <- stats::delete.response(stats::terms(obj))
   m <- stats::model.frame(Terms, dat, xlev = obj$xlevels)
   mat <- stats::model.matrix(Terms, m, contrasts.arg = obj$contrasts)
@@ -304,7 +301,7 @@ MIpredict <- function(res, dat, sformula)  {
   out <- data.frame(fit=fit, se.fit=se.fit, 
     lci=fit+CI[, 1], uci=fit+CI[, 2])
   out <- data.frame(lapply(out, "*", 100))
-  rownames(out) <- rownames(dat)
+  rownames(out) <- obj$xlevels[[1]]
   out
 }
 
@@ -354,8 +351,8 @@ getFormula <- function() {
 
 #' @title getIncidence
 #' 
-#' @description  Default function for using \code{mitools} to do incidence rate
-#' estimation.
+#' @description  Calculate annual HIV incidence rates using the single random-point
+#' approach and multiple imputation. 
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
 #' @param formulas A list of formulas for the poisson regression models, see
@@ -364,10 +361,13 @@ getFormula <- function() {
 #' @return list
 #'
 #' @export 
-getIncidence <- function(Args, formulas=getFormula()) {
-  hiv <- getHIV()
-  rtdat <- getRTData(hiv)
-  age_dat <- getAgeYear(Args)
+getIncidence <- function(
+  Args=setArgs(), formulas=getFormula()) {
+  #
+  if (Args$nSim==1) 
+    stop('nSim in setArgs() must be > 1')
+  rtdat <- getRTData()
+  age_dat <- getAgeYear(dat=setHIV(Args))
   mdat <- MIdata(rtdat, Args)
   pois_inc <- lapply(formulas, 
     function(x) MIpois(mdat, age_dat, x))

@@ -106,4 +106,12 @@ test_that("Check WGH/MGH N and Age", {
 })
 
 
-
+context("Test getWGH getMGH")
+wgh <- getWGH()
+mgh <- getMGH()
+test_that("Check N", {
+  expect_equal(length(unique(mgh$IIntID)), 37787)
+  expect_equal(length(unique(wgh$IIntID)), 50563)
+  expect_equal(sum(mgh$Age), 4732753)
+  expect_equal(sum(wgh$Age), 8471355)
+})
