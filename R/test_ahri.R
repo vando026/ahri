@@ -54,4 +54,4 @@ test_ahri_set <- test_func('ahri_set_')
 #'
 #' @export 
 
-test_ahri_func <- test_func('ahri_hiv_')
+test_ahri_hiv <- test_func('ahri_hiv_')

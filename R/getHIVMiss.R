@@ -300,7 +300,7 @@ plotHIVTestYear <- function(cyear=c(2005:2017),
 
 #' @title getFollowUp
 #' 
-#' @description  Used for inverse probability weights
+#' @description  Used for inverse probability weights.
 #' 
 #' @param x
 #' 
