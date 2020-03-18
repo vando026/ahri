@@ -321,7 +321,7 @@ getFollowUp <- function(x) {
 
 #' @title getDropOut
 #' 
-#' @description  Used for inverse probability weights
+#' @description  Used for inverse probability weights.
 #' 
 #' @param x
 #' 

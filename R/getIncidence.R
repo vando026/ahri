@@ -8,7 +8,6 @@
 #' @param func Function to perform additional operation. 
 #'
 #' @return data.frame
-#' 
 #' @export
 #'
 #' @examples
@@ -53,7 +52,6 @@ AggFunc <- function(RHS) {
 #' @param dat Dataset. 
 #' 
 #' @return data.frame
-#' 
 #' @export 
 #' 
 #' @examples
@@ -91,6 +89,7 @@ AggByAge <- AggFunc("AgeCat")
 #'
 #' @import epitools
 #' @export 
+#' @examples
 #' Args <- setArgs(Years=c(2008:2018), 
 #'   Age=list(All=c(15, 45)),
 #'   imputeMethod=imputeRandomPoint)
@@ -108,8 +107,8 @@ calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
     vars <- c("rate", "lower", "upper")
     dat[vars] <- lapply(dat[vars], function(x) round(x*100, 3))
   }
-  dat <- dplyr::rename(dat, sero_event=x, 
-    pyears=pt, lci=lower, uci=upper)
+  dat <- dplyr::rename(dat, sero_event=.data$x, 
+    pyears=.data$pt, lci=.data$lower, uci=.data$upper)
   dat
 }
 
@@ -136,7 +135,7 @@ doPoisCrude <- function(dat) {
 #' 
 #' @description  Calculate mean age by year. 
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}.
+#' @param dat A dataset with an Age and Year variable. 
 #' 
 #' @return data.frame
 #'
@@ -191,10 +190,9 @@ doPoisAge <- function(dat) {
 #' @description  Calculates standard errors for Poisson estimates from a single imputed
 #' dataset.
 #' 
-#' @param est Estimates from m imputations, must be a data.frame[, "fit", drop=FALSE]
-#' @param se Estimates from m imputations, must be a data.frame[, "se.fit", drop=FALSE]
+#' @param dat Estimates from glm, see for example \code{\link{doPoisYear}}.
 #' @param by100 If TRUE (default) calculate incidence per 100 person-years.
-#' @param fun A function to transform the data, default is to exponentiate, \code{exp}.
+#' @param func A function to transform the data, default is to exponentiate, \code{exp}.
 #' @param pval If TRUE (default) calculate the p-values.
 #' @return data.frame
 #'
@@ -216,7 +214,7 @@ calcPoisCI <- function(dat, func=exp, by100=TRUE, pval=FALSE) {
   uci <- func(dat$fit + (tdf * dat$se.fit))
   mn <- func(dat$fit)
   out <- data.frame(rate=mn, lci, uci)
-  if (pval)  out$pvalue <- round(2*pnorm(-abs(dat$fit/dat$se.fit)), 4)
+  if (pval)  out$pvalue <- round(2*stats::pnorm(-abs(dat$fit/dat$se.fit)), 4)
   if (by100) out[] <- lapply(out[], `*`, 100)
   out
 }
@@ -359,8 +357,8 @@ getFormula <- function() {
 #' \code{\link{getFormula}}.
 #' 
 #' @return list
-#'
 #' @export 
+
 getIncidence <- function(
   Args=setArgs(), formulas=getFormula()) {
   #
