@@ -343,8 +343,8 @@ MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
 #' @export 
 getFormula <- function() {
   list(
-    crude = "sero_event ~ -1 + Year + offset(log(tscale))",
-    adj = "sero_event ~ -1 + Year + Age + Year:Age + offset(log(tscale))")
+    crude = "sero_event ~ -1 + as.factor(Year) + offset(log(tscale))",
+    adj = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))")
 }
 
 
