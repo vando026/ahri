@@ -81,47 +81,64 @@ getBSMax <- function(
 }
 
 
+#' @title makeMigrVars
+#' 
+#' @description Make Migration variable such as the cumulative time spent out the PIP
+#' study area and the number of migration events (in and out). 
+#' 
+#' @param Args requires Args, see \code{\link{setArgs}}.
+#' 
+#' @return data.frame
+#' @export 
+
+makeMigrVars <- function(Args) {
+  dem <- setEpisodes(Args)
+  adat <- distinct(dem, IIntID, Year)
+  mdat <- filter(dem, Resident==1)
+  mdat <- group_by(mdat, IIntID, Year) %>% 
+    summarize(DaysIn=sum(ExpDays)) %>% ungroup()
+  adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
+  adat$DaysIn[is.na(adat$DaysIn)] <- 0
+  adat <- mutate(adat, 
+    DaysOut = 366 - DaysIn, DayFull = 366)
+  cumtime <- group_by(adat, IIntID) %>% 
+    mutate(CumDaysOut = cumsum(DaysOut),
+    CumDays = cumsum(DayFull),
+    CumTimeOut = round(CumDaysOut/CumDays, 2)) %>% 
+    ungroup()
+  cumtime <- select(cumtime, IIntID, Year, CumTimeOut)
+  # Count external migr events
+  inmigr <- select(dem, IIntID, Year, InMigration) %>% filter(InMigration==1)
+  inmigr <- group_by(inmigr, IIntID, Year) %>% summarize(InMigr=n()) %>% ungroup()
+  outmigr <- select(dem, IIntID, Year, OutMigration) %>% filter(OutMigration==1)
+  outmigr <- group_by(outmigr, IIntID, Year) %>% summarize(OutMigr=n()) %>% ungroup()
+  migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-DayFull)
+    
+  migr <- left_join(migr, outmigr, by=c("IIntID", "Year"))
+  migr$InMigr[is.na(migr$InMigr)] <- 0
+  migr$OutMigr[is.na(migr$OutMigr)] <- 0
+  migr <- mutate(migr, MigrCount=InMigr+OutMigr) 
+  dat <- left_join(migr, cumtime, by=c("IIntID", "Year"))
+  dat
+}
+
+
+
 
 #' @title addMigrVars
 #' 
-#' @description Gets variables on Migration.
+#' @description Adds variables from \code(\link{makeMigrVars}} to an
+#' existing dataset. 
 #' 
-#' @param dat Dataset to merge variables to. 
-#' @param dem Dataset from \code{\link{readEpisodes}}.
-#' @param keepYear Years to keep. 
+#' @param dat Existing dataset to merge variables into. 
+#' @param mdat Dataset of migration variables \code{\link{makeMigrVars}}.
 #' 
 #' @return data.frame
 #' @keywords internal
 #' @export 
 
-addMigrVars <- function(dat, dem=NULL, keepYear=Args$Years) {
-  if (is.null(dem)) dem <- getEpisodes()
-  adat <- distinct(dem, IIntID, Year)
-  mdat <- filter(dem, Resident==1)
-  mdat <- group_by(mdat, IIntID, Year) %>% 
-    summarize(DaysIn=sum(ExpDays))
-  adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
-  adat <- filter(adat, Year %in% keepYear)
-  adat$DaysIn[is.na(adat$DaysIn)] <- 0
-  adat <- mutate(adat, 
-    DaysOut = 366 - DaysIn, DayFull = 366)
-  adat <- group_by(adat, IIntID) %>% 
-    mutate(CumDaysOut = cumsum(DaysOut),
-    CumDays = cumsum(DayFull),
-    CumTimeOut = round(CumDaysOut/CumDays, 2))
-  adat <- ungroup(adat) %>%
-    select(IIntID, Year, CumTimeOut)
-
-  # Count external migr events
-  Migr <- group_by(dem, IIntID, Year) %>% summarize(
-    InMigr=sum(InMigration), OutMigr=sum(OutMigration)) %>%
-    ungroup()
-  Migr <- mutate(Migr, MigrCount=InMigr+OutMigr) %>% 
-    select(IIntID, Year, InMigr, OutMigr, MigrCount)
-
-  # Now bring all data together
-  dat <- left_join(dat, adat, by=c("IIntID", "Year"))
-  dat <- left_join(dat, Migr, by=c("IIntID", "Year"))
+addMigrVars <- function(dat, mdat=NULL) {
+  dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
   dat <- arrange(dat, IIntID, Year)
   dat <- mutate(dat, 
     MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE), 

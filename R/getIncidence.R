@@ -17,7 +17,7 @@ getIncData <- function(rtdat, bdat, Args, func=identity) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
   edat <- setData(edat, Args, time2="obs_end", birthdate=bdat)
-  edat <- mutate(edat, tscale = Time/365.25, Year = as.factor(Year))
+  edat <- mutate(edat, tscale = Time/365.25)
   func(edat)
 }
 
@@ -159,6 +159,7 @@ getAgeYear <- function(dat) {
 #' @export
 doPoisYear <- function(dat, 
   age_dat=eval.parent(quote(age_dat))) {
+  dat <- mutate(dat, Year = as.factor(.data$Year))
   mod <- stats::glm(sero_event ~ -1 + Year + Age + Year:Age 
     + offset(log(tscale)), data=dat, family=poisson)
   data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])

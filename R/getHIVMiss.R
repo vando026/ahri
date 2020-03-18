@@ -80,8 +80,7 @@ setHIVMiss <- function(
 #' @param dat Default is Null or loads dataset from \code{\link{setHIVMiss}}.
 #' 
 #' @return 
-#'
-#' @keywords internal
+#' @import dplyr
 #' @export 
 getHIVEligible <- function(dat=NULL) {
   if (is.null(dat)) dat <- readRDS(getFiles()$eli_rda)
