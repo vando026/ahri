@@ -92,28 +92,29 @@ getBSMax <- function(
 #' @export 
 
 makeMigrVars <- function(Args) {
-  dem <- setEpisodes(Args)
-  adat <- distinct(dem, IIntID, Year)
-  mdat <- filter(dem, Resident==1)
-  mdat <- group_by(mdat, IIntID, Year) %>% 
-    summarize(DaysIn=sum(ExpDays)) %>% ungroup()
+  dem <- setEpisodes(Args) %>% 
+    select(.data$IIntID, .data$BSIntID, .data$Year, .data$Age,
+      .data$ExpDays, .data$Resident, matches("Migration"))
+  adat <- distinct(dem, .data$IIntID, .data$Year)
+  mdat <- filter(dem, .data$Resident==1)
+  mdat <- group_by(mdat, .data$IIntID, .data$Year) %>% 
+    summarize(DaysIn=sum(.data$ExpDays)) %>% ungroup()
   adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
   adat$DaysIn[is.na(adat$DaysIn)] <- 0
   adat <- mutate(adat, 
-    DaysOut = 366 - DaysIn, DayFull = 366)
-  cumtime <- group_by(adat, IIntID) %>% 
-    mutate(CumDaysOut = cumsum(DaysOut),
-    CumDays = cumsum(DayFull),
-    CumTimeOut = round(CumDaysOut/CumDays, 2)) %>% 
+    DaysOut = 366 - .data$DaysIn, DayFull = 366)
+  cumtime <- group_by(adat, .data$IIntID) %>% 
+    mutate(CumDaysOut = cumsum(.data$DaysOut),
+    CumDays = cumsum(.data$DayFull),
+    CumTimeOut = round(.data$CumDaysOut/.data$CumDays, 2)) %>% 
     ungroup()
-  cumtime <- select(cumtime, IIntID, Year, CumTimeOut)
+  cumtime <- select(cumtime,.data$IIntID, .data$Year, .data$CumTimeOut)
   # Count external migr events
   inmigr <- select(dem, IIntID, Year, InMigration) %>% filter(InMigration==1)
   inmigr <- group_by(inmigr, IIntID, Year) %>% summarize(InMigr=n()) %>% ungroup()
   outmigr <- select(dem, IIntID, Year, OutMigration) %>% filter(OutMigration==1)
   outmigr <- group_by(outmigr, IIntID, Year) %>% summarize(OutMigr=n()) %>% ungroup()
   migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-DayFull)
-    
   migr <- left_join(migr, outmigr, by=c("IIntID", "Year"))
   migr$InMigr[is.na(migr$InMigr)] <- 0
   migr$OutMigr[is.na(migr$OutMigr)] <- 0
