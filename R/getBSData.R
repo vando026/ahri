@@ -2,7 +2,7 @@
 #' 
 #' @description  Read in Bounded Structures data.
 #' 
-#' @param inFile filepath to data.
+#' @param inFile filepath to data. 
 #' 
 #' @return data.frame
 #'
@@ -16,7 +16,7 @@ getBSData <- function(inFile=NULL) {
     inFile=getFiles()$bsifile
   }
   dat <- haven::read_dta(inFile) %>% 
-    rename(BSIntID=BSIntId)
+    rename(BSIntID=.data$BSIntId)
   dat <- mutate(dat, BSIntID = as.integer(.data$BSIntID))
   return(dat)
 }
@@ -128,7 +128,7 @@ makeMigrVars <- function(Args) {
 
 #' @title addMigrVars
 #' 
-#' @description Adds variables from \code(\link{makeMigrVars}} to an
+#' @description Adds variables from \code{\link{makeMigrVars}} to an
 #' existing dataset. 
 #' 
 #' @param dat Existing dataset to merge variables into. 

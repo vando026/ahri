@@ -98,25 +98,35 @@ setEpisodes <- function(Args=setArgs(), dat=NULL) {
 }
 
 
-#' @title getDemResident
+#' @title makePropRes
 #' 
-#' @description Gets the total number of residents from the Episodes dataset. 
+#' @description Makes a variable of the proportion of time that a participant spent as a
+#' resident in the PIP surveillance arear by year. 
 #' 
-#' @param Args requires Args, see \code{\link{setArgs}}. Note that the function will drop
-#' residents according to \code{Args$ResRule}.
+#' @param Args requires Args, see \code{\link{setArgs}}. 
 #' 
 #' @return  data.frame
-#'
+#' @import dplyr
 #' @export 
+#' @examples
+#' dat <- setEpisodes(setArgs()) 
+#' adat <- makePropRes(setArgs())
+#' dat <- left_join(dat, adat, by=c("IIntID", "Year"))
+#' select(dat, IIntID, Year, ExpDays, Resident, PropRes)
 
-getDemResident <- function(Args) {
-  dat <- setEpisodes(Args)
-  dat <- filter(dat, Resident==1)
-  gdat <- group_by(dat, IIntID, Year) %>% 
-    summarize(Perc = sum(ExpDays)/366)
-  dat <- left_join(dat, gdat, by=c("IIntID", "Year"))
-  dat <- filter(dat, Perc>=Args$ResRule)
-  dat
+makePropRes <- function(Args) {
+  dat <- setEpisodes(Args) 
+  ddat <- select(dat, .data$IIntID, .data$Year,
+    .data$Resident, .data$ExpDays) 
+  ddat <- distinct(ddat, .data$IIntID, .data$Year)
+  gdat <- filter(dat, .data$Resident==1)
+  gdat <- group_by(gdat, .data$IIntID, .data$Year) %>% 
+    summarize(DaysIn = sum(.data$ExpDays)) %>% ungroup()
+  adat <- left_join(ddat, gdat, by=c("IIntID", "Year"))
+  adat$DaysIn[is.na(adat$DaysIn)] <- 0
+  adat <- mutate(adat, PropRes=round(.data$DaysIn/366, 3)) %>% 
+    select(.data$IIntID, .data$Year, .data$PropRes)
+  # adat <- filter(adat, .adata$PropRes>=Prop)
+  adat
 }
-
 

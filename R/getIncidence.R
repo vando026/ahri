@@ -133,13 +133,23 @@ doPoisCrude <- function(dat) {
 
 #' @title getAgeYear
 #' 
-#' @description  Calculate mean age by year. 
+#' @description  Calculate mean age by year. This is mostly used in the
+#' \code{\link{doPoisYear}}. 
 #' 
 #' @param dat A dataset with an Age and Year variable. 
 #' 
 #' @return data.frame
 #'
 #' @export 
+#' @examples
+#' Args <- setArgs(Years=c(2008:2018), 
+#'   Age=list(All=c(15, 45)),
+#'   imputeMethod=imputeRandomPoint)
+#' age_dat <- getAgeYear(dat=setHIV(Args))
+#' rtdat <- getRTData(dat=getHIV())
+#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
+#' pois_yr <- doPoisYear(idat, age_dat)
+
 getAgeYear <- function(dat) {
   group_by(dat, Year) %>% 
   summarize(Age = mean(Age)) %>% 

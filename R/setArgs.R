@@ -1,6 +1,10 @@
 #' @title setArgs
 #' 
-#' @description  Set the arguments for functions. 
+#' @description  A function that collects and stores various arguments that can be used as
+#' inputs to other functions. The \code{setArgs} function comes with default parameter
+#' values for the arguments. The user is asked to check these values and understand how
+#' these will affect the data. For example, the default setting is to drop all
+#' observations before 2005, and keep only observations with ages between 15 and 54 years. 
 #' 
 #' @param Years numeric vector of years.
 #'
@@ -12,17 +16,13 @@
 #'
 #' @param nSim number of simulations to perform.
 #'
-#' @param ResRule proportion of time spent in DSA, greater than >.
-#'
-#' @param aname root name to associate with output or filenames.
+#' @param aname String to name an object or set a filename.
 #'
 #' @param imputeMethod select either \code{\link{imputeRandomPoint}} or
 #' \code{\link{imputeMidPoint}}.
 #'
-#' @param printout print out results.
-#'
 #' @param mcores number of cores to use for parallel package (used in
-#' \code{\link{getIncidence}}).
+#' \code{\link{MIdata}}).
 #'
 #' @param MoreArgs a list, which adds more arguments if needed.
 #'
@@ -36,18 +36,24 @@
 #' @export
 #'
 #' @examples
-#' Args <- setArgs(Years=c(2004:2015), Age=list(Mal=c(15, 54), Fem=c(15, 49)))
+#' # Check default parameter values
+#' Args = setArgs()
+#' Args 
+#' # Set specific age and year ranges 
+#' Args <- setArgs(Years=c(2008:2018), Age=list(Mal=c(15, 54), Fem=c(15, 49)))
+#' setHIV(Args)
+#' # Keep all ages
+#' ArgsEpi <- setArgs(Age=list(All=c(0, 100)), AgeCat=seq(0, 100, 20))
+#' setEpisodes(ArgsEpi)
 
 setArgs <- function( 
   Years=c(2005:2018),
   Age=list(All=c(15, 54)),
   AgeCat=NULL,
   AgeBy=5,
-  ResRule=0,
   nSim=1, 
   imputeMethod=imputeRandomPoint,
   aname='filename',
-  printout=FALSE,
   mcores=1,
   setFun=identity,
   addVars=identity,
