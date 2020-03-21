@@ -74,7 +74,7 @@ setArgs <- function(
 #' @title getCol
 #' 
 #' @description Save RColorbrewer colors to global environment 
-#' 
+#' @keywords internal
 #' @return 
 getColor <- function() {
   return(list(

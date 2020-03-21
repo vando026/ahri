@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' rtdat <- getRTData(dat=getHIV())
-#' getIncData(rtdat, bdat=getBirthDate(), Args)
+#' getIncData(rtdat, bdat=getBirthDate(), Args=setArgs())
 getIncData <- function(rtdat, bdat, Args, func=identity) {
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
@@ -266,6 +266,15 @@ MIdata <- function(rtdat, Args, f=identity) {
 #' 
 #' @return List
 #' @export
+#' @examples
+#' Args <- setArgs(nSim=2)
+#' rtdat <- getRTData(dat=getHIV())
+#' mdat <- MIdata(rtdat, Args)
+#' sformula <- "sero_event ~ -1 + as.factor(Year) + Age + 
+#'   as.factor(Year):Age + offset(log(tscale))" 
+#' pdat <- getAgeYear(dat=setHIV(Args))
+#' MIpois(mdat, pdat, sformula)
+
 MIpois <- function(mdat, pdat, sformula) {
   mdat <- mitools::imputationList(mdat)
   mods <- with(mdat, stats::glm(as.formula(sformula), family=poisson))
@@ -290,11 +299,12 @@ MIpois <- function(mdat, pdat, sformula) {
 #' Args <- setArgs(nSim=2)
 #' mdat <- MIdata(rtdat, Args)
 #' mdat <- mitools::imputationList(mdat)
-#' F1 <- "sero_event ~ -1 + Year + Age + Year:Age + offset(log(tscale))" 
+#' F1 <- "sero_event ~ -1 + as.factor(Year) + Age +
+#'   as.factor(Year):Age + offset(log(tscale))" 
 #' mods <- with(mdat, glm(as.formula(F1), family=poisson))
 #' betas <- mitools::MIextract(mods,fun=coef)
-#' vars <- mitools::MIextract(mods, fun=vcov)
-#' res <-  mitools::MIcombine(betas, vars) 
+#' var <- mitools::MIextract(mods, fun=vcov)
+#' res <-  mitools::MIcombine(betas, var) 
 #' MIpredict(res, mods[[1]], dat=getAgeYear(setHIV(Args)))
 
 MIpredict <- function(res, obj,  dat)  {

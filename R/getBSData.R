@@ -83,8 +83,8 @@ getBSMax <- function(
 
 #' @title makeMigrVars
 #' 
-#' @description Make Migration variable such as the cumulative time spent out the PIP
-#' study area and the number of migration events (in and out). 
+#' @description Make migration variables: the cumulative time spent out the PIP
+#' study area and the number of migration events (in and out) by year. 
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
@@ -110,15 +110,15 @@ makeMigrVars <- function(Args) {
     ungroup()
   cumtime <- select(cumtime,.data$IIntID, .data$Year, .data$CumTimeOut)
   # Count external migr events
-  inmigr <- select(dem, IIntID, Year, InMigration) %>% filter(InMigration==1)
-  inmigr <- group_by(inmigr, IIntID, Year) %>% summarize(InMigr=n()) %>% ungroup()
-  outmigr <- select(dem, IIntID, Year, OutMigration) %>% filter(OutMigration==1)
-  outmigr <- group_by(outmigr, IIntID, Year) %>% summarize(OutMigr=n()) %>% ungroup()
-  migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-DayFull)
+  inmigr <- select(dem, .data$IIntID, .data$Year, .data$InMigration) %>% filter(.data$InMigration==1)
+  inmigr <- group_by(inmigr, .data$IIntID, .data$Year) %>% summarize(InMigr=n()) %>% ungroup()
+  outmigr <- select(dem, .data$IIntID, .data$Year, .data$OutMigration) %>% filter(.data$OutMigration==1)
+  outmigr <- group_by(outmigr, .data$IIntID, .data$Year) %>% summarize(OutMigr=n()) %>% ungroup()
+  migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-.data$DayFull)
   migr <- left_join(migr, outmigr, by=c("IIntID", "Year"))
   migr$InMigr[is.na(migr$InMigr)] <- 0
   migr$OutMigr[is.na(migr$OutMigr)] <- 0
-  migr <- mutate(migr, MigrCount=InMigr+OutMigr) 
+  migr <- mutate(migr, MigrCount=.data$InMigr+.data$OutMigr) 
   dat <- left_join(migr, cumtime, by=c("IIntID", "Year"))
   dat
 }
@@ -133,20 +133,28 @@ makeMigrVars <- function(Args) {
 #' 
 #' @param dat Existing dataset to merge variables into. 
 #' @param mdat Dataset of migration variables \code{\link{makeMigrVars}}.
+#' @param mdat Whether to carry missing values forward and backward after merging. Default
+#' is TRUE.
 #' 
 #' @return data.frame
-#' @keywords internal
 #' @export 
+#' @examples
+#' Args <- setArgs()
+#' epi <- setEpisodes(Args) 
+#' mdat <- makeMigrVars(Args)
+#' epi2 <- addMigrVars(epi, mdat)
 
-addMigrVars <- function(dat, mdat=NULL) {
+addMigrVars <- function(dat, mdat, carry=TRUE) {
   dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
-  dat <- arrange(dat, IIntID, Year)
+  dat <- arrange(dat, .data$IIntID, .data$Year)
+  if (carry) {
   dat <- mutate(dat, 
-    MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE), 
-    MigrCount = zoo::na.locf(MigrCount, na.rm=FALSE, fromLast=TRUE),
-    CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE), 
-    CumTimeOut = zoo::na.locf(CumTimeOut, na.rm=FALSE, fromLast=TRUE),
-    CumTimeOut = round(CumTimeOut*100))
+    MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE), 
+    MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE, fromLast=TRUE),
+    CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE), 
+    CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE, fromLast=TRUE))
+  }
+  dat <- mutate(dat, CumTimeOut = round(.data$CumTimeOut*100))
   dat
 }
 

@@ -23,5 +23,5 @@ Function that imputes sero date, splits at censoring date and set the age.
 }
 \examples{
 rtdat <- getRTData(dat=getHIV())
-getIncData(rtdat, bdat=getBirthDate(), Args)
+getIncData(rtdat, bdat=getBirthDate(), Args=setArgs())
 }
