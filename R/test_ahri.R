@@ -72,3 +72,19 @@ test_ahri_hiv <- test_func('ahri_hiv_')
 #' @export 
 
 test_ahri_get <- test_func('ahri_get_')
+
+
+#' @title check_var
+#' 
+#' @description   Check if the variable name exists
+#' 
+#' @param dat A dataset 
+#' @param var The variable
+#' 
+#' @return 
+check_var <- function(dat, var) {
+  if (var %in% names(dat))
+    stop(sprintf("dat must have a variable named %s",  var))
+}
+
+

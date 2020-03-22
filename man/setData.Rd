@@ -4,7 +4,7 @@
 \alias{setData}
 \title{setData}
 \usage{
-setData(dat, Args, time2 = NULL, age_cut = NULL, birthdate = NULL)
+setData(dat, Args = setArgs(), time2 = NULL, age_cut = NULL, birthdate = NULL)
 }
 \arguments{
 \item{dat}{A dataset to subset.}

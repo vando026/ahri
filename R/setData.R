@@ -80,8 +80,17 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
       dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
     dat <- select(dat, -(DateOfBirth))
   }
+  if (is.null(time2)  &  is.null(birthdate)) {
+    if (!("Year" %in% names(dat))) 
+      stop("dat must have a variable named Year if time2 argument is NULL")
+    birthdate <- getBirthDate()
+    birthdate <- mutate(birthdate, BYear = as.numeric(format(.data$DateOfBirth, "%Y")))
+    dat <- left_join(dat, birthdate, by="IIntID")
+    dat <- mutate(dat, Age = floor(.data$Year - .data$BYear)) %>% 
+      select(-c(.data$DateOfBirth, .data$BYear))
+  }
   if(!is.null(age_cut)) {
-    dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
+    dat <- mutate(dat, AgeCat = cut(.data$Age, breaks=age_cut,
       include.lower=TRUE, right=FALSE, labels=NULL))
     dat$AgeCat <- droplevels(dat$AgeCat)
   }
@@ -120,13 +129,16 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
 #' # Note that there will be some discrepancy in the number of observations between adat and
 #' adat1
 
-setData <- function(dat, Args, time2=NULL, age_cut=NULL, birthdate=NULL) {
+setData <- function(dat, Args=setArgs(), time2=NULL,
+    age_cut=NULL, birthdate=NULL) {
   dat <- makeAgeVars(dat, time2=time2,
-    age_cut=Args$AgeCat, birthdate=birthdate)
+    age_cut=age_cut, birthdate=birthdate)
   # Filter by Age limits
   dat <- setAge(dat, Args)
-  dat <- filter(dat, Female %in% Args$FemCode)
-  dat <- filter(dat, Year %in% Args$Years)
+  check_var(dat, "Age")
+  check_var(dat, "Year")
+  dat <- filter(dat, .data$Female %in% Args$FemCode)
+  dat <- filter(dat, .data$Year %in% Args$Years)
   # further actions to take place
   dat <- Args$setFun(dat)
   dat <- Args$addVars(dat)

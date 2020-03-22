@@ -66,17 +66,18 @@ getWGH <- function(inFile=NULL) {
 
 #' @title getCircumcisionData
 #' 
-#' @description  Gets circumcision data from MGH dataset. 
-#' 
-#' @keywords internal
+#' @description  Gets circumcision data from the MGH dataset with the year of
+#' circumcision and an indicator of ever circumcised.
+#' @param dat A dataset from \code{\link{getMGH}}.
 #' @export
-getCircumcisionData <- function() {
-  dat <- getMGH() 
+#' @examples
+#' gdat <- getCircumcisionData()
+getCircumcisionData <- function(dat=getMGH()) {
   dat <- filter(dat, IsCircumcised %in% c(1, 2))
-  dat <- mutate(dat, IsCircumcised=as.numeric(IsCircumcised==1))
-  dat <- filter(dat, IsCircumcised==1)
-  dat <- group_by(dat, IIntID) %>% 
-    summarize(YearCircum = min(Year)) %>% 
+  dat <- mutate(dat, IsCircumcised=as.numeric(.data$IsCircumcised==1))
+  dat <- filter(dat, .data$IsCircumcised==1)
+  dat <- group_by(dat, .data$IIntID) %>% 
+    summarize(YearCircum = min(.data$Year)) %>% 
       mutate(EverCircum=1)
   dat
 }

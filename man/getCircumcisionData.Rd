@@ -4,9 +4,15 @@
 \alias{getCircumcisionData}
 \title{getCircumcisionData}
 \usage{
-getCircumcisionData()
+getCircumcisionData(dat = getMGH())
+}
+\arguments{
+\item{dat}{A dataset from \code{\link{getMGH}}.}
 }
 \description{
-Gets circumcision data from MGH dataset.
+Gets circumcision data from the MGH dataset with the year of
+circumcision and an indicator of ever circumcised.
 }
-\keyword{internal}
+\examples{
+gdat <- getCircumcisionData()
+}
