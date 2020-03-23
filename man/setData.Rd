@@ -2,7 +2,7 @@
 % Please edit documentation in R/setData.R
 \name{setData}
 \alias{setData}
-\title{setData}
+\title{Sets data according to a list of arguments.}
 \usage{
 setData(dat, Args = setArgs(), time2 = NULL, age_cut = NULL, birthdate = NULL)
 }

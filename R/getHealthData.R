@@ -63,8 +63,7 @@ getWGH <- function(inFile=NULL) {
 }
 
 
-
-#' @title getCircumcisionData
+#' @title Gets circumcision data from the MGH dataset 
 #' 
 #' @description  Gets circumcision data from the MGH dataset with the year of
 #' circumcision and an indicator of ever circumcised.
@@ -81,49 +80,6 @@ getCircumcisionData <- function(dat=getMGH()) {
       mutate(EverCircum=1)
   dat
 }
-
-setCircumStatus <- function(Keep) {
-  function(dat) {
-    cdat <- getCircumcisionData()
-    dat <- left_join(dat, cdat, by="IIntID")
-    dat <- mutate(dat,
-      IsCircum = as.numeric(Year >= YearCircum & !is.na(YearCircum)),
-      EverCircum = as.numeric(EverCircum==1 & !is.na(EverCircum)))
-    dat <- filter(dat, EverCircum %in% Keep)
-    select(dat, -(YearCircum))
-  }
-}
-
-#' @title getCircum
-#' 
-#' @description gets Circumcision data from MGH AHRI datasets.
-#' 
-#' @param dat Dataset to make the circumcision status variable.
-#' 
-#' @keywords internal
-#' @export
-getCircum <- setCircumStatus(Keep = c(0, 1))
-
-
-#' @title keepCircum
-#' 
-#' @description gets Circumcision data from MGH AHRI datasets.
-#' 
-#' @param dat Dataset to make the circumcision status variable.
-#' 
-#' @keywords internal
-#' @export
-keepCircum <- setCircumStatus(Keep=1)
-
-#' @title dropCircum
-#' 
-#' @description gets Circumcision data from MGH AHRI datasets.
-#' 
-#' @param dat Dataset to make the circumcision status variable.
-#' 
-#' @keywords internal
-#' @export
-dropCircum <- setCircumStatus(Keep=0)
 
 
 #' @title getCondomUseData
@@ -150,8 +106,6 @@ getCondomUseData <- function() {
 #' @param dropFemale Drop the Female variable. Default is TRUE.
 #' 
 #' @return
-#'
-#' @keywords internal
 #' @export 
 addCondomVar <- function(dat, dropFemale=TRUE) {
   cdat <- getCondomUseData()
@@ -177,21 +131,4 @@ addCondomVar <- function(dat, dropFemale=TRUE) {
   dat
 }
 
-
-#' @title addCircumVar
-#' 
-#' @description  Adds circumcision data for ever Circumcised. 
-#' 
-#' @param dat An existing dataset.
-#' 
-#' @return 
-#'
-#' @keywords internal
-#' @export 
-addCircumVar <- function(dat) {
-  cdat <- getCircumcisionData()
-  dat <- left_join(dat, cdat, by="IIntID")
-  dat$EverCircum[is.na(dat$EverCircum)] <- 0
-  dat
-}
 

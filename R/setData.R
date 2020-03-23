@@ -80,24 +80,16 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
       dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
     dat <- select(dat, -(DateOfBirth))
   }
-  if (is.null(time2)  &  is.null(birthdate)) {
-    if (!("Year" %in% names(dat))) 
-      stop("dat must have a variable named Year if time2 argument is NULL")
-    birthdate <- getBirthDate()
-    birthdate <- mutate(birthdate, BYear = as.numeric(format(.data$DateOfBirth, "%Y")))
-    dat <- left_join(dat, birthdate, by="IIntID")
-    dat <- mutate(dat, Age = floor(.data$Year - .data$BYear)) %>% 
-      select(-c(.data$DateOfBirth, .data$BYear))
-  }
   if(!is.null(age_cut)) {
-    dat <- mutate(dat, AgeCat = cut(.data$Age, breaks=age_cut,
+    dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
       include.lower=TRUE, right=FALSE, labels=NULL))
     dat$AgeCat <- droplevels(dat$AgeCat)
   }
   tibble::as_tibble(dat) 
 }
 
-#' @title setData
+
+#' @title Sets data according to a list of arguments. 
 #' 
 #' @description  Sets data according to a list of arguments. 
 #' 
@@ -131,11 +123,12 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
 
 setData <- function(dat, Args=setArgs(), time2=NULL,
     age_cut=NULL, birthdate=NULL) {
+  if (is.null(age_cut)) age_cut <- Args$AgeCat
   dat <- makeAgeVars(dat, time2=time2,
     age_cut=age_cut, birthdate=birthdate)
   # Filter by Age limits
   dat <- setAge(dat, Args)
-  check_var(dat, "Age")
+  check_var(dat, "Female")
   check_var(dat, "Year")
   dat <- filter(dat, .data$Female %in% Args$FemCode)
   dat <- filter(dat, .data$Year %in% Args$Years)

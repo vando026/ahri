@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{getCircumcisionData}
 \alias{getCircumcisionData}
-\title{getCircumcisionData}
+\title{Gets circumcision data from the MGH dataset}
 \usage{
 getCircumcisionData(dat = getMGH())
 }
