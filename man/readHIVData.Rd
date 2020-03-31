@@ -9,6 +9,7 @@ readHIVData(
   outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
+  drop15Less = TRUE,
   write_rda = TRUE
 )
 }
@@ -17,9 +18,12 @@ readHIVData(
 
 \item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
 
-\item{dropTasP}{Drop TasP surveillance areas from the data.}
+\item{dropTasP}{Default is to drop TasP surveillance areas from the data.}
 
 \item{addVars}{A regular expression string representing the variables to be added.}
+
+\item{drop15Less}{Default is to drop all observations with Age < 15 years. Only
+participants >=15 years eligible for HIV testing.}
 
 \item{write_rda}{Default is to write the .Rda file.}
 }

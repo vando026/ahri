@@ -133,8 +133,8 @@ setData <- function(dat, Args=setArgs(), time2=NULL,
   dat <- filter(dat, .data$Female %in% Args$FemCode)
   dat <- filter(dat, .data$Year %in% Args$Years)
   # further actions to take place
-  dat <- Args$setFun(dat)
   dat <- Args$addVars(dat)
+  dat <- Args$setFun(dat)
   tibble::as_tibble(dat)
 }
 

@@ -19,7 +19,7 @@ test_that("Test RTDates: wrong date", {
 })
 
 context("Test splitEpisodes")
-Args <- setArgs(Years=c(2005:2018), 
+Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15,54)),
   imputeMethod=imputeMidPoint)
 hiv <- getHIV()
 rtdat <- getRTData(hiv)

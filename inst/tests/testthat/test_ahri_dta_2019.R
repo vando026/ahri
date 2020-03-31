@@ -1,6 +1,7 @@
 ## Description: Test read code and dta
 ## Project: ahri
 ## Author: AV / Created: 06 March 2020
+# testthat::test_file('inst/tests/testthat/test_ahri_dta_2019.R')
 
 context("Test getBSData")
 bdat <- getBSData()

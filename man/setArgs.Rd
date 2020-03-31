@@ -5,8 +5,8 @@
 \title{setArgs}
 \usage{
 setArgs(
-  Years = c(2005:2018),
-  Age = list(All = c(15, 54)),
+  Years = c(2000:2025),
+  Age = list(All = c(0, 100)),
   AgeCat = NULL,
   AgeBy = 5,
   nSim = 1,
@@ -51,8 +51,7 @@ list
 A function that collects and stores various arguments that can be used as
 inputs to other functions. The \code{setArgs} function comes with default parameter
 values for the arguments. The user is asked to check these values and understand how
-these will affect the data. For example, the default setting is to drop all
-observations before 2005, and keep only observations with ages between 15 and 54 years.
+these will affect the data.
 }
 \examples{
 # Check default parameter values

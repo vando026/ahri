@@ -36,6 +36,17 @@ test_that("Check makeAgeVars Age", {
   expect_equal(sum(hiv3$Age, na.rm=TRUE), 5807805) 
 })
 
+context("Test makeAgeVars new Args defaults")
+Args <- setArgs(Years=c(2000:2025), Age=list(All=c(0, 100)))
+hiv <- setHIV(Args, dat=hiv0)
+hiv1 <- makeAgeVars(hiv)
+hiv2 <- makeAgeVars(hiv, age_cut=Args$AgeCat)
+hiv3 <- makeAgeVars(hiv, age_cut=Args$AgeCat, time2="VisitDate")
+test_that("Check makeAgeVars Age", {
+  expect_equal(sum(hiv1$Age), 5822611) 
+  expect_equal(sum(hiv2$Age), 5822611) 
+  expect_equal(sum(hiv3$Age, na.rm=TRUE), 5807805) 
+})
 
 context("Test setData")
 Args <- setArgs(Years=c(2001:2018), Age=list(All=c(15, 100)))
@@ -52,7 +63,7 @@ test_that("Check setData Age", {
 
 
 context("Test setHIV")
-Args <- setArgs(Years=c(2005:2017))
+Args <- setArgs(Years=c(2005:2017), Age=list(All=c(15, 54)))
 hiv <- setHIV(Args, dat=hiv0)
 test_that("Check setHIV N", {
   expect_equal(length(unique(hiv$IIntID)), 41609) 
@@ -61,11 +72,21 @@ test_that("Check setHIV N", {
 
 
 context("Test setEpisodes")
-Args <- setArgs(Years=c(2005:2018))
+Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15, 54)))
 ydat <- setEpisodes(Args, dat=edat0)
 test_that("Check setEpisodes N", {
   expect_equal(length(unique(ydat$IIntID)), 97477)
   expect_equal(nrow(ydat), 2613221)
 })
+
+context("Test new Args defaults")
+Args <- setArgs(Years=c(2000:2025), Age=list(All=c(0, 110)))
+hiv <- setHIV(Args, dat=hiv0)
+epi <- setEpisodes(Args, dat=edat0)
+test_that("Check new Args Age", {
+  expect_equal(sum(hiv$Age), 5822611) 
+  expect_equal(sum(epi$Age), 138497617) 
+})
+
 
 

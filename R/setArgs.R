@@ -3,8 +3,7 @@
 #' @description  A function that collects and stores various arguments that can be used as
 #' inputs to other functions. The \code{setArgs} function comes with default parameter
 #' values for the arguments. The user is asked to check these values and understand how
-#' these will affect the data. For example, the default setting is to drop all
-#' observations before 2005, and keep only observations with ages between 15 and 54 years. 
+#' these will affect the data. 
 #' 
 #' @param Years numeric vector of years.
 #'
@@ -47,8 +46,8 @@
 #' setEpisodes(ArgsEpi)
 
 setArgs <- function( 
-  Years=c(2005:2018),
-  Age=list(All=c(15, 54)),
+  Years=c(2000:2025),
+  Age=list(All=c(0, 100)),
   AgeCat=NULL,
   AgeBy=5,
   nSim=1, 
@@ -71,17 +70,3 @@ setArgs <- function(
   as.list(environment())
 }
 
-#' @title getCol
-#' 
-#' @description Save RColorbrewer colors to global environment 
-#' @keywords internal
-#' @return 
-getColor <- function() {
-  return(list(
-    Blues = RColorBrewer::brewer.pal(9, "Blues"),
-    YlRed = RColorBrewer::brewer.pal(9, "YlOrRd"),
-    Blues = RColorBrewer::brewer.pal(9, "Blues"),
-    Reds =  RColorBrewer::brewer.pal(9, "Reds"),
-    Greens = RColorBrewer::brewer.pal(9, "Greens"),
-    Set1 = RColorBrewer::brewer.pal(9, "Set1")))
-}

@@ -4,8 +4,10 @@
 #' 
 #' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
 #' @param outFile File path to save .Rda, default is set by \code{\link{setFiles}}.
-#' @param dropTasP Drop TasP surveillance areas from the data. 
+#' @param dropTasP Default is to drop TasP surveillance areas from the data. 
 #' @param addVars A regular expression string representing the variables to be added. 
+#' @param drop15Less Default is to drop all observations with Age < 15 years. Only
+#' participants >=15 years eligible for HIV testing.
 #' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return data.frame
@@ -25,7 +27,7 @@
 readHIVData <- function(
   inFile=NULL, outFile=NULL,
   dropTasP=TRUE, addVars=" ", 
-  write_rda=TRUE) {
+  drop15Less=TRUE, write_rda=TRUE) {
   #
   if (is.null(inFile)) {
     check_getFiles()
@@ -51,7 +53,7 @@ readHIVData <- function(
   if (dropTasP) hiv <- dropTasPData(hiv)
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
-  hiv <- filter(hiv, Age %in% c(15:100))
+  if (drop15Less) hiv <- filter(hiv, Age %in% c(15:100))
   hiv <- mutate(hiv, 
     HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
     HIVPositive = ifelse(HIVResult==1, VisitDate, NA))

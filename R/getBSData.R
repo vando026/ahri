@@ -133,7 +133,7 @@ makeMigrVars <- function(Args) {
 #' 
 #' @param dat Existing dataset to merge variables into. 
 #' @param mdat Dataset of migration variables \code{\link{makeMigrVars}}.
-#' @param mdat Whether to carry missing values forward and backward after merging. Default
+#' @param carry Whether to carry missing values forward and backward after merging. Default
 #' is TRUE.
 #' 
 #' @return data.frame
