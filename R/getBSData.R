@@ -232,18 +232,18 @@ addAIQVar <- function(dat) {
 #' 
 #' @description  Calculates the HIV prevalence of area surrounding BS
 #' 
+#' @param inFile The filepath to the dataset with HIV prevalence.
 #' @param dat A dataset to add HIV prevalence variables to. 
 #' @param Args requires Args, see \code{\link{setArgs}}
 #' @param Type Males, Females or All for ART coverage. 
 #' 
 #' @return data.frame
-#' @keywords internal
 #' @export 
 
 
-addHIVPrevBS <- function(dat, Args, Type="All") {
+addHIVPrevBS <- function(inFile, dat, Args, Type="All") {
 
-  prev <- tbl_df(read.csv(Args$inFiles$prvfile))
+  prev <- tbl_df(read.csv(inFile))
   prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
 
   # Reshape to long
