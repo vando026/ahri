@@ -85,9 +85,21 @@ set.seed(1234)
 Args <- setArgs(Age=list(All=c(15, 49)), nSim=2, mcores=1)
 rtdat <- getRTData(dat=getHIV())
 mdat <- MIdata(rtdat, Args)
-mdat <- mitools::imputationList(mdat)
 AggByYearAgeFem <- AggFunc("Year + AgeCat + Female")
-inc <- with(mdat, fun=AggByYearAgeFem)
+inc <- lapply(mdat, AggByYearAgeFem)
+inc3 <- MIaggregate(inc)
+test_that("Check seroevent and pyears add up", {
+  expect_equal(round(sum(inc3$sero_event)), 3698)
+  expect_equal(round(sum(inc3$pyears)), 105748)
+})
+
+
+set.seed(1234)
+Args <- setArgs(Age=list(All=c(15, 49)), nSim=2, mcores=1)
+rtdat <- getRTData(dat=getHIV())
+mdat <- MIdata(rtdat, Args)
+AggByYearAgeFem <- AggFunc("Year + AgeCat + Female")
+inc <- lapply(mdat, AggByYearAgeFem)
 inc3 <- MIaggregate(inc)
 test_that("Check seroevent and pyears add up", {
   expect_equal(round(sum(inc3$sero_event)), 3698)
@@ -138,4 +150,3 @@ test_that("Count sero events and ptime", {
 # test_that("Sum vars", {
 #   expect_equal(sum(adat$EverTest), 141909)
 # })
-

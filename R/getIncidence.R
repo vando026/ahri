@@ -38,7 +38,7 @@ AggFunc <- function(RHS) {
   function(dat) {
     F1 <- stats::as.formula(paste(
       "cbind(sero_event, pyears=Time/365.25) ~ ", RHS))
-    out <- stats::aggregate(F1, data=dat, FUN=sum)
+    out <- stats::aggregate(F1, data=dat, FUN=sum, drop=FALSE)
     out
   }
 }
@@ -349,7 +349,7 @@ MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
     stop("Your datasets have different nrows")
   getEst <- function(dat, col_name) {
     out <- as.matrix(sapply(dat, "[[", col_name))
-    rowMeans(out)
+    rowMeans(out, na.rm=TRUE)
   }
   dat0 <- dat[[1]]
   dat0 <- dat0[, !(colnames(dat0) %in% col_names), drop=FALSE]
