@@ -7,7 +7,7 @@
 getDates(f)
 }
 \arguments{
-\item{f}{a function.}
+\item{f}{a function, either \code{min} or \code{max}.}
 }
 \value{
 data.frame

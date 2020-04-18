@@ -45,14 +45,14 @@ getRTData <- function(dat=NULL, onlyRT=TRUE) {
 #' 
 #' @description Function to get earliest/latest test dates
 #' 
-#' @param  f a function.
+#' @param  f a function, either \code{min} or \code{max}.
 #' 
 #' @return data.frame
 #' 
 #' @export
 getDates <- function(f) {
   function(dat, Var, Name) {
-    dat <- data.frame(dat[!is.na(dat[, Var]), c("IIntID", Var)])
+    dat <- data.frame(dat[!is.na(dat[, Var, drop=TRUE]), c("IIntID", Var)])
     dates <- tapply(dat[, Var], dat[, "IIntID"], f)
     out <- data.frame(as.integer(names(dates)), dates)
     colnames(out) <- c("IIntID", Name)

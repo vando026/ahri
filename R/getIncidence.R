@@ -39,7 +39,6 @@ AggFunc <- function(RHS) {
     F1 <- stats::as.formula(paste(
       "cbind(sero_event, pyears=Time/365.25) ~ ", RHS))
     out <- stats::aggregate(F1, data=dat, FUN=sum)
-    rownames(out) <- out[[1]]
     out
   }
 }
@@ -329,7 +328,7 @@ MIpredict <- function(res, obj,  dat)  {
 #' @description  Aggregates results after mutiple imputation.
 #' 
 #' @param dat List of results.
-#' @param get_names Names used to collect dataset columns into a single matrix.
+#' @param col_names Names used to collect dataset columns into a single matrix.
 #' 
 #' @return data.frame
 #'
@@ -342,15 +341,21 @@ MIpredict <- function(res, obj,  dat)  {
 #' inc <- with(mdat, fun=AggByYear)
 #' MIaggregate(inc)
 
-MIaggregate <-  function(dat, get_names=c("sero_event", "pyears")) {
-  getEst <- function(dat, obj) {
-    out <- as.matrix(sapply(dat, "[[", obj))
+MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
+  if (!(class(dat) %in% c("imputationList", "list")))
+    stop("Data must be a list of >= 1 dataset")
+  same <- sapply(dat, function(x) nrow(x))
+  if (abs(max(same) - min(same)) != 0)
+    stop("Your datasets have different nrows")
+  getEst <- function(dat, col_name) {
+    out <- as.matrix(sapply(dat, "[[", col_name))
     rowMeans(out)
   }
-  out <- data.frame(lapply(get_names, function(x) getEst(dat, x)))
-  colnames(out) <- get_names
-  rownames(out) <- rownames(dat[[1]])
-  out
+  dat0 <- dat[[1]]
+  dat0 <- dat0[, !(colnames(dat0) %in% col_names), drop=FALSE]
+  out <- data.frame(lapply(col_names, function(x) getEst(dat, x)))
+  colnames(out) <- col_names
+  cbind(dat0, out)
 }
 
 
