@@ -48,19 +48,27 @@ readUniRegResults <- function(File=NULL) {
 #' 
 #' @description  Uses the G-imputation method to impute the infection times.
 #' 
-#' @param dat A dataset.
+#' @param dat A dataset from \code{\link{getRTData}}. 
 #' @param Results Results from \code{\link{readUniRegResults}}.
-#' @param Args provide arguments from \code{\link{setArgs}}.
+#' @param nSim The number of imputations to perform.
 #' @param start_date If null, start_date is the first obs_start date of ID, else it is
 #' same start_date for everyone. Must be a string in the following YYYY-MM-DD format: e.g. "2005-01-23".
+#' @param tscale Scalar by which to scale time.  The default is 1, which means
+#' that the time-scale is in days. The tscale used must correspond with the time scale of your Time
+#' variable. So if Time is in days, \code{tscale=1} else if Time is in months \code{tscale
+#' = 30.44}. 
+#' @param trans_back If \code{tscale != 1}, transform the infection times back into days.
+#' Default is TRUE. 
+#' @param mcores The number of cores to use for parallel processing using \code{mclapply}.
 #' 
 #' @return 
 #'
 #' @export 
 
-gImpute <- function(dat, Results, Args, start_date=NULL) {
+gImpute <- function(dat, Results, nSim=1,
+  start_date=NULL, tscale=1, trans_back=TRUE,
+  mcores=1) {
 
-  message("Running intCensImpute...")
   # G = function(x)  return(x)
   G = function(x)  return(log(1 + x))
 
@@ -68,7 +76,7 @@ gImpute <- function(dat, Results, Args, start_date=NULL) {
   # regression parameter estimates
   betaMeans <- Results$edat[, "Estimate"]
   betaCovariance  <- Results$cdat
-  regParamsSim = mvtnorm::rmvnorm(n=Args$nSim,
+  regParamsSim = mvtnorm::rmvnorm(n=nSim,
     mean = betaMeans, sigma = as.matrix(betaCovariance))
 
   # step function for the baseline hazard
@@ -81,23 +89,22 @@ gImpute <- function(dat, Results, Args, start_date=NULL) {
   dat <- data.frame(dat[!is.na(dat$early_pos), ])
   allIDs <- sort(unique(dat$IIntID))
 
-  doFunc <- function(oneID, dat, Args) {
+  doFunc <- function(oneID, dat) {
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
-    browser()
     start_time <- ifelse(is.null(start_date), 
       as.character(oneIDdata$obs_start[1]), start_date)
     if (oneIDdata$late_neg[1] < start_time) {
       print(oneIDdata)
       stop("Reconcile: Latest HIV negative date (late_neg) is before observation start (obs_start).")
     }
-    leftTime <- as.integer(
-      difftime(oneIDdata$late_neg[1], start_time, units='days'))
-    rightTime <- as.integer(
-      difftime(oneIDdata$early_pos[1], start_time, units='days'))
+    leftTime <- round(as.integer(
+      difftime(oneIDdata$late_neg[1], start_time, units='days'))/tscale)
+    rightTime <- round(as.integer(
+      difftime(oneIDdata$early_pos[1], start_time, units='days'))/tscale)
 
     #vector of random seroconversion times
-    SeroTimes = rep(NA,Args$nSim)
+    SeroTimes = rep(NA, nSim)
 
     # Get all the knots in censor interval
     jumpTimesIndicesSample = which((knots(baselineHazard)>=leftTime) &
@@ -107,7 +114,7 @@ gImpute <- function(dat, Results, Args, start_date=NULL) {
     variableNames <- Results$edat[, "Covariate"]
     if(length(jumpTimesIndicesSample)<1) {
       message(sprintf("=====Issue for %s ", oneID))
-      message("  No infection times imputed")
+      message("  No infection times sampled. Suggested: check time scale in your data.")
     } else if(length(jumpTimesIndicesSample)>=1) {
       covariateValues = matrix(data=NA,
         nrow=length(jumpTimesIndices),
@@ -123,7 +130,7 @@ gImpute <- function(dat, Results, Args, start_date=NULL) {
       xbase <- knots(baselineHazard)[jumpTimesIndices]
       Lambda <- c(0, diff(baselineHazard(xbase)))
       AllSeroTimes = c(knots(baselineHazard)[jumpTimesIndicesSample],rightTime)
-      for(asim in seq_len(Args$nSim))
+      for(asim in seq_len(nSim))
         {
           M = cumsum(exp(as.vector(covariateValues %*% matrix(data=regParamsSim[asim,],ncol=1)))*Lambda)
           valF = 1 - exp(-G(M))
@@ -142,14 +149,17 @@ gImpute <- function(dat, Results, Args, start_date=NULL) {
             stop('Random seroconversion time larger than allowed\n')
         }
     }
-    names(SeroTimes) <- paste0("s", seq(Args$nSim))
-    c(IIntID=oneID, start_date=as.Date(start_time), 
+    names(SeroTimes) <- paste0("s", seq(nSim))
+    if (!trans_back) tscale = 1
+    c(IIntID=oneID, 
+      start_date=as.Date(start_time), 
       obs_start=oneIDdata$obs_start[1], 
-      late_neg=leftTime, early_pos=rightTime, SeroTimes) 
+      late_neg=floor(leftTime*tscale),
+      early_pos=ceiling(rightTime*tscale),
+      round(SeroTimes*tscale)) 
   }
   out <- parallel::mclapply(allIDs, 
-    function(i) doFunc(i, dat, Args),
-    mc.cores=Args$mcores)
+    function(i) doFunc(i, dat), mc.cores=mcores)
   data.frame(do.call("rbind", out))
 }
 
