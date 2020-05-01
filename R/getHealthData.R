@@ -82,6 +82,27 @@ getCircumcisionData <- function(dat=getMGH()) {
 }
 
 
+#' @title addCircumVar
+#' 
+#' @description  Adds the ever circumcised variable to an existing dataset. 
+#' 
+#' @param dat An existing dataset.
+#' @param cdat Circumcision dataset from \code{\link{getCircumcisionData}}. 
+#' 
+#' @return 
+#'
+#' @export 
+addCircumVar <- function(dat, cdat=NULL) {
+  if (is.null(cdat)) cdat <- getCircumcisionData()
+  cdat <- rename(cdat, Year = YearCircum)
+  dat <- left_join(dat, cdat, by=c("IIntID", "Year"))
+  dat <- group_by(dat, .data$IIntID) %>% mutate( 
+    EverCircum=zoo::na.locf(.data$EverCircum, na.rm=FALSE))
+  dat$EverCircum[is.na(dat$EverCircum)] <- 0
+  dat
+}
+
+
 #' @title getCondomUseData
 #' 
 #' @description  gets Condom use data from AHRI datasets. File path must be set in

@@ -1,12 +1,13 @@
-#' @title intCensParse
+#' @title readUniRegResults
 #' 
-#' @description  Code to get IntCens results from output.
+#' @description  Read the results from the \code{\link{UniReg}} model into .Rdata
+#' format. 
 #' 
-#' @param File File path to output.txt.
+#' @param File File path to \code{UniReg} output.txt.
 #'
 #' @export
 #'
-intCensParse <- function(File=NULL) {
+readUniRegResults <- function(File=NULL) {
 
   out <- readLines(File)
   out <- gsub("\\t", " ", out)
@@ -43,21 +44,21 @@ intCensParse <- function(File=NULL) {
 }
 
 
-#' @title intCensImpute
+#' @title gImpute
 #' 
-#' @description  Uses the G-transformation to impute events
+#' @description  Uses the G-imputation method to impute the infection times.
 #' 
 #' @param dat A dataset.
-#' @param Results Results from \code{\link{intCensParse}}.
+#' @param Results Results from \code{\link{readUniRegResults}}.
 #' @param Args provide arguments from \code{\link{setArgs}}.
 #' @param start_date If null, start_date is the first obs_start date of ID, else it is
-#' same start_date for everyone.
+#' same start_date for everyone. Must be a string in the following YYYY-MM-DD format: e.g. "2005-01-23".
 #' 
 #' @return 
 #'
 #' @export 
 
-intCensImpute <- function(dat, Results, Args, start_date=NULL) {
+gImpute <- function(dat, Results, Args, start_date=NULL) {
 
   message("Running intCensImpute...")
   # G = function(x)  return(x)
@@ -83,8 +84,13 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
   doFunc <- function(oneID, dat, Args) {
     oneIDdata <- dat[dat$IIntID==oneID, ]
     stopifnot(nrow(oneIDdata)>0)
+    browser()
     start_time <- ifelse(is.null(start_date), 
       as.character(oneIDdata$obs_start[1]), start_date)
+    if (oneIDdata$late_neg[1] < start_time) {
+      print(oneIDdata)
+      stop("Reconcile: Latest HIV negative date (late_neg) is before observation start (obs_start).")
+    }
     leftTime <- as.integer(
       difftime(oneIDdata$late_neg[1], start_time, units='days'))
     rightTime <- as.integer(
@@ -101,6 +107,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
     variableNames <- Results$edat[, "Covariate"]
     if(length(jumpTimesIndicesSample)<1) {
       message(sprintf("=====Issue for %s ", oneID))
+      message("  No infection times imputed")
     } else if(length(jumpTimesIndicesSample)>=1) {
       covariateValues = matrix(data=NA,
         nrow=length(jumpTimesIndices),
@@ -149,9 +156,12 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
 
 
 
-#' @title UniReg
+#' @title uniReg
 #' 
-#' @description  Wrapper for IntCens fuction by Zeng et al 2016.
+#' @description  Wrapper for Intcens executable by Zeng et al 2016. See
+#' http://dlin.web.unc.edu/software/intcens/ for details. The executable is shipped with 
+#' the \code{ahri} package. Type in the R console \code{system.file("intcens", "unireg.exe", package =
+#' "ahri")}. 
 #' 
 #' @param InFile txt file to be input
 #' 
@@ -160,6 +170,11 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
 #' @param Model equation to be given
 #'
 #' @param ID name of subject ID
+#' @param iter Number of iterations
+#' @param cthreshold Threshold for convergence
+#' @param r Threshold for convergence
+#' @param printout Print results to screen
+#' @param ign_stout For Linux systems
 #'
 #' @export
 #'
@@ -171,7 +186,7 @@ intCensImpute <- function(dat, Results, Args, start_date=NULL) {
 #' ID = "id")
 
 
-UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
+uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
   iter=5000, cthresh=0.0001, r=1.0, printout=FALSE, ign_stout=TRUE) {
     InFile <- paste("--in", InFile)
     OutFile <- paste("--out", OutFile)
@@ -184,30 +199,28 @@ UniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     cthresh <- paste("--convergence_threshold", cthresh)
     xpath <- system.file("intcens", "unireg.exe", package = "ahri")
     if (Sys.getenv("OS") == "Windows_NT") {
-      # xpath <- file.path(.libPaths()[1], "IntCens2", "unireg.exe")
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),
         show.output.on.console=printout)
     } else {
-      xpath <- file.path(.libPaths()[1], "IntCens2", "unireg")
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),
         ignore.stdout=ign_stout)
     }
 }
 
-#' @title SetUniReg
+#' @title setUniReg
 #' 
-#' @description  Helper function to run \code{\link{UniReg}}.
+#' @description  Helper function to run \code{\link{uniReg}}.
 #' 
-#' @param  Vars Variables to feed into UniReg model.
+#' @param  Vars Variables to feed into uniReg model.
 #' @param  aName Name of output txt file.
 #' 
 #' @return list
 #'
 #' @export 
-SetUniReg <- function(Vars, aName) {
-  UniReg(
+setUniReg <- function(Vars, aName) {
+  uniReg(
     InFile=file.path(derived, paste0(aName,".txt")), 
     OutFile=file.path(derived, paste0(aName, "_out.txt")), 
     Model = paste0("(Time, sero_event) = ", Vars), 
@@ -215,7 +228,7 @@ SetUniReg <- function(Vars, aName) {
 }
 
 
-#' @title UniRegOne
+#' @title uniRegOne
 #' 
 #' @description  Run IntCens on each variable and make table
 #' 
@@ -223,13 +236,13 @@ SetUniReg <- function(Vars, aName) {
 #' @param aName File name of the IntCens results from \code{\link{intCensParse}}. 
 #'
 #' @export
-#' @examples
 #' @keywords internal
-#' UniRegOne(c("Age0", "Age2"), aName="icens_mal")
-UniRegOne <- function(Vars, Args) {
+#' @examples 
+#' uniRegOne(c("Age0", "Age2"), aName="icens_mal")
+uniRegOne <- function(Vars, Args) {
   i <- 1
   for(vari in Vars) {
-    SetUniReg(vari, Args$aname)
+    setUniReg(vari, Args$aname)
     res <- intCensParse(File=
       file.path(derived, paste0(Args$aname,"_out.txt")))
     res <- res$edat
@@ -242,23 +255,25 @@ UniRegOne <- function(Vars, Args) {
   dat
 }
 
-#' @title imputeIntCensPoint
+#' @title getGImpute
 #' 
-#' @description  Imputes the dates from \code{\link{intCensImpute}}.
+#' @description  Adds the ith column of imputed infection times from \code{\link{gImpute}} to an
+#' existing dataset.
 #' 
-#' @param rtdat The dataset to impute.
-#' @param sdates The imputed dateset.
+#' @param rtdat An existing dataset generated from \code{\link{getRTData}}. 
+#' @param gdat The imputed dateset from \code{\link{gImpute}}.
+#' @param i The ith imputed infection time in gdat.
 #' 
 #' @return 
 #'
 #' @export 
-#' @keywords internal
-imputeIntCensPoint <- function(rtdat, sdates, i) {
-  sdat <- sdates[, c("IIntID", "start_date", paste0("s", i))]
-  names(sdat) <- c("IIntID", "start_date", "sero_days")
-  sdat <- mutate(sdat,
+getGImpute <- function(rtdat, gdat, i) {
+  gdat <- gdat[, c("IIntID", "start_date", paste0("s", i))]
+  names(gdat) <- c("IIntID", "start_date", "sero_days")
+  gdat <- mutate(gdat,
     sero_date =  as.Date(start_date + sero_days, origin="1970-01-01"))
-  left_join(rtdat, sdat, by="IIntID") 
+  left_join(rtdat, gdat, by="IIntID") %>% 
+    select(-c(start_date, sero_days))
 }
 
 
