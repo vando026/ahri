@@ -103,18 +103,20 @@ addCircumVar <- function(dat, cdat=NULL) {
 }
 
 
-#' @title getCondomUseData
+#' @title getCondomUseVar
 #' 
-#' @description  gets Condom use data from AHRI datasets. File path must be set in
-#' \code{\link{setFiles}}. 
+#' @description  Gets the ever used condom variable from Men and Women's health datasets.
 #' 
-#' @keywords internal
 #' @export
 
-getCondomUseData <- function() {
-  dat <- getWGH_MGH()
-  dat <- select(dat, IIntID, Year, EverUsedCondom, Female)
+getCondomUseVar <- function() {
+  wdat <- getWGH() %>% 
+    select(IIntID, Female,  Year, EverUsedCondom = MRPEverUsedCondoms )
+  mdat <- getMGH() %>% 
+    select(IIntID, Female, Year, EverUsedCondom = MRPEverUsedCondoms )
+  dat <- rbind(mdat, wdat)
   dat <- filter(dat, EverUsedCondom %in% c(1:3))
+  dat$EverUsedCondom <- as.character(haven::as_factor(dat$EverUsedCondom)) 
   dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
   dat
 }
@@ -129,7 +131,7 @@ getCondomUseData <- function() {
 #' @return
 #' @export 
 addCondomVar <- function(dat, dropFemale=TRUE) {
-  cdat <- getCondomUseData()
+  cdat <- getCondomUseVar()
   if (dropFemale) cdat <- select(cdat, -Female)
   probs <- prop.table(table(cdat$EverUsedCondom))
   dat <- left_join(dat, cdat, by=c("IIntID", "Year"))
@@ -146,10 +148,7 @@ addCondomVar <- function(dat, dropFemale=TRUE) {
   dat <- left_join(dat, idat, by="IIntID")
   dat <- mutate(dat, EverUsedCondom =
     ifelse(is.na(EverUsedCondom), EverUsedCondom2, EverUsedCondom))
-  dat <- mutate(dat, EverUsedCondom = 
-    ifelse(EverUsedCondom==1, "Sometimes",
-    ifelse(EverUsedCondom==2, "Sometimes", "Never")))
-  dat
+  select(dat, -c(EverUsedCondom2))
 }
 
 

@@ -18,6 +18,10 @@ getBSData <- function(inFile=NULL) {
   dat <- haven::read_dta(inFile) %>% 
     rename(BSIntID=.data$BSIntId)
   dat <- mutate(dat, BSIntID = as.integer(.data$BSIntID))
+  dat$IsUrbanOrRural <- as.character(haven::as_factor(dat$IsUrbanOrRural))
+  dat$LocalArea <- as.character(haven::as_factor(dat$LocalArea))
+  dat$PIPSA <- as.character(haven::as_factor(dat$PIPSA))
+  dat$Isigodi <- as.character(haven::as_factor(dat$Isigodi))
   return(dat)
 }
 
@@ -35,7 +39,6 @@ getBSData <- function(inFile=NULL) {
 
 dropTasPData <- function(dat) {
   bsdat <- getBSData() %>% select(BSIntID, PIPSA)
-  bsdat$PIPSA <- as.character(haven::as_factor(bsdat$PIPSA))
   dat <- left_join(dat, bsdat, by="BSIntID")
   dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
   return(dat)
@@ -158,73 +161,28 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
   dat
 }
 
-#' @title addBSVars
-#' 
-#' @description Add variables from Bounded Structures to existing dataset.
-#' 
-#' @param dat An existing dataset.
-#' @param Vars Select variables.
-#' @param dropMissBS Drop any missing BS.
-#' 
-#' @return data.frame
-#' @keywords internal
-#' @export 
-
-addBSVars <- function(dat, Vars="Area", 
-  dropMissBS=TRUE) {
-  maxBS <- readRDS(getFiles()$bsm_rda)
-  dat <- left_join(dat, maxBS, by=c("IIntID", "Year"))
-  bdat <- readRDS(getFiles()$bsc_rda)
-  bdat <- select(bdat, BSIntID, matches(Vars))
-  dat <- left_join(dat, bdat, by="BSIntID")
-  dat$Area[is.na(dat$Area)] <- 
-    sample(sort(unique(dat$Area)),
-    size=sum(is.na(dat$Area)),
-    replace=TRUE,
-    prob=prop.table(table(dat$Area)))
-  if (dropMissBS)
-    dat <- filter(dat, !is.na(BSIntID))
-  dat
-}
-
-#' @title readHSEData
-#' 
-#' @description Read HSE data.
-#' 
-#' @param inFile File path from \code{\link{setFiles}}.
-#' 
-#' @return data.frame
-#'
-#' @export 
-readHSEData <- function(inFile=getFiles()$hsefile) {
-  dat <- haven::read_dta(inFile)
-  dat <- select(dat, BSIntID, Year=ExpYear, AIQ=AssetIndexQuintile) %>% 
-    arrange(BSIntID, Year) 
-  dat[] <- lapply(dat[], as.integer)
-  dat
-}
 
 #' @title addAIQVar
 #' 
-#' @description Add variables from Bounded Structures to existing dataset.
+#' @description Add the household assets index variable to an existing dataset.
 #' 
 #' @param dat An existing dataset.
-#' @param Vars Select variables.
-#' @keywords internal
-
-##cut(ee1$ModerntAssetIdx, breaks=quantile(ee1$ModerntAssetIdx, probs = seq(0, 1, 1/5), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE)
+#' @export
 
 addAIQVar <- function(dat) {
   hdat <- getEpisodes() 
-  hdat <- distinct(hdat, BSIntID, Year, .keep_all=TRUE) 
+  hdat <- distinct(hdat, .data$BSIntID, .data$Year, .keep_all=TRUE) %>% 
+    select(.data$BSIntID, .data$Year, .data$AssetIndex)
   dat <- left_join(dat, hdat, by=c("BSIntID", "Year"))
+  dat <- mutate(dat, AIQ = cut(.data$AssetIndex, breaks=quantile(.data$AssetIndex,
+    probs = seq(0, 1, 1/3), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE))
   dat <- mutate(dat, 
-    AIQ = zoo::na.locf(AIQ, na.rm=FALSE), 
-    AIQ = zoo::na.locf(AIQ, na.rm=FALSE, fromLast=TRUE))
-  dat <- mutate(dat, AIQ3 =
-    ifelse(AIQ %in% c(1:2), "lower",
-    ifelse(AIQ %in% c(4:5), "upper", "middle")))
-  dat <- mutate(dat, AIQ3 = as.factor(AIQ3))
+    AIQ = zoo::na.locf(.data$AIQ, na.rm=FALSE), 
+    AIQ = zoo::na.locf(.data$AIQ, na.rm=FALSE, fromLast=TRUE))
+  dat <- mutate(dat, AIQ =
+    ifelse(.data$AIQ == 1, "lower",
+    ifelse(.data$AIQ == 3, "upper", "middle")))
+  dat <- mutate(dat, AIQ = as.factor(.data$AIQ))
   dat
 }
 

@@ -8,10 +8,7 @@ addAIQVar(dat)
 }
 \arguments{
 \item{dat}{An existing dataset.}
-
-\item{Vars}{Select variables.}
 }
 \description{
-Add variables from Bounded Structures to existing dataset.
+Add the household assets index variable to an existing dataset.
 }
-\keyword{internal}

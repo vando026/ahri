@@ -11,8 +11,7 @@
 #' @import dplyr
 #' @keywords internal
 
-getPartnerData <- function( 
-  Args=eval.parent(quote(Args))) {
+getPartnerData <- function(Args) {
 
   getDat <- function(inFile) {
     read_csv(inFile, 
@@ -111,40 +110,3 @@ makePartnerData <- function(dat,
   out
 }
 
-#' @title getMaritalStatus
-#' 
-#' @description  Get the marital status variable.
-#' 
-#' @param dat WGH or MGH dataset.
-#' 
-#' @return variable
-#'
-#' @export 
-#' @keywords internal
-getMaritalStatus <- function(var) {
-  ifelse(var %in% c(1:3, 6:8, 11:16), 1, # married 
-    ifelse(var %in% c(4, 5, 9, 10, 17), 0, NA)) # not married
-}
-
-
-#' @title addMaritalStatus
-#' 
-#' @description  Add marital status to exisisting dataset. 
-#' 
-#' @param dat Existing dataset.
-#' 
-#' @param mdat Dataset from \code{\link{getMGH}}.
-#' 
-#' @return 
-#'
-#' @export 
-#' @keywords internal
-addMaritalStatus <- function(dat, mdat, fun=as.factor) {
-  mdat$MaritalStatus <- getMaritalStatus(mdat$Marital)
-  mdat <- select(mdat, IIntID, Year, MaritalStatus)
-  dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
-  dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE))
-  dat  <- mutate(dat, MaritalStatus = zoo::na.locf(MaritalStatus, na.rm=FALSE, fromLast=TRUE))
-  dat <- mutate(dat, MaritalStatus = fun(MaritalStatus))
-  dat
-}

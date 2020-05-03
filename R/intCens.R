@@ -1,6 +1,6 @@
 #' @title readUniRegResults
 #' 
-#' @description  Read the results from the \code{\link{UniReg}} model into .Rdata
+#' @description  Read the results from the \code{\link{uniReg}} model into .Rdata
 #' format. 
 #' 
 #' @param File File path to \code{UniReg} output.txt.
@@ -96,7 +96,7 @@ gImpute <- function(dat, Results, nSim=1,
       as.character(oneIDdata$obs_start[1]), start_date)
     if (oneIDdata$late_neg[1] < start_time) {
       print(oneIDdata)
-      stop("Reconcile: Latest HIV negative date (late_neg) is before observation start (obs_start).")
+      stop("Reconcile: Latest negative date (late_neg) is before observation start (obs_start).")
     }
     leftTime <- round(as.integer(
       difftime(oneIDdata$late_neg[1], start_time, units='days'))/tscale)
@@ -149,7 +149,7 @@ gImpute <- function(dat, Results, nSim=1,
             stop('Random seroconversion time larger than allowed\n')
         }
     }
-    names(SeroTimes) <- paste0("s", seq(nSim))
+    names(SeroTimes) <- paste0("g", seq(nSim))
     if (!trans_back) tscale = 1
     c(IIntID=oneID, 
       start_date=as.Date(start_time), 
@@ -243,7 +243,7 @@ setUniReg <- function(Vars, aName) {
 #' @description  Run IntCens on each variable and make table
 #' 
 #' @param Vars Vector of RHS character varnames. 
-#' @param aName File name of the IntCens results from \code{\link{intCensParse}}. 
+#' @param aName File name of the IntCens results from \code{\link{readUniRegResults}}. 
 #'
 #' @export
 #' @keywords internal
@@ -278,7 +278,7 @@ uniRegOne <- function(Vars, Args) {
 #'
 #' @export 
 getGImpute <- function(rtdat, gdat, i) {
-  gdat <- gdat[, c("IIntID", "start_date", paste0("s", i))]
+  gdat <- gdat[, c("IIntID", "start_date", paste0("g", i))]
   names(gdat) <- c("IIntID", "start_date", "sero_days")
   gdat <- mutate(gdat,
     sero_date =  as.Date(start_date + sero_days, origin="1970-01-01"))

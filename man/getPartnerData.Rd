@@ -4,7 +4,7 @@
 \alias{getPartnerData}
 \title{getPartnerData}
 \usage{
-getPartnerData(Args = eval.parent(quote(Args)))
+getPartnerData(Args)
 }
 \arguments{
 \item{inFile}{path to data which is typically set using \code{\link{setFiles}}}
