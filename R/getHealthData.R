@@ -121,34 +121,4 @@ getCondomUseVar <- function() {
   dat
 }
 
-#' @title addCondomVar
-#' 
-#' @description  Adds condom variable.
-#' 
-#' @param dat Master dataset to be merged with condom use variable.
-#' @param dropFemale Drop the Female variable. Default is TRUE.
-#' 
-#' @return
-#' @export 
-addCondomVar <- function(dat, dropFemale=TRUE) {
-  cdat <- getCondomUseVar()
-  if (dropFemale) cdat <- select(cdat, -Female)
-  probs <- prop.table(table(cdat$EverUsedCondom))
-  dat <- left_join(dat, cdat, by=c("IIntID", "Year"))
-  # First carry forward
-  dat <- group_by(dat, IIntID) %>% mutate( 
-    EverUsedCondom=na.locf(EverUsedCondom, na.rm=FALSE),
-    EverUsedCondom=na.locf(EverUsedCondom, na.rm=FALSE, fromLast=TRUE))
-  idat <- data.frame(IIntID=unique(dat$IIntID[is.na(dat$EverUsedCondom)]))
-  # Some people dont have any condom data, randomly sample
-  idat <- mutate(idat, EverUsedCondom2 =
-    sample(unique(dat$EverUsedCondom[!is.na(dat$EverUsedCondom)]),
-    size=nrow(idat), replace=TRUE,
-    prob=probs))
-  dat <- left_join(dat, idat, by="IIntID")
-  dat <- mutate(dat, EverUsedCondom =
-    ifelse(is.na(EverUsedCondom), EverUsedCondom2, EverUsedCondom))
-  select(dat, -c(EverUsedCondom2))
-}
-
 

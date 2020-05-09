@@ -48,7 +48,9 @@ readUniRegResults <- function(File=NULL) {
 #' 
 #' @description  Uses the G-imputation method to impute the infection times.
 #' 
-#' @param dat A dataset from \code{\link{getRTData}}. 
+#' @param dat A dataset of the covaraiate values by individual and time period. \code{dat} must have an ID variable
+#' called IIntID, a start date \code{obs_statr}, a latest-negative date \code{late_neg}
+#' and earliest-positive date \code{early_pos}. 
 #' @param Results Results from \code{\link{readUniRegResults}}.
 #' @param nSim The number of imputations to perform.
 #' @param start_date If null, start_date is the first obs_start date of ID, else it is
@@ -64,6 +66,8 @@ readUniRegResults <- function(File=NULL) {
 #' @return 
 #'
 #' @export 
+#' @examples
+#' See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 
 gImpute <- function(dat, Results, nSim=1,
   start_date=NULL, tscale=1, trans_back=TRUE,
@@ -95,8 +99,8 @@ gImpute <- function(dat, Results, nSim=1,
     start_time <- ifelse(is.null(start_date), 
       as.character(oneIDdata$obs_start[1]), start_date)
     if (oneIDdata$late_neg[1] < start_time) {
-      print(oneIDdata)
-      stop("Reconcile: Latest negative date (late_neg) is before observation start (obs_start).")
+      ID <- oneID[1]
+      message(sprintf("Warning: ID %s latest negative date (late_neg) is before observation start (obs_start).", ID))
     }
     leftTime <- round(as.integer(
       difftime(oneIDdata$late_neg[1], start_time, units='days'))/tscale)
@@ -219,20 +223,20 @@ uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     }
 }
 
-#' @title setUniReg
+#' @title runUniReg
 #' 
 #' @description  Helper function to run \code{\link{uniReg}}.
 #' 
 #' @param  Vars Variables to feed into uniReg model.
-#' @param  aName Name of output txt file.
+#' @param  Name Name of input txt file.
 #' 
 #' @return list
 #'
 #' @export 
-setUniReg <- function(Vars, aName) {
+runUniReg <- function(Vars, Name) {
   uniReg(
-    InFile=file.path(derived, paste0(aName,".txt")), 
-    OutFile=file.path(derived, paste0(aName, "_out.txt")), 
+    InFile=file.path(derived, paste0(Name,".txt")), 
+    OutFile=file.path(derived, paste0(Name, "_out.txt")), 
     Model = paste0("(Time, sero_event) = ", Vars), 
     ID="IIntID", printout=TRUE, ign_stout=FALSE, cthresh=0.01)
 }
@@ -240,29 +244,25 @@ setUniReg <- function(Vars, aName) {
 
 #' @title uniRegOne
 #' 
-#' @description  Run IntCens on each variable and make table
+#' @description  Run gModel on each variable and make table
 #' 
 #' @param Vars Vector of RHS character varnames. 
-#' @param aName File name of the IntCens results from \code{\link{readUniRegResults}}. 
+#' @param Name File name of the gModel results from \code{\link{readUniRegResults}}. 
 #'
 #' @export
 #' @keywords internal
 #' @examples 
-#' uniRegOne(c("Age0", "Age2"), aName="icens_mal")
-uniRegOne <- function(Vars, Args) {
-  i <- 1
+#' uniRegOne(c("Age0", "Age2"), Name="icens_mal")
+uniRegOne <- function(Vars, Name) {
+  dat = list()
   for(vari in Vars) {
-    setUniReg(vari, Args$aname)
-    res <- intCensParse(File=
-      file.path(derived, paste0(Args$aname,"_out.txt")))
-    res <- res$edat
-    if (i==1)
-      dat <- res
-    else  
-      dat <- rbind(dat, res)
-    i <- i + 1
+    message(sprintf("Running UniReg on %s", vari))
+    runUniReg(vari, Name)
+    res <- readUniRegResults(File=
+      file.path(derived, paste0(Name,"_out.txt")))
+    dat[[vari]] <- res$edat
   }
-  dat
+  do.call(rbind, dat)
 }
 
 #' @title getGImpute

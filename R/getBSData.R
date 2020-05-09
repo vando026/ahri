@@ -162,30 +162,6 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 }
 
 
-#' @title addAIQVar
-#' 
-#' @description Add the household assets index variable to an existing dataset.
-#' 
-#' @param dat An existing dataset.
-#' @export
-
-addAIQVar <- function(dat) {
-  hdat <- getEpisodes() 
-  hdat <- distinct(hdat, .data$BSIntID, .data$Year, .keep_all=TRUE) %>% 
-    select(.data$BSIntID, .data$Year, .data$AssetIndex)
-  dat <- left_join(dat, hdat, by=c("BSIntID", "Year"))
-  dat <- mutate(dat, AIQ = cut(.data$AssetIndex, breaks=quantile(.data$AssetIndex,
-    probs = seq(0, 1, 1/3), na.rm=TRUE), labels=FALSE, include.lowest=TRUE, right=FALSE))
-  dat <- mutate(dat, 
-    AIQ = zoo::na.locf(.data$AIQ, na.rm=FALSE), 
-    AIQ = zoo::na.locf(.data$AIQ, na.rm=FALSE, fromLast=TRUE))
-  dat <- mutate(dat, AIQ =
-    ifelse(.data$AIQ == 1, "lower",
-    ifelse(.data$AIQ == 3, "upper", "middle")))
-  dat <- mutate(dat, AIQ = as.factor(.data$AIQ))
-  dat
-}
-
 #' @title addHIVPrevBS
 #' 
 #' @description  Calculates the HIV prevalence of area surrounding BS
