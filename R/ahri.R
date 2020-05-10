@@ -1,6 +1,6 @@
 #' ahri: R package for the AHRI datasets
 #'
-#' The ahri package provides functions for analyzing the AHRI datasets. 
+#' @section The ahri package provides functions for analyzing the AHRI datasets. 
 #'
 #' @section Default .dta datasets:
 #' The ahri package uses the following deafult datasets, which you must request from the AHRI data
