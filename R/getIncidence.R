@@ -334,28 +334,13 @@ MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
 }
 
 
-#' @title getFormula
-#' 
-#' @description  Gets default glm string formulas to run crude and age adjusted incidence.
-#' 
-#' @return list
-#'
-#' @export 
-getFormula <- function() {
-  list(
-    crude = "sero_event ~ -1 + as.factor(Year) + offset(log(tscale))",
-    adj = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))")
-}
-
-
 #' @title getIncidence
 #' 
 #' @description  Calculate annual HIV incidence rates using the single random-point
 #' approach and multiple imputation. 
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
-#' @param sformula A list of formulas for the poisson regression models, see
-#' \code{\link{getFormula}}.
+#' @param sformula A list of formulas for the poisson regression models.
 #' @param aggFun Function to aggregate sero events and person-time by, see
 #' \code{link{AggFunc}}.
 #' @param newdata Dataset of variables to predict incidence, see \code{\link{MIpredict}}.

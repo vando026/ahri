@@ -87,7 +87,7 @@ getCircumcisionData <- function(dat=getMGH()) {
 #' @description  Adds the ever circumcised variable to an existing dataset. 
 #' 
 #' @param dat An existing dataset.
-#' @param cdat Circumcision dataset from \code{\link{getCircumcisionData}}. 
+#' @param cdat Circumcision dataset from \code{getCircumcisionData}. 
 #' 
 #' @return data.frame
 #'

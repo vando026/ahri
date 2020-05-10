@@ -9,8 +9,7 @@ getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 \arguments{
 \item{Args}{takes list from \code{\link{setArgs}}.}
 
-\item{sformula}{A list of formulas for the poisson regression models, see
-\code{\link{getFormula}}.}
+\item{sformula}{A list of formulas for the poisson regression models.}
 
 \item{aggFun}{Function to aggregate sero events and person-time by, see
 \code{link{AggFunc}}.}
