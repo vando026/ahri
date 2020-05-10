@@ -23,7 +23,6 @@
 #' @param bsc_rda Writes the file ACDIS_BoundedStructures.Rda
 #'
 #' @return function
-#'
 #' @export
 #'
 #' @examples 
