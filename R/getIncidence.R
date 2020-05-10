@@ -255,32 +255,6 @@ MIdata <- function(rtdat, Args, f=identity) {
 }
 
 
-#' @title MIpois
-#' 
-#' @description Run poission regressions.
-#' 
-#' @param mdat List of datasets from \code{mitools}.
-#' @param pdat Dataset for predicting values.
-#' @param sformula List of string formulas.
-#' 
-#' @return List
-#' @export
-#' @examples
-#' Args <- setArgs(nSim=2)
-#' rtdat <- getRTData(dat=getHIV())
-#' mdat <- MIdata(rtdat, Args)
-#' sformula <- "sero_event ~ -1 + as.factor(Year) + Age + 
-#'   as.factor(Year):Age + offset(log(tscale))" 
-#' pdat <- getAgeYear(dat=setHIV(Args))
-#' MIpois(mdat, pdat, sformula)
-
-MIpois <- function(mdat, pdat, sformula) {
-  mdat <- mitools::imputationList(mdat)
-  mods <- with(mdat, stats::glm(as.formula(sformula), family=poisson))
-  mres <- mitools::MIcombine(mods)
-  MIpredict(mres, mods[[1]], pdat)
-}
-
 #' @title MIpredict
 #' 
 #' @description Used with \code{mitools} to get incidence rate estimates per 100
@@ -304,12 +278,14 @@ MIpois <- function(mdat, pdat, sformula) {
 #' betas <- mitools::MIextract(mods,fun=coef)
 #' var <- mitools::MIextract(mods, fun=vcov)
 #' res <-  mitools::MIcombine(betas, var) 
-#' MIpredict(res, mods[[1]], dat=getAgeYear(setHIV(Args)))
+#' MIpredict(res, object=mods[[1]], newdata=getAgeYear(setHIV(Args)))
 
-MIpredict <- function(res, obj,  dat)  {
-  Terms <- stats::delete.response(stats::terms(obj))
-  m <- stats::model.frame(Terms, dat, xlev = obj$xlevels)
-  mat <- stats::model.matrix(Terms, m, contrasts.arg = obj$contrasts)
+MIpredict <- function(object,  newdata)  {
+  res <- mitools::MIcombine(object)
+  object <- object[[1]]
+  Terms <- stats::delete.response(stats::terms(object))
+  m <- stats::model.frame(Terms, newdata, xlev = object$xlevels)
+  mat <- stats::model.matrix(Terms, m, contrasts.arg = object$contrasts)
   pred <- mat %*% stats::coef(res)
   se <-  sqrt(diag(mat %*% stats::vcov(res) %*% t(mat)))
   fit <- exp(pred)
@@ -319,7 +295,7 @@ MIpredict <- function(res, obj,  dat)  {
   out <- data.frame(fit=fit, se.fit=se.fit, 
     lci=fit+CI[, 1], uci=fit+CI[, 2])
   out <- data.frame(lapply(out, "*", 100))
-  rownames(out) <- obj$xlevels[[1]]
+  rownames(out) <- object$xlevels[[1]]
   out
 }
 
@@ -379,23 +355,24 @@ getFormula <- function() {
 #' approach and multiple imputation. 
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
-#' @param formulas A list of formulas for the poisson regression models, see
+#' @param sformula A list of formulas for the poisson regression models, see
 #' \code{\link{getFormula}}.
+#' @param aggFun Function to aggregate sero events and person-time by, see
+#' \code{link{AggFunc}}.
+#' @param newdata Dataset of variables to predict incidence, see \code{\link{MIpredict}}.
 #' 
 #' @return list
 #' @export 
 
 getIncidence <- function(
-  Args=setArgs(), formulas=getFormula()) {
-  #
-  if (Args$nSim==1) 
-    stop('nSim in setArgs() must be > 1')
+  Args=setArgs(), sformula="", aggFun=NULL, newdata=NULL) {
+  if (Args$nSim < 2) stop('nSim in setArgs() must be > 1')
   rtdat <- getRTData()
-  age_dat <- getAgeYear(dat=setHIV(Args))
   mdat <- MIdata(rtdat, Args)
-  pois_inc <- lapply(formulas, 
-    function(x) MIpois(mdat, age_dat, x))
-  agg_inc <- lapply(mdat, AggByYear)
+  agg_inc <- lapply(mdat, aggFun)
   agg_inc <- MIaggregate(agg_inc)
+  mdat <- mitools::imputationList(mdat)
+  mods <- with(mdat, stats::glm(as.formula(sformula), family=poisson))
+  pois_inc <- MIpredict(mods, newdata)
   list(agg=agg_inc, pois_inc=pois_inc)
 }

@@ -4,13 +4,18 @@
 \alias{getIncidence}
 \title{getIncidence}
 \usage{
-getIncidence(Args = setArgs(), formulas = getFormula())
+getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 }
 \arguments{
 \item{Args}{takes list from \code{\link{setArgs}}.}
 
-\item{formulas}{A list of formulas for the poisson regression models, see
+\item{sformula}{A list of formulas for the poisson regression models, see
 \code{\link{getFormula}}.}
+
+\item{aggFun}{Function to aggregate sero events and person-time by, see
+\code{link{AggFunc}}.}
+
+\item{newdata}{Dataset of variables to predict incidence, see \code{\link{MIpredict}}.}
 }
 \value{
 list
