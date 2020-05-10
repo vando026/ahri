@@ -347,7 +347,11 @@ MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
 #' 
 #' @return list
 #' @export 
-
+#' @examples
+#' Args <- setArgs(Age=list(All=c(15, 49)), Years=c(2004:2018), nSim=2)
+#' age_dat <- getAgeYear(dat=setHIV(Args))
+#' sformula = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"
+#' getIncidence(Args, sformula, AggByYear, age_dat)
 getIncidence <- function(
   Args=setArgs(), sformula="", aggFun=NULL, newdata=NULL) {
   if (Args$nSim < 2) stop('nSim in setArgs() must be > 1')

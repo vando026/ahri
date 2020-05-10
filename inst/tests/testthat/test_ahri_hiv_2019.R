@@ -128,8 +128,10 @@ test_that("Count sero events and ptime", {
 
 context("Test getIncidence (random-point)")
 Args <- setArgs(Age=list(All=c(15, 49)), Years=c(2004:2018), nSim=2)
+age_dat <- getAgeYear(dat=setHIV(Args))
+sformula = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"
 set.seed(123456)
-inc <- getIncidence(Args)
+inc <- getIncidence(Args, sformula, AggByYear, age_dat)
 test_that("Count sero events and ptime", {
   expect_equal(sum(inc$agg$sero), 3674)
   expect_equal(round(sum(inc$agg$pyears)), 104847)

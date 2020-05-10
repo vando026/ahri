@@ -23,3 +23,9 @@ list
 Calculate annual HIV incidence rates using the single random-point
 approach and multiple imputation.
 }
+\examples{
+Args <- setArgs(Age=list(All=c(15, 49)), Years=c(2004:2018), nSim=2)
+age_dat <- getAgeYear(dat=setHIV(Args))
+sformula = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"
+getIncidence(Args, sformula, AggByYear, age_dat)
+}
