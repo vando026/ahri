@@ -343,7 +343,7 @@ MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
 #' @param sformula A list of formulas for the poisson regression models.
 #' @param aggFun Function to aggregate sero events and person-time by, see
 #' \code{link{AggFunc}}.
-#' @param newdata Dataset of variables to predict incidence, see \code{MIpredict}.
+#' @param newdata Dataset of variables to predict incidence, see \code{\link{MIpredict}}.
 #' 
 #' @return list
 #' @export 

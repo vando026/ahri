@@ -79,7 +79,7 @@ getEpisodes <- function(inFile=NULL) {
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param dat A dataset generated from \code{\link{readEpisodes}}, which exists in the
 #' global environment. If NULL, it reads in the corresponding .Rda file (see
-#' \code{setFiles}.  
+#' \code{\link{setFiles}}.  
 #' 
 #' @return data.frame
 #'

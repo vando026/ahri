@@ -7,7 +7,7 @@
 calcARTCov(dat = getEverART(), Args = setArgs())
 }
 \arguments{
-\item{dat}{A dataset from \code{getEverART}.}
+\item{dat}{A dataset from \code{\link{getEverART}}.}
 
 \item{Args}{requires Args, see \code{\link{setArgs}}}
 }

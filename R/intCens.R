@@ -3,7 +3,7 @@
 #' @description  Read the results from the \code{\link{uniReg}} model into .Rdata
 #' format. 
 #' 
-#' @param File File path to \code{UniReg} output.txt.
+#' @param File File path to \code{\link{uniReg}} output.txt.
 #'
 #' @export
 #'

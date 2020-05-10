@@ -35,7 +35,7 @@ setArgs(
 \item{aname}{String to name an object or set a filename.}
 
 \item{mcores}{number of cores to use for parallel package (used in
-\code{MIdata}).}
+\code{\link{MIdata}}).}
 
 \item{setFun}{a function used by \code{\link{setData}} by which the data can be further subset.}
 
@@ -49,7 +49,7 @@ list
 }
 \description{
 A function that collects and stores various arguments that can be used as
-inputs to other functions. The \code{setArgs} function comes with default parameter
+inputs to other functions. The \code{\link{setArgs}} function comes with default parameter
 values for the arguments. The user is asked to check these values and understand how
 these will affect the data.
 }

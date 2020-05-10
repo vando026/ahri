@@ -7,7 +7,7 @@
 getCircumcisionData(dat = getMGH())
 }
 \arguments{
-\item{dat}{A dataset from \code{getMGH}.}
+\item{dat}{A dataset from \code{\link{getMGH}}.}
 }
 \description{
 Gets circumcision data from the MGH dataset with the year of

@@ -14,7 +14,7 @@ getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 \item{aggFun}{Function to aggregate sero events and person-time by, see
 \code{link{AggFunc}}.}
 
-\item{newdata}{Dataset of variables to predict incidence, see \code{MIpredict}.}
+\item{newdata}{Dataset of variables to predict incidence, see \code{\link{MIpredict}}.}
 }
 \value{
 list

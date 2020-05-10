@@ -13,7 +13,7 @@ setData(dat, Args = setArgs(), time2 = NULL, age_cut = NULL, birthdate = NULL)
 
 \item{time2}{The name of a date variable that is used to calculate the Age variable using the
 \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
-If time2=NULL, the default, then \code{setData} will use an existing Age
+If time2=NULL, the default, then \code{\link{setData}} will use an existing Age
 variable in \code{dat}.}
 
 \item{age_cut}{Vector of ages to make age categories from \code{link{setArgs}}.}
