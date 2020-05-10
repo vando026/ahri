@@ -12,7 +12,6 @@
 #' @export
 #' @examples
 #' getARTDates()
-
 getARTDates <- function(dat=NULL) {
   if (is.null(dat)) dat <- getEpisodes()
   dat <- filter(dat, !is.na(.data$EarliestARTInitDate))
@@ -59,7 +58,6 @@ getEverART <- function(dat=getEpisodes()) {
 #' 
 #' @return data.frame
 #' @export 
-
 calcARTCov <- function(dat=getEverART(), Args=setArgs()) {
   dat <- setData(dat, Args)
   calcTrendYear("EverART", dat)
@@ -99,7 +97,6 @@ readARTCov <- function(Female=1) {
 #' 
 #' @return data.frame
 #' @keywords internal
-
 addARTCov <- function(dat, Args, oppSex=FALSE) {
   Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)
   art <- readARTCov(Sex)

@@ -12,7 +12,7 @@
 #' \code{folder=""}, then the default is to call a dialogue box for you to point and click
 #' to the folder path.  
 #' @param hivfile Reads the file RD05-99 ACDIS HIV All.dta 
-#' @param #' epifile Reads the file SurveillanceEpisodesExtended.dta 
+#' @param epifile Reads the file SurveillanceEpisodesExtended.dta 
 #' @param wghfile Reads the file RD03-99 ACDIS WGH ALL.dta 
 #' @param mghfile Reads the file RD04-99 ACDIS MGH ALL.dta
 #' @param bsifile Reads the file RD01-03 ACDIS BoundedStructures.dta 
@@ -35,7 +35,6 @@
 #'
 #' # print out the file paths and names 
 #' setFiles() 
-
 setFiles <- function(
   folder="",
   hivfile="RD05-99 ACDIS HIV All.dta",
