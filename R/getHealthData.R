@@ -67,7 +67,7 @@ getWGH <- function(inFile=NULL) {
 #' 
 #' @description  Gets circumcision data from the MGH dataset with the year of
 #' circumcision and an indicator of ever circumcised.
-#' @param dat A dataset from \code{\link{getMGH}}.
+#' @param dat A dataset from \code{getMGH}.
 #' @export
 #' @examples
 #' gdat <- getCircumcisionData()

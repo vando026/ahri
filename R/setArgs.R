@@ -21,7 +21,7 @@
 #' \code{\link{imputeMidPoint}}.
 #'
 #' @param mcores number of cores to use for parallel package (used in
-#' \code{\link{MIdata}}).
+#' \code{MIdata}).
 #'
 #' @param MoreArgs a list, which adds more arguments if needed.
 #'

@@ -2,8 +2,8 @@
 #' 
 #' @description  Reads in the Surveillance Episodes dataset 
 #' 
-#' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
-#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
+#' @param inFile File path to the .dta dataset, default is set to \code{setFiles}.
+#' @param outFile File path to the write the .Rda dataset, default is set to \code{setFiles}.
 #' @param dropTasP default is to drop TasP areas.
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param write_rda Default is to write the .Rda file.
@@ -79,7 +79,7 @@ getEpisodes <- function(inFile=NULL) {
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param dat A dataset generated from \code{\link{readEpisodes}}, which exists in the
 #' global environment. If NULL, it reads in the corresponding .Rda file (see
-#' \code{\link{setFiles}}.  
+#' \code{setFiles}.  
 #' 
 #' @return data.frame
 #'
