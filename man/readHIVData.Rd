@@ -14,9 +14,9 @@ readHIVData(
 )
 }
 \arguments{
-\item{inFile}{File path to .dta, default is set by \code{\link{setFiles}}.}
+\item{inFile}{File path to .dta, default is set by \code{setFiles}.}
 
-\item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
+\item{outFile}{File path to save .Rda, default is set by \code{setFiles}.}
 
 \item{dropTasP}{Default is to drop TasP surveillance areas from the data.}
 

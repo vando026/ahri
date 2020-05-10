@@ -11,7 +11,7 @@ setEpisodes(Args = setArgs(), dat = NULL)
 
 \item{dat}{A dataset generated from \code{\link{readEpisodes}}, which exists in the
 global environment. If NULL, it reads in the corresponding .Rda file (see
-\code{\link{setFiles}}.}
+\code{setFiles}.}
 }
 \value{
 data.frame

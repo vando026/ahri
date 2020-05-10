@@ -35,7 +35,7 @@ setArgs(
 \item{aname}{String to name an object or set a filename.}
 
 \item{mcores}{number of cores to use for parallel package (used in
-\code{\link{MIdata}}).}
+\code{MIdata}).}
 
 \item{setFun}{a function used by \code{\link{setData}} by which the data can be further subset.}
 
