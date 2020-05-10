@@ -48,7 +48,7 @@ AggFunc <- function(RHS) {
 #' @description Aggregates data to get sero events and pyears by year.
 #' formula.
 #' 
-#' @param dat Dataset. 
+#' @param dat An existing dataset. 
 #' 
 #' @return data.frame
 #' @export 
@@ -238,7 +238,7 @@ calcPoisCI <- function(dat, func=exp, by100=TRUE, pval=FALSE) {
 #' @param Args Takes list from \code{\link{setArgs}}.
 #' @param f Function to perform additional operation. 
 #' 
-#' @return data.frame
+#' @return list
 #'
 #' @export 
 #' @examples
@@ -303,7 +303,7 @@ MIpredict <- function(object,  newdata)  {
 #' @description  Aggregates results after mutiple imputation.
 #' 
 #' @param dat List of results.
-#' @param col_names Names used to collect dataset columns into a single matrix.
+#' @param col_names Names used to collect columns into a data.frame.
 #' 
 #' @return data.frame
 #'

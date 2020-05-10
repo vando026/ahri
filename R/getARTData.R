@@ -91,10 +91,10 @@ readARTCov <- function(Female=1) {
 
 #' @title addARTCov
 #' 
-#' @description  Add community ART cov. 
+#' @description  Add community ART coverage. 
 #' 
 #' @param dat Dataset to add ART vars to. 
-#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param oppSex Make opposite-sex HIV prevalence. Default is FALSE.
 #' 
 #' @return data.frame

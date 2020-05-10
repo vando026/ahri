@@ -168,7 +168,7 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 #' 
 #' @param inFile The filepath to the dataset with HIV prevalence.
 #' @param dat A dataset to add HIV prevalence variables to. 
-#' @param Args requires Args, see \code{\link{setArgs}}
+#' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param Type Males, Females or All for ART coverage. 
 #' 
 #' @return data.frame
