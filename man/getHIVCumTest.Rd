@@ -12,7 +12,7 @@ getHIVCumTest(dat, ntest = 1)
 \item{num_test}{Integer for number of times tested. Use 2 for incidence cohort.}
 }
 \value{
-
+data.frame
 }
 \description{
 Get summary of number of times participants test.

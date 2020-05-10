@@ -18,7 +18,7 @@ setHIVMiss(
 \item{dropTasP}{Drop TasP surveillance areas from the data.}
 }
 \value{
-
+data.frame
 }
 \description{
 Gets HIV test dates by merging yearly HIV surveillance datasets.

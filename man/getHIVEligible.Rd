@@ -10,7 +10,7 @@ getHIVEligible(dat = NULL)
 \item{dat}{Default is Null or loads dataset from \code{\link{setHIVMiss}}.}
 }
 \value{
-
+data.frame
 }
 \description{
 Get eligibility for HIV testing.

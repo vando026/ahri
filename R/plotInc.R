@@ -10,7 +10,6 @@
 plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
   Title="", fname="year_plot") {
-  alainr::getColor()
   if(!is.null(gfun)) {
     gfun(file.path(output,
       paste0(fname, ".", deparse(substitute(gfun)))),

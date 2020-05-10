@@ -31,7 +31,7 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 #' @param outFile Path to write new dataset.
 #' @param dropTasP Drop TasP surveillance areas from the data. 
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @keywords internal
 #' @export 
@@ -79,7 +79,7 @@ setHIVMiss <- function(
 #' 
 #' @param dat Default is Null or loads dataset from \code{\link{setHIVMiss}}.
 #' 
-#' @return 
+#' @return data.frame
 #' @import dplyr
 #' @export 
 getHIVEligible <- function(dat=NULL) {
@@ -132,7 +132,7 @@ sumHIVMiss <- function(dat) {
 #' @param dat Dataset from  \code{\link{getHIVEligible}}.
 #' @param num_test Integer for number of times tested. Use 2 for incidence cohort.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @keywords internal
 #' @export 
@@ -152,7 +152,7 @@ getHIVCumTest <- function(dat, ntest=1) {
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param ids keep only IDs.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @keywords internal
 #' @export 
@@ -239,7 +239,7 @@ mkHIVTestTable <- function(Args, IDS=NULL) {
 #' 
 #' @param x
 #' 
-#' @return 
+#' @return vector
 #'
 #' @keywords internal
 #' @export 
@@ -260,7 +260,7 @@ getFollowUp <- function(x) {
 #' 
 #' @param x
 #' 
-#' @return 
+#' @return vector
 #'
 #' @keywords internal
 #' @export 

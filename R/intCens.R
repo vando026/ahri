@@ -63,7 +63,7 @@ readUniRegResults <- function(File=NULL) {
 #' Default is TRUE. 
 #' @param mcores The number of cores to use for parallel processing using \code{mclapply}.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 #' @examples
@@ -185,8 +185,9 @@ gImpute <- function(dat, Results, nSim=1,
 #'
 #' @param ID name of subject ID
 #' @param iter Number of iterations
-#' @param cthreshold Threshold for convergence
+#' @param cthresh Threshold for convergence
 #' @param r Threshold for convergence
+#' @param inf Value for infinite, default is "Inf"
 #' @param printout Print results to screen
 #' @param ign_stout For Linux systems
 #'
@@ -275,7 +276,7 @@ uniRegOne <- function(Vars, Name) {
 #' @param gdat The imputed dateset from \code{\link{gImpute}}.
 #' @param i The ith imputed infection time in gdat.
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 getGImpute <- function(rtdat, gdat, i) {

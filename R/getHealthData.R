@@ -89,7 +89,7 @@ getCircumcisionData <- function(dat=getMGH()) {
 #' @param dat An existing dataset.
 #' @param cdat Circumcision dataset from \code{\link{getCircumcisionData}}. 
 #' 
-#' @return 
+#' @return data.frame
 #'
 #' @export 
 addCircumVar <- function(dat, cdat=NULL) {

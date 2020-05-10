@@ -12,7 +12,7 @@ getHIVIncEligible(Args, ids = NULL)
 \item{ids}{keep only IDs.}
 }
 \value{
-
+data.frame
 }
 \description{
 Get number of participants eligible for HIV incidence cohort.
