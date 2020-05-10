@@ -269,7 +269,7 @@ MIdata <- function(rtdat, Args, f=identity) {
 #' @export 
 #' @examples
 #' rtdat <- getRTData(dat=getHIV())
-#' Args <- setArgs(nSim=2)
+#' Args <- setArgs(nSim=2, Years=c(2008:2018))
 #' mdat <- MIdata(rtdat, Args)
 #' mdat <- mitools::imputationList(mdat)
 #' F1 <- "sero_event ~ -1 + as.factor(Year) + Age +
@@ -278,7 +278,7 @@ MIdata <- function(rtdat, Args, f=identity) {
 #' betas <- mitools::MIextract(mods,fun=coef)
 #' var <- mitools::MIextract(mods, fun=vcov)
 #' res <-  mitools::MIcombine(betas, var) 
-#' MIpredict(res, object=mods[[1]], newdata=getAgeYear(setHIV(Args)))
+#' MIpredict(object=mods, newdata=getAgeYear(setHIV(Args)))
 
 MIpredict <- function(object,  newdata)  {
   res <- mitools::MIcombine(object)

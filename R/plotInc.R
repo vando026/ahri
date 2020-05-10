@@ -123,8 +123,7 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
 #' 
 #' @importFrom plotrix plotCI 
 #' 
-#' @export  
-
+#' @keywords internal
 
 # You need to add integer var to plot for CI
 plotIncAge <- function(
@@ -181,14 +180,7 @@ plotIncAge <- function(
 #' @param inc Incidence data, must include CIs, from \code{\link{getIncidence}}. 
 #' @param prev Prevalence data, only a vector. 
 #' 
-#' @export 
-#' @examples
-#' inc <- getIncidence(Args)$adj$Year
-#' hiv <- setHIV(Args) 
-#' prev <-  calcTrend(hiv, 
-#'   Formula = "HIVResult ~ Year", fmt=FALSE)
-#' prev <- prev$adj.rate*100
-#' plotIncPrev(inc, prev) 
+#' @keywords internal
 
 plotIncPrev <- function(
   inc, prev=NULL, x=NULL, yLim=8, Main="", prev_lty=1,

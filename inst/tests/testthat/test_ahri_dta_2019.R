@@ -7,7 +7,7 @@ context("Test getBSData")
 bdat <- getBSData()
 test_that("Check readBSData N", {
   expect_equal(length(unique(bdat$BSIntID)), 30776)
-  expect_equal(sum(bdat$PIPSA[bdat$PIPSA==1], na.rm=TRUE), 18058)
+  expect_equal(sum(bdat$PIPSA %in% "Southern PIPSA", na.rm=TRUE), 18058)
 })
 
 

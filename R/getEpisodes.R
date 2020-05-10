@@ -111,8 +111,8 @@ setEpisodes <- function(Args=setArgs(), dat=NULL) {
 #' @examples
 #' dat <- setEpisodes(setArgs()) 
 #' adat <- makePropRes(setArgs())
-#' dat <- left_join(dat, adat, by=c("IIntID", "Year"))
-#' select(dat, IIntID, Year, ExpDays, Resident, PropRes)
+#' dat <- dplyr::left_join(dat, adat, by=c("IIntID", "Year"))
+#' dplyr::select(dat, IIntID, Year, ExpDays, Resident, PropRes)
 
 makePropRes <- function(Args) {
   dat <- setEpisodes(Args) 

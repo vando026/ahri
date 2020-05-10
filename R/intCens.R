@@ -67,7 +67,7 @@ readUniRegResults <- function(File=NULL) {
 #'
 #' @export 
 #' @examples
-#' See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+#' ## See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 
 gImpute <- function(dat, Results, nSim=1,
   start_date=NULL, tscale=1, trans_back=TRUE,
@@ -193,11 +193,12 @@ gImpute <- function(dat, Results, nSim=1,
 #' @export
 #'
 #' @examples
-#' UniReg(
+#' \donttest{
+#' uniReg(
 #' InFile = file.path(output, "TestSim.txt"),
 #' OutFile = file.path(output, "TestSim_Out.txt"), r = 0.0,
 #' Model = "(time, d) = v1 + v2 + v3",
-#' ID = "id")
+#' ID = "id")}
 
 
 uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
@@ -252,7 +253,7 @@ runUniReg <- function(Vars, Name) {
 #' @export
 #' @keywords internal
 #' @examples 
-#' uniRegOne(c("Age0", "Age2"), Name="icens_mal")
+#' \donttest{uniRegOne(c("Age0", "Age2"), Name="icens_mal")}
 uniRegOne <- function(Vars, Name) {
   dat = list()
   for(vari in Vars) {
