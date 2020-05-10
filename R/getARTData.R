@@ -54,7 +54,7 @@ getEverART <- function(dat=getEpisodes()) {
 #' @description  Calculate ART coverage for AHRI data. (This is a very crude measure of
 #' ART coverage. More work needed on an appropriate measure.)
 #' 
-#' @param dat A dataset from \code{\link{getEverART}}.
+#' @param dat A dataset from \code{getEverART}.
 #' @param Args requires Args, see \code{\link{setArgs}}
 #' 
 #' @return data.frame
