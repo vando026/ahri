@@ -2,8 +2,8 @@
 #' 
 #' @description  Reads in the Surveillance Episodes dataset 
 #' 
-#' @param inFile File path to the .dta dataset, default is set to \code{setFiles}.
-#' @param outFile File path to the write the .Rda dataset, default is set to \code{setFiles}.
+#' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
+#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
 #' @param dropTasP default is to drop TasP areas.
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param write_rda Default is to write the .Rda file.

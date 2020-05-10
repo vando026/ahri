@@ -2,8 +2,8 @@
 #' 
 #' @description  Reads in AHRI data from csv file
 #' 
-#' @param inFile File path to .dta, default is set by \code{setFiles}.
-#' @param outFile File path to save .Rda, default is set by \code{setFiles}.
+#' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
+#' @param outFile File path to save .Rda, default is set by \code{\link{setFiles}}.
 #' @param dropTasP Default is to drop TasP surveillance areas from the data. 
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param drop15Less Default is to drop all observations with Age < 15 years. Only
@@ -69,7 +69,7 @@ readHIVData <- function(
 #' @description  Load in the .rda version of the HIV surveillance dataset. 
 #' 
 #' @param inFile File path to .rda dataset, default is \code{getFiles()$hiv_rda}. Leave as
-#' NULL if you don't know what to do or see \code{setFiles}. 
+#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
 #'
 #' @return data.frame
 #'

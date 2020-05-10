@@ -13,9 +13,9 @@ readEpisodes(
 )
 }
 \arguments{
-\item{inFile}{File path to the .dta dataset, default is set to \code{setFiles}.}
+\item{inFile}{File path to the .dta dataset, default is set to \code{\link{setFiles}}.}
 
-\item{outFile}{File path to the write the .Rda dataset, default is set to \code{setFiles}.}
+\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.}
 
 \item{dropTasP}{default is to drop TasP areas.}
 
