@@ -23,8 +23,7 @@ getIncData <- function(rtdat, bdat, Args, func=identity) {
 
 #' @title AggFunc
 #' 
-#' @description  A function factory for creating specific AggByFuncs, see for example
-#' \code{\link{AggByYear}}.
+#' @description  A function factory for creating specific AggByFuncs, see for example \code{\link{AggByYear}}.
 #' 
 #' @param RHS The variable name as string that you want to aggregate by.
 #' 
