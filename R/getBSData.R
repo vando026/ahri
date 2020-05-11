@@ -174,7 +174,6 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 #' @return data.frame
 #' @export 
 
-
 addHIVPrevBS <- function(inFile, dat, Args, Type="All") {
 
   prev <- tbl_df(read.csv(inFile))

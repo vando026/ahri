@@ -111,28 +111,10 @@ calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
 }
 
 
-#' @title doPoisCrude
-#' 
-#' @description  Calculates crude incidence rates by year using poisson regression.
-#' 
-#' @param dat Dataset from \code{\link{AggByYear}}.
-#' 
-#' @return data.frame
-#'
-#' @export 
-doPoisCrude <- function(dat) {
-  dat <- AggByYear(dat)
-  dat <- mutate(dat, Year = as.factor(.data$Year))
-  mod <- stats::glm(sero_event ~ - 1 + Year + offset(log(pyears)),
-    data=dat, family=poisson)
-  data.frame(fit=mod$coef, se.fit=summary(mod)$coef[, 2])
-}
-
 
 #' @title getAgeYear
 #' 
-#' @description  Calculate mean age by year. This is mostly used in the \code{predict}
-#' part of \code{\link{doPoisYear}}. 
+#' @description  Calculate mean age by year. This is mostly used in \code{MIpredict}
 #' 
 #' @param dat A dataset with an Age and Year variable. 
 #' 
@@ -140,13 +122,7 @@ doPoisCrude <- function(dat) {
 #'
 #' @export 
 #' @examples
-#' Args <- setArgs(Years=c(2008:2018), 
-#'   Age=list(All=c(15, 45)),
-#'   imputeMethod=imputeRandomPoint)
-#' rtdat <- getRTData(dat=getHIV())
-#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
 #' age_dat <- getAgeYear(dat=setHIV(Args))
-#' pois_yr <- doPoisYear(idat, age_dat)
 
 getAgeYear <- function(dat) {
   group_by(dat, Year) %>% 
@@ -154,79 +130,6 @@ getAgeYear <- function(dat) {
   mutate(Year = factor(Year), tscale=1)
 }
 
-
-#' @title doPoisYear
-#' 
-#' @description Do poisson regression and incidence rates by year.
-#' 
-#' @param dat Dataset from a function \code{\link{getAgeYear}}.
-#' @param age_dat Dataset from function \code{\link{getAgeYear}}.
-#'
-#' @return data.frame
-#'
-#' @export
-doPoisYear <- function(dat, 
-  age_dat=eval.parent(quote(age_dat))) {
-  dat <- mutate(dat, Year = as.factor(.data$Year))
-  mod <- stats::glm(sero_event ~ -1 + Year + Age + Year:Age 
-    + offset(log(tscale)), data=dat, family=poisson)
-  data.frame(predict.glm(mod, age_dat, se.fit=TRUE)[c(1,2)])
-}
-
-#' @title doPoisAge
-#' 
-#' @description Do poisson regression for incidence rates by age. 
-#' 
-#' @param dat Dataset from a function \code{\link{getIncData}}.
-#'
-#' @return data.frame
-#'
-#' @export
-doPoisAge <- function(dat) {
-  mod <- stats::glm(sero_event ~ AgeCat + offset(log(tscale)),
-    data=dat, family=poisson)
-  nage <- seq(unique(dat$AgeCat))
-  ndat <- data.frame(tscale=1,
-    AgeCat = factor(nage, levels = nage, labels = levels(dat$AgeCat)))
-  out <- data.frame(predict.glm(mod, ndat, se.fit=TRUE)[c(1, 2)])
-  rownames(out) <- ndat$AgeCat
-  out
-}
-
-
-#' @title calcPoisCI
-#' 
-#' @description  Calculates standard errors for Poisson estimates from a single imputed
-#' dataset.
-#' 
-#' @param dat Estimates from glm, see for example \code{\link{doPoisYear}}.
-#' @param by100 If TRUE (default) calculate incidence per 100 person-years.
-#' @param func A function to transform the data, default is to exponentiate, \code{exp}.
-#' @param pval If TRUE (default) calculate the p-values.
-#' @return data.frame
-#'
-#' @export 
-#'
-#' @examples
-#' Args <- setArgs(Years=c(2008:2018), 
-#'   Age=list(All=c(15, 45)),
-#'   imputeMethod=imputeRandomPoint)
-#' age_dat <- getAgeYear(dat=setHIV(Args))
-#' rtdat <- getRTData(dat=getHIV())
-#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
-#' pois_yr <- doPoisYear(idat, age_dat)
-#' calcPoisCI(pois_yr)
-
-calcPoisCI <- function(dat, func=exp, by100=TRUE, pval=FALSE) {
-  tdf <- 1.96 
-  lci <- func(dat$fit - (tdf * dat$se.fit))
-  uci <- func(dat$fit + (tdf * dat$se.fit))
-  mn <- func(dat$fit)
-  out <- data.frame(rate=mn, lci, uci)
-  if (pval)  out$pvalue <- round(2*stats::pnorm(-abs(dat$fit/dat$se.fit)), 4)
-  if (by100) out[] <- lapply(out[], `*`, 100)
-  out
-}
 
 
 #' @title MIdata
@@ -279,8 +182,12 @@ MIdata <- function(rtdat, Args, f=identity) {
 #' MIpredict(object=mods, newdata=getAgeYear(setHIV(Args)))
 
 MIpredict <- function(object,  newdata)  {
-  res <- mitools::MIcombine(object)
-  object <- object[[1]]
+  if ("list" %in% class(object)) {
+    res <- mitools::MIcombine(object)
+    object <- object[[1]]
+  } else {
+    res = object
+  }
   Terms <- stats::delete.response(stats::terms(object))
   m <- stats::model.frame(Terms, newdata, xlev = object$xlevels)
   mat <- stats::model.matrix(Terms, m, contrasts.arg = object$contrasts)

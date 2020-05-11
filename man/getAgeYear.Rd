@@ -13,15 +13,8 @@ getAgeYear(dat)
 data.frame
 }
 \description{
-Calculate mean age by year. This is mostly used in the \code{predict}
-part of \code{\link{doPoisYear}}.
+Calculate mean age by year. This is mostly used in \code{MIpredict}
 }
 \examples{
-Args <- setArgs(Years=c(2008:2018), 
-  Age=list(All=c(15, 45)),
-  imputeMethod=imputeRandomPoint)
-rtdat <- getRTData(dat=getHIV())
-idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
 age_dat <- getAgeYear(dat=setHIV(Args))
-pois_yr <- doPoisYear(idat, age_dat)
 }
