@@ -213,7 +213,7 @@ uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
-    xpath <- system.file("intcens", "unireg.exe", package = "ahri")
+    xpath <- system.file("unireg", "unireg.exe", package = "ahri")
     if (Sys.getenv("OS") == "Windows_NT") {
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),

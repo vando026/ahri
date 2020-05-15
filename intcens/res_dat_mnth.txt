@@ -1,5 +1,5 @@
 Command issued:
-C:\Users\ALAIN~1.VAN\Seafile\Programs\R\ahri\inst\intcens\unireg.exe --in C:\Users\alain.vandormael/Seafile/Programs/R/ahri_home/intcens/input_data_mnth.txt --out C:\Users\alain.vandormael/Seafile/Programs/R/ahri_home/intcens/res_dat_mnth.txt --model "(Time, sero_event) = Age0 + Age2 + EverCircum" --subject_id IIntID --sep   --max_itr 5000 --r 1 --inf_char Inf --convergence_threshold 0.01
+C:\Users\ALAIN~1.VAN\Seafile\Programs\R\ahri\inst\unireg\unireg.exe --in C:\Users\alain.vandormael/Seafile/Programs/R/ahri/intcens/input_data_mnth.txt --out C:\Users\alain.vandormael/Seafile/Programs/R/ahri/intcens/res_dat_mnth.txt --model "(Time, sero_event) = Age0 + Age2 + EverCircum" --subject_id IIntID --sep   --max_itr 5000 --r 1 --inf_char Inf --convergence_threshold 0.01
 
 Num Subjects: 1022
 Num distinct time points: 160
