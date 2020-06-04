@@ -134,7 +134,6 @@ sumHIVMiss <- function(dat) {
 #' 
 #' @return data.frame
 #'
-#' @keywords internal
 #' @export 
 getHIVCumTest <- function(dat, ntest=1) {
   dat <- filter(dat, Contact == "Contact")
@@ -196,7 +195,6 @@ getHIVIncEligible <- function(Args, ids=NULL) {
 #' 
 #' @return data.frame
 #'
-#' @keywords internal
 #' @export 
 
 mkHIVTestTable <- function(Args, edat=NULL, IDS=NULL) {
