@@ -176,7 +176,7 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 
 addHIVPrevBS <- function(inFile, dat, Args, Type="All") {
 
-  prev <- tbl_df(read.csv(inFile))
+  prev <- tibble::as_tibble(read.csv(inFile))
   prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
 
   # Reshape to long

@@ -26,7 +26,7 @@ splitData2 <- function(
     function(x) as.Date(x, origin="1970-01-01"))
   edat <- mutate(edat, 
     Year=as.integer(format(obs_start, "%Y")))
-  tbl_df(edat)
+  tibble::as_tibble(edat)
 }
 
 
@@ -71,7 +71,7 @@ splitAtSeroDate <- function(
   edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
   if(any(edat$Time>366)) stop("Days > 366")
   edat <- rename(edat, sero_event = .data$event)
-  tbl_df(edat)
+  tibble::as_tibble(edat)
 }
 
 #' @title splitAtEarlyPos
@@ -99,6 +99,6 @@ splitAtEarlyPos <- function(
   edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
   if(any(edat$Time > 366)) stop("Days > 366")
   edat <- rename(edat, sero_event = .data$event)
-  tbl_df(edat)
+  tibble::as_tibble(edat)
 }
 

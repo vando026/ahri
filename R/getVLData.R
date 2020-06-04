@@ -12,7 +12,7 @@
 
 getVLData <- function(Args) {
 
-  cvl_all <- tbl_df(read.dta(Args$inFiles$pvlfile))
+  cvl_all <- tibble::as_tibble(read.dta(Args$inFiles$pvlfile))
   ind <- read_csv(Args$inFiles$indfile, 
     col_types=cols_only(
     IIntID="i",
@@ -164,7 +164,7 @@ setDiffData <- function(hdat, cdat, SampN, Args) {
       }
     }
   }
-  return(tbl_df(hiv_neg1))
+  return(tibble::as_tibble(hiv_neg1))
  } 
 
 mkDat <- function(dat) {
