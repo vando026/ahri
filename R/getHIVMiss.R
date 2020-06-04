@@ -190,6 +190,8 @@ getHIVIncEligible <- function(Args, ids=NULL) {
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}. In this case, Args$Year must have
 #' one additional year to compute HIV cohort person time. 
+#' @param edat A dataset from \code{\link{getHIVEligible}}. If NULL, it will be created for
+#' you.
 #' @param IDS Needed to subset dataset, default is NULL. 
 #' 
 #' @return data.frame
@@ -197,11 +199,11 @@ getHIVIncEligible <- function(Args, ids=NULL) {
 #' @keywords internal
 #' @export 
 
-mkHIVTestTable <- function(Args, IDS=NULL) {
+mkHIVTestTable <- function(Args, edat=NULL, IDS=NULL) {
   fmt <- function(x) trimws(formatC(x, big.mark=",", format="d"))
   rnd <- function(x) trimws(format(x, digits=1, nsmall=1))
   # Get testing date
-  edat <- getHIVEligible()
+  if (is.null(edat)) edat <- getHIVEligible()
   sdat <- sumHIVMiss(edat)
   sdat <- filter(sdat, Year %in% Args$Years)
   Eligible = paste0(fmt(sdat$EligibleN), "/", fmt(sdat$EnumeratedN))
