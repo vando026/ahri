@@ -146,15 +146,19 @@ getHIVCumTest <- function(dat, ntest=1) {
 
 #' @title getHIVIncEligible
 #' 
-#' @description  Get number of participants eligible for HIV incidence cohort.
+#' @description  Get number of participants eligible for HIV incidence cohort. It is
+#' recommended that you use all years in the HIV surveillance system (i.e. from 2003
+#' onward).
 #' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param ids keep only IDs.
 #' 
 #' @return data.frame
 #'
-#' @keywords internal
 #' @export 
+#' @examples
+#' Args <- setArgs(Years=c(2003:2018))
+#' getHIVIncEligible(Args)
 getHIVIncEligible <- function(Args, ids=NULL) {
   getN <- function(dat) {
     function(i) {
@@ -163,20 +167,18 @@ getHIVIncEligible <- function(Args, ids=NULL) {
       data.frame(Year=i, N=yy)
     }
   }
-  Yrs <- c(2003:2018)
-  Args$Years <- Yrs
   hiv <- getHIV()
   ehiv <- filter(hiv, HIVResult==0)
   edat <- setData(ehiv, Args, time2="VisitDate")
   getElig <- getN(edat)
-  elig <- do.call(rbind, lapply(Yrs, getElig)) %>% rename(EligN=N)
+  elig <- do.call(rbind, lapply(Args$Years, getElig)) %>% rename(EligN=N)
   rtdat <- getRTData(hiv)
   sdat <- splitAtEarlyPos(rtdat)
   sdat <- setData(sdat, Args, time2="obs_end", birthdate=NULL) 
   if (!is.null(ids))
     sdat <- sdat[sdat$IIntID %in% ids, ]
   getRT <- getN(sdat)
-  cohort <- do.call(rbind, lapply(c(Yrs), getRT))
+  cohort <- do.call(rbind, lapply(c(Args$Years), getRT))
   out <- right_join(elig, cohort)
   out <- mutate(out, Perc=round((N/EligN)*100, 2))
   out

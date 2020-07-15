@@ -7,9 +7,6 @@ accept a list of arguments to standardize the analyses, subset and set
 the data, create or get variables, and calculate trends in HIV incidence
 and other epidemiological measures.
 
-The R code is at the development branch:
-<https://github.com/vando026/ahri_dev>.
-
 The wiki help pages serve as a short introduction to the `ahri` library.
 These can be found in the links below. The help files are organised as
 follows:

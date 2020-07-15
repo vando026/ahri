@@ -15,6 +15,11 @@ getHIVIncEligible(Args, ids = NULL)
 data.frame
 }
 \description{
-Get number of participants eligible for HIV incidence cohort.
+Get number of participants eligible for HIV incidence cohort. It is
+recommended that you use all years in the HIV surveillance system (i.e. from 2003
+onward).
 }
-\keyword{internal}
+\examples{
+Args <- setArgs(Years=c(2003:2018))
+getHIVIncEligible(Args)
+}
