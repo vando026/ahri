@@ -28,7 +28,7 @@ follows:
     performing these operations. (Documentation ongoing.)
     <https://github.com/vando026/ahri/wiki/4-Make-and-get-variables>
 
-  - HIV function to make the HIV incidence datasets, impute the
+  - Functions to make the HIV incidence datasets, impute the
     seroconversion dates, perform multiple imputation, and calculate
     annual HIV incidence.
     <https://github.com/vando026/ahri/wiki/5A-HIV-functions> and
