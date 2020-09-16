@@ -37,6 +37,8 @@ getARTDates <- function(dat=NULL) {
 #' getEverART()
 
 getEverART <- function(dat=getEpisodes()) {
+  early_pos  <- getDatesMax(dat=getHIV(), "HIVPositive", "EarliestHIVPos")
+  dat <- left_join(dat, early_pos, by = "IIntID")
   dat <- filter(dat, !is.na(.data$EarliestHIVPos))
   dat <- select(dat, .data$IIntID,.data$Year, .data$Age, .data$Female,
     DateOfInitiation=.data$EarliestARTInitDate, .data$EarliestHIVPos, .data$OnART)
