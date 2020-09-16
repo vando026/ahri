@@ -37,13 +37,13 @@
 setFiles <- function(
   folder="",
   hivfile="RD05-99 ACDIS HIV All.dta",
-  epifile="SurveillanceEpisodesExtended.dta",
+  epifile="SurveillanceEpisodes.dta",
   wghfile="RD03-99 ACDIS WGH ALL.dta",
   mghfile="RD04-99 ACDIS MGH ALL.dta",
   bsifile="RD01-03 ACDIS BoundedStructures.dta",
 
   hiv_rda="ACDIS_HIV_All.Rda",
-  epi_rda="SurveillanceEpisodesExtended.Rda",
+  epi_rda="SurveillanceEpisodes.Rda",
   wgh_rda="ACDIS_WGH_ALL.Rda",
   mgh_rda="ACDIS_MGH_ALL.Rda",
   bsc_rda="ACDIS_BoundedStructures.Rda") {
