@@ -32,16 +32,27 @@ readEpisodes <- function(
     outFile=getFiles()$epi_rda
   }
   dat <- haven::read_dta(inFile) 
+  # Variable names changed from releases
+  if (grepl("2019", attributes(dat)$label)) {
+    Year = "Year"
+    ARTStart = "EarliestARTInitDate"
+  } else if (grepl("2020", attributes(dat)$label)) {
+    Year = "CalendarYear"
+    ARTStart = "ARTStartedDate"
+  }
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
-    Female=Sex, Age,  DoB, DoD,
-    Year,ExpDays=Days,
+    Female=Sex, Age, DoB, DoD,
+    any_of(Year), ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
     Resident, AssetIndex=ModerntAssetIdx,
-    EarliestHIVPos, EarliestARTInitDate, OnART,
-    matches(addVars))
+    OnART, any_of(ARTStart), matches(addVars))
+  if (grepl("2020", attributes(dat)$label))
+    dat <- rename(dat,
+      Year = CalendarYear, 
+      EarliestARTInitDate = ARTStartedDate)
   dat <- filter(dat, Female %in% c(1,2))
   dat <- mutate(dat,
     IIntID=as.integer(IIntID),
