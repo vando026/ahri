@@ -46,9 +46,7 @@ There are other sources of help:
 
   - Please consult the issues page on this Github site for more
     information and for answers to questions someone before you may have
-    already asked. There are also through discussions with users about
-    the approach to coding the `ahri` library:
-    <https://github.com/vando026/ahri/issues?q=is%3Aissue+is%3Aclosed>
+    already asked.
 
   - If you have questions, post them as an issue so that I or others can
     answer.

@@ -4,11 +4,11 @@
 \alias{test_ahri_dta}
 \title{test_ahri_dta}
 \usage{
-test_ahri_dta(year = "2019", report = "progress")
+test_ahri_dta(year = "2020", report = "progress")
 }
 \arguments{
 \item{year}{The release year that you want to perform the tests on. Currently, tests
-include 2019 release year only.}
+include 2019 and 2020 release years only.}
 
 \item{report}{How to display results, can be "minimal", "summary", "progress".}
 }

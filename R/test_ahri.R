@@ -1,5 +1,5 @@
 test_func <- function(testfile) {
-  function(year="2019", report='progress') {
+  function(year="2020", report='progress') {
     check_getFiles()
     message(sprintf('Running tests on %s data release...', year))
     testthat::test_package('ahri', filter=paste0(testfile, year), reporter=report)
@@ -13,7 +13,7 @@ test_func <- function(testfile) {
 #' expected values defined in the test. 
 #' 
 #' @param year The release year that you want to perform the tests on. Currently, tests
-#' include 2019 release year only.
+#' include 2019 and 2020 release years only.
 #' @param report How to display results, can be "minimal", "summary", "progress". 
 #' 
 #' @return NULL
@@ -29,7 +29,7 @@ test_ahri_dta <- test_func('ahri_dta_')
 #' several datasets and check if they match expected values defined in the test. 
 #' 
 #' @param year The release year that you want to perform the tests on. Currently, tests
-#' include 2019 release year only.  
+#' include 2019 and 2020 release years only.  
 #' @param report How to display results, can be
 #' "minimal", "summary", "progress". 
 #' 
@@ -46,7 +46,7 @@ test_ahri_set <- test_func('ahri_set_')
 #' several datasets and check if they match expected values defined in the test. 
 #' 
 #' @param year The release year that you want to perform the tests on. Currently, tests
-#' include 2019 release year only.  
+#' include 2019 and 2020 release years only.  
 #' @param report How to display results, can be
 #' "minimal", "summary", "progress". 
 #' 
@@ -63,7 +63,7 @@ test_ahri_hiv <- test_func('ahri_hiv_')
 #' several datasets and check if they match expected values defined in the test. 
 #' 
 #' @param year The release year that you want to perform the tests on. Currently, tests
-#' include 2019 release year only.  
+#' include 2019 and 2020 release years only.  
 #' @param report How to display results, can be
 #' "minimal", "summary", "progress". 
 #' 
