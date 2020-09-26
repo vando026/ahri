@@ -4,12 +4,12 @@
 \alias{splitData2}
 \title{splitData2}
 \usage{
-splitData2(dat, years = c(2003:2018))
+splitData2(dat, years = NULL)
 }
 \arguments{
 \item{dat}{Dataset must have variables called obs_start, obs_end and event.}
 
-\item{years}{The years by which to split the data.}
+\item{years}{The years by which to split the data. Default is c(2003:2020).}
 }
 \value{
 data.frame

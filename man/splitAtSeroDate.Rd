@@ -4,7 +4,7 @@
 \alias{splitAtSeroDate}
 \title{splitAtSeroDate}
 \usage{
-splitAtSeroDate(dat = NULL, splitYears = c(2003:2019))
+splitAtSeroDate(dat = NULL, splitYears = NULL)
 }
 \arguments{
 \item{dat}{a dataset}
@@ -18,7 +18,7 @@ data.frame
 Split data at the imputed seroconversion date.
 }
 \examples{
-Args <- setArgs(Years=c(2008:2018))
+Args <- setArgs(Years=c(2008:2020))
 hiv <- setHIV(Args)
 rtdat <- getRTData(hiv)
 sdat <- imputeMidPoint(rtdat)

@@ -4,7 +4,7 @@
 \alias{splitAtEarlyPos}
 \title{splitAtEarlyPos}
 \usage{
-splitAtEarlyPos(dat = NULL, splitYears = c(2003:2018))
+splitAtEarlyPos(dat = NULL, splitYears = NULL)
 }
 \arguments{
 \item{dat}{a dataset}
@@ -18,7 +18,7 @@ data.frame
 Split data at the earliest HIV-positive date.
 }
 \examples{
-Args <- setArgs(Years=c(2008:2018))
+Args <- setArgs(Years=c(2008:2019))
 hiv <- setHIV(Args)
 rtdat <- getRTData(hiv)
 splitAtEarlyPos(rtdat, splitYears=Args$Years)

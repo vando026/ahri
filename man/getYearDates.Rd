@@ -7,11 +7,11 @@
 getYearDates(Years)
 }
 \arguments{
-\item{Years}{The years by which to split the data.}
+\item{Years}{The years by which to split the data, for example, `c(2005:2019)`.}
 }
 \value{
 vector
 }
 \description{
-gets numeric dates for 31DecYYYY.
+gets numeric dates for 01JanXXXX.
 }
