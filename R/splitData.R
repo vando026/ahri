@@ -3,7 +3,7 @@
 #' @description  Function for splitting data into episodes. 
 #' 
 #' @param  dat Dataset must have variables called obs_start, obs_end and event.
-#' @param  years The years by which to split the data.
+#' @param  years The years by which to split the data. Default is c(2003:2020).
 #' 
 #' @return data.frame
 #D 
@@ -12,7 +12,9 @@
 #' @export 
 
 splitData2 <- function(
-  dat, years=c(2003:2018)) {
+  dat, years=NULL) {
+  if (is.null(years))
+    years <- c(2003:2020)
   edat <- survSplit(Surv(
     time=as.integer(obs_start), 
     time2=as.integer(obs_end), 
@@ -32,9 +34,9 @@ splitData2 <- function(
 
 #' @title getYearDates
 #' 
-#' @description  gets numeric dates for 31DecYYYY.
+#' @description  gets numeric dates for 01JanXXXX.
 #' 
-#' @param  Years The years by which to split the data.
+#' @param  Years The years by which to split the data, for example, `c(2005:2019)`.
 #' 
 #' @return vector
 #'
@@ -57,19 +59,19 @@ getYearDates <- function(Years) {
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs(Years=c(2008:2018))
+#' Args <- setArgs(Years=c(2008:2020))
 #' hiv <- setHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' sdat <- imputeMidPoint(rtdat)
 #' splitAtSeroDate(sdat, splitYears=Args$Years)
 
 splitAtSeroDate <- function(
-  dat=NULL,  splitYears=c(2003:2019)) {
+  dat=NULL,  splitYears=NULL) {
   dat <- rename(dat, event = .data$sero_event)
   dat <- mutate(dat, obs_end=ifelse(.data$event==1, .data$sero_date, .data$late_neg))
   edat <- splitData2(dat, years=splitYears)
   edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
-  if(any(edat$Time>366)) stop("Days > 366")
+  if(any(edat$Time>366)) stop("Days in Year > 366")
   edat <- rename(edat, sero_event = .data$event)
   tibble::as_tibble(edat)
 }
@@ -86,18 +88,18 @@ splitAtSeroDate <- function(
 #' @export 
 #'
 #' @examples
-#' Args <- setArgs(Years=c(2008:2018))
+#' Args <- setArgs(Years=c(2008:2019))
 #' hiv <- setHIV(Args)
 #' rtdat <- getRTData(hiv)
 #' splitAtEarlyPos(rtdat, splitYears=Args$Years)
 
 splitAtEarlyPos <- function(
-  dat=NULL,  splitYears=c(2003:2018)) {
+  dat=NULL,  splitYears=NULL) {
   dat <- mutate(dat, obs_end=ifelse(.data$sero_event==1, .data$early_pos, .data$late_neg))
   dat <- rename(dat, event = .data$sero_event)
   edat <- splitData2(dat, years=splitYears)
   edat <- mutate(edat, Time = as.numeric(.data$obs_end - .data$obs_start))
-  if(any(edat$Time > 366)) stop("Days > 366")
+  if(any(edat$Time > 366)) stop("Days in Year > 366")
   edat <- rename(edat, sero_event = .data$event)
   tibble::as_tibble(edat)
 }
