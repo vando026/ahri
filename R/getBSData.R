@@ -63,7 +63,7 @@ getBSMax <- function(
   inFile=getFiles()$epi_rda,
   minDays=0) {
 
-  dat <- readRDS(inFile)
+  dat <- getEpisodes()
   dat <- filter(dat, .data$Resident==1)
 
   # Identify max expdays per episode

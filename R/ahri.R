@@ -10,10 +10,8 @@
 #'  - \code{RD03-99 ACDIS WGH ALL.dta}
 #'  - \code{RD04-99 ACDIS MGH ALL.dta}
 #'  - \code{RD01-03 ACDIS BoundedStructures.dta}
-#' 
 #' @section setFile function:
 #' You can set the filepaths to the default .dta datasets using the \code{\link{setFiles}} function.  
-#' 
 #' @seealso https://github.com/vando026/ahri
 #' @docType package
 #' @name ahri

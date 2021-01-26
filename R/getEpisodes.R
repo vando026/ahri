@@ -16,7 +16,7 @@
 #' @examples
 #' \donttest{
 #' readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
-#' eadEpisodes(dropTasP=FALSE, addVars="Employ")
+#' readEpisodes(dropTasP=FALSE, addVars="Employ")
 #' }
 readEpisodes <- function(
   inFile=NULL, outFile=NULL, 
