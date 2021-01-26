@@ -32,6 +32,6 @@ Reads in the Surveillance Episodes dataset
 \examples{
 \donttest{
 readEpisodes(addVars="CurrentlyEmployed|UnEmployment")
-eadEpisodes(dropTasP=FALSE, addVars="Employ")
+readEpisodes(dropTasP=FALSE, addVars="Employ")
 }
 }
