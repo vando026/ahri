@@ -33,26 +33,23 @@ readEpisodes <- function(
   }
   dat <- haven::read_dta(inFile) 
   # Variable names changed from releases
-  if (grepl("2019", attributes(dat)$label)) {
-    Year = "Year"
-    ARTStart = "EarliestARTInitDate"
-  } else if (grepl("2020", attributes(dat)$label)) {
-    Year = "CalendarYear"
-    ARTStart = "ARTStartedDate"
+  if ("CalendarYear" %in% names(dat)) {
+    message("ahri: Renaming CalendarYear to Year")
+    names(dat)[names(dat) == "CalendarYear"] <- "Year"
+  } 
+  if ("ARTStartedDate" %in% names(dat)) { 
+    message("ahri: Renaming ARTStartedDate to EarliestARTInitDate")
+    names(dat)[names(dat)=="ARTStartedDate"] <- "EarliestARTInitDate"
   }
   dat <- select(dat,
     IIntID=IndividualId, BSIntID=LocationId, 
     Female=Sex, Age, DoB, DoD,
-    any_of(Year), ExpDays=Days,
+    Year, ExpDays=Days,
     ObservationStart=StartDate,
     ObservationEnd=EndDate,
     InMigration, OutMigration,
     Resident, AssetIndex=ModerntAssetIdx,
-    OnART, any_of(ARTStart), matches(addVars))
-  if (grepl("2020", attributes(dat)$label))
-    dat <- rename(dat,
-      Year = CalendarYear, 
-      EarliestARTInitDate = ARTStartedDate)
+    OnART, EarliestARTInitDate, matches(addVars))
   dat <- filter(dat, Female %in% c(1,2))
   dat <- mutate(dat,
     IIntID=as.integer(IIntID),
@@ -140,4 +137,3 @@ makePropRes <- function(Args) {
   # adat <- filter(adat, .adata$PropRes>=Prop)
   adat
 }
-
