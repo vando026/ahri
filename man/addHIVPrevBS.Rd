@@ -7,17 +7,17 @@
 addHIVPrevBS(inFile, dat, Args, Type = "All")
 }
 \arguments{
-\item{inFile}{The filepath to the dataset with HIV prevalence.}
+\item{inFile}{The filepath to the dataset with HIV prevalence variables.}
 
 \item{dat}{A dataset to add HIV prevalence variables to.}
 
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
 
-\item{Type}{Males, Females or All for ART coverage.}
+\item{Type}{"Males", "Females", or "All". Add only the Males, Females or All.}
 }
 \value{
 data.frame
 }
 \description{
-Calculates the HIV prevalence of area surrounding BS
+add the geospatical HIV prevalence surrounding BS
 }

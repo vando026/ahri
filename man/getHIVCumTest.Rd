@@ -17,3 +17,4 @@ data.frame
 \description{
 Get summary of number of times participants test.
 }
+\keyword{internal}

@@ -35,10 +35,8 @@ readHIVSurvYear <- function(inFile, addVars=" ") {
 #'
 #' @keywords internal
 #' @export 
-setHIVMiss <- function(
-  inFile=getFiles()$elifile,
-  outFile=getFiles()$eli_rda,
-  dropTasP=TRUE) {
+setHIVMiss <- function(inFile="", outFile="", dropTasP=TRUE) {
+  #
   files <- list.files(inFile, pattern=".dta$")
   # diff vars for 2005--2009
   set1 <- files[unlist(lapply(files,
@@ -50,7 +48,7 @@ setHIVMiss <- function(
   dat1$FormRefused <- dat1$HIVRefused
   # From 2010-2017, HIVRefused changes, depends on FormRefused
   set2 <- files[unlist(lapply(files,
-    function(x) grepl("201[0-8]", x)))]
+    function(x) grepl("201[0-9]", x)))]
   dat2 <- lapply(file.path(inFile, set2), 
     function(x) readHIVSurvYear(x, addVars="^FormRefusedBy$|^FormRefused$"))
   dat2 <- do.call(rbind, dat2)
@@ -81,6 +79,7 @@ setHIVMiss <- function(
 #' 
 #' @return data.frame
 #' @import dplyr
+#' @keywords internal
 #' @export 
 getHIVEligible <- function(dat=NULL) {
   if (is.null(dat)) dat <- readRDS(getFiles()$eli_rda)
@@ -134,6 +133,7 @@ sumHIVMiss <- function(dat) {
 #' 
 #' @return data.frame
 #'
+#' @keywords internal
 #' @export 
 getHIVCumTest <- function(dat, ntest=1) {
   dat <- filter(dat, Contact == "Contact")
