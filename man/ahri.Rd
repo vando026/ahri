@@ -9,10 +9,9 @@ The ahri package provides functions for analyzing the AHRI datasets.
 }
 \section{Default .dta datasets}{
 
-The ahri package uses the following deafult datasets, which you must request from the AHRI data
-centre.
+The ahri package uses the following deafult datasets as of 2020, which you must request from the AHRI data centre.
  - \code{RD05-99 ACDIS HIV All.dta}
- - \code{SurveillanceEpisodesExtended.dta}
+ - \code{SurveillanceEpisodes.dta}
  - \code{RD03-99 ACDIS WGH ALL.dta}
  - \code{RD04-99 ACDIS MGH ALL.dta}
  - \code{RD01-03 ACDIS BoundedStructures.dta}
