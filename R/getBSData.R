@@ -17,7 +17,7 @@ getBSData <- function(inFile=NULL) {
   }
   dat <- haven::read_dta(inFile) %>% 
     rename(BSIntID=.data$BSIntId)
-  dat <- mutate(dat, BSIntID = as.integer(.data$BSIntID))
+  dat <- dplyr::mutate(dat, BSIntID = as.integer(.data$BSIntID))
   dat$IsUrbanOrRural <- as.character(haven::as_factor(dat$IsUrbanOrRural))
   dat$LocalArea <- as.character(haven::as_factor(dat$LocalArea))
   dat$PIPSA <- as.character(haven::as_factor(dat$PIPSA))
@@ -48,7 +48,7 @@ dropTasPData <- function(dat) {
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
-#' @param inFile file path to Episodes dataset (\code{getFiles()$epi_rda}).
+#' @param dat The default is to call \code{\link{getEpisodes}}.
 #' @param minDays Value of 1:366 min days spent in DSA to qualify as being a resident in
 #' that year. 
 #'
@@ -59,26 +59,23 @@ dropTasPData <- function(dat) {
 #' @examples 
 #' getBSMax()
 
-getBSMax <- function(
-  inFile=getFiles()$epi_rda,
-  minDays=0) {
+getBSMax <- function(dat = getEpisodes(), minDays=0) {
 
-  dat <- getEpisodes()
-  dat <- filter(dat, .data$Resident==1)
+  dat <- dplyr::filter(dat, .data$Resident==1)
 
   # Identify max expdays per episode
-  dat <- group_by(dat, .data$IIntID, .data$Year) %>% mutate(
+  dat <- dplyr::group_by(dat, .data$IIntID, .data$Year) %>% dplyr::mutate(
     MaxDays = max(.data$ExpDays, na.rm=TRUE))
-  dat <- ungroup(dat)
+  dat <- dplyr::ungroup(dat)
   
-  dat <- filter(dat, .data$MaxDays==.data$ExpDays)
+  dat <- dplyr::filter(dat, .data$MaxDays==.data$ExpDays)
 
-  dat <- group_by(dat, .data$IIntID, .data$Year) %>% 
-    filter(row_number()==1)
-  dat <- ungroup(dat)
+  dat <- dplyr::group_by(dat, .data$IIntID, .data$Year) %>% 
+    dplyr::filter(row_number()==1)
+  dat <- dplyr::ungroup(dat)
 
-  maxBS <- filter(dat, .data$MaxDays >= minDays) %>% 
-    select(.data$IIntID, .data$Year, .data$BSIntID )
+  maxBS <- dplyr::filter(dat, .data$MaxDays >= minDays) %>% 
+    dplyr::select(.data$IIntID, .data$Year, .data$BSIntID )
 
   maxBS
 }

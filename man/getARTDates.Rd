@@ -4,7 +4,7 @@
 \alias{getARTDates}
 \title{getARTDates}
 \usage{
-getARTDates(dat = NULL)
+getARTDates(dat = getEpisodes())
 }
 \arguments{
 \item{dat}{A dataset which has a variable called \code{EarliestARTInitDate}. If

@@ -11,7 +11,7 @@
 readHIVSurvYear <- function(inFile, addVars=" ") {
   dat <- haven::read_dta(inFile) %>% select(IIntID=IIntId, BSIntID=BSIntId, VisitDate, 
     Comment=PrematureCompletionReason, HIVResult, HIVRefused, matches(addVars))
-  dat <- mutate(dat, 
+  dat <- dplyr::mutate(dat, 
     Comment = as.character(haven::as_factor(Comment)),
     HIVResult = as.character(haven::as_factor(HIVResult)),
     HIVRefused = as.character(haven::as_factor(HIVRefused)),

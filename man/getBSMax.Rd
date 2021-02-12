@@ -4,10 +4,10 @@
 \alias{getBSMax}
 \title{getBSMax}
 \usage{
-getBSMax(inFile = getFiles()$epi_rda, minDays = 0)
+getBSMax(dat = getEpisodes(), minDays = 0)
 }
 \arguments{
-\item{inFile}{file path to Episodes dataset (\code{getFiles()$epi_rda}).}
+\item{dat}{The default is to call \code{\link{getEpisodes}}.}
 
 \item{minDays}{Value of 1:366 min days spent in DSA to qualify as being a resident in
 that year.}

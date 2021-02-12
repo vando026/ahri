@@ -72,9 +72,9 @@ getWGH <- function(inFile=NULL) {
 #' @examples
 #' gdat <- getCircumcisionData()
 getCircumcisionData <- function(dat=getMGH()) {
-  dat <- filter(dat, IsCircumcised %in% c(1, 2))
-  dat <- mutate(dat, IsCircumcised=as.numeric(.data$IsCircumcised==1))
-  dat <- filter(dat, .data$IsCircumcised==1)
+  dat <- dplyr::filter(dat, .data$IsCircumcised %in% c(1, 2))
+  dat <- dplyr::mutate(dat, IsCircumcised=as.numeric(.data$IsCircumcised==1))
+  dat <- dplyr::filter(dat, .data$IsCircumcised==1)
   dat <- group_by(dat, .data$IIntID) %>% 
     summarize(YearCircum = min(.data$Year)) %>% 
       mutate(EverCircum=1)

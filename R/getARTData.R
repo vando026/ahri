@@ -12,12 +12,11 @@
 #' @export
 #' @examples
 #' getARTDates()
-getARTDates <- function(dat=NULL) {
-  if (is.null(dat)) dat <- getEpisodes()
-  dat <- filter(dat, !is.na(.data$EarliestARTInitDate))
-  dat <- distinct(dat, .data$IIntID, .data$EarliestARTInitDate, .keep_all=TRUE) %>% 
-    select(IIntID, DateOfInitiation=.data$EarliestARTInitDate)
-  dat <- mutate(dat,
+getARTDates <- function(dat=getEpisodes()) {
+  dat <- dplyr::filter(dat, !is.na(.data$EarliestARTInitDate))
+  dat <- dplyr::distinct(dat, .data$IIntID, .data$EarliestARTInitDate, .keep_all=TRUE) %>% 
+    dplyr::select(IIntID, DateOfInitiation=.data$EarliestARTInitDate)
+  dat <- dplyr::mutate(dat,
     YearOfInitiation = as.integer(format(.data$DateOfInitiation, "%Y")),
     MonthART = as.integer(format(.data$DateOfInitiation, "%m")))
   dat
@@ -81,10 +80,10 @@ readARTCov <- function(Female=1) {
   art <- suppressMessages(readr::read_csv(
     unlist(getFiles()[sex]), na=c("", "-")))
   art <- tidyr::gather(art, Year, ARTCov, -BSIntID)
-  art <- filter(art, !is.na(ARTCov))
+  art <- dplyr::filter(art, !is.na(.data$ARTCov))
   art <- suppressWarnings(mutate(art, 
-    Year=as.integer(gsub("[MF]_ART_|All_ART_", "", Year)),
-    ARTCov = as.numeric(ARTCov)*100))
+    Year=as.integer(gsub("[MF]_ART_|All_ART_", "", .data$Year)),
+    ARTCov = as.numeric(.data$ARTCov)*100))
   art
 }
 

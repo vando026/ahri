@@ -23,39 +23,39 @@ getMortalityData <- function(Args,
   if (startVar=="ObservationStart") {
     dat <- edat
   } else {
-    dat <- mutate(hiv, EarliestTest = pmin(HIVNegative, HIVPositive, na.rm=TRUE))
+    dat <- dplyr::mutate(hiv, EarliestTest = pmin(HIVNegative, HIVPositive, na.rm=TRUE))
   }
-  dat <- select(dat, IIntID, obs_start = matches(startVar)) %>%
-    filter(is.finite(obs_start))
+  dat <- dplyr::select(dat, IIntID, obs_start = matches(startVar)) %>%
+    dplyr::filter(is.finite(obs_start))
   startdat <- getDatesMin(dat, "obs_start", "obs_start")
   #
   # Get all death dates
-  dodat  <- select(idat, IIntID, DoD) %>% 
-    filter(is.finite(DoD))
+  dodat  <- dplyr::select(idat, IIntID, DoD) %>% 
+    dplyr::filter(is.finite(DoD))
   # Get last observation date
   enddat <- getDatesMax(edat, "ObservationEnd", "end_date")
   # Make obs_end as death or last obs date
-  enddat <- left_join(enddat, dodat, by="IIntID")
-  enddat <- mutate(enddat,
+  enddat <- dplyr::left_join(enddat, dodat, by="IIntID")
+  enddat <- dplyr::mutate(enddat,
     obs_end = ifelse(is.finite(DoD), DoD, end_date),
     event = as.numeric(is.finite(DoD)))
   #
   # merge obs_start and obs_end dates 
-  sdat <- left_join(startdat, enddat, by="IIntID") %>% 
-    select(IIntID, obs_start, obs_end, event)
-  sdat <- filter(sdat, obs_end>obs_start)
+  sdat <- dplyr::left_join(startdat, enddat, by="IIntID") %>% 
+    dplyr::select(IIntID, obs_start, obs_end, event)
+  sdat <- dplyr::filter(sdat, obs_end>obs_start)
   # Only HIV-negative mortality
   if(startVar=="ObservationStart" & dropHIVPos) {
-     HIVPos <-  group_by(hiv, IIntID) %>% 
+     HIVPos <-  dplyr::group_by(hiv, IIntID) %>% 
       summarize(HIVResult = max(HIVResult, na.rm=TRUE)) 
-     sdat <- left_join(sdat, HIVPos, by="IIntID")
-     sdat <- filter(sdat, HIVResult %in% c(NA, 0))
+     sdat <- dplyr::left_join(sdat, HIVPos, by="IIntID")
+     sdat <- dplyr::filter(sdat, HIVResult %in% c(NA, 0))
   }
   # split data
   tdat <- splitData2(sdat)
   bdat <- getBirthDate(addVars="Female") 
   tdat <- setData(tdat, Args, time2="obs_start", birthdate=bdat)
-  tdat <- mutate(tdat, Days = as.numeric(obs_end-obs_start))
+  tdat <- dplyr::mutate(tdat, Days = as.numeric(obs_end-obs_start))
   if(any(tdat$Days > 366)) stop("Days > 366")
   tdat
 } 
