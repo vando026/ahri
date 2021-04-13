@@ -247,13 +247,11 @@ MIaggregate <-  function(dat, col_names=c("sero_event", "pyears")) {
 #' 
 #' @param Args takes list from \code{\link{setArgs}}.
 #' @param sformula A list of formulas for the poisson regression models. Default is: "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"
-#' @param aggFun Function to aggregate sero events and person-time by, see
-#' \code{link{AggFunc}}. Default is \code{\link{AggByYear}}.
+#' @param aggFun Function to aggregate sero events and person-time by, see \code{link{AggFunc}}. Default is \code{\link{AggByYear}}.
 #' @param newdata Dataset of variables to predict incidence, see \code{\link{MIpredict}}.  Default is \code{getAgeYear(dat=setHIV(Args))}.
 #' @return list
 #' @export 
 #' @examples
-#' These are the default settings, calculates incidence by year
 #' Args <- setArgs(Age=list(All=c(15, 49)), Years=c(2004:2018), nSim=2)
 #' age_dat <- getAgeYear(dat=setHIV(Args))
 #' sformula = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"

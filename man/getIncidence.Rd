@@ -11,8 +11,7 @@ getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 
 \item{sformula}{A list of formulas for the poisson regression models. Default is: "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"}
 
-\item{aggFun}{Function to aggregate sero events and person-time by, see
-\code{link{AggFunc}}. Default is \code{\link{AggByYear}}.}
+\item{aggFun}{Function to aggregate sero events and person-time by, see \code{link{AggFunc}}. Default is \code{\link{AggByYear}}.}
 
 \item{newdata}{Dataset of variables to predict incidence, see \code{\link{MIpredict}}.  Default is \code{getAgeYear(dat=setHIV(Args))}.}
 }
@@ -24,7 +23,6 @@ Calculate annual HIV incidence rates using the single random-point
 approach and multiple imputation.
 }
 \examples{
-These are the default settings, calculates incidence by year
 Args <- setArgs(Age=list(All=c(15, 49)), Years=c(2004:2018), nSim=2)
 age_dat <- getAgeYear(dat=setHIV(Args))
 sformula = "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"
