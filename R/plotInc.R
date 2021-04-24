@@ -11,7 +11,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
   Title="", fname="year_plot") {
   if(!is.null(gfun)) {
-    gfun(file.path(output,
+    gfun(file.path(getwd(),
       paste0(fname, ".", deparse(substitute(gfun)))),
       units="in", width=5.0, height=5.0, pointsize=9, 
       res=200, type="cairo")

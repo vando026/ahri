@@ -9,7 +9,8 @@ readEpisodes(
   outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
-  write_rda = TRUE
+  write_rda = TRUE,
+  nrow = Inf
 )
 }
 \arguments{

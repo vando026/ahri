@@ -21,7 +21,7 @@
 readEpisodes <- function(
   inFile=NULL, outFile=NULL, 
   dropTasP=TRUE, addVars=" ",
-  write_rda=TRUE) {
+  write_rda=TRUE, nrow=Inf) {
   #
   if (is.null(inFile)) {
     check_getFiles()
@@ -31,7 +31,7 @@ readEpisodes <- function(
     check_getFiles()
     outFile=getFiles()$epi_rda
   }
-  dat <- haven::read_dta(inFile) 
+  dat <- haven::read_dta(inFile, n_max = nrow) 
   # Variable names changed from releases
   if ("CalendarYear" %in% names(dat)) {
     message("ahri: Renaming CalendarYear to Year")
