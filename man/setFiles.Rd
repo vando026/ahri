@@ -49,7 +49,7 @@ function
 \description{
 Set file paths to the default AHRI datasets, which must be placed into a
 single folder. The names of the default .dta datasets must be exactly the same as
-described below: The function also sets the names for the .Rda datasets used in other
+described below. The function also sets the names for the .Rda datasets used in other
 functions.  You should change these names only if you know what you are doing (assume
 that you don't). The \code{ahri} package will never overwrite the default. dta
 datasets. You must assign the \code{setFiles} function to a name called
@@ -62,6 +62,6 @@ getFiles <- setFiles(folder="Path/to/my/datafolder")
 # If for some reason your HIV surveillance .dta file is named differently 
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 
-# print out the file paths and names 
-setFiles() 
+# print out the file paths and names
+setFiles()
 }

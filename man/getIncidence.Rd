@@ -11,7 +11,7 @@ getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 
 \item{sformula}{A list of formulas for the poisson regression models. Default is: "sero_event ~ -1 + as.factor(Year) + Age + as.factor(Year):Age + offset(log(tscale))"}
 
-\item{aggFun}{Function to aggregate sero events and person-time by, see \code{link{AggFunc}}. Default is \code{\link{AggByYear}}.}
+\item{aggFun}{Function to aggregate sero events and person-time by, see \code{\link{AggFunc}}. Default is \code{\link{AggByYear}}.}
 
 \item{newdata}{Dataset of variables to predict incidence, see \code{\link{MIpredict}}.  Default is \code{getAgeYear(dat=setHIV(Args))}.}
 }

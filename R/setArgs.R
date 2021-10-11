@@ -26,7 +26,6 @@
 #' @param MoreArgs a list, which adds more arguments if needed.
 #'
 #' @param setFun a function used by \code{\link{setData}} by which the data can be further subset.
-#'
 #' @param addVars a function used by \code{\link{setData}} by which additional variables
 #' can be added. 
 #'

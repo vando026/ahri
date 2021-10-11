@@ -1,12 +1,8 @@
 #' @title readUniRegResults
-#' 
 #' @description  Read the results from the \code{\link{uniReg}} model into .Rdata
 #' format. 
-#' 
 #' @param File File path to \code{\link{uniReg}} output.txt.
-#'
 #' @export
-#'
 readUniRegResults <- function(File=NULL) {
 
   out <- readLines(File)
@@ -62,9 +58,7 @@ readUniRegResults <- function(File=NULL) {
 #' @param trans_back If \code{tscale != 1}, transform the infection times back into days.
 #' Default is TRUE. 
 #' @param mcores The number of cores to use for parallel processing using \code{mclapply}.
-#' 
 #' @return data.frame
-#'
 #' @export 
 #' @examples
 #' ## See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
@@ -74,13 +68,13 @@ gImpute <- function(dat, Results, nSim=1,
   mcores=1) {
 
   # G = function(x)  return(x)
-  G = function(x)  return(log(1 + x))
+  G <- function(x)  return(log(1 + x))
 
   # simulate from the multivariate normal distribution of the 
   # regression parameter estimates
   betaMeans <- Results$edat[, "Estimate"]
   betaCovariance  <- Results$cdat
-  regParamsSim = mvtnorm::rmvnorm(n=nSim,
+  regParamsSim <- mvtnorm::rmvnorm(n=nSim,
     mean = betaMeans, sigma = as.matrix(betaCovariance))
 
   # step function for the baseline hazard
