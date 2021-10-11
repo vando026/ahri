@@ -27,22 +27,18 @@ setAge <- function(dat, Args) {
 }
 
 #' @title getBirthDate
-#' 
 #' @description  Gets birth dates from \code{\link{getEpisodes}} data
-#' 
+#' @param dat default value is \code{Null}, which calls \code{\link{getEpisodes}}
 #' @param addVars String for a regular expression to select additional vars
-#' 
 #' @return data.frame
-#'
 #' @import dplyr
-#'
 #' @export 
-#'
 #' @examples
 #' getBirthDate(addVars="Female")
 
-getBirthDate <- function(addVars=" ") {
-  dat <- getEpisodes() 
+getBirthDate <- function(dat = NULL, addVars=" ") {
+  if (is.null(dat)) 
+    dat <- getEpisodes() 
   dat <- select(dat, .data$IIntID, DateOfBirth=.data$DoB, contains(addVars))
   dat <- group_by(dat, .data$IIntID) %>% slice(1)
   dat <- ungroup(dat)

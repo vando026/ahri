@@ -3,7 +3,8 @@
 ## Author: AV / Created: 06Mar2020 
 # testthat::test_file('inst/tests/testthat/test_ahri_set_2020.R')
 
-edat0 <- readEpisodes(dropTasP=TRUE, write_rda=FALSE)
+edat0 <- readEpisodes(dropTasP=TRUE, write_rda=FALSE, nstart = 0, nrow = 5000)
+edat1 <- readEpisodes(dropTasP=TRUE, write_rda=FALSE, nstart = 10000, nrow = 50000)
 hiv0 <- readHIVData(dropTasP=TRUE, write_rda=FALSE)
 
 
@@ -18,10 +19,15 @@ test_that("Check getHIV dropTasP N", {
 context("Test setEpisodes with dropTasP")
 Args = setArgs(Years=c(2000:2020), Age = list(All=c(0, 150)))
 ydat <- setEpisodes(Args, dat=edat0)
+ydat1 <- setEpisodes(Args, dat=edat1)
 test_that("Check readEpisodes dropTasP N", {
-  expect_equal(length(unique(ydat$IIntID)), 178604) 
-  expect_equal(length(unique(ydat$BSIntID)), 16856) 
-  expect_equal(length(ydat$Female[ydat$Female==0]), 2809200) 
+  expect_equal(length(unique(ydat$IIntID)), 128) 
+  expect_equal(length(unique(ydat$BSIntID)), 47) 
+  expect_equal(length(ydat$Female[ydat$Female==0]), 2631) 
+  #
+  expect_equal(length(unique(ydat1$IIntID)), 1125) 
+  expect_equal(length(unique(ydat1$BSIntID)), 343) 
+  expect_equal(length(ydat1$Female[ydat1$Female==0]), 22883) 
 })
 
 
@@ -75,18 +81,24 @@ test_that("Check setHIV N", {
 context("Test setEpisodes")
 Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15, 54)))
 ydat <- setEpisodes(Args, dat=edat0)
+ydat1 <- setEpisodes(Args, dat=edat1)
 test_that("Check setEpisodes N", {
-  expect_equal(length(unique(ydat$IIntID)), 97220)
-  expect_equal(nrow(ydat), 2635649)
+  expect_equal(length(unique(ydat$IIntID)), 81)
+  expect_equal(nrow(ydat), 2683)
+  #
+  expect_equal(length(unique(ydat1$IIntID)), 794)
+  expect_equal(nrow(ydat1), 26221)
 })
 
 context("Test new Args defaults")
 Args <- setArgs(Years=c(2000:2025), Age=list(All=c(0, 110)))
 hiv <- setHIV(Args, dat=hiv0)
 epi <- setEpisodes(Args, dat=edat0)
+epi1 <- setEpisodes(Args, dat=edat1)
 test_that("Check new Args Age", {
   expect_equal(sum(hiv$Age), 6116966) 
-  expect_equal(sum(epi$Age), 146273028) 
+  expect_equal(sum(epi$Age), 156126) 
+  expect_equal(sum(epi1$Age), 1540898) 
 })
 
 

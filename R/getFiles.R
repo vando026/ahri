@@ -16,7 +16,7 @@
 #' @param wghfile Reads the file RD03-99 ACDIS WGH ALL.dta 
 #' @param mghfile Reads the file RD04-99 ACDIS MGH ALL.dta
 #' @param bsifile Reads the file RD01-03 ACDIS BoundedStructures.dta 
-#' @param hiv_rda Writes #' the file ACDIS_HIV_All.Rda 
+#' @param hiv_rda Writes the file ACDIS_HIV_All.Rda 
 #' @param epi_rda Writes the file SurveillanceEpisodesExtended.Rda 
 #' @param wgh_rda Writes the file ACDIS_WGH_ALL.Rda
 #' @param mgh_rda Writes the file ACDIS_MGH_ALL.Rda 
@@ -31,8 +31,11 @@
 #' # If for some reason your HIV surveillance .dta file is named differently 
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 #'
-#' # print out the file paths and names
+#' # print out the default file paths and names
 #' setFiles()
+#' # print out your file paths and names
+#' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
+#' getFiles()
 setFiles <- function(
   folder="",
   hivfile="RD05-99 ACDIS HIV All.dta",

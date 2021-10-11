@@ -33,7 +33,7 @@ to the folder path.}
 
 \item{bsifile}{Reads the file RD01-03 ACDIS BoundedStructures.dta}
 
-\item{hiv_rda}{Writes #' the file ACDIS_HIV_All.Rda}
+\item{hiv_rda}{Writes the file ACDIS_HIV_All.Rda}
 
 \item{epi_rda}{Writes the file SurveillanceEpisodesExtended.Rda}
 
@@ -62,6 +62,9 @@ getFiles <- setFiles(folder="Path/to/my/datafolder")
 # If for some reason your HIV surveillance .dta file is named differently 
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 
-# print out the file paths and names
+# print out the default file paths and names
 setFiles()
+# print out your file paths and names
+getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
+getFiles()
 }

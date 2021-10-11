@@ -1,6 +1,7 @@
 #' @title readEpisodes
 #' 
-#' @description  Reads in the Surveillance Episodes dataset 
+#' @description  Reads in the Surveillance Episodes dataset. Note, this function drops
+#' participants with missing values for \code{Sex} (there are a handful of these).
 #' 
 #' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
 #' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
@@ -21,7 +22,7 @@
 readEpisodes <- function(
   inFile=NULL, outFile=NULL, 
   dropTasP=TRUE, addVars=" ",
-  write_rda=TRUE, nrow=Inf) {
+  write_rda=TRUE, nstart = 0, nrow=Inf) {
   #
   if (is.null(inFile)) {
     check_getFiles()
@@ -31,7 +32,8 @@ readEpisodes <- function(
     check_getFiles()
     outFile=getFiles()$epi_rda
   }
-  dat <- haven::read_dta(inFile, n_max = nrow) 
+  message(sprintf("ahri: Reading %s, this may take a while...", inFile))
+  dat <- haven::read_dta(inFile, skip = nstart, n_max = nrow) 
   # Variable names changed from releases
   if ("CalendarYear" %in% names(dat)) {
     message("ahri: Renaming CalendarYear to Year")
