@@ -4,12 +4,15 @@
 \alias{calcARTCov}
 \title{calcARTCov}
 \usage{
-calcARTCov(dat = getEverART(), Args = setArgs())
+calcARTCov(dat = getEverART(), Args = setArgs(), Formula = "EverART ~ Year")
 }
 \arguments{
 \item{dat}{A dataset from \code{\link{getEverART}}.}
 
 \item{Args}{requires Args, see \code{\link{setArgs}}}
+
+\item{Formula}{A formula using R formula language to get ART estimates by group,
+default is by year \code{"EvertART ~ Year"}}
 }
 \value{
 data.frame
@@ -17,4 +20,7 @@ data.frame
 \description{
 Calculate ART coverage for AHRI data. (This is a very crude measure of
 ART coverage. More work needed on an appropriate measure.)
+}
+\examples{
+calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
 }

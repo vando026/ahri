@@ -4,12 +4,14 @@
 \alias{getAggregate}
 \title{getAggregate}
 \usage{
-getAggregate(dat, Formula = "IIntID ~ Year")
+getAggregate(dat, Formula = "IIntID ~ Year", fun = length)
 }
 \arguments{
 \item{Args}{requires Args, see \code{\link{setArgs}}.}
 
 \item{Formula.}{}
+
+\item{Fun}{A function, default is \code{length}}
 }
 \value{
 list

@@ -50,18 +50,20 @@ getEverART <- function(dat=getEpisodes()) {
 }
 
 #' @title calcARTCov
-#' 
 #' @description  Calculate ART coverage for AHRI data. (This is a very crude measure of
 #' ART coverage. More work needed on an appropriate measure.)
-#' 
 #' @param dat A dataset from \code{\link{getEverART}}.
 #' @param Args requires Args, see \code{\link{setArgs}}
-#' 
+#' @param Formula A formula using R formula language to get ART estimates by group,
+#' default is by year \code{"EvertART ~ Year"}
 #' @return data.frame
 #' @export 
-calcARTCov <- function(dat=getEverART(), Args=setArgs()) {
+#' @examples
+#' calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
+calcARTCov <- function(dat=getEverART(), Args=setArgs(), 
+  Formula = "EverART ~ Year") {
   dat <- setData(dat, Args)
-  calcTrendYear("EverART", dat)
+  calcTrendYear(Formula = Formula, dat)
 }
 
 

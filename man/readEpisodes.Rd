@@ -10,6 +10,7 @@ readEpisodes(
   dropTasP = TRUE,
   addVars = " ",
   write_rda = TRUE,
+  nstart = 0,
   nrow = Inf
 )
 }
@@ -28,7 +29,8 @@ readEpisodes(
 data.frame
 }
 \description{
-Reads in the Surveillance Episodes dataset
+Reads in the Surveillance Episodes dataset. Note, this function drops
+participants with missing values for \code{Sex} (there are a handful of these).
 }
 \examples{
 \donttest{

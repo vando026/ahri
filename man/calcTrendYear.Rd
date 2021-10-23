@@ -4,12 +4,12 @@
 \alias{calcTrendYear}
 \title{calcTrendYear}
 \usage{
-calcTrendYear(RHS = "", dat)
+calcTrendYear(Formula = "", dat)
 }
 \arguments{
-\item{RHS}{The right hand side variable, must be string name.}
-
 \item{dat}{A dataset.}
+
+\item{RHS}{The right hand side variable, must be string name.}
 }
 \value{
 data.frame

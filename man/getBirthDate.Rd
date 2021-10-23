@@ -4,9 +4,11 @@
 \alias{getBirthDate}
 \title{getBirthDate}
 \usage{
-getBirthDate(addVars = " ")
+getBirthDate(dat = NULL, addVars = " ")
 }
 \arguments{
+\item{dat}{default value is \code{Null}, which calls \code{\link{getEpisodes}}}
+
 \item{addVars}{String for a regular expression to select additional vars}
 }
 \value{

@@ -1,12 +1,9 @@
 #' @title getAggregate
-#' 
 #' @description Gets aggregated numbers by category.
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param  Formula. 
-#' 
+#' @param  Fun A function, default is \code{length}
 #' @return list
-#'
 #' @export 
 #' @keywords internal
 #' @examples
@@ -14,11 +11,8 @@
 #' hiv <- getHIV()
 #' hiv <- setData(hiv, Args)
 #' getAggregate(hiv, "IIntID ~ Year + HIVResult")
-getAggregate <- function(dat, 
-  Formula = "IIntID ~ Year") {
-  F1 <- as.formula(Formula)
-  dat <- aggregate(as.formula(Formula),
-    data=dat, FUN=length)
+getAggregate <- function(dat, Formula = "IIntID ~ Year", fun = length) {
+  dat <- aggregate(as.formula(Formula), data = dat, FUN = fun)
   dat
 }
 
@@ -91,13 +85,11 @@ calcTrend <- function(
 #'
 #' @keywords internal
 #' @export 
-calcTrendYear <- function(RHS="", dat) {
-  dat <- group_by(dat, Year) %>%
-    summarize(Count = sum(get(RHS)), N = n())
-  edat <- epitools::binom.exact(dat$Count, dat$N)
-  edat <- select(edat,
-    crude.rate = proportion, lci=lower, uci=upper )
-  edat <- round(edat*100, 2)
-  cbind(Year=dat$Year, N=dat$N, edat)
+calcTrendYear <- function(Formula = "", dat) {
+  Count <- getAggregate(dat, Formula, fun = sum)
+  Total <- getAggregate(dat, Formula, fun = length)
+  edat <- epitools::binom.exact(Count[, ncol(Count)], Total[, ncol(Total)])
+  byVars <- do.call(paste, c(Count[-ncol(Count)], sep="-"))
+  cbind(Group = byVars, edat)
 }
 
