@@ -1,19 +1,14 @@
 #' @title readEpisodes
-#' 
 #' @description  Reads in the Surveillance Episodes dataset. Note, this function drops
 #' participants with missing values for \code{Sex} (there are a handful of these).
-#' 
 #' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
 #' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
 #' @param dropTasP default is to drop TasP areas.
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param write_rda Default is to write the .Rda file.
-#' 
 #' @return data.frame
-#'
 #' @import dplyr
 #' @export 
-#'
 #' @examples
 #' \donttest{
 #' readEpisodes(addVars="CurrentlyEmployed|UnEmployment")

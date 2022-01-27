@@ -1,14 +1,9 @@
 #' @title splitData2
-#' 
 #' @description  Function for splitting data into episodes. 
-#' 
 #' @param  dat Dataset must have variables called obs_start, obs_end and event.
 #' @param  years The years by which to split the data. Default is c(2003:2020).
-#' 
 #' @return data.frame
-#D 
 #' @importFrom survival survSplit Surv
-#'
 #' @export 
 
 splitData2 <- function(

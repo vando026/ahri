@@ -1,5 +1,4 @@
 #' @title setFiles
-#' 
 #' @description  Set file paths to the default AHRI datasets, which must be placed into a
 #' single folder. The names of the default .dta datasets must be exactly the same as
 #' described below. The function also sets the names for the .Rda datasets used in other
@@ -7,7 +6,6 @@
 #' that you don't). The \code{ahri} package will never overwrite the default. dta
 #' datasets. You must assign the \code{setFiles} function to a name called
 #' \code{getFiles}. See the examples below. 
-#'
 #' @param folder The path (as a string) to  the folder of default .dta files. If
 #' \code{folder=""}, then the default is to call a dialogue box for you to point and click
 #' to the folder path.  
@@ -21,16 +19,13 @@
 #' @param wgh_rda Writes the file ACDIS_WGH_ALL.Rda
 #' @param mgh_rda Writes the file ACDIS_MGH_ALL.Rda 
 #' @param bsc_rda Writes the file ACDIS_BoundedStructures.Rda
-#'
 #' @return function
 #' @export
 #' @examples 
 #' # You must assign the setfiles function to the getFiles name 
 #' getFiles <- setFiles(folder="Path/to/my/datafolder")
-#'
 #' # If for some reason your HIV surveillance .dta file is named differently 
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
-#'
 #' # print out the default file paths and names
 #' setFiles()
 #' # print out your file paths and names
@@ -59,9 +54,7 @@ setFiles <- function(
 }
 
 #' @title check_getFiles
-#' 
 #' @description  Warns user that they did not set getFiles, see \code{\link{setFiles}}.
-#' 
 #' @export 
 check_getFiles <- function() {
   if (!exists("getFiles", envir = globalenv()))

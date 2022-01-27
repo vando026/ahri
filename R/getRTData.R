@@ -1,17 +1,10 @@
 #' @title getRTData
-#' 
 #' @description  Get all repeat testers from HIV surveillance.
-#' 
 #' @param dat dataset from \code{\link{getHIV}}. 
-#'
 #' @param onlyRT Drops IDs who are not repeat-testers.
-#'
 #' @return data.frame
-#'
 #' @import dplyr
-#'
 #' @export
-#'
 #' @examples 
 #' rtdat <- getRTData(dat=getHIV())
 

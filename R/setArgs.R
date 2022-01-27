@@ -1,38 +1,24 @@
 #' @title setArgs
-#' 
 #' @description  A function that collects and stores various arguments that can be used as
 #' inputs to other functions. The \code{\link{setArgs}} function comes with default parameter
 #' values for the arguments. The user is asked to check these values and understand how
 #' these will affect the data. 
-#' 
 #' @param Years numeric vector of years.
-#'
 #' @param Age list of ages as in \code{list(Fem=c(15, 49), Mal=c(15, 54)}.
-#'
 #' @param AgeCat numeric vector of age categories, e.g. \code{seq(15, 55, by=5)}.
-#'
 #' @param AgeBy integer value for size age categories.
-#'
 #' @param nSim number of simulations to perform.
-#'
 #' @param aname String to name an object or set a filename.
-#'
 #' @param imputeMethod select either \code{\link{imputeRandomPoint}} or
 #' \code{\link{imputeMidPoint}}.
-#'
 #' @param mcores number of cores to use for parallel package (used in
 #' \code{\link{MIdata}}).
-#'
 #' @param MoreArgs a list, which adds more arguments if needed.
-#'
 #' @param setFun a function used by \code{\link{setData}} by which the data can be further subset.
 #' @param addVars a function used by \code{\link{setData}} by which additional variables
 #' can be added. 
-#'
 #' @return list
-#'
 #' @export
-#'
 #' @examples
 #' # Check default parameter values
 #' Args = setArgs()

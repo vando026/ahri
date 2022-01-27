@@ -65,14 +65,10 @@ readHIVData <- function(
 }
 
 #' @title getHIV
-#' 
 #' @description  Load in the .rda version of the HIV surveillance dataset. 
-#' 
 #' @param inFile File path to .rda dataset, default is \code{getFiles()$hiv_rda}. Leave as
 #' NULL if you don't know what to do or see \code{\link{setFiles}}. 
-#'
 #' @return data.frame
-#'
 #' @export 
 
 getHIV <- function(inFile=NULL) {
@@ -84,17 +80,12 @@ getHIV <- function(inFile=NULL) {
 }
 
 #' @title setHIV
-#' 
 #' @description set HIV data by arguments.
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
-#' 
 #' @param dat A dataset generated from \code{\link{readHIVData}}, which exists in the
 #' global environment. If NULL, it reads in the .Rda file from
 #' \code{getFiles()$hiv_rda}.  
-#' 
 #' @return data.frame
-#'
 #' @export 
 #' @examples
 #' Args <- setArgs() 

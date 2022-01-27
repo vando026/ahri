@@ -1,13 +1,8 @@
 #' @title setAge
-#' 
 #' @description  sets age according to arguments
-#' 
 #' @param dat must have a variable named AgeAtVisit  
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}
-#'
 #' @return data.frame
-#'
 #' @export 
 
 setAge <- function(dat, Args) {
@@ -86,27 +81,18 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
 
 
 #' @title Sets data according to a list of arguments. 
-#' 
 #' @description  Sets data according to a list of arguments. 
-#' 
 #' @param dat A dataset to subset. 
-#'
 #' @param Args Takes a list of arguments from \code{\link{setArgs}}. 
-#'
 #' @param time2 The name of a date variable that is used to calculate the Age variable using the
 #' \code{\link{getBirthDate}} function. Age is calculated as (time2 - birthdate)/365.35.
 #' If time2=NULL, the default, then \code{\link{setData}} will use an existing Age
 #' variable in \code{dat}. 
-#'
 #' @param age_cut Vector of ages to make age categories from \code{link{setArgs}}.
 #' @param birthdate Takes the dataset generated from \code{\link{getBirthDate}}. 
-#'
 #' @return data.frame
-#'
 #' @import dplyr
-#'
 #' @export
-#' 
 #' @examples
 #' hiv <- getHIV()
 #' Args <- setArgs(Age=list(All=c(15, 25)))
