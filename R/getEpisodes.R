@@ -60,13 +60,9 @@ readEpisodes <- function(
 }
 
 #' @title getEpisodes
-#' 
 #' @description  Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
-#' 
 #' @param inFile File path to the dataset, default is set to \code{getFiles()$epi_rda}.
-#' 
 #' @return data.frame
-#'
 #' @export 
 getEpisodes <- function(inFile=NULL) {
   if (is.null(inFile)) {
@@ -78,18 +74,13 @@ getEpisodes <- function(inFile=NULL) {
 
 
 #' @title setEpisodes
-#' 
 #' @description  Set the Episodes data according to Arguments.
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param dat A dataset generated from \code{\link{readEpisodes}}, which exists in the
 #' global environment. If NULL, it reads in the corresponding .Rda file (see
 #' \code{\link{setFiles}}.  
-#' 
 #' @return data.frame
-#'
 #' @export 
-#'
 #' @examples
 #' Args <- setArgs(Years=c(2005:2010))
 #' setEpisodes(Args)
@@ -104,12 +95,9 @@ setEpisodes <- function(Args=setArgs(), dat=NULL) {
 
 
 #' @title makePropRes
-#' 
 #' @description Makes a variable of the proportion of time that a participant spent as a
 #' resident in the PIP surveillance arear by year. 
-#' 
 #' @param Args requires Args, see \code{\link{setArgs}}. 
-#' 
 #' @return  data.frame
 #' @import dplyr
 #' @export 
