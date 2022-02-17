@@ -53,7 +53,16 @@ There are other sources of help:
     answer.
     (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
 
+## Screen shots
+
+Read and load the data, subset and create repeat-tester data.
+
 ![demo1](ahri1.gif)
+
+Calculate HIV incidence rate for women aged 12–24 years. Do 3 imputed
+datasets using the single-random point method.
+
+![demo2](ahri2.gif)
 
 |                                                                                                                                                                                                                                                                                       |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
