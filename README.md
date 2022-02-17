@@ -49,10 +49,6 @@ There are other sources of help:
     information and for answers to questions someone before you may have
     already asked.
 
--   If you have questions, post them as an issue so that I or others can
-    answer.
-    (<https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue>)
-
 ## Screen shots
 
 Read and load the data, subset and create repeat-tester data.
