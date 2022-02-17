@@ -55,7 +55,7 @@ Read and load the data, subset and create repeat-tester data.
 
 ![demo1](ahri1.gif)
 
-Calculate the HIV incidence rate for women aged 12–24 years. Do 3
+Calculate the HIV incidence rate for women aged 15–24 years. Do 3
 imputed datasets using the single-random point method.
 
 ![demo2](ahri2.gif)
