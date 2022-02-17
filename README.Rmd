@@ -53,7 +53,7 @@ There are other sources of help:
 - If you have questions, post them as an issue so that I or others can answer.
   (https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue)
 
-![demo1](demo.gif)
+![demo1](ahri1.gif)
 
 +---------------------------------------------------------------------------------------+
 |Disclaimer: This is not an official AHRI site. The `ahri` library is a collaboration   |
