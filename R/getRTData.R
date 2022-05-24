@@ -41,8 +41,6 @@ getRTData <- function(dat=NULL, onlyRT=TRUE) {
 #' @param  f a function, either \code{min} or \code{max}.
 #' 
 #' @return data.frame
-#' 
-#' @export
 getDates <- function(f) {
   function(dat, Var, Name) {
     dat <- data.frame(dat[!is.na(dat[, Var, drop=TRUE]), c("IIntID", Var)])
@@ -64,8 +62,6 @@ getDates <- function(f) {
 #' 
 #' @return data.frame
 #' 
-#' @export
-#'
 #' @examples
 #' getDatesMin(dat=getHIV(), "HIVNegative", "early_neg")
 
@@ -81,8 +77,6 @@ getDatesMin <- getDates(min)
 #' 
 #' @return data.frame
 #' 
-#' @export
-#'
 #' @examples
 #' getDatesMax(dat=getHIV(), "HIVNegative", "late_neg")
 
