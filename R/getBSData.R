@@ -169,27 +169,26 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 #' @param Type "Males", "Females", or "All". Add only the Males, Females or All.
 #' 
 #' @return data.frame
-#' @export 
 
 addHIVPrevBS <- function(inFile, dat, Args, Type="All") {
+  stop("This function is deprecated and no longer maintained")
+  # prev <- tibble::as_tibble(read.csv(inFile))
+  # prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
 
-  prev <- tibble::as_tibble(read.csv(inFile))
-  prev[] <- lapply(prev[], function(x) as.numeric(as.character(x)))
+  # # Reshape to long
+  # prev <- select(prev, BSIntID, starts_with(Type))
+  # long <- tidyr::gather(prev, Year, HIVPrev, starts_with(Type)) 
+  # long <- suppressWarnings(mutate(long, 
+  #   Year=as.integer(gsub("[^[:digit:]]", "", Year)),
+  #   HIVPrev = as.numeric(HIVPrev)*100))
 
-  # Reshape to long
-  prev <- select(prev, BSIntID, starts_with(Type))
-  long <- tidyr::gather(prev, Year, HIVPrev, starts_with(Type)) 
-  long <- suppressWarnings(mutate(long, 
-    Year=as.integer(gsub("[^[:digit:]]", "", Year)),
-    HIVPrev = as.numeric(HIVPrev)*100))
-
-  dat <- left_join(dat, long, by=c("BSIntID", "Year"))
-  dat <- arrange(dat, BSIntID, Year) 
-  dat <- group_by(dat, BSIntID) %>% mutate(
-      HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE),
-      HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE, fromLast=TRUE))
-  dat$HIVPrev[is.na(dat$HIVPrev)]  <- 
-    runif(sum(is.na(dat$HIVPrev)), 0, 50)
-  dat
+  # dat <- left_join(dat, long, by=c("BSIntID", "Year"))
+  # dat <- arrange(dat, BSIntID, Year) 
+  # dat <- group_by(dat, BSIntID) %>% mutate(
+  #     HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE),
+  #     HIVPrev=zoo::na.locf(HIVPrev, na.rm=FALSE, fromLast=TRUE))
+  # dat$HIVPrev[is.na(dat$HIVPrev)]  <- 
+  #   runif(sum(is.na(dat$HIVPrev)), 0, 50)
+  # dat
 }
 

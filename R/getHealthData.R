@@ -106,19 +106,18 @@ addCircumVar <- function(dat, cdat=NULL) {
 #' @title getCondomUseVar
 #' 
 #' @description  Gets the ever used condom variable from Men and Women's health datasets.
-#' 
-#' @export
 
 getCondomUseVar <- function() {
-  wdat <- getWGH() %>% 
-    select(IIntID, Female,  Year, EverUsedCondom = MRPEverUsedCondoms )
-  mdat <- getMGH() %>% 
-    select(IIntID, Female, Year, EverUsedCondom = MRPEverUsedCondoms )
-  dat <- rbind(mdat, wdat)
-  dat <- filter(dat, EverUsedCondom %in% c(1:3))
-  dat$EverUsedCondom <- as.character(haven::as_factor(dat$EverUsedCondom)) 
-  dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
-  dat
+  stop("This function is deprecated and no longer maintained.")
+  # wdat <- getWGH() %>% 
+  #   select(IIntID, Female,  Year, EverUsedCondom = MRPEverUsedCondoms )
+  # mdat <- getMGH() %>% 
+  #   select(IIntID, Female, Year, EverUsedCondom = MRPEverUsedCondoms )
+  # dat <- rbind(mdat, wdat)
+  # dat <- filter(dat, EverUsedCondom %in% c(1:3))
+  # dat$EverUsedCondom <- as.character(haven::as_factor(dat$EverUsedCondom)) 
+  # dat <- distinct(dat, IIntID, Year, .keep_all=TRUE)
+  # dat
 }
 
 
