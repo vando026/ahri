@@ -58,10 +58,8 @@ datasets. You must assign the \code{setFiles} function to a name called
 \examples{
 # You must assign the setfiles function to the getFiles name 
 getFiles <- setFiles(folder="Path/to/my/datafolder")
-
 # If for some reason your HIV surveillance .dta file is named differently 
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
-
 # print out the default file paths and names
 setFiles()
 # print out your file paths and names
