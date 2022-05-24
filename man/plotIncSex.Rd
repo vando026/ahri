@@ -22,3 +22,4 @@ plotIncSex(
 \description{
 Plot HIV incidence with 95% CIs as whiskers.
 }
+\keyword{internal}

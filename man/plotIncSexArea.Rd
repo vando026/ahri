@@ -26,3 +26,4 @@ plotIncSexArea(
 \description{
 Plot HIV incidence with 95% CIs as area.
 }
+\keyword{internal}

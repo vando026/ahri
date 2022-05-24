@@ -4,8 +4,7 @@
 #' 
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
-#' 
-#' @export
+#' @keywords internal
 
 plotIncSex <- function(Mal, Fem, yLim=7,
   Colors=c("blue", "red"), gfun=png,
@@ -62,8 +61,7 @@ plotIncSex <- function(Mal, Fem, yLim=7,
 #' 
 #' @param Mal data.frame with rate, lci, and uci for men.
 #' @param Fem data.frame with rate, lci, and uci for women.
-#' 
-#' @export
+#' @keywords internal
 plotIncSexArea <- function(Mal, Fem, yLim=5.5,
   Colors=c(Blues[3], Reds[3]), gcolor="grey50", ipoints=TRUE,
   bwidth=list(mal=c(2.5, 2.5), fem=c(2.5, 2.5)),

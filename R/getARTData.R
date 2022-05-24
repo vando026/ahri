@@ -57,13 +57,13 @@ getEverART <- function(dat=getEpisodes()) {
 #' @param Formula A formula using R formula language to get ART estimates by group,
 #' default is by year \code{"EvertART ~ Year"}
 #' @return data.frame
-#' @export 
 #' @examples
 #' calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
 calcARTCov <- function(dat=getEverART(), Args=setArgs(), 
   Formula = "EverART ~ Year") {
-  dat <- setData(dat, Args)
-  calcTrendYear(Formula = Formula, dat)
+  stop("This function is deprecated and no longer maintained")
+  # dat <- setData(dat, Args)
+  # calcTrendYear(Formula = Formula, dat)
 }
 
 
@@ -75,18 +75,18 @@ calcARTCov <- function(dat=getEverART(), Args=setArgs(),
 #' 
 #' @return data.frame
 #' @keywords internal
-#' @export 
 
 readARTCov <- function(Female=1) {
-  sex <- ifelse(Female==1, "fem_art", "mal_art")
-  art <- suppressMessages(readr::read_csv(
-    unlist(getFiles()[sex]), na=c("", "-")))
-  art <- tidyr::gather(art, Year, ARTCov, -BSIntID)
-  art <- dplyr::filter(art, !is.na(.data$ARTCov))
-  art <- suppressWarnings(mutate(art, 
-    Year=as.integer(gsub("[MF]_ART_|All_ART_", "", .data$Year)),
-    ARTCov = as.numeric(.data$ARTCov)*100))
-  art
+  stop("This function is deprecated and no longer maintained")
+  # sex <- ifelse(Female==1, "fem_art", "mal_art")
+  # art <- suppressMessages(readr::read_csv(
+  #   unlist(getFiles()[sex]), na=c("", "-")))
+  # art <- tidyr::gather(art, Year, ARTCov, -BSIntID)
+  # art <- dplyr::filter(art, !is.na(.data$ARTCov))
+  # art <- suppressWarnings(mutate(art, 
+  #   Year=as.integer(gsub("[MF]_ART_|All_ART_", "", .data$Year)),
+  #   ARTCov = as.numeric(.data$ARTCov)*100))
+  # art
 }
 
 
@@ -101,10 +101,11 @@ readARTCov <- function(Female=1) {
 #' @return data.frame
 #' @keywords internal
 addARTCov <- function(dat, Args, oppSex=FALSE) {
-  Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)
-  art <- readARTCov(Sex)
-  dat <- left_join(dat, art, by=c("BSIntID", "Year"))
-  dat
+  stop("This function is deprecated and no longer maintained")
+  # Sex <- ifelse(oppSex, as.numeric(!Args$Fem), Args$Fem)
+  # art <- readARTCov(Sex)
+  # dat <- left_join(dat, art, by=c("BSIntID", "Year"))
+  # dat
 }
 
 
