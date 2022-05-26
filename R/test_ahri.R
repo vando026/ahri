@@ -1,6 +1,5 @@
 test_func <- function(testfile) {
   function(year="2020", report='progress') {
-    check_getFiles()
     message(sprintf('Running tests on %s data release...', year))
     testthat::test_package('ahri', filter=paste0(testfile, year), reporter=report)
   }
@@ -80,6 +79,7 @@ test_ahri_get <- test_func('ahri_get_')
 #' 
 #' @param dat A dataset 
 #' @param var The variable
+#' 
 check_var <- function(dat, var) {
   if (!(var %in% names(dat)))
     stop(sprintf("dat must have a variable named %s",  var))

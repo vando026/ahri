@@ -4,12 +4,14 @@
 \alias{dropTasPData}
 \title{dropTasPData}
 \usage{
-dropTasPData(dat)
+dropTasPData(dat, bsdat = NULL, bsifile = getFiles()$bsifile)
 }
 \arguments{
 \item{dat}{A dataset, which will be merged with the Bounded Structures
 dataset, to determine if observations come from the TasP (northern) areas. 
 If an observation cannot be linked to an area, it is kept.}
+
+\item{bsdat}{The Bounded Structures dataset with BSIntID and PIPSA variables.}
 }
 \value{
 data.frame

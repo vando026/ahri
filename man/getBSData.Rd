@@ -17,4 +17,6 @@ Read in Bounded Structures data.
 }
 \examples{
 getBSData() 
+# Same as above
+getBSData(inFile = getFiles()$bsifile) 
 }

@@ -8,11 +8,8 @@
 #' @return data.frame
 #'
 #' @export 
-#' @examples
-#' \donttest{
-#' readHealthData(Female=0)
-#' }
 readHealthData <- function(Female=1, write_rda=TRUE) {
+  warning("This function is deprecated. Use readMGH() or readWGH() instead.")
   check_getFiles()
   inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
   outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
@@ -25,6 +22,91 @@ readHealthData <- function(Female=1, write_rda=TRUE) {
   if (write_rda) saveRDS(dat, file=outFile) 
   dat
 }
+
+#' @title readMGH
+#' 
+#' @description  Reads the Men (MGH) General Health Dataset. 
+#' 
+#' @param inFile Filepath to .dta dataset, default is \code{getFiles()$mghfile}. 
+#' @param write_rda Default is to write the .Rda file.
+#' 
+#' @return data.frame
+#'
+#' @export 
+#' @examples
+#' readMGH(write_rda = FALSE)
+readMGH <- function(inFile = NULL, write_rda=TRUE) {
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile <- getFiles()$mghfile
+  }
+  dat <- haven::read_dta(inFile) %>%
+    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+  dat <- mutate(dat, 
+    Year = as.integer(format(dat$VisitDate, "%Y")),
+    IIntID = as.integer(IIntID), Female = 0)
+  if (write_rda) {
+    check_getFiles()
+    saveRDS(dat, file = getFiles()$mgh_rda) 
+  }
+  dat
+}
+
+
+#' @title readWGH
+#' 
+#' @description  Reads the Women  General Health Dataset (WGH).
+#' 
+#' @param inFile Filepath to .dta dataset, default is \code{getFiles()$wghfile}. 
+#' @param write_rda Default is to write the .Rda file.
+#' 
+#' @return data.frame
+#'
+#' @export 
+#' @examples
+#' readWGH(write_rda = FALSE)
+readWGH <- function(inFile = NULL, write_rda=TRUE) {
+  if (is.null(inFile)) {
+    check_getFiles()
+    inFile <- getFiles()$wghfile
+  }
+  dat <- haven::read_dta(inFile) %>%
+    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+  dat <- mutate(dat, 
+    Year = as.integer(format(dat$VisitDate, "%Y")),
+    IIntID = as.integer(IIntID), Female = 1)
+  if (write_rda) {
+    check_getFiles()
+    saveRDS(dat, file = getFiles()$wgh_rda) 
+  }
+  dat
+}
+
+#' @title getMGH
+#' 
+#' @description  Reads in Men's general health data. 
+#' 
+#' @param inFile Filepath to .rda dataset, default is \code{getFiles()$mgh_rda}. Leave as
+#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
+#' @return  data.frame
+#'
+#' @export 
+getMGH <- function(inFile=NULL) {
+  if(is.null(inFile)) {
+    check_getFiles()
+    inFile <- getFiles()$mgh_rda
+  }
+  readRDS(inFile)
+}
+
+
+
+
+
+
+
+
+
 
 #' @title getMGH
 #' 

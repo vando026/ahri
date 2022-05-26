@@ -25,17 +25,13 @@
 #' hdat <- readHIVData(addVars="HIVRefused|WhereLastTested", write_rda=FALSE)
 
 readHIVData <- function(
-  inFile=NULL, outFile=NULL,
+  inFile=NULL, 
   dropTasP=TRUE, addVars=" ", 
   drop15Less=TRUE, write_rda=TRUE) {
   #
   if (is.null(inFile)) {
     check_getFiles()
     inFile=getFiles()$hivfile
-  }
-  if(is.null(outFile)) {
-    check_getFiles()
-    outFile=getFiles()$hiv_rda
   }
   #
   hiv <- haven::read_dta(inFile) %>% 
@@ -60,7 +56,10 @@ readHIVData <- function(
   hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-  if (write_rda) saveRDS(hiv, file=outFile)
+  if (write_rda) {
+    check_getFiles()
+    saveRDS(hiv, file = getFiles()$hiv_rda)
+  }
   hiv
 }
 

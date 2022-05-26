@@ -10,13 +10,14 @@
 #'
 #' @examples
 #' getBSData() 
-getBSData <- function(inFile=NULL) {
+#' # Same as above
+#' getBSData(inFile = getFiles()$bsifile) 
+getBSData <- function(inFile = NULL) {
   if (is.null(inFile)) {
     check_getFiles()
-    inFile=getFiles()$bsifile
+    inFile = getFiles()$bsifile
   }
-  dat <- haven::read_dta(inFile) %>% 
-    rename(BSIntID=.data$BSIntId)
+  dat <- haven::read_dta(inFile) %>% rename(BSIntID=.data$BSIntId)
   dat <- dplyr::mutate(dat, BSIntID = as.integer(.data$BSIntID))
   dat$IsUrbanOrRural <- as.character(haven::as_factor(dat$IsUrbanOrRural))
   dat$LocalArea <- as.character(haven::as_factor(dat$LocalArea))
@@ -32,13 +33,16 @@ getBSData <- function(inFile=NULL) {
 #' @param dat A dataset, which will be merged with the Bounded Structures
 #' dataset, to determine if observations come from the TasP (northern) areas. 
 #' If an observation cannot be linked to an area, it is kept.
-#' 
+#' @param bsdat The Bounded Structures dataset with BSIntID and PIPSA variables.
 #' @return data.frame
 #'
 #' @export 
 
-dropTasPData <- function(dat) {
-  bsdat <- getBSData() %>% select(BSIntID, PIPSA)
+dropTasPData <- function(dat, bsdat = NULL, bsifile = getFiles()$bsifile) {
+  if (is.null(bsdat)) {
+    check_getFiles()
+    bsdat <- getBSData(bsifile) %>% select(BSIntID, PIPSA)
+  }
   dat <- left_join(dat, bsdat, by="BSIntID")
   dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
   return(dat)

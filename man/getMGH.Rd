@@ -5,6 +5,8 @@
 \title{getMGH}
 \usage{
 getMGH(inFile = NULL)
+
+getMGH(inFile = NULL)
 }
 \arguments{
 \item{inFile}{Filepath to .rda dataset, default is \code{getFiles()$mgh_rda}. Leave as
@@ -12,7 +14,11 @@ NULL if you don't know what to do or see \code{\link{setFiles}}.}
 }
 \value{
 data.frame
+
+data.frame
 }
 \description{
+Reads in Men's general health data.
+
 Reads in Men's general health data.
 }

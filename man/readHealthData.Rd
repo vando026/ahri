@@ -17,8 +17,3 @@ data.frame
 \description{
 Reads the Women (WGH) or Men (MGH) General Health Dataset.
 }
-\examples{
-\donttest{
-readHealthData(Female=0)
-}
-}

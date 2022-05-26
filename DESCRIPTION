@@ -1,15 +1,13 @@
 Package: ahri
 Title: R functions for AHRI dataset management and analysis
 Version: 1.4.0
-Authors@R: person("Alain", "Vandormael", email = "alain  dot  vandormael  at  uni
- dash  heidelberg  dot  de", role = c("aut", "cre"))
+Authors@R: person("Alain", "Vandormael", email = "alaindotvandormael@uni-hedeilberg.de", role = c("aut", "cre"))
 Description: Functions for working with AHRI data.
 Depends: R (>= 4.0.0)
 License: GPL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
-Imports: tidyverse, dplyr, survival, zoo, plotrix, mitools, parallel, epitools, haven, readr, stats, utils, tibble, tidyr, mvtnorm
-Suggests: testthat
+Imports: tidyverse, dplyr, survival, zoo, plotrix, mitools, parallel, epitools, haven, readr, stats, utils, tibble, tidyr, mvtnorm, testthat
 URL: http://github.com/vando026/ahri
 BugReports: http://github.com/vando026/ahri/issues

@@ -6,7 +6,6 @@
 \usage{
 readHIVData(
   inFile = NULL,
-  outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
   drop15Less = TRUE,
@@ -16,8 +15,6 @@ readHIVData(
 \arguments{
 \item{inFile}{File path to .dta, default is set by \code{\link{setFiles}}.}
 
-\item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
-
 \item{dropTasP}{Default is to drop TasP surveillance areas from the data.}
 
 \item{addVars}{A regular expression string representing the variables to be added.}
@@ -26,6 +23,8 @@ readHIVData(
 participants >=15 years eligible for HIV testing.}
 
 \item{write_rda}{Default is to write the .Rda file.}
+
+\item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
 }
 \value{
 data.frame

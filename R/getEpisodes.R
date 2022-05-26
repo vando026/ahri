@@ -15,17 +15,13 @@
 #' readEpisodes(dropTasP=FALSE, addVars="Employ")
 #' }
 readEpisodes <- function(
-  inFile=NULL, outFile=NULL, 
+  inFile=NULL,
   dropTasP=TRUE, addVars=" ",
   write_rda=TRUE, nstart = 0, nrow=Inf) {
   #
   if (is.null(inFile)) {
     check_getFiles()
     inFile=getFiles()$epifile
-  }
-  if(is.null(outFile)) {
-    check_getFiles()
-    outFile=getFiles()$epi_rda
   }
   message(sprintf("ahri: Reading %s, this may take a while...", inFile))
   dat <- haven::read_dta(inFile, skip = nstart, n_max = nrow) 
@@ -55,7 +51,10 @@ readEpisodes <- function(
     Female=as.integer(ifelse(Female==2, 1, 0)))
   if (dropTasP==TRUE) dat <- dropTasPData(dat)
   dat <- arrange(dat, IIntID, ObservationStart)
-  if (write_rda) saveRDS(dat, outFile)
+  if (write_rda) {
+    check_getFiles()
+    saveRDS(dat, file = getFiles()$epi_rda)
+  }
   dat
 }
 

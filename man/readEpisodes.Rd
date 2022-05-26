@@ -6,7 +6,6 @@
 \usage{
 readEpisodes(
   inFile = NULL,
-  outFile = NULL,
   dropTasP = TRUE,
   addVars = " ",
   write_rda = TRUE,
@@ -17,13 +16,13 @@ readEpisodes(
 \arguments{
 \item{inFile}{File path to the .dta dataset, default is set to \code{\link{setFiles}}.}
 
-\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.}
-
 \item{dropTasP}{default is to drop TasP areas.}
 
 \item{addVars}{A regular expression string representing the variables to be added.}
 
 \item{write_rda}{Default is to write the .Rda file.}
+
+\item{outFile}{File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.}
 }
 \value{
 data.frame
