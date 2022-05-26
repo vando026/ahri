@@ -85,4 +85,7 @@ check_var <- function(dat, var) {
     stop(sprintf("dat must have a variable named %s",  var))
 }
 
-
+local_gfiles <- function(getfiles, env = parent.frame()) {
+  op <- getfiles
+  withr::defer(options(op), env)
+}

@@ -31,27 +31,25 @@
 #' setEpisodes(ArgsEpi)
 
 setArgs <- function( 
-  Years=c(2000:2025),
-  Age=list(All=c(0, 100)),
-  AgeCat=NULL,
-  AgeBy=5,
-  nSim=1, 
-  imputeMethod=imputeRandomPoint,
-  aname='filename',
-  mcores=1,
-  setFun=identity,
-  addVars=identity,
-  MoreArgs=NULL) {
+  Years = c(2000:2025),
+  Age = list(All = c(0, 100)),
+  AgeCat = NULL,
+  AgeBy = 5,
+  nSim = 1, 
+  imputeMethod = imputeRandomPoint,
+  aname = 'filename',
+  mcores = 1,
+  setFun = identity,
+  addVars = identity,
+  MoreArgs = NULL) {
   #
-  if (is.null(AgeCat)) {
-    AgeCat=seq(min(unlist(Age)),
-      max(unlist(Age)) + AgeBy, AgeBy)
-  }
+  if (is.null(AgeCat)) 
+    AgeCat = seq(0, 105, by = 5)
   Sex <- ifelse(
     setequal(names(Age), c("Mal", "Fem")), 
     "All", names(Age))
-  FemCode=switch(Sex,
-    Mal=0,Fem=1,All=c(0, 1))
+  FemCode = switch(Sex,
+    Mal = 0, Fem = 1, All = c(0, 1))
   as.list(environment())
 }
 

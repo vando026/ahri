@@ -13,7 +13,7 @@ assign("getFiles",
     epifile = "SurveillanceEpisodes_Sample.dta",
     wghfile = "RD03-99_ACDIS_WGH_Sample.dta",
     mghfile = "RD04-99_ACDIS_MGH_Sample.dta"), 
-  env = .GlobalEnv)
+  env = globalenv())
 
 context("Test getBSData")
 bdat <- getBSData()

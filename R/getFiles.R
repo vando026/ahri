@@ -26,27 +26,28 @@
 #' getFiles <- setFiles(folder="Path/to/my/datafolder")
 #' # If for some reason your HIV surveillance .dta file is named differently 
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
-#' # print out the default file paths and names
+#' # preadHIVDatarint out the default file paths and names
 #' setFiles()
 #' # print out your file paths and names
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 #' getFiles()
 setFiles <- function(
-  folder="",
-  hivfile="RD05-99 ACDIS HIV All.dta",
-  epifile="SurveillanceEpisodes.dta",
-  wghfile="RD03-99 ACDIS WGH ALL.dta",
-  mghfile="RD04-99 ACDIS MGH ALL.dta",
-  bsifile="RD01-03 ACDIS BoundedStructures.dta",
+  folder = "",
+  hivfile = "RD05-99 ACDIS HIV All.dta",
+  epifile = "SurveillanceEpisodes.dta",
+  wghfile = "RD03-99 ACDIS WGH ALL.dta",
+  mghfile = "RD04-99 ACDIS MGH ALL.dta",
+  bsifile = "RD01-03 ACDIS BoundedStructures.dta",
 
-  hiv_rda="ACDIS_HIV_All.Rda",
-  epi_rda="SurveillanceEpisodes.Rda",
-  wgh_rda="ACDIS_WGH_ALL.Rda",
-  mgh_rda="ACDIS_MGH_ALL.Rda",
-  bsc_rda="ACDIS_BoundedStructures.Rda") {
+  hiv_rda = "ACDIS_HIV_All.Rda",
+  epi_rda = "SurveillanceEpisodes.Rda",
+  wgh_rda = "ACDIS_WGH_ALL.Rda",
+  mgh_rda = "ACDIS_MGH_ALL.Rda",
+  bsc_rda = "ACDIS_BoundedStructures.Rda") {
 
-  if (folder=="") 
-    folder <- utils::choose.dir(caption="Select a folder which contains all the AHRI .dta files") 
+  if (folder == "") 
+    folder <- utils::choose.dir(
+      caption = "Select a folder which contains the standard AHRI .dta files") 
   flist <- as.list(environment())
   flist <- lapply(flist, function(x) file.path(folder, x))
   function() 
@@ -57,5 +58,5 @@ setFiles <- function(
 #' @description  Warns user that they did not set getFiles, see \code{\link{setFiles}}.
 check_getFiles <- function() {
   if (!exists("getFiles", envir = globalenv()))
-    print("The  getFiles function doesn't exist, you need to set it. Type `?setFiles` for help.")
+    message("The  getFiles function doesn't exist, you need to set it. Type `?setFiles` for help.")
 }
