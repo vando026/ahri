@@ -4,7 +4,7 @@
 # testthat::test_file('inst/tests/testthat/test_ahri_dta_2020.R')
 
 if (exists("getFiles", env = .GlobalEnv))
-  getFiles_User = getFiles
+  getFiles_User <- getFiles
 
 assign("getFiles", 
   setFiles(system.file("data", package = "ahri"),
@@ -35,6 +35,17 @@ testthat::test_that("Check getHIVData N", {
   testthat::expect_equal(sum(hdat1$Age), 1374)
 })
 
+context("Test readHIVData (dropTasP")
+hdat2 <- readHIVData(dropTasP=TRUE, write_rda=FALSE)
+testthat::test_that("Check getHIVData N", {
+  testthat::expect_equal(length(unique(hdat2$IIntID)), 5)
+  testthat::expect_equal(nrow(hdat2), 32)
+  testthat::expect_equal(ncol(hdat2), 10)
+  testthat::expect_equal(sum(hdat2$Female), 28)
+  testthat::expect_equal(sum(hdat2$Age), 1280)
+})
+
+
 context("Test readEpisodes")
 edat <- readEpisodes(dropTasP=FALSE, write_rda=FALSE)
 testthat::test_that("Check readEpisodes N", {
@@ -62,4 +73,5 @@ testthat::test_that("Check WGH/MGH N and Age", {
 })
 
 rm(list = c("getFiles"), envir = .GlobalEnv)
-if (exists("getFiles_User")) getFiles <- getFiles_User
+if (exists("getFiles_User"))
+  getFiles <<- getFiles_User
