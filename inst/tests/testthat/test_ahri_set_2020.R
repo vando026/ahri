@@ -15,8 +15,8 @@ assign("getFiles",
     mghfile = "RD04-99_ACDIS_MGH_Sample.dta"), 
   env = .GlobalEnv)
 
-edat0 <- readEpisodes(dropTasP=TRUE, write_rda=FALSE)
-hiv0 <- readHIVData(dropTasP=TRUE, write_rda=FALSE)
+edat0 <- readEpisodes(dropTasP = TRUE, write_rda = FALSE)
+hiv0 <- readHIVData(dropTasP = TRUE, write_rda = FALSE)
 bidat <- dplyr::group_by(hiv0, IIntID) %>% dplyr::slice(1) %>%
   dplyr::mutate(DateOfBirth = VisitDate - (Age * 365)) %>% 
   dplyr::select(IIntID, DateOfBirth)
@@ -32,7 +32,6 @@ test_that("Check getHIV dropTasP N", {
   expect_equal(min(hiv$Year), 2008) 
   expect_equal(max(hiv$Year), 2015) 
 })
-
 
 context("Test setEpisodes with dropTasP")
 Args = setArgs(Years=c(2010:2020), Age = list(All=c(16, 60)))
@@ -76,7 +75,6 @@ test_that("Check setData Age", {
   expect_equal(sum(as.integer(hiv2$AgeCat == "[20,25)")), 8)
 })
 
-
 context("Test setHIV")
 Args <- setArgs(Years=c(2005:2017), Age=list(All=c(15, 54)))
 hiv <- setData(hiv0, Args)
@@ -85,22 +83,12 @@ test_that("Check setHIV N", {
   expect_equal(hiv1, hiv) 
 })
 
-
 context("Test setEpisodes")
 Args <- setArgs(Years=c(2005:2018), Age=list(All=c(15, 54)))
-ydat <- setEpisodes(Args, dat=edat0)
+ydat <- setEpisodes(Args, dat = edat0)
+ydat1 <- setData(edat0, Args)
 test_that("Check setEpisodes N", {
-  expect_equal(length(unique(ydat$IIntID)), 2)
-  expect_equal(nrow(ydat), 31)
-})
-
-context("Test new Args defaults")
-Args <- setArgs(Years=c(2000:2025), Age=list(All=c(0, 110)))
-hiv <- setHIV(Args, dat=hiv0)
-epi <- setEpisodes(Args, dat=edat0)
-test_that("Check new Args Age", {
-  expect_equal(sum(hiv$Age), 1280) 
-  expect_equal(sum(epi$Age), 1684) 
+  expect_equal(ydat, ydat1)
 })
 
 rm(list = c("getFiles"), envir = .GlobalEnv)
