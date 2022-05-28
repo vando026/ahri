@@ -22,5 +22,7 @@ Calculate ART coverage for AHRI data. (This is a very crude measure of
 ART coverage. More work needed on an appropriate measure.)
 }
 \examples{
+\donttest{
 calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
+}
 }

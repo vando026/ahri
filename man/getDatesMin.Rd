@@ -19,6 +19,3 @@ data.frame
 \description{
 Function to get earliest test dates
 }
-\examples{
-getDatesMin(dat=getHIV(), "HIVNegative", "early_neg")
-}

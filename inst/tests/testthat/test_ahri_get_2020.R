@@ -44,23 +44,14 @@ test_that("Check splitAtEarlyPos", {
   expect_equal(sum(as.numeric(edat2$obs_end)), 3030384325)
 })
 
-rm(list = c("getFiles"), envir = .GlobalEnv)
-if (exists("getFiles_User"))
-  getFiles <<- getFiles_User
-
-testDates <- function(dat=NULL) {
-  testNeg <- filter(dat, is.finite(obs_start) & is.finite(late_neg))
-  if(any(with(testNeg, obs_start > late_neg))) 
-      stop("Some obs_start > late_neg") 
-  testPos <- filter(dat, is.finite(early_pos) & is.finite(late_neg))
-  if(any(with(testPos, late_neg >= early_pos))) 
-      stop("Some late_neg >= early_pos") 
-}
-
 context("Test RTDates")
 rtdat <- getRTData(dat = hiv0)
 rtdat$obs_start[rtdat$IIntID==2820]  <- as.Date("2020-01-01", origin="1970-01-01")
 test_that("Test RTDates: wrong date", {
   expect_error(testDates(rtdat))
 })
+
+rm(list = c("getFiles"), envir = .GlobalEnv)
+if (exists("getFiles_User"))
+  getFiles <<- getFiles_User
 

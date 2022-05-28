@@ -20,7 +20,9 @@ recommended that you use all years in the HIV surveillance system (i.e. from 200
 onward).
 }
 \examples{
+\donttest{
 Args <- setArgs(Years=c(2003:2018))
 getHIVIncEligible(Args)
+}
 }
 \keyword{internal}

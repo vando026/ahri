@@ -99,7 +99,7 @@ calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
 #' @return data.frame
 #' @export 
 #' @examples
-#' age_dat <- getAgeYear(dat=setHIV(Args))
+#' age_dat <- getAgeYear(dat=setHIV(setArgs()))
 
 getAgeYear <- function(dat) {
   group_by(dat, Year) %>% 
@@ -111,22 +111,23 @@ getAgeYear <- function(dat) {
 
 #' @title MIdata
 #' @description  Function to generate dataset with imputed serodate.
-#' @param rtdat Dataset from \code{\link{getRTData}}.
+#' @param rtdat Dataframe from \code{\link{getRTData}}.
 #' @param Args Takes list from \code{\link{setArgs}}.
-#' @param f Function to perform additional operation. 
+#' @param f Function to perform additional operations. 
+#' @param bdat Dataframe of birthdates, otherwise it use \code{\link{getBirthDate}}
 #' @return list
 #' @export 
 #' @examples
 #' Args <- setArgs(nSim=2, mcores=1)
 #' rtdat <- getRTData(dat=getHIV())
 #' MIdata(rtdat, Args)
-MIdata <- function(rtdat, Args, f=identity) {
-  bdat=getBirthDate()
+MIdata <- function(rtdat, Args, f = identity,  bdat = NULL) {
+  if (is.null(bdat)) bdat = getBirthDate()
   parallel::mclapply(seq(Args$nSim),
     function(i) { 
       cat(i, "")
-      getIncData(rtdat, bdat, Args, func=f)},
-      mc.cores=Args$mcores)
+      getIncData(rtdat, bdat, Args, func = f)},
+      mc.cores = Args$mcores)
 }
 
 

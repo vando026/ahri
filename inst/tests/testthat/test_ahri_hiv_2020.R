@@ -3,45 +3,38 @@
 ## Author: AV / Created: 26Sep2020
 # testthat::test_file('inst/tests/testthat/test_ahri_hiv_2020.R')
 
+if (exists("getFiles", env = .GlobalEnv))
+  getFiles_User <- getFiles
 
-context("Test setData (15-54 years)")
-Args <- setArgs(nSim=1, Years=c(2005:2018), Age=list(Mal=c(15, 54)))
-hiv   <- getHIV()
-rtdat <- getRTData(hiv)
-dat <- imputeMidPoint(rtdat)
-edat <- splitAtSeroDate(dat)
-adat <- setData(edat, Args, time2="obs_end")
-test_that("Check Time, Age and sero events", {
-  expect_equal(sum(adat$Time),  16282483)
-  expect_equal(sum(adat$sero_event), 930)
-  expect_equal(sum(adat$Age), 1388066)
-})
+assign("getFiles", 
+  setFiles(system.file("data", package = "ahri"),
+    hivfile = "RD05-99_ACDIS_HIV_Sample.dta",
+    bsifile = "RD01-03_ACDIS_BS_Sample.dta",
+    epifile = "SurveillanceEpisodes_Sample.dta",
+    wghfile = "RD03-99_ACDIS_WGH_Sample.dta",
+    mghfile = "RD04-99_ACDIS_MGH_Sample.dta"), 
+  env = .GlobalEnv)
 
-
-context("Test setData (25-29 years)")
-Args <- setArgs(nSim=1, Years=c(2005:2018), Age=list(Mal=c(25, 29)))
-hiv   <- getHIV()
-rtdat <- getRTData(hiv)
-dat <- imputeMidPoint(rtdat)
-edat <- splitAtSeroDate(dat )
-adat <- setData(edat, Args, time2="obs_end")
-test_that("Check Time, Age and sero events", {
-  expect_equal(sum(adat$Time), 2355857)
-  expect_equal(sum(adat$sero_event), 262)
-  expect_equal(sum(adat$Age), 194327)
-})
-
+edat0 <- readEpisodes(dropTasP = TRUE, write_rda = FALSE)
+hiv0 <- readHIVData(dropTasP = TRUE, write_rda = FALSE)
+bidat <- dplyr::group_by(hiv0, IIntID) %>% dplyr::slice(1) %>%
+  dplyr::mutate(DateOfBirth = VisitDate - (Age * 365)) %>% 
+  dplyr::select(IIntID, DateOfBirth)
+rtdat <- getRTData(hiv0)
+rtdat$early_pos[rtdat$IIntID == 2820] <- as.Date("2019-02-10")
+rtdat$sero_event[rtdat$IIntID == 2820] <- 1
+rtdat$early_pos[rtdat$IIntID == 2830] <- as.Date("2017-05-01")
+rtdat$sero_event[rtdat$IIntID == 2830] <- 1
 
 context("Test getIncData")
-Args <- setArgs(Age=list(Mal=c(15, 54), Fem=c(15, 54)), 
+Args <- setArgs(Age=list(Mal=c(15, 100), Fem=c(15, 100)), 
   Years=c(2004:2017), imputeMethod=imputeMidPoint)
-hiv <- getHIV()
-rtdat <- getRTData(hiv)
-idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
-test_that("Check Time, Age and sero events", {
-  expect_equal(sum(idat$Time), 42204082)
-  expect_equal(sum(idat$sero_event), 3845)
-  expect_equal(sum(idat$Age),  3854380)
+idat <- getIncData(rtdat, bdat=bidat, Args)
+test_that("Check Time, tscale and sero events", {
+  expect_gt(min(idat$tscale), 0)
+  expect_lte(max(idat$tscale), 1.02)
+  expect_equal(sum(idat$sero_event), 2)
+  expect_equal(sum(idat$Time),  14258)
 })
 
 context("Test AggFunc")
@@ -49,21 +42,21 @@ agedat <- AggByAge(idat)
 yeardat <- AggByYear(idat)
 test_that("Check seroevent and pyears add up", {
   expect_equal(sum(agedat$sero_event), sum(idat$sero_event))
-  expect_equal(round(sum(agedat$pyears)), 115548)
+  expect_equal(round(sum(agedat$pyears)), 39)
   expect_equal(sum(yeardat$sero_event), sum(idat$sero_event))
-  expect_equal(round(sum(yeardat$pyears)),  115548)
+  expect_equal(round(sum(yeardat$pyears)),  39)
 })
 
 context("Test MMIaggregate")
 set.seed(1234)
 Args <- setArgs(nSim=1, mcores=1)
-rtdat <- getRTData(dat=getHIV())
-mdat <- MIdata(rtdat, Args)
+rtdat <- getRTData(dat = hiv0)
+mdat <- MIdata(rtdat, Args, bdat = bidat)
 mdat <- mitools::imputationList(mdat)
 inc <- with(mdat, fun=AggByYear)
 agedat1 <- MIaggregate(inc)
 test_that("Check seroevent and pyears add up", {
-  expect_equal(round(sum(agedat1$sero_event)), 4007)
+  expect_equal(sum(agedat1$sero_event), 2)
   expect_equal(round(sum(agedat1$pyears)), 159710)
 })
 

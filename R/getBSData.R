@@ -93,38 +93,39 @@ getBSMax <- function(dat = getEpisodes(), minDays=0) {
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' 
 #' @return data.frame
-#' @export 
+#' @keywords internal 
 
 makeMigrVars <- function(Args) {
-  dem <- setEpisodes(Args) %>% 
-    select(.data$IIntID, .data$BSIntID, .data$Year, .data$Age,
-      .data$ExpDays, .data$Resident, matches("Migration"))
-  adat <- distinct(dem, .data$IIntID, .data$Year)
-  mdat <- filter(dem, .data$Resident==1)
-  mdat <- group_by(mdat, .data$IIntID, .data$Year) %>% 
-    summarize(DaysIn=sum(.data$ExpDays)) %>% ungroup()
-  adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
-  adat$DaysIn[is.na(adat$DaysIn)] <- 0
-  adat <- mutate(adat, 
-    DaysOut = 366 - .data$DaysIn, DayFull = 366)
-  cumtime <- group_by(adat, .data$IIntID) %>% 
-    mutate(CumDaysOut = cumsum(.data$DaysOut),
-    CumDays = cumsum(.data$DayFull),
-    CumTimeOut = round(.data$CumDaysOut/.data$CumDays, 2)) %>% 
-    ungroup()
-  cumtime <- select(cumtime,.data$IIntID, .data$Year, .data$CumTimeOut)
-  # Count external migr events
-  inmigr <- select(dem, .data$IIntID, .data$Year, .data$InMigration) %>% filter(.data$InMigration==1)
-  inmigr <- group_by(inmigr, .data$IIntID, .data$Year) %>% summarize(InMigr=n()) %>% ungroup()
-  outmigr <- select(dem, .data$IIntID, .data$Year, .data$OutMigration) %>% filter(.data$OutMigration==1)
-  outmigr <- group_by(outmigr, .data$IIntID, .data$Year) %>% summarize(OutMigr=n()) %>% ungroup()
-  migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-.data$DayFull)
-  migr <- left_join(migr, outmigr, by=c("IIntID", "Year"))
-  migr$InMigr[is.na(migr$InMigr)] <- 0
-  migr$OutMigr[is.na(migr$OutMigr)] <- 0
-  migr <- mutate(migr, MigrCount=.data$InMigr+.data$OutMigr) 
-  dat <- left_join(migr, cumtime, by=c("IIntID", "Year"))
-  dat
+  stop("This function is deprecated and no longer maintained")
+  # dem <- setEpisodes(Args) %>% 
+  #   select(.data$IIntID, .data$BSIntID, .data$Year, .data$Age,
+  #     .data$ExpDays, .data$Resident, matches("Migration"))
+  # adat <- distinct(dem, .data$IIntID, .data$Year)
+  # mdat <- filter(dem, .data$Resident==1)
+  # mdat <- group_by(mdat, .data$IIntID, .data$Year) %>% 
+  #   summarize(DaysIn=sum(.data$ExpDays)) %>% ungroup()
+  # adat <- left_join(adat, mdat, by=c("IIntID", "Year"))
+  # adat$DaysIn[is.na(adat$DaysIn)] <- 0
+  # adat <- mutate(adat, 
+  #   DaysOut = 366 - .data$DaysIn, DayFull = 366)
+  # cumtime <- group_by(adat, .data$IIntID) %>% 
+  #   mutate(CumDaysOut = cumsum(.data$DaysOut),
+  #   CumDays = cumsum(.data$DayFull),
+  #   CumTimeOut = round(.data$CumDaysOut/.data$CumDays, 2)) %>% 
+  #   ungroup()
+  # cumtime <- select(cumtime,.data$IIntID, .data$Year, .data$CumTimeOut)
+  # # Count external migr events
+  # inmigr <- select(dem, .data$IIntID, .data$Year, .data$InMigration) %>% filter(.data$InMigration==1)
+  # inmigr <- group_by(inmigr, .data$IIntID, .data$Year) %>% summarize(InMigr=n()) %>% ungroup()
+  # outmigr <- select(dem, .data$IIntID, .data$Year, .data$OutMigration) %>% filter(.data$OutMigration==1)
+  # outmigr <- group_by(outmigr, .data$IIntID, .data$Year) %>% summarize(OutMigr=n()) %>% ungroup()
+  # migr <- left_join(adat, inmigr, by=c("IIntID", "Year")) %>% select(-.data$DayFull)
+  # migr <- left_join(migr, outmigr, by=c("IIntID", "Year"))
+  # migr$InMigr[is.na(migr$InMigr)] <- 0
+  # migr$OutMigr[is.na(migr$OutMigr)] <- 0
+  # migr <- mutate(migr, MigrCount=.data$InMigr+.data$OutMigr) 
+  # dat <- left_join(migr, cumtime, by=c("IIntID", "Year"))
+  # dat
 }
 
 
@@ -141,25 +142,28 @@ makeMigrVars <- function(Args) {
 #' is TRUE.
 #' 
 #' @return data.frame
-#' @export 
+#' @keywords internal 
 #' @examples
+#' \donttest{
 #' Args <- setArgs()
 #' epi <- setEpisodes(Args) 
 #' mdat <- makeMigrVars(Args)
 #' epi2 <- addMigrVars(epi, mdat)
+#' }
 
 addMigrVars <- function(dat, mdat, carry=TRUE) {
-  dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
-  dat <- arrange(dat, .data$IIntID, .data$Year)
-  if (carry) {
-  dat <- mutate(dat, 
-    MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE), 
-    MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE, fromLast=TRUE),
-    CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE), 
-    CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE, fromLast=TRUE))
-  }
-  dat <- mutate(dat, CumTimeOut = round(.data$CumTimeOut*100))
-  dat
+  stop("This function is deprecated and no longer maintained")
+  # dat <- left_join(dat, mdat, by=c("IIntID", "Year"))
+  # dat <- arrange(dat, .data$IIntID, .data$Year)
+  # if (carry) {
+  # dat <- mutate(dat, 
+  #   MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE), 
+  #   MigrCount = zoo::na.locf(.data$MigrCount, na.rm=FALSE, fromLast=TRUE),
+  #   CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE), 
+  #   CumTimeOut = zoo::na.locf(.data$CumTimeOut, na.rm=FALSE, fromLast=TRUE))
+  # }
+  # dat <- mutate(dat, CumTimeOut = round(.data$CumTimeOut*100))
+  # dat
 }
 
 
@@ -173,6 +177,7 @@ addMigrVars <- function(dat, mdat, carry=TRUE) {
 #' @param Type "Males", "Females", or "All". Add only the Males, Females or All.
 #' 
 #' @return data.frame
+#' @keywords internal 
 
 addHIVPrevBS <- function(inFile, dat, Args, Type="All") {
   stop("This function is deprecated and no longer maintained")

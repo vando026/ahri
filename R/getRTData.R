@@ -61,9 +61,6 @@ getDates <- function(f) {
 #' @param  Name new variable name.
 #' 
 #' @return data.frame
-#' 
-#' @examples
-#' getDatesMin(dat=getHIV(), "HIVNegative", "early_neg")
 
 getDatesMin <- getDates(min)
 
@@ -76,10 +73,6 @@ getDatesMin <- getDates(min)
 #' @param  Name new variable name.
 #' 
 #' @return data.frame
-#' 
-#' @examples
-#' getDatesMax(dat=getHIV(), "HIVNegative", "late_neg")
-
 getDatesMax <- getDates(max)
 
 

@@ -58,7 +58,9 @@ getEverART <- function(dat=getEpisodes()) {
 #' default is by year \code{"EvertART ~ Year"}
 #' @return data.frame
 #' @examples
+#' \donttest{
 #' calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
+#' }
 calcARTCov <- function(dat=getEverART(), Args=setArgs(), 
   Formula = "EverART ~ Year") {
   stop("This function is deprecated and no longer maintained")

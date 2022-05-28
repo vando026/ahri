@@ -14,3 +14,4 @@ check_var(dat, var)
 \description{
 Check if the variable name exists
 }
+\keyword{internal}

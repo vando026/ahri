@@ -19,6 +19,3 @@ data.frame
 \description{
 Function to get latest test dates
 }
-\examples{
-getDatesMax(dat=getHIV(), "HIVNegative", "late_neg")
-}

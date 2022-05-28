@@ -9,3 +9,4 @@ check_getFiles()
 \description{
 Warns user that they did not set getFiles, see \code{\link{setFiles}}.
 }
+\keyword{internal}

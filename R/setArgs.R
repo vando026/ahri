@@ -12,7 +12,7 @@
 #' @param imputeMethod select either \code{\link{imputeRandomPoint}} or
 #' \code{\link{imputeMidPoint}}.
 #' @param mcores number of cores to use for parallel package (used in
-#' \code{\link{MIdata}}).
+#' \code{\link{MIdata}}). This is not available for Windows users apparently.
 #' @param MoreArgs a list, which adds more arguments if needed.
 #' @param setFun a function used by \code{\link{setData}} by which the data can be further subset.
 #' @param addVars a function used by \code{\link{setData}} by which additional variables

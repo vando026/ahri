@@ -22,8 +22,11 @@ Adds variables from \code{\link{makeMigrVars}} to an
 existing dataset.
 }
 \examples{
+\donttest{
 Args <- setArgs()
 epi <- setEpisodes(Args) 
 mdat <- makeMigrVars(Args)
 epi2 <- addMigrVars(epi, mdat)
 }
+}
+\keyword{internal}

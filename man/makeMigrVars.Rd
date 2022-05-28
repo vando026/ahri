@@ -16,3 +16,4 @@ data.frame
 Make migration variables: the cumulative time spent out the PIP
 study area and the number of migration events (in and out) by year.
 }
+\keyword{internal}

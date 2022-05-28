@@ -26,11 +26,13 @@
 #' getFiles <- setFiles(folder="Path/to/my/datafolder")
 #' # If for some reason your HIV surveillance .dta file is named differently 
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
-#' # preadHIVDatarint out the default file paths and names
+#' # print out the default file paths and names
 #' setFiles()
 #' # print out your file paths and names
+#' \donttest{
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 #' getFiles()
+#' }
 setFiles <- function(
   folder = "",
   hivfile = "RD05-99 ACDIS HIV All.dta",
@@ -56,6 +58,7 @@ setFiles <- function(
 
 #' @title check_getFiles
 #' @description  Warns user that they did not set getFiles, see \code{\link{setFiles}}.
+#' @keywords internal
 check_getFiles <- function() {
   if (!exists("getFiles", envir = globalenv()))
     message("The  getFiles function doesn't exist, you need to set it. Type `?setFiles` for help.")

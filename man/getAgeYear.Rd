@@ -16,5 +16,5 @@ data.frame
 Calculate mean age by year. This is mostly used in \code{MIpredict}
 }
 \examples{
-age_dat <- getAgeYear(dat=setHIV(Args))
+age_dat <- getAgeYear(dat=setHIV(setArgs()))
 }

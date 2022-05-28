@@ -4,14 +4,16 @@
 \alias{MIdata}
 \title{MIdata}
 \usage{
-MIdata(rtdat, Args, f = identity)
+MIdata(rtdat, Args, f = identity, bdat = NULL)
 }
 \arguments{
-\item{rtdat}{Dataset from \code{\link{getRTData}}.}
+\item{rtdat}{Dataframe from \code{\link{getRTData}}.}
 
 \item{Args}{Takes list from \code{\link{setArgs}}.}
 
-\item{f}{Function to perform additional operation.}
+\item{f}{Function to perform additional operations.}
+
+\item{bdat}{Dataframe of birthdates, otherwise it use \code{\link{getBirthDate}}}
 }
 \value{
 list

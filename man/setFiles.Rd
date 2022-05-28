@@ -60,9 +60,11 @@ datasets. You must assign the \code{setFiles} function to a name called
 getFiles <- setFiles(folder="Path/to/my/datafolder")
 # If for some reason your HIV surveillance .dta file is named differently 
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
-# preadHIVDatarint out the default file paths and names
+# print out the default file paths and names
 setFiles()
 # print out your file paths and names
+\donttest{
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 getFiles()
+}
 }
