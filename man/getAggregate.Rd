@@ -20,8 +20,11 @@ list
 Gets aggregated numbers by category.
 }
 \examples{
+\donttest{
 Args <- setArgs()
 hiv <- getHIV()
 hiv <- setData(hiv, Args)
 getAggregate(hiv, "IIntID ~ Year + HIVResult")
 }
+}
+\keyword{internal}
