@@ -24,10 +24,8 @@
 #' # Add variables
 #' hdat <- readHIVData(addVars="HIVRefused|WhereLastTested", write_rda=FALSE)
 
-readHIVData <- function(
-  inFile=NULL, 
-  dropTasP=TRUE, addVars=" ", 
-  drop15Less=TRUE, write_rda=TRUE) {
+readHIVData <- function(inFile=NULL, 
+  dropTasP=TRUE, addVars=" ", drop15Less=TRUE, write_rda=TRUE) {
   #
   if (is.null(inFile)) {
     check_getFiles()
@@ -35,32 +33,31 @@ readHIVData <- function(
   }
   #
   hiv <- haven::read_dta(inFile) %>% 
-    select(IIntID=IIntId, 
-      BSIntID=ResidencyBSIntId, VisitDate, 
-      HIVResult, Female=Sex, Age=AgeAtVisit,
+    select(IIntID = IIntId, 
+      BSIntID = ResidencyBSIntId, VisitDate, 
+      HIVResult, Female = Sex, Age = AgeAtVisit,
       matches(addVars))
   hiv <- haven::zap_labels(hiv)
-  hiv <- filter(hiv, Female %in% c(1,2))
-  hiv <- mutate(hiv,
-    IIntID = as.integer(IIntID),
-    BSIntID = as.integer(BSIntID),
-    Female=as.integer(ifelse(Female==2, 1, 0)))
-  hiv <- arrange(hiv, IIntID, VisitDate)
   if (dropTasP) hiv <- dropTasPData(hiv)
+  hiv <- filter(hiv, Female %in% c(1,2))
   # Only deal with valid test results
   hiv <- filter(hiv, HIVResult %in% c(0,1))
   if (drop15Less) hiv <- filter(hiv, Age %in% c(15:100))
-  hiv <- mutate(hiv, 
+  hiv <- mutate(hiv,
+    IIntID = as.integer(IIntID),
+    BSIntID = as.integer(BSIntID),
+    Female = as.integer(ifelse(Female==2, 1, 0)),
+    Year = as.integer(format(VisitDate, "%Y")),
     HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
     HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
-  hiv <- mutate(hiv, Year=as.integer(format(VisitDate, "%Y")))
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
+  hiv <- arrange(hiv, IIntID, VisitDate)
   if (write_rda) {
     check_getFiles()
     saveRDS(hiv, file = getFiles()$hiv_rda)
   }
-  hiv
+  return(hiv)
 }
 
 #' @title getHIV
