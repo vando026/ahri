@@ -56,7 +56,7 @@ set.seed(1234)
 Args <- setArgs(nSim=1, mcores=1)
 mdat <- MIdata(rtdat, Args, bdat = getBirthDate(edat0))
 mdat <- mitools::imputationList(mdat)
-inc <- with(mdat, fun=AggByYear
+inc <- with(mdat, fun=AggByYear)
 yeardat1 <- MIaggregate(inc)
 test_that("Check seroevent and pyears add up", {
   expect_equal(yeardat1[yeardat1$Year == 2007, "sero_event"], 0)
