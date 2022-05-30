@@ -1,4 +1,4 @@
-#' @title readUniRegResults
+#' @title  Read the results from the unireg model into dataframe.
 #' @description  Read the results from the \code{\link{uniReg}} model into .Rdata
 #' format. Download and install the IntCens library for R from
 #' \link{https://dlin.web.unc.edu/software/intcens/}.
@@ -55,7 +55,7 @@ readUniRegResults <- function(File=NULL) {
 }
 
 
-#' @title gImpute
+#' @title  Uses the G-imputation method to impute the HIV sero date times.
 #' 
 #' @description  Uses the G-imputation method to impute the infection times.
 #' 
@@ -276,7 +276,7 @@ uniRegOne <- function(Vars, Name) {
   do.call(rbind, dat)
 }
 
-#' @title getGImpute
+#' @title Add theimputed infection times to an existing dataframe.
 #' 
 #' @description  Adds the ith column of imputed infection times from \code{\link{gImpute}} to an
 #' existing dataset.

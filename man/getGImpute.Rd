@@ -2,7 +2,7 @@
 % Please edit documentation in R/intCens.R
 \name{getGImpute}
 \alias{getGImpute}
-\title{getGImpute}
+\title{Add theimputed infection times to an existing dataframe.}
 \usage{
 getGImpute(rtdat, gdat, i)
 }

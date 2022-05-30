@@ -2,7 +2,7 @@
 % Please edit documentation in R/intCens.R
 \name{readUniRegResults}
 \alias{readUniRegResults}
-\title{readUniRegResults}
+\title{Read the results from the unireg model into dataframe.}
 \usage{
 readUniRegResults(File = NULL)
 }

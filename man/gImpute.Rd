@@ -2,7 +2,7 @@
 % Please edit documentation in R/intCens.R
 \name{gImpute}
 \alias{gImpute}
-\title{gImpute}
+\title{Uses the G-imputation method to impute the HIV sero date times.}
 \usage{
 gImpute(
   dat,
