@@ -3,7 +3,7 @@
 \docType{data}
 \name{gdat}
 \alias{gdat}
-\title{Example datasets for G-imputation: idat}
+\title{Example datasets for G-imputation: gdat}
 \format{
 A data frame with 6042 rows and 6 variables:
 \describe{
@@ -24,7 +24,7 @@ A data frame with 6042 rows and 6 variables:
 gdat
 }
 \description{
-A dataset consisting of the covariate values that will be input for the uniReg
+A dataset consisting of the covariate values that will be input for the unireg
 function.
 }
 \keyword{datasets}
