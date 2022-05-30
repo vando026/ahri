@@ -2,7 +2,7 @@
 % Please edit documentation in R/getARTData.R
 \name{getEverART}
 \alias{getEverART}
-\title{getEverART}
+\title{Creates an Ever on ART variable.}
 \usage{
 getEverART(dat = getEpisodes())
 }

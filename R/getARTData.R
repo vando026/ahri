@@ -1,4 +1,4 @@
-#' @title getARTDates
+#' @title  Get ART initiation dates from Surveillance Episodes dataset. 
 #' 
 #' @description  Get ART initiation dates
 #' 
@@ -23,7 +23,7 @@ getARTDates <- function(dat=getEpisodes()) {
 }
 
 
-#' @title getEverART
+#' @title  Creates an Ever on ART variable.
 #' 
 #' @description  Creates an Ever on ART variable.
 #' 

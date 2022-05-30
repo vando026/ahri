@@ -2,7 +2,7 @@
 % Please edit documentation in R/getARTData.R
 \name{getARTDates}
 \alias{getARTDates}
-\title{getARTDates}
+\title{Get ART initiation dates from Surveillance Episodes dataset.}
 \usage{
 getARTDates(dat = getEpisodes())
 }
