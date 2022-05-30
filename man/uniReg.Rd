@@ -5,6 +5,7 @@
 \title{uniReg}
 \usage{
 uniReg(
+  xpath,
   InFile,
   OutFile,
   Model,
@@ -18,6 +19,8 @@ uniReg(
 )
 }
 \arguments{
+\item{xpath}{The path to the unireg executable.}
+
 \item{InFile}{txt file to be input}
 
 \item{OutFile}{txt file to be output}
@@ -40,15 +43,14 @@ uniReg(
 }
 \description{
 Wrapper for Intcens executable by Zeng et al 2016. See
-http://dlin.web.unc.edu/software/intcens/ for details. The executable is shipped with 
-the \code{ahri} package. Type in the R console \code{system.file("intcens", "unireg.exe", package =
-"ahri")}.
+http://dlin.web.unc.edu/software/intcens/ to download the program for Windows or Linux.
 }
 \examples{
 \donttest{
-uniReg(
+# Download unireg program and place in path
+xpath <- '/home/alain/Seafile/ahriproject/unireg'
+uniReg(xpath = xpath,
 InFile = file.path(output, "TestSim.txt"),
 OutFile = file.path(output, "TestSim_Out.txt"), r = 0.0,
-Model = "(time, d) = v1 + v2 + v3",
-ID = "id")}
+Model = "(time, d) = v1 + v2 + v3", ID = "id")}
 }

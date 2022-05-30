@@ -38,16 +38,17 @@ getBSData <- function(inFile = NULL) {
 #'
 #' @export 
 #' @examples
-#' hiv <- readHIVData()
+#' # This is what the dropTasP argument does when it is TRUE.
+#' hiv <- readHIVData(dropTasP = FALSE)
 #' hiv <- dropTasPData(hiv)
 
 dropTasPData <- function(dat, bsdat = NULL) {
   if (is.null(bsdat)) {
     check_getFiles()
-    bsdat <- getBSData() %>% select(BSIntID, PIPSA)
+    bsdat <- getBSData() %>% select(.data$BSIntID, .data$PIPSA)
   }
   dat <- left_join(dat, bsdat, by="BSIntID")
-  dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
+  dat <- filter(dat, .data$PIPSA %in% c("Southern PIPSA", NA)) 
   return(dat)
 }
 

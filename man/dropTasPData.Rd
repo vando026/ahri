@@ -20,6 +20,7 @@ data.frame
 Function to drop obervations from TasP areas.
 }
 \examples{
-hiv <- readHIVData()
+# This is what the dropTasP argument does when it is TRUE.
+hiv <- readHIVData(dropTasP = FALSE)
 hiv <- dropTasPData(hiv)
 }

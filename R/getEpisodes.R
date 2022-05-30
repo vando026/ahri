@@ -33,22 +33,22 @@ readEpisodes <- function(
     names(dat)[names(dat)=="ARTStartedDate"] <- "EarliestARTInitDate"
   }
   dat <- select(dat,
-    IIntID=IndividualId, BSIntID=LocationId, 
-    Female=Sex, Age, DoB, DoD,
-    Year, ExpDays=Days,
-    ObservationStart=StartDate,
-    ObservationEnd=EndDate,
-    InMigration, OutMigration,
-    Resident, AssetIndex=ModerntAssetIdx,
-    OnART, EarliestARTInitDate, matches(addVars))
-  dat <- filter(dat, Female %in% c(1,2))
+    IIntID=.data$IndividualId, BSIntID=.data$LocationId, 
+    Female=.data$Sex, .data$Age, .data$DoB, .data$DoD,
+    .data$Year, ExpDays=.data$Days,
+    ObservationStart=.data$StartDate,
+    ObservationEnd=.data$EndDate,
+    .data$InMigration, .data$OutMigration,
+    .data$Resident, AssetIndex=.data$ModerntAssetIdx,
+    .data$OnART, .data$EarliestARTInitDate, matches(addVars))
+  dat <- filter(dat, .data$Female %in% c(1,2))
   dat <- mutate(dat,
-    IIntID=as.integer(IIntID),
-    BSIntID=as.integer(BSIntID),
-    Year=as.integer(Year),
-    Female=as.integer(ifelse(Female==2, 1, 0)))
+    IIntID=as.integer(.data$IIntID),
+    BSIntID=as.integer(.data$BSIntID),
+    Year=as.integer(.data$Year),
+    Female=as.integer(ifelse(.data$Female==2, 1, 0)))
   if (dropTasP==TRUE) dat <- dropTasPData(dat)
-  dat <- arrange(dat, IIntID, ObservationStart)
+  dat <- arrange(dat, .data$IIntID, .data$ObservationStart)
   if (write_rda) {
     check_getFiles()
     saveRDS(dat, file = getFiles()$epi_rda)

@@ -1,7 +1,7 @@
 ## Description: Test read code and dta
 ## Project: ahri
 ## Author: AV / Created: 23 September 2020
-# testthat::test_file('inst/tests/testthat/test_ahri_dta_2020.R')
+# testthat:test_file('inst/tests/testthat/test_ahri_dta_2020.R')
 
 if (exists("getFiles", env = .GlobalEnv))
   getFiles_User <- getFiles

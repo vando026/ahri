@@ -15,7 +15,7 @@
 getARTDates <- function(dat=getEpisodes()) {
   dat <- dplyr::filter(dat, !is.na(.data$EarliestARTInitDate))
   dat <- dplyr::distinct(dat, .data$IIntID, .data$EarliestARTInitDate, .keep_all=TRUE) %>% 
-    dplyr::select(IIntID, DateOfInitiation=.data$EarliestARTInitDate)
+    dplyr::select(.data$IIntID, DateOfInitiation=.data$EarliestARTInitDate)
   dat <- dplyr::mutate(dat,
     YearOfInitiation = as.integer(format(.data$DateOfInitiation, "%Y")),
     MonthART = as.integer(format(.data$DateOfInitiation, "%m")))
@@ -82,7 +82,7 @@ calcARTCov <- function(dat=getEverART(), Args=setArgs(),
 readARTCov <- function(Female=1) {
   stop("This function is deprecated and no longer maintained")
   # sex <- ifelse(Female==1, "fem_art", "mal_art")
-  # art <- suppressMessages(readr::read_csv(
+  # art <- suppressMessages(read_csv(
   #   unlist(getFiles()[sex]), na=c("", "-")))
   # art <- tidyr::gather(art, Year, ARTCov, -BSIntID)
   # art <- dplyr::filter(art, !is.na(.data$ARTCov))

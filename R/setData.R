@@ -7,16 +7,16 @@
 
 setAge <- function(dat, Args) {
   if ("All" %in% names(Args$Age)) {
-    dat <- filter(dat, !(Age < Args$Age[["All"]][1]) &
-      !(Age > Args$Age[["All"]][2]))
+    dat <- filter(dat, !(.data$Age < Args$Age[["All"]][1]) &
+      !(.data$Age > Args$Age[["All"]][2]))
   } 
   if ("Mal" %in% names(Args$Age)) {
-    dat <- filter(dat, !(Female==0 & Age < Args$Age[["Mal"]][1]) &
-      !(Female==0 & Age > Args$Age[["Mal"]][2]))
+    dat <- filter(dat, !(.data$Female==0 & .data$Age < Args$Age[["Mal"]][1]) &
+      !(.data$Female==0 & .data$Age > Args$Age[["Mal"]][2]))
   } 
   if ("Fem" %in% names(Args$Age)) {
-    dat <- filter(dat, !(Female==1 & Age < Args$Age[["Fem"]][1]) &
-      !(Female==1 & Age > Args$Age[["Fem"]][2]))
+    dat <- filter(dat, !(.data$Female==1 & .data$Age < Args$Age[["Fem"]][1]) &
+      !(.data$Female==1 & .data$Age > Args$Age[["Fem"]][2]))
   }
   dat
 }
@@ -69,10 +69,10 @@ makeAgeVars <- function(dat, time2=NULL, age_cut=NULL, birthdate=NULL){
     dat <- data.frame(left_join(dat, birthdate, by="IIntID"))
     dat$Age <- floor(as.numeric(difftime(
       dat[,time2], dat[,"DateOfBirth"], units='weeks'))/52.25)
-    dat <- select(dat, -(DateOfBirth))
+    dat <- select(dat, -(.data$DateOfBirth))
   }
   if(!is.null(age_cut)) {
-    dat <- mutate(dat, AgeCat = cut(Age, breaks=age_cut,
+    dat <- mutate(dat, AgeCat = cut(.data$Age, breaks=age_cut,
       include.lower=TRUE, right=FALSE, labels=NULL))
     dat$AgeCat <- droplevels(dat$AgeCat)
   }

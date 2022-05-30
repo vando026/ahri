@@ -22,7 +22,7 @@ splitData2 <- function(
   edat[vars] <- lapply(edat[vars], 
     function(x) as.Date(x, origin="1970-01-01"))
   edat <- mutate(edat, 
-    Year=as.integer(format(obs_start, "%Y")))
+    Year=as.integer(format(.data$obs_start, "%Y")))
   tibble::as_tibble(edat)
 }
 

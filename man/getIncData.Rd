@@ -25,8 +25,4 @@ Function that imputes sero date, splits at censoring date and set the age.
 Args <- setArgs(imputeMethod = imputeRandomPoint)
 rtdat <- getRTData(dat=getHIV())
 getIncData(rtdat, Args = Args)
-Args <- setArgs(imputeMethod = imputeMidPoint)
-ydat <- getIncData(rtdat, Args = Args)
-AggByYear <- AggFunc("Year")
-inc <- AggByYear(ydat)
 }

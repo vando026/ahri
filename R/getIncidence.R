@@ -10,17 +10,12 @@
 #' Args <- setArgs(imputeMethod = imputeRandomPoint)
 #' rtdat <- getRTData(dat=getHIV())
 #' getIncData(rtdat, Args = Args)
-#' @examples
-#' Args <- setArgs(imputeMethod = imputeMidPoint)
-#' ydat <- getIncData(rtdat, Args = Args)
-#' AggByYear <- AggFunc("Year")
-#' inc <- AggByYear(ydat)
 getIncData <- function(rtdat, bdat = NULL, Args, func = identity) {
   if (is.null(bdat)) bdat = getBirthDate()
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
   edat <- setData(edat, Args, time2 = "obs_end", birthdate = bdat)
-  edat <- mutate(edat, tscale = Time/365.25)
+  edat <- mutate(edat, tscale = .data$Time/365.25)
   func(edat)
 }
 
@@ -57,6 +52,7 @@ AggByYear <- AggFunc("Year")
 #' @export 
 #' @examples
 #' # Show for one imputation 
+#' getFiles <- setFiles('/home/alain/Seafile/AHRI_Data/2020')
 #' Args <- setArgs(imputeMethod = imputeMidPoint)
 #' rtdat <- getRTData(dat = getHIV())
 #' idat <- getIncData(rtdat, Args = Args)
@@ -101,9 +97,9 @@ calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
 #' age_dat <- getAgeYear(dat=setHIV(setArgs()))
 
 getAgeYear <- function(dat) {
-  group_by(dat, Year) %>% 
-  summarize(Age = mean(Age)) %>% 
-  mutate(Year = factor(Year), tscale=1)
+  group_by(dat, .data$Year) %>% 
+  summarize(Age = mean(.data$Age)) %>% 
+  mutate(Year = factor(.data$Year), tscale=1)
 }
 
 

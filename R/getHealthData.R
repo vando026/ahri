@@ -74,7 +74,7 @@ readWGH <- function(inFile = NULL, write_rda=TRUE) {
     rename(IIntID=.data$IIntId, BSIntID=.data$ResidenceBSIntId, Age=.data$AgeAtVisit)
   dat <- mutate(dat, 
     Year = as.integer(format(.data$VisitDate, "%Y")),
-    IIntID = as.integer(.data$IntID), Female = 1)
+    IIntID = as.integer(.data$IIntID), Female = 1)
   if (write_rda) {
     check_getFiles()
     saveRDS(dat, file = getFiles()$wgh_rda) 
@@ -152,7 +152,7 @@ getWGH <- function(inFile=NULL) {
 #' @param dat A dataset from \code{\link{getMGH}}.
 #' @export
 #' @examples
-#' gdat <- getCircumcisionData()
+#' getCircumcisionData(dat = getMGH())
 getCircumcisionData <- function(dat=getMGH()) {
   dat <- dplyr::filter(dat, .data$IsCircumcised %in% c(1, 2))
   dat <- dplyr::mutate(dat, IsCircumcised=as.numeric(.data$IsCircumcised==1))

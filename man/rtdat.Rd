@@ -12,7 +12,7 @@ A data frame with 1022 rows and 6 variables:
 \item{obs_start}{The earliest-negative date}
 \item{late_neg}{The latest-negative date}
 \item{early_pos}{The earliest-positive date}
-\item{sero_date}{Indicates if repeat-tester seroconverted during observation period}
+\item{sero_event}{Indicates if repeat-tester seroconverted during observation period}
 }
 }
 \usage{

@@ -14,5 +14,5 @@ Gets circumcision data from the MGH dataset with the year of
 circumcision and an indicator of ever circumcised.
 }
 \examples{
-gdat <- getCircumcisionData()
+getCircumcisionData(dat = getMGH())
 }

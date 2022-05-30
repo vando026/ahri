@@ -59,6 +59,7 @@ readUniRegResults <- function(File=NULL) {
 #' Default is TRUE. 
 #' @param mcores The number of cores to use for parallel processing using \code{mclapply}.
 #' @return data.frame
+#' @importFrom stats knots stepfun runif
 #' @export 
 #' @examples
 #' ## See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
@@ -167,16 +168,12 @@ gImpute <- function(dat, Results, nSim=1,
 #' @title uniReg
 #' 
 #' @description  Wrapper for Intcens executable by Zeng et al 2016. See
-#' http://dlin.web.unc.edu/software/intcens/ for details. The executable is shipped with 
-#' the \code{ahri} package. Type in the R console \code{system.file("intcens", "unireg.exe", package =
-#' "ahri")}. 
+#' http://dlin.web.unc.edu/software/intcens/ to download the program for Windows or Linux. 
 #' 
+#' @param xpath The path to the unireg executable.
 #' @param InFile txt file to be input
-#' 
 #' @param OutFile txt file to be output
-#' 
 #' @param Model equation to be given
-#'
 #' @param ID name of subject ID
 #' @param iter Number of iterations
 #' @param cthresh Threshold for convergence
@@ -184,19 +181,18 @@ gImpute <- function(dat, Results, nSim=1,
 #' @param inf Value for infinite, default is "Inf"
 #' @param printout Print results to screen
 #' @param ign_stout For Linux systems
-#'
 #' @export
-#'
 #' @examples
 #' \donttest{
-#' uniReg(
+#' # Download unireg program and place in path
+#' xpath <- '/home/alain/Seafile/ahriproject/unireg'
+#' uniReg(xpath = xpath,
 #' InFile = file.path(output, "TestSim.txt"),
 #' OutFile = file.path(output, "TestSim_Out.txt"), r = 0.0,
-#' Model = "(time, d) = v1 + v2 + v3",
-#' ID = "id")}
+#' Model = "(time, d) = v1 + v2 + v3", ID = "id")}
 
 
-uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
+uniReg <- function(xpath, InFile, OutFile, Model, ID=NULL, inf="Inf",
   iter=5000, cthresh=0.0001, r=1.0, printout=FALSE, ign_stout=TRUE) {
     InFile <- paste("--in", InFile)
     OutFile <- paste("--out", OutFile)
@@ -207,7 +203,6 @@ uniReg <- function(InFile, OutFile, Model, ID=NULL, inf="Inf",
     R <- paste("--r", r)
     iter <- paste("--max_itr", iter)
     cthresh <- paste("--convergence_threshold", cthresh)
-    xpath <- system.file("unireg", "unireg.exe", package = "ahri")
     if (Sys.getenv("OS") == "Windows_NT") {
       system(command=paste(xpath, InFile, OutFile, Model, 
         ID, Sep, iter, R, inf, cthresh, collapse=" "),
@@ -277,9 +272,9 @@ getGImpute <- function(rtdat, gdat, i) {
   gdat <- gdat[, c("IIntID", "start_date", paste0("g", i))]
   names(gdat) <- c("IIntID", "start_date", "sero_days")
   gdat <- mutate(gdat,
-    sero_date =  as.Date(start_date + sero_days, origin="1970-01-01"))
+    sero_date =  as.Date(.data$start_date + .data$sero_days, origin="1970-01-01"))
   left_join(rtdat, gdat, by="IIntID") %>% 
-    select(-c(start_date, sero_days))
+    select(-c(.data$start_date, .data$sero_days))
 }
 
 

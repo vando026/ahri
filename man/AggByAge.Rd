@@ -17,6 +17,7 @@ Aggregates data to get sero events and pyears by age category.
 }
 \examples{
 # Show for one imputation 
+getFiles <- setFiles('/home/alain/Seafile/AHRI_Data/2020')
 Args <- setArgs(imputeMethod = imputeMidPoint)
 rtdat <- getRTData(dat = getHIV())
 idat <- getIncData(rtdat, Args = Args)

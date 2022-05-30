@@ -34,26 +34,26 @@ readHIVData <- function(inFile=NULL,
   }
   #
   hiv <- haven::read_dta(inFile) %>% 
-    select(IIntID = IIntId, 
-      BSIntID = ResidencyBSIntId, VisitDate, 
-      HIVResult, Female = Sex, Age = AgeAtVisit,
+    select(IIntID = .data$IIntId, 
+      BSIntID = .data$ResidencyBSIntId, .data$VisitDate, 
+      .data$HIVResult, Female = .data$Sex, Age = .data$AgeAtVisit,
       matches(addVars))
   hiv <- haven::zap_labels(hiv)
   if (dropTasP) hiv <- dropTasPData(hiv)
-  hiv <- filter(hiv, Female %in% c(1,2))
+  hiv <- filter(hiv, .data$Female %in% c(1,2))
   # Only deal with valid test results
-  hiv <- filter(hiv, HIVResult %in% c(0,1))
-  if (drop15Less) hiv <- filter(hiv, Age %in% c(15:100))
+  hiv <- filter(hiv, .data$HIVResult %in% c(0,1))
+  if (drop15Less) hiv <- filter(hiv, .data$Age %in% c(15:100))
   hiv <- mutate(hiv,
-    IIntID = as.integer(IIntID),
-    BSIntID = as.integer(BSIntID),
-    Female = as.integer(ifelse(Female==2, 1, 0)),
-    Year = as.integer(format(VisitDate, "%Y")),
-    HIVNegative = ifelse(HIVResult==0, VisitDate, NA), 
-    HIVPositive = ifelse(HIVResult==1, VisitDate, NA))
+    IIntID = as.integer(.data$IIntID),
+    BSIntID = as.integer(.data$BSIntID),
+    Female = as.integer(ifelse(.data$Female==2, 1, 0)),
+    Year = as.integer(format(.data$VisitDate, "%Y")),
+    HIVNegative = ifelse(.data$HIVResult==0, .data$VisitDate, NA), 
+    HIVPositive = ifelse(.data$HIVResult==1, .data$VisitDate, NA))
   Vars <- c("HIVNegative", "HIVPositive")
   hiv[Vars] <- lapply(hiv[Vars], as.Date, origin="1970-01-01")
-  hiv <- arrange(hiv, IIntID, VisitDate)
+  hiv <- arrange(hiv, .data$IIntID, .data$VisitDate)
   if (write_rda) {
     check_getFiles()
     saveRDS(hiv, file = getFiles()$hiv_rda)
@@ -94,4 +94,84 @@ setHIV <- function(Args=setArgs(), dat=NULL) {
   if (is.null(dat)) dat <- getHIV()
   setData(dat, Args)
 }
+
+#' @title getRTData
+#' @description  Get all repeat testers from HIV surveillance.
+#' @param dat dataset from \code{\link{getHIV}}. 
+#' @param onlyRT Drops IDs who are not repeat-testers.
+#' @return data.frame
+#' @import dplyr
+#' @export
+#' @examples 
+#' rtdat <- getRTData(dat=getHIV())
+
+getRTData <- function(dat=NULL, onlyRT=TRUE) {
+  if (is.null(dat)) dat <- getHIV()
+  early_neg <- getDatesMin(dat, "HIVNegative", "early_neg")
+  early_pos <- getDatesMin(dat, "HIVPositive", "early_pos")
+  late_neg <- getDatesMax(dat, "HIVNegative", "late_neg")
+  late_pos <- getDatesMax(dat, "HIVPositive", "late_pos")
+  dat <- distinct(dat, .data$IIntID, .data$Female)
+  dat <- suppressMessages(Reduce(left_join, 
+    list(dat, early_neg, late_neg, early_pos, late_pos)))
+
+  rtdat <- mutate(dat, late_neg_after = ifelse(
+    (.data$late_neg > .data$early_pos) &
+      is.finite(.data$early_pos) & is.finite(.data$late_neg), 1, 0)) 
+  # I just drop these individuals, irreconcilable
+  rtdat <- filter(rtdat, .data$late_neg_after==0) %>% 
+    select(-c(.data$late_neg_after, .data$late_pos))
+  if (onlyRT) {
+    # Drop any indiv that dont have a first neg date.
+    rtdat <- filter(rtdat, !(is.na(.data$early_neg) & is.na(.data$late_neg)))
+    # Must have two tests, if early neg date is equal to late neg date and missing pos date then drop
+    rtdat <- filter(rtdat, !(.data$early_neg==.data$late_neg & is.na(.data$early_pos)))
+  }
+  rtdat <- mutate(rtdat, sero_event = ifelse(is.finite(.data$early_pos), 1, 0))
+  rtdat <- rename(rtdat, obs_start = .data$early_neg)
+  rtdat
+}
+
+#' @title getDates
+#' 
+#' @description Function to get earliest/latest test dates
+#' 
+#' @param  f a function, either \code{min} or \code{max}.
+#' 
+#' @return data.frame
+getDates <- function(f) {
+  function(dat, Var, Name) {
+    dat <- data.frame(dat[!is.na(dat[, Var, drop=TRUE]), c("IIntID", Var)])
+    dates <- tapply(dat[, Var], dat[, "IIntID"], f)
+    out <- data.frame(as.integer(names(dates)), dates)
+    colnames(out) <- c("IIntID", Name)
+    out[, Name] <- as.Date(out[, Name], origin="1970-01-01")
+    tibble::as_tibble(out)
+  }
+}
+
+#' @title getDatesMin
+#' 
+#' @description Function to get earliest test dates
+#' 
+#' @param  dat a dataset.
+#' @param  Var a variable name.
+#' @param  Name new variable name.
+#' 
+#' @return data.frame
+
+getDatesMin <- getDates(min)
+
+#' @title getDatesMax
+#' 
+#' @description Function to get latest test dates
+#' 
+#' @param  dat a dataset.
+#' @param  Var a variable name.
+#' @param  Name new variable name.
+#' 
+#' @return data.frame
+getDatesMax <- getDates(max)
+
+
 

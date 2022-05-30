@@ -9,7 +9,12 @@ A data frame with 6042 rows and 6 variables:
 \describe{
 \item{IIntID}{The ID variable, name is compulsory}
 \item{Time}{Time since the earliest-negative data}
-\item{sero_date}{Indicates if repeat-tester seroconverted during observation period}
+\item{Year}{Year of episode}
+\item{obs_start}{start date of episode}
+\item{obs_end}{end date of episode}
+\item{late_neg}{ date of latest HIV-negative date}
+\item{early_pos}{ date of earliest HIV-positive date}
+\item{sero_event}{Indicates if repeat-tester seroconverted during observation period}
 \item{Age0}{Mean-centered age variable}
 \item{Age2}{Age0 squared}
 \item{EverCircum}{EverCircumcised}
