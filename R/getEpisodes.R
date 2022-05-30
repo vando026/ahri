@@ -23,6 +23,7 @@ readEpisodes <- function(
     inFile=getFiles()$epifile
   }
   message(sprintf("ahri: Reading %s, this may take a while...", inFile))
+  dat <- haven::read_dta(inFile)
   # Variable names changed from releases
   if ("CalendarYear" %in% names(dat)) {
     message("ahri: Renaming CalendarYear to Year")
