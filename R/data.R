@@ -15,9 +15,9 @@
 #' }
 "rtdat"
 
-#' Example datasets for G-imputation: idat
+#' Example datasets for G-imputation: gdat
 #'
-#' A dataset consisting of the covariate values that will be input for the uniReg
+#' A dataset consisting of the covariate values that will be input for the unireg
 #' function. 
 #'
 #' @format A data frame with 6042 rows and 6 variables:
