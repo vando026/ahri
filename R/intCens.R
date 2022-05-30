@@ -215,24 +215,25 @@ gImpute <- function(dat, Results, nSim=1,
 
 uniReg <- function(xpath, InFile, OutFile, Model, ID=NULL, inf="Inf",
   iter=5000, cthresh=0.0001, r=1.0, printout=FALSE, ign_stout=TRUE) {
-    InFile <- paste("--in", InFile)
-    OutFile <- paste("--out", OutFile)
-    Model <- paste("--model", shQuote(Model))
-    ID <- ifelse(is.null(ID), "", paste("--subject_id", ID))
-    Sep <- paste("--sep", shQuote(" "))
-    inf <- paste("--inf_char", inf)
-    R <- paste("--r", r)
-    iter <- paste("--max_itr", iter)
-    cthresh <- paste("--convergence_threshold", cthresh)
-    if (Sys.getenv("OS") == "Windows_NT") {
-      system(command=paste(xpath, InFile, OutFile, Model, 
-        ID, Sep, iter, R, inf, cthresh, collapse=" "),
-        show.output.on.console=printout)
-    } else {
-      system(command=paste(xpath, InFile, OutFile, Model, 
-        ID, Sep, iter, R, inf, cthresh, collapse=" "),
-        ignore.stdout=ign_stout)
-    }
+  stop('This function is deprecated. Use the unireg function from the IntCens package')
+    # InFile <- paste("--in", InFile)
+    # OutFile <- paste("--out", OutFile)
+    # Model <- paste("--model", shQuote(Model))
+    # ID <- ifelse(is.null(ID), "", paste("--subject_id", ID))
+    # Sep <- paste("--sep", shQuote(" "))
+    # inf <- paste("--inf_char", inf)
+    # R <- paste("--r", r)
+    # iter <- paste("--max_itr", iter)
+    # cthresh <- paste("--convergence_threshold", cthresh)
+    # if (Sys.getenv("OS") == "Windows_NT") {
+    #   system(command=paste(xpath, InFile, OutFile, Model, 
+    #     ID, Sep, iter, R, inf, cthresh, collapse=" "),
+    #     show.output.on.console=printout)
+    # } else {
+    #   system(command=paste(xpath, InFile, OutFile, Model, 
+    #     ID, Sep, iter, R, inf, cthresh, collapse=" "),
+    #     ignore.stdout=ign_stout)
+    # }
 }
 
 #' @title runUniReg
