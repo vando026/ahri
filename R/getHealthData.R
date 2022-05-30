@@ -22,7 +22,7 @@ readHealthData <- function(Female=1, write_rda=TRUE) {
   # dat
 }
 
-#' @title  Reads the Men (MGH) General Health Dataset. 
+#' @title  Reads the standard Men (MGH) General Health .dta dataset into R. 
 #' 
 #' @description  Reads the Men (MGH) General Health Dataset. 
 #' 
@@ -53,7 +53,7 @@ readMGH <- function(inFile = NULL, write_rda=TRUE) {
 }
 
 
-#' @title Reads the Women's  General Health Dataset (WGH).
+#' @title Reads the standard Women's  General Health (WGH) .dta dataset into R.
 #' 
 #' @description  Reads the Women's  General Health Dataset (WGH).
 #' 
@@ -82,35 +82,9 @@ readWGH <- function(inFile = NULL, write_rda=TRUE) {
   dat
 }
 
-#' @title Reads in Men's general health data (MGH). 
+#' @title Loads the Men's general health (MGH) dataframe into memory. 
 #' 
-#' @description  Reads in Men's general health data. 
-#' 
-#' @param inFile Filepath to .rda dataset, default is \code{getFiles()$mgh_rda}. Leave as
-#' NULL if you don't know what to do or see \code{\link{setFiles}}. 
-#' @return  data.frame
-#'
-#' @export 
-getMGH <- function(inFile=NULL) {
-  if(is.null(inFile)) {
-    check_getFiles()
-    inFile <- getFiles()$mgh_rda
-  }
-  readRDS(inFile)
-}
-
-
-
-
-
-
-
-
-
-
-#' @title Loads Men's general health data into memory.  
-#' 
-#' @description  Reads in Men's general health data. 
+#' @description  Loads in the Men's general health data. 
 #' 
 #' @param inFile Filepath to .rda dataset, default is \code{getFiles()$mgh_rda}. Leave as
 #' NULL if you don't know what to do or see \code{\link{setFiles}}. 
@@ -125,8 +99,7 @@ getMGH <- function(inFile=NULL) {
   readRDS(inFile)
 }
 
-
-#' @title Loads Women's general health data into memory.  
+#' @title Loads the Women's general health (WGH) dataframe into memory.  
 #' 
 #' @description  Reads in Women's general health data. 
 #' 

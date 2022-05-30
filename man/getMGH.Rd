@@ -2,10 +2,8 @@
 % Please edit documentation in R/getHealthData.R
 \name{getMGH}
 \alias{getMGH}
-\title{Reads in Men's general health data (MGH).}
+\title{Loads the Men's general health (MGH) dataframe into memory.}
 \usage{
-getMGH(inFile = NULL)
-
 getMGH(inFile = NULL)
 }
 \arguments{
@@ -14,11 +12,7 @@ NULL if you don't know what to do or see \code{\link{setFiles}}.}
 }
 \value{
 data.frame
-
-data.frame
 }
 \description{
-Reads in Men's general health data.
-
-Reads in Men's general health data.
+Loads in the Men's general health data.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{readWGH}
 \alias{readWGH}
-\title{Reads the Women's  General Health Dataset (WGH).}
+\title{Reads the standard Women's  General Health (WGH) .dta dataset into R.}
 \usage{
 readWGH(inFile = NULL, write_rda = TRUE)
 }
