@@ -56,6 +56,7 @@ datasets. You must assign the \code{setFiles} function to a name called
 \code{getFiles}. See the examples below.
 }
 \examples{
+\donttest{
 # You must assign the setfiles function to the getFiles name 
 getFiles <- setFiles(folder="Path/to/my/datafolder")
 # If for some reason your HIV surveillance .dta file is named differently 
@@ -63,7 +64,6 @@ getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All
 # print out the default file paths and names
 setFiles()
 # print out your file paths and names
-\donttest{
 getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 getFiles()
 }

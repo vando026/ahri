@@ -40,10 +40,11 @@ readMGH <- function(inFile = NULL, write_rda=TRUE) {
     inFile <- getFiles()$mghfile
   }
   dat <- haven::read_dta(inFile) %>%
-    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+    rename(IIntID=.data$IIntId, 
+     BSIntID=.data$ResidenceBSIntId, Age=.data$AgeAtVisit)
   dat <- mutate(dat, 
-    Year = as.integer(format(dat$VisitDate, "%Y")),
-    IIntID = as.integer(IIntID), Female = 0)
+    Year = as.integer(format(.data$VisitDate, "%Y")),
+    IIntID = as.integer(.data$IIntID), Female = 0)
   if (write_rda) {
     check_getFiles()
     saveRDS(dat, file = getFiles()$mgh_rda) 
@@ -70,10 +71,10 @@ readWGH <- function(inFile = NULL, write_rda=TRUE) {
     inFile <- getFiles()$wghfile
   }
   dat <- haven::read_dta(inFile) %>%
-    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+    rename(IIntID=.data$IIntId, BSIntID=.data$ResidenceBSIntId, Age=.data$AgeAtVisit)
   dat <- mutate(dat, 
-    Year = as.integer(format(dat$VisitDate, "%Y")),
-    IIntID = as.integer(IIntID), Female = 1)
+    Year = as.integer(format(.data$VisitDate, "%Y")),
+    IIntID = as.integer(.data$IntID), Female = 1)
   if (write_rda) {
     check_getFiles()
     saveRDS(dat, file = getFiles()$wgh_rda) 

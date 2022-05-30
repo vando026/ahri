@@ -19,5 +19,6 @@ data.frame
 Gets the BSIntID that IIntID spent most time in a surveillance year.
 }
 \examples{
-getBSMax()
+edat <- getEpisodes()
+bs_max <- getBSMax(edat)
 }

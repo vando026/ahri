@@ -118,8 +118,6 @@ plotIncSexArea <- function(Mal, Fem, yLim=5.5,
 #' 
 #' @param dat dataset from \code{\link{getIncidence}}. 
 #' 
-#' @importFrom plotrix plotCI 
-#' 
 #' @keywords internal
 
 # You need to add integer var to plot for CI

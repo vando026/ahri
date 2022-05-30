@@ -12,8 +12,4 @@ AggFunc(RHS)
 \description{
 A function factory for creating specific AggByFuncs, see for example \code{\link{AggByYear}}.
 }
-\examples{
-\donttest{
-AggByYear <- AggFunc("Year")
-}
-}
+\keyword{internal}

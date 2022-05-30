@@ -7,7 +7,7 @@ if (exists("getFiles", env = .GlobalEnv))
   getFiles_User <- getFiles
 
 assign("getFiles", 
-  setFiles(system.file("data", package = "ahri"),
+  setFiles(system.file("exdata", package = "ahri"),
     hivfile = "RD05-99_ACDIS_HIV_Sample.dta",
     bsifile = "RD01-03_ACDIS_BS_Sample.dta",
     epifile = "SurveillanceEpisodes_Sample.dta",

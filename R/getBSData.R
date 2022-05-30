@@ -37,11 +37,14 @@ getBSData <- function(inFile = NULL) {
 #' @return data.frame
 #'
 #' @export 
+#' @examples
+#' hiv <- readHIVData()
+#' hiv <- dropTasPData(hiv)
 
-dropTasPData <- function(dat, bsdat = NULL, bsifile = getFiles()$bsifile) {
+dropTasPData <- function(dat, bsdat = NULL) {
   if (is.null(bsdat)) {
     check_getFiles()
-    bsdat <- getBSData(bsifile) %>% select(BSIntID, PIPSA)
+    bsdat <- getBSData() %>% select(BSIntID, PIPSA)
   }
   dat <- left_join(dat, bsdat, by="BSIntID")
   dat <- filter(dat, PIPSA %in% c("Southern PIPSA", NA)) 
@@ -61,7 +64,8 @@ dropTasPData <- function(dat, bsdat = NULL, bsifile = getFiles()$bsifile) {
 #' @export 
 #'
 #' @examples 
-#' getBSMax()
+#' edat <- getEpisodes()
+#' bs_max <- getBSMax(edat)
 
 getBSMax <- function(dat = getEpisodes(), minDays=0) {
 

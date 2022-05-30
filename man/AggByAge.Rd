@@ -7,12 +7,18 @@
 AggByAge(dat)
 }
 \arguments{
-\item{dat}{Dataset.}
+\item{dat}{A dataframe generated from \code{\link{getIncData}}.}
 }
 \value{
 data.frame
 }
 \description{
 Aggregates data to get sero events and pyears by age category.
-formula.
+}
+\examples{
+# Show for one imputation 
+Args <- setArgs(imputeMethod = imputeMidPoint)
+rtdat <- getRTData(dat = getHIV())
+idat <- getIncData(rtdat, Args = Args)
+inc <- AggByAge(idat)
 }

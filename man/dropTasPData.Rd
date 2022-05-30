@@ -4,7 +4,7 @@
 \alias{dropTasPData}
 \title{dropTasPData}
 \usage{
-dropTasPData(dat, bsdat = NULL, bsifile = getFiles()$bsifile)
+dropTasPData(dat, bsdat = NULL)
 }
 \arguments{
 \item{dat}{A dataset, which will be merged with the Bounded Structures
@@ -18,4 +18,8 @@ data.frame
 }
 \description{
 Function to drop obervations from TasP areas.
+}
+\examples{
+hiv <- readHIVData()
+hiv <- dropTasPData(hiv)
 }

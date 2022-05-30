@@ -1,18 +1,25 @@
 #' @title getIncData
 #' @description Function that imputes sero date, splits at censoring date and set the age.
 #' @param rtdat dataset from \code{\link{getRTData}}. 
-#' @param bdat dataset from \code{\link{getBirthDate}}. 
 #' @param Args takes list from \code{\link{setArgs}}.
+#' @param bdat dataset from \code{\link{getBirthDate}}. 
 #' @param func Function to perform additional operation. 
 #' @return data.frame
 #' @export
 #' @examples
+#' Args <- setArgs(imputeMethod = imputeRandomPoint)
 #' rtdat <- getRTData(dat=getHIV())
-#' getIncData(rtdat, bdat=getBirthDate(), Args=setArgs())
-getIncData <- function(rtdat, bdat, Args, func=identity) {
+#' getIncData(rtdat, Args = Args)
+#' @examples
+#' Args <- setArgs(imputeMethod = imputeMidPoint)
+#' ydat <- getIncData(rtdat, Args = Args)
+#' AggByYear <- AggFunc("Year")
+#' inc <- AggByYear(ydat)
+getIncData <- function(rtdat, bdat = NULL, Args, func = identity) {
+  if (is.null(bdat)) bdat = getBirthDate()
   dat <- Args$imputeMethod(rtdat)
   edat <- splitAtSeroDate(dat) 
-  edat <- setData(edat, Args, time2="obs_end", birthdate=bdat)
+  edat <- setData(edat, Args, time2 = "obs_end", birthdate = bdat)
   edat <- mutate(edat, tscale = Time/365.25)
   func(edat)
 }
@@ -20,11 +27,7 @@ getIncData <- function(rtdat, bdat, Args, func=identity) {
 #' @title AggFunc
 #' @description  A function factory for creating specific AggByFuncs, see for example \code{\link{AggByYear}}.
 #' @param RHS The variable name as string that you want to aggregate by.
-#' @export 
-#' @examples
-#' \donttest{
-#' AggByYear <- AggFunc("Year")
-#' }
+#' @keywords internal 
 
 AggFunc <- function(RHS) {
   function(dat) {
@@ -37,27 +40,27 @@ AggFunc <- function(RHS) {
 
 #' @title AggByYear
 #' @description Aggregates data to get sero events and pyears by year.
-#' formula.
-#' @param dat An existing dataset. 
+#' @param dat A dataframe generated from \code{\link{getIncData}}. 
 #' @return data.frame
 #' @export 
 #' @examples
-#' # Show for one imputation 
-#' Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
-#' getFiles <- setFiles(file.path(Sys.getenv("HOME"), "AHRI_Data/2019"))
-#' hiv   <- getHIV()
-#' rtdat <- getRTData(hiv)
-#' bdat <- getBirthDate()
-#' ydat <- getIncData(rtdat, bdat, Args)
-#' inc <- AggByYear(ydat)
+#' Args <- setArgs(imputeMethod = imputeMidPoint)
+#' rtdat <- getRTData(dat = getHIV())
+#' idat <- getIncData(rtdat, Args = Args)
+#' inc <- AggByYear(idat)
 AggByYear <- AggFunc("Year")
 
 #' @title AggByAge
 #' @description Aggregates data to get sero events and pyears by age category.
-#' formula.
-#' @param dat Dataset. 
+#' @param dat A dataframe generated from \code{\link{getIncData}}. 
 #' @return data.frame
 #' @export 
+#' @examples
+#' # Show for one imputation 
+#' Args <- setArgs(imputeMethod = imputeMidPoint)
+#' rtdat <- getRTData(dat = getHIV())
+#' idat <- getIncData(rtdat, Args = Args)
+#' inc <- AggByAge(idat)
 AggByAge <- AggFunc("AgeCat")
 
 #' @title calcPoisExact 
@@ -66,22 +69,18 @@ AggByAge <- AggFunc("AgeCat")
 #' @param byVar Either "AgeCat" or "Year".
 #' @param fmt If TRUE, format by 100 person-years and round off to three decimal places. 
 #' @return data.frame
-#' @import epitools
 #' @export 
 #' @examples
-#' Args <- setArgs(Years=c(2008:2018), 
-#'   Age=list(All=c(15, 45)),
-#'   imputeMethod=imputeRandomPoint)
-#' hiv <- getHIV()
-#' rtdat <- getRTData(hiv)
-#' idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
+#' Args <- setArgs(imputeMethod = imputeMidPoint)
+#' rtdat <- getRTData(getHIV())
+#' idat <- getIncData(rtdat, Args = Args)
 #' idat_yr <- AggByYear(idat)
 #' calcPoisExact(idat_yr, byVar="Year")
 
 calcPoisExact <- function(dat, byVar="Year", fmt=TRUE) {
   dat <- split(dat, dat[, byVar])
   dat <- do.call(rbind, lapply(dat, function(x)
-    pois.exact(x$sero_event, x$pyears)))
+    epitools::pois.exact(x$sero_event, x$pyears)))
   if (fmt==TRUE) {
     vars <- c("rate", "lower", "upper")
     dat[vars] <- lapply(dat[vars], function(x) round(x*100, 3))

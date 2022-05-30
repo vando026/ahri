@@ -4,7 +4,7 @@
 \alias{getIncData}
 \title{getIncData}
 \usage{
-getIncData(rtdat, bdat, Args, func = identity)
+getIncData(rtdat, bdat = NULL, Args, func = identity)
 }
 \arguments{
 \item{rtdat}{dataset from \code{\link{getRTData}}.}
@@ -22,6 +22,11 @@ data.frame
 Function that imputes sero date, splits at censoring date and set the age.
 }
 \examples{
+Args <- setArgs(imputeMethod = imputeRandomPoint)
 rtdat <- getRTData(dat=getHIV())
-getIncData(rtdat, bdat=getBirthDate(), Args=setArgs())
+getIncData(rtdat, Args = Args)
+Args <- setArgs(imputeMethod = imputeMidPoint)
+ydat <- getIncData(rtdat, Args = Args)
+AggByYear <- AggFunc("Year")
+inc <- AggByYear(ydat)
 }

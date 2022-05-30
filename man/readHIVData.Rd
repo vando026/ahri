@@ -23,8 +23,6 @@ readHIVData(
 participants >=15 years eligible for HIV testing.}
 
 \item{write_rda}{Default is to write the .Rda file.}
-
-\item{outFile}{File path to save .Rda, default is set by \code{\link{setFiles}}.}
 }
 \value{
 data.frame
@@ -35,8 +33,10 @@ Reads in AHRI data from csv file
 \examples{
 # Writes .Rda to file
 \donttest{
-readHIVData()
+readHIVData(write_rda = TRUE)
 }
+# Drop TasP areas, dont write to file
+readHIVData(dropTasP = FALSE, write_rda = TRUE)
 # Saves to global environment 
 hdat <- readHIVData(write_rda=FALSE)
 # Add variables

@@ -22,6 +22,7 @@
 #' @return function
 #' @export
 #' @examples 
+#' \donttest{
 #' # You must assign the setfiles function to the getFiles name 
 #' getFiles <- setFiles(folder="Path/to/my/datafolder")
 #' # If for some reason your HIV surveillance .dta file is named differently 
@@ -29,7 +30,6 @@
 #' # print out the default file paths and names
 #' setFiles()
 #' # print out your file paths and names
-#' \donttest{
 #' getFiles <-setFiles(folder="Path/to/my/datafolder", hivfile="RD09-01 PIP HIV All.dta")
 #' getFiles()
 #' }

@@ -2,7 +2,6 @@
 #' @description  Reads in the Surveillance Episodes dataset. Note, this function drops
 #' participants with missing values for \code{Sex} (there are a handful of these).
 #' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
-#' @param outFile File path to the write the .Rda dataset, default is set to \code{\link{setFiles}}.
 #' @param dropTasP default is to drop TasP areas.
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param write_rda Default is to write the .Rda file.
@@ -17,14 +16,13 @@
 readEpisodes <- function(
   inFile=NULL,
   dropTasP=TRUE, addVars=" ",
-  write_rda=TRUE, nstart = 0, nrow=Inf) {
+  write_rda=TRUE) {
   #
   if (is.null(inFile)) {
     check_getFiles()
     inFile=getFiles()$epifile
   }
   message(sprintf("ahri: Reading %s, this may take a while...", inFile))
-  dat <- haven::read_dta(inFile, skip = nstart, n_max = nrow) 
   # Variable names changed from releases
   if ("CalendarYear" %in% names(dat)) {
     message("ahri: Renaming CalendarYear to Year")

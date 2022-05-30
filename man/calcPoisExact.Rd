@@ -20,12 +20,9 @@ data.frame
 Calculate crude incidence rates using the Poisson exact method.
 }
 \examples{
-Args <- setArgs(Years=c(2008:2018), 
-  Age=list(All=c(15, 45)),
-  imputeMethod=imputeRandomPoint)
-hiv <- getHIV()
-rtdat <- getRTData(hiv)
-idat <- getIncData(rtdat, bdat=getBirthDate(), Args)
+Args <- setArgs(imputeMethod = imputeMidPoint)
+rtdat <- getRTData(getHIV())
+idat <- getIncData(rtdat, Args = Args)
 idat_yr <- AggByYear(idat)
 calcPoisExact(idat_yr, byVar="Year")
 }

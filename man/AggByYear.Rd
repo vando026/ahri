@@ -7,22 +7,17 @@
 AggByYear(dat)
 }
 \arguments{
-\item{dat}{An existing dataset.}
+\item{dat}{A dataframe generated from \code{\link{getIncData}}.}
 }
 \value{
 data.frame
 }
 \description{
 Aggregates data to get sero events and pyears by year.
-formula.
 }
 \examples{
-# Show for one imputation 
-Args <- setArgs(nSim=1, imputeMethod=imputeEndPoint)
-getFiles <- setFiles(file.path(Sys.getenv("HOME"), "AHRI_Data/2019"))
-hiv   <- getHIV()
-rtdat <- getRTData(hiv)
-bdat <- getBirthDate()
-ydat <- getIncData(rtdat, bdat, Args)
-inc <- AggByYear(ydat)
+Args <- setArgs(imputeMethod = imputeMidPoint)
+rtdat <- getRTData(dat = getHIV())
+idat <- getIncData(rtdat, Args = Args)
+inc <- AggByYear(idat)
 }

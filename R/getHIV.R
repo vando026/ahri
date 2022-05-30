@@ -3,7 +3,6 @@
 #' @description  Reads in AHRI data from csv file
 #' 
 #' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
-#' @param outFile File path to save .Rda, default is set by \code{\link{setFiles}}.
 #' @param dropTasP Default is to drop TasP surveillance areas from the data. 
 #' @param addVars A regular expression string representing the variables to be added. 
 #' @param drop15Less Default is to drop all observations with Age < 15 years. Only
@@ -17,8 +16,10 @@
 #' @examples
 #' # Writes .Rda to file
 #' \donttest{
-#' readHIVData()
+#' readHIVData(write_rda = TRUE)
 #' }
+#' # Drop TasP areas, dont write to file
+#' readHIVData(dropTasP = FALSE, write_rda = TRUE)
 #' # Saves to global environment 
 #' hdat <- readHIVData(write_rda=FALSE)
 #' # Add variables
