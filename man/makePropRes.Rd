@@ -2,7 +2,8 @@
 % Please edit documentation in R/getEpisodes.R
 \name{makePropRes}
 \alias{makePropRes}
-\title{makePropRes}
+\title{Makes a variable of the proportion of time that a participant spent
+as a resident in the PIP surveillance area by year.}
 \usage{
 makePropRes(Args)
 }

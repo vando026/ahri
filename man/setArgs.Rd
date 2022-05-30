@@ -2,7 +2,8 @@
 % Please edit documentation in R/setArgs.R
 \name{setArgs}
 \alias{setArgs}
-\title{setArgs}
+\title{Set arguments and parameters to control functions and data
+transformations.}
 \usage{
 setArgs(
   Years = c(2000:2025),

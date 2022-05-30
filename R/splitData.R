@@ -1,4 +1,4 @@
-#' @title splitData2
+#' @title  Function for splitting data into episodes. 
 #' @description  Function for splitting data into episodes. 
 #' @param  dat Dataset must have variables called obs_start, obs_end and event.
 #' @param  years The years by which to split the data. Default is c(2003:2020).
@@ -27,7 +27,7 @@ splitData2 <- function(
 }
 
 
-#' @title getYearDates
+#' @title Get the numeric version of date for 01JanXXXX.
 #' 
 #' @description  gets numeric dates for 01JanXXXX.
 #' 
@@ -42,7 +42,7 @@ getYearDates <- function(Years) {
     as.numeric(as.Date(paste0(x, "-01-01"))))
 }
 
-#' @title splitAtSeroDate
+#' @title Split data at the imputed seroconversion date.
 #' 
 #' @description Split data at the imputed seroconversion date.
 #' 
@@ -71,7 +71,7 @@ splitAtSeroDate <- function(
   tibble::as_tibble(edat)
 }
 
-#' @title splitAtEarlyPos
+#' @title Split data at the earliest HIV-positive date. 
 #' 
 #' @description Split data at the earliest HIV-positive date. 
 #' 

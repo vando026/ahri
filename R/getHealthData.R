@@ -22,7 +22,7 @@ readHealthData <- function(Female=1, write_rda=TRUE) {
   # dat
 }
 
-#' @title readMGH
+#' @title  Reads the Men (MGH) General Health Dataset. 
 #' 
 #' @description  Reads the Men (MGH) General Health Dataset. 
 #' 
@@ -53,9 +53,9 @@ readMGH <- function(inFile = NULL, write_rda=TRUE) {
 }
 
 
-#' @title readWGH
+#' @title Reads the Women's  General Health Dataset (WGH).
 #' 
-#' @description  Reads the Women  General Health Dataset (WGH).
+#' @description  Reads the Women's  General Health Dataset (WGH).
 #' 
 #' @param inFile Filepath to .dta dataset, default is \code{getFiles()$wghfile}. 
 #' @param write_rda Default is to write the .Rda file.
@@ -82,7 +82,7 @@ readWGH <- function(inFile = NULL, write_rda=TRUE) {
   dat
 }
 
-#' @title getMGH
+#' @title Reads in Men's general health data (MGH). 
 #' 
 #' @description  Reads in Men's general health data. 
 #' 
@@ -108,7 +108,7 @@ getMGH <- function(inFile=NULL) {
 
 
 
-#' @title getMGH
+#' @title Loads Men's general health data into memory.  
 #' 
 #' @description  Reads in Men's general health data. 
 #' 
@@ -126,7 +126,7 @@ getMGH <- function(inFile=NULL) {
 }
 
 
-#' @title getWGH
+#' @title Loads Women's general health data into memory.  
 #' 
 #' @description  Reads in Women's general health data. 
 #' 
@@ -145,7 +145,7 @@ getWGH <- function(inFile=NULL) {
 }
 
 
-#' @title Gets circumcision data from the MGH dataset 
+#' @title Gets circumcision data from the MGH dataset.
 #' 
 #' @description  Gets circumcision data from the MGH dataset with the year of
 #' circumcision and an indicator of ever circumcised.
@@ -164,7 +164,7 @@ getCircumcisionData <- function(dat=getMGH()) {
 }
 
 
-#' @title addCircumVar
+#' @title  Adds the ever circumcised variable to an existing dataset. 
 #' 
 #' @description  Adds the ever circumcised variable to an existing dataset. 
 #' 
@@ -185,7 +185,7 @@ addCircumVar <- function(dat, cdat=NULL) {
 }
 
 
-#' @title getCondomUseVar
+#' @title Get variable for ever used condom status from Men and Women's health datasets.
 #' 
 #' @description  Gets the ever used condom variable from Men and Women's health datasets.
 

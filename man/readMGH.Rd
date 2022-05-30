@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{readMGH}
 \alias{readMGH}
-\title{readMGH}
+\title{Reads the Men (MGH) General Health Dataset.}
 \usage{
 readMGH(inFile = NULL, write_rda = TRUE)
 }

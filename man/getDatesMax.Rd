@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{getDatesMax}
 \alias{getDatesMax}
-\title{getDatesMax}
+\title{Function to get latest HIV test dates}
 \usage{
 getDatesMax(dat, Var, Name)
 }

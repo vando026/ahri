@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeMethods.R
 \name{imputeRandomPoint}
 \alias{imputeRandomPoint}
-\title{imputeRandomPoint}
+\title{Impute random seroconversion date(s) within the censored interval.}
 \usage{
 imputeRandomPoint(dat)
 }

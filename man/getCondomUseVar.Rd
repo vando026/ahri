@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{getCondomUseVar}
 \alias{getCondomUseVar}
-\title{getCondomUseVar}
+\title{Get variable for ever used condom status from Men and Women's health datasets.}
 \usage{
 getCondomUseVar()
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/setData.R
 \name{makeAgeVars}
 \alias{makeAgeVars}
-\title{makeAgeVars}
+\title{Function for making Age and AgeCat variables}
 \usage{
 makeAgeVars(dat, time2 = NULL, age_cut = NULL, birthdate = NULL)
 }

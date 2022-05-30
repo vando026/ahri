@@ -2,7 +2,8 @@
 % Please edit documentation in R/getIncidence.R
 \name{getIncidence}
 \alias{getIncidence}
-\title{getIncidence}
+\title{Calculate annual HIV incidence rates using the single random-point
+imputation.}
 \usage{
 getIncidence(Args = setArgs(), sformula = "", aggFun = NULL, newdata = NULL)
 }

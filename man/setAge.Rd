@@ -2,7 +2,7 @@
 % Please edit documentation in R/setData.R
 \name{setAge}
 \alias{setAge}
-\title{setAge}
+\title{Set age according to user arguments.}
 \usage{
 setAge(dat, Args)
 }

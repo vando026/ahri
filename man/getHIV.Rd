@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{getHIV}
 \alias{getHIV}
-\title{getHIV}
+\title{Loads the standard HIV dataset into R.}
 \usage{
 getHIV(inFile = NULL)
 }

@@ -1,4 +1,4 @@
-#' @title getBSData
+#' @title  Read in the standard Bounded Structures .dta dataset.
 #' 
 #' @description  Read in Bounded Structures data.
 #' 
@@ -26,7 +26,7 @@ getBSData <- function(inFile = NULL) {
   return(dat)
 }
 
-#' @title dropTasPData
+#' @title Drop TasP (Northern Areas) from a dataframe.
 #' 
 #' @description  Function to drop obervations from TasP areas.
 #' 
@@ -52,7 +52,7 @@ dropTasPData <- function(dat, bsdat = NULL) {
   return(dat)
 }
 
-#' @title getBSMax
+#' @title Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 
 #' @description Gets the BSIntID that IIntID spent most time in a surveillance year. 
 #' 

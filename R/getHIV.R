@@ -1,6 +1,6 @@
-#' @title readHIVData
+#' @title Reads the standard HIV .dta file into R.
 #' 
-#' @description  Reads in AHRI data from csv file
+#' @description  Reads in AHRI data from standard HIV .dta file
 #' 
 #' @param inFile File path to .dta, default is set by \code{\link{setFiles}}.
 #' @param dropTasP Default is to drop TasP surveillance areas from the data. 
@@ -61,7 +61,7 @@ readHIVData <- function(inFile=NULL,
   return(hiv)
 }
 
-#' @title getHIV
+#' @title Loads the standard HIV dataset into R.
 #' @description  Load in the .rda version of the HIV surveillance dataset. 
 #' @param inFile File path to .rda dataset, default is \code{getFiles()$hiv_rda}. Leave as
 #' NULL if you don't know what to do or see \code{\link{setFiles}}. 
@@ -76,7 +76,7 @@ getHIV <- function(inFile=NULL) {
   readRDS(file=inFile)
 }
 
-#' @title setHIV
+#' @title Subsets the HIV dataset according to user arguments.
 #' @description set HIV data by arguments.
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param dat A dataset generated from \code{\link{readHIVData}}, which exists in the
@@ -95,7 +95,7 @@ setHIV <- function(Args=setArgs(), dat=NULL) {
   setData(dat, Args)
 }
 
-#' @title getRTData
+#' @title Creates a dataset for HIV repeat-testers.
 #' @description  Get all repeat testers from HIV surveillance.
 #' @param dat dataset from \code{\link{getHIV}}. 
 #' @param onlyRT Drops IDs who are not repeat-testers.
@@ -139,6 +139,7 @@ getRTData <- function(dat=NULL, onlyRT=TRUE) {
 #' @param  f a function, either \code{min} or \code{max}.
 #' 
 #' @return data.frame
+#' @keywords internal
 getDates <- function(f) {
   function(dat, Var, Name) {
     dat <- data.frame(dat[!is.na(dat[, Var, drop=TRUE]), c("IIntID", Var)])
@@ -150,7 +151,7 @@ getDates <- function(f) {
   }
 }
 
-#' @title getDatesMin
+#' @title Function to get earliest HIV test dates.
 #' 
 #' @description Function to get earliest test dates
 #' 
@@ -162,7 +163,7 @@ getDates <- function(f) {
 
 getDatesMin <- getDates(min)
 
-#' @title getDatesMax
+#' @title Function to get latest HIV test dates
 #' 
 #' @description Function to get latest test dates
 #' 

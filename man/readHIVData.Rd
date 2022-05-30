@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{readHIVData}
 \alias{readHIVData}
-\title{readHIVData}
+\title{Reads the standard HIV .dta file into R.}
 \usage{
 readHIVData(
   inFile = NULL,
@@ -28,7 +28,7 @@ participants >=15 years eligible for HIV testing.}
 data.frame
 }
 \description{
-Reads in AHRI data from csv file
+Reads in AHRI data from standard HIV .dta file
 }
 \examples{
 # Writes .Rda to file

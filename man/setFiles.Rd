@@ -2,7 +2,7 @@
 % Please edit documentation in R/getFiles.R
 \name{setFiles}
 \alias{setFiles}
-\title{setFiles}
+\title{Set the path and filenames to the standard AHRI datasets. Required.}
 \usage{
 setFiles(
   folder = "",

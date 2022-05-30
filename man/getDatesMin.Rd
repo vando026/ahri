@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{getDatesMin}
 \alias{getDatesMin}
-\title{getDatesMin}
+\title{Function to get earliest HIV test dates.}
 \usage{
 getDatesMin(dat, Var, Name)
 }

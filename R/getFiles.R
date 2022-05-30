@@ -1,4 +1,4 @@
-#' @title setFiles
+#' @title Set the path and filenames to the standard AHRI datasets. Required. 
 #' @description  Set file paths to the default AHRI datasets, which must be placed into a
 #' single folder. The names of the default .dta datasets must be exactly the same as
 #' described below. The function also sets the names for the .Rda datasets used in other

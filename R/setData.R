@@ -1,4 +1,4 @@
-#' @title setAge
+#' @title Set age according to user arguments. 
 #' @description  sets age according to arguments
 #' @param dat must have a variable named AgeAtVisit  
 #' @param Args requires Args, see \code{\link{setArgs}}
@@ -21,7 +21,7 @@ setAge <- function(dat, Args) {
   dat
 }
 
-#' @title getBirthDate
+#' @title Gets the birthdates form the Surveillance Episodes dataframe. 
 #' @description  Gets birth dates from \code{\link{getEpisodes}} data
 #' @param dat default value is \code{Null}, which calls \code{\link{getEpisodes}}
 #' @param addVars String for a regular expression to select additional vars
@@ -43,7 +43,7 @@ getBirthDate <- function(dat = NULL, addVars=" ") {
 }
 
 
-#' @title makeAgeVars
+#' @title  Function for making Age and AgeCat variables
 #' 
 #' @description  Function for making Age and AgeCat variables
 #' 

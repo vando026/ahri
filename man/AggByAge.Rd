@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{AggByAge}
 \alias{AggByAge}
-\title{AggByAge}
+\title{Aggregates sero events and person years by age category.}
 \usage{
 AggByAge(dat)
 }

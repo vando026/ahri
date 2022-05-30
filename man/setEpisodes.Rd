@@ -2,7 +2,7 @@
 % Please edit documentation in R/getEpisodes.R
 \name{setEpisodes}
 \alias{setEpisodes}
-\title{setEpisodes}
+\title{Subset the Surveillance Episodes dataframe by user arguments.}
 \usage{
 setEpisodes(Args = setArgs(), dat = NULL)
 }

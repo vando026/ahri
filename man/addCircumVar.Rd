@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{addCircumVar}
 \alias{addCircumVar}
-\title{addCircumVar}
+\title{Adds the ever circumcised variable to an existing dataset.}
 \usage{
 addCircumVar(dat, cdat = NULL)
 }

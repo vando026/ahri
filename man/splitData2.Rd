@@ -2,7 +2,7 @@
 % Please edit documentation in R/splitData.R
 \name{splitData2}
 \alias{splitData2}
-\title{splitData2}
+\title{Function for splitting data into episodes.}
 \usage{
 splitData2(dat, years = NULL)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getEpisodes.R
 \name{getEpisodes}
 \alias{getEpisodes}
-\title{getEpisodes}
+\title{Load the standard Surveillance Episodes dataframe into memory.}
 \usage{
 getEpisodes(inFile = NULL)
 }

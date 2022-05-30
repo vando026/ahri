@@ -1,4 +1,5 @@
-#' @title setArgs
+#' @title Set arguments and parameters to control functions and data
+#' transformations.
 #' @description  A function that collects and stores various arguments that can be used as
 #' inputs to other functions. The \code{\link{setArgs}} function comes with default parameter
 #' values for the arguments. The user is asked to check these values and understand how

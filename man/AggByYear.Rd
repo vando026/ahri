@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{AggByYear}
 \alias{AggByYear}
-\title{AggByYear}
+\title{Aggregates sero events and person years by year.}
 \usage{
 AggByYear(dat)
 }

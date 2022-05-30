@@ -2,7 +2,7 @@
 % Please edit documentation in R/getBSData.R
 \name{getBSData}
 \alias{getBSData}
-\title{getBSData}
+\title{Read in the standard Bounded Structures .dta dataset.}
 \usage{
 getBSData(inFile = NULL)
 }

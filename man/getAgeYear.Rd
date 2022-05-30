@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{getAgeYear}
 \alias{getAgeYear}
-\title{getAgeYear}
+\title{Calculate mean age by year.}
 \usage{
 getAgeYear(dat)
 }

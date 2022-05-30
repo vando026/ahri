@@ -2,7 +2,7 @@
 % Please edit documentation in R/getEpisodes.R
 \name{readEpisodes}
 \alias{readEpisodes}
-\title{readEpisodes}
+\title{Read in the standard Surveillance .dta dataset.}
 \usage{
 readEpisodes(inFile = NULL, dropTasP = TRUE, addVars = " ", write_rda = TRUE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/splitData.R
 \name{splitAtEarlyPos}
 \alias{splitAtEarlyPos}
-\title{splitAtEarlyPos}
+\title{Split data at the earliest HIV-positive date.}
 \usage{
 splitAtEarlyPos(dat = NULL, splitYears = NULL)
 }

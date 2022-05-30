@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{getMGH}
 \alias{getMGH}
-\title{getMGH}
+\title{Reads in Men's general health data (MGH).}
 \usage{
 getMGH(inFile = NULL)
 

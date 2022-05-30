@@ -2,7 +2,7 @@
 % Please edit documentation in R/getBSData.R
 \name{getBSMax}
 \alias{getBSMax}
-\title{getBSMax}
+\title{Gets the BSIntID that IIntID spent most time in a surveillance year.}
 \usage{
 getBSMax(dat = getEpisodes(), minDays = 0)
 }

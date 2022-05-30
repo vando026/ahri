@@ -1,4 +1,4 @@
-#' @title imputeMidPoint
+#' @title  Impute a mid-point seroconversion date within the censored interval.
 #' 
 #' @description  Impute a mid-point seroconversion date within the censored interval.
 #' 
@@ -15,7 +15,7 @@ imputeMidPoint <- function(dat) {
   tibble::as_tibble(dat)
 }
 
-#' @title imputeRandomPoint
+#' @title  Impute random seroconversion date(s) within the censored interval.
 #' 
 #' @description  Impute random seroconversion date(s) within the censored interval.
 #' 
@@ -46,7 +46,7 @@ imputeRandomPoint <- function(dat) {
   tibble::as_tibble(dat)
 }
 
-#' @title imputeEndPoint
+#' @title  Impute a end-point seroconversion date within the censored interval.
 #' 
 #' @description  Impute a end-point seroconversion date within the censored interval.
 #' 

@@ -1,4 +1,4 @@
-#' @title readEpisodes
+#' @title Read in the standard Surveillance .dta dataset.
 #' @description  Reads in the Surveillance Episodes dataset. Note, this function drops
 #' participants with missing values for \code{Sex} (there are a handful of these).
 #' @param inFile File path to the .dta dataset, default is set to \code{\link{setFiles}}.
@@ -57,7 +57,7 @@ readEpisodes <- function(
   dat
 }
 
-#' @title getEpisodes
+#' @title Load the standard Surveillance Episodes dataframe into memory. 
 #' @description  Loads Episodes .Rda into memory, see \code{\link{readEpisodes}}.
 #' @param inFile File path to the dataset, default is set to \code{getFiles()$epi_rda}.
 #' @return data.frame
@@ -71,7 +71,7 @@ getEpisodes <- function(inFile=NULL) {
 }
 
 
-#' @title setEpisodes
+#' @title Subset the Surveillance Episodes dataframe by user arguments. 
 #' @description  Set the Episodes data according to Arguments.
 #' @param Args requires Args, see \code{\link{setArgs}}.
 #' @param dat A dataset generated from \code{\link{readEpisodes}}, which exists in the
@@ -92,7 +92,8 @@ setEpisodes <- function(Args=setArgs(), dat=NULL) {
 }
 
 
-#' @title makePropRes
+#' @title Makes a variable of the proportion of time that a participant spent
+#' as a resident in the PIP surveillance area by year.
 #' @description Makes a variable of the proportion of time that a participant spent as a
 #' resident in the PIP surveillance arear by year. 
 #' @param Args requires Args, see \code{\link{setArgs}}. 

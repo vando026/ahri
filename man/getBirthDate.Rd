@@ -2,7 +2,7 @@
 % Please edit documentation in R/setData.R
 \name{getBirthDate}
 \alias{getBirthDate}
-\title{getBirthDate}
+\title{Gets the birthdates form the Surveillance Episodes dataframe.}
 \usage{
 getBirthDate(dat = NULL, addVars = " ")
 }

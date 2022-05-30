@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{getWGH}
 \alias{getWGH}
-\title{getWGH}
+\title{Loads Women's general health data into memory.}
 \usage{
 getWGH(inFile = NULL)
 }

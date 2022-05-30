@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{setHIV}
 \alias{setHIV}
-\title{setHIV}
+\title{Subsets the HIV dataset according to user arguments.}
 \usage{
 setHIV(Args = setArgs(), dat = NULL)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHealthData.R
 \name{readWGH}
 \alias{readWGH}
-\title{readWGH}
+\title{Reads the Women's  General Health Dataset (WGH).}
 \usage{
 readWGH(inFile = NULL, write_rda = TRUE)
 }
@@ -15,7 +15,7 @@ readWGH(inFile = NULL, write_rda = TRUE)
 data.frame
 }
 \description{
-Reads the Women  General Health Dataset (WGH).
+Reads the Women's  General Health Dataset (WGH).
 }
 \examples{
 readWGH(write_rda = FALSE)

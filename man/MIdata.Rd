@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{MIdata}
 \alias{MIdata}
-\title{MIdata}
+\title{Function to generate multiple datasets with imputed serodate.}
 \usage{
 MIdata(rtdat, Args, f = identity, bdat = NULL)
 }
@@ -19,7 +19,7 @@ MIdata(rtdat, Args, f = identity, bdat = NULL)
 list
 }
 \description{
-Function to generate dataset with imputed serodate.
+Function to generate multiple datasets with imputed serodate.
 }
 \examples{
 Args <- setArgs(nSim=2, mcores=1)

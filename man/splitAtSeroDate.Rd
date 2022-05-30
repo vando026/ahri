@@ -2,7 +2,7 @@
 % Please edit documentation in R/splitData.R
 \name{splitAtSeroDate}
 \alias{splitAtSeroDate}
-\title{splitAtSeroDate}
+\title{Split data at the imputed seroconversion date.}
 \usage{
 splitAtSeroDate(dat = NULL, splitYears = NULL)
 }

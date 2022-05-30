@@ -2,7 +2,7 @@
 % Please edit documentation in R/splitData.R
 \name{getYearDates}
 \alias{getYearDates}
-\title{getYearDates}
+\title{Get the numeric version of date for 01JanXXXX.}
 \usage{
 getYearDates(Years)
 }

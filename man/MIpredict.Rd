@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{MIpredict}
 \alias{MIpredict}
-\title{MIpredict}
+\title{Predict incidence rate estimates after multiple imputation.}
 \usage{
 MIpredict(object, newdata)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{getIncData}
 \alias{getIncData}
-\title{getIncData}
+\title{Function to impute serodate, split at censoring date, and set age.}
 \usage{
 getIncData(rtdat, bdat = NULL, Args, func = identity)
 }

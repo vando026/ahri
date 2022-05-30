@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeMethods.R
 \name{imputeEndPoint}
 \alias{imputeEndPoint}
-\title{imputeEndPoint}
+\title{Impute a end-point seroconversion date within the censored interval.}
 \usage{
 imputeEndPoint(dat)
 }

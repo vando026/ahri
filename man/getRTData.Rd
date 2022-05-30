@@ -2,7 +2,7 @@
 % Please edit documentation in R/getHIV.R
 \name{getRTData}
 \alias{getRTData}
-\title{getRTData}
+\title{Creates a dataset for HIV repeat-testers.}
 \usage{
 getRTData(dat = NULL, onlyRT = TRUE)
 }

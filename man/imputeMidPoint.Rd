@@ -2,7 +2,7 @@
 % Please edit documentation in R/imputeMethods.R
 \name{imputeMidPoint}
 \alias{imputeMidPoint}
-\title{imputeMidPoint}
+\title{Impute a mid-point seroconversion date within the censored interval.}
 \usage{
 imputeMidPoint(dat)
 }

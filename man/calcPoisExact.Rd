@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{calcPoisExact}
 \alias{calcPoisExact}
-\title{calcPoisExact}
+\title{Calculate crude incidence rates using the Poisson exact method.}
 \usage{
 calcPoisExact(dat, byVar = "Year", fmt = TRUE)
 }

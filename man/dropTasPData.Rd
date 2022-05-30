@@ -2,7 +2,7 @@
 % Please edit documentation in R/getBSData.R
 \name{dropTasPData}
 \alias{dropTasPData}
-\title{dropTasPData}
+\title{Drop TasP (Northern Areas) from a dataframe.}
 \usage{
 dropTasPData(dat, bsdat = NULL)
 }

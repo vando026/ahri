@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{MIaggregate}
 \alias{MIaggregate}
-\title{MIaggregate}
+\title{Aggregates the HIV incidence results after mutiple imputation.}
 \usage{
 MIaggregate(dat, col_names = c("sero_event", "pyears"))
 }
