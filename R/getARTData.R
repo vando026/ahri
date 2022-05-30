@@ -57,6 +57,7 @@ getEverART <- function(dat=getEpisodes()) {
 #' @param Formula A formula using R formula language to get ART estimates by group,
 #' default is by year \code{"EvertART ~ Year"}
 #' @return data.frame
+#' @keywords internal
 #' @examples
 #' \donttest{
 #' calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")

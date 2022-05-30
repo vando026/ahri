@@ -6,21 +6,20 @@
 #' @param write_rda Default is to write the .Rda file.
 #' 
 #' @return data.frame
-#'
-#' @export 
+#' @keywords internal
 readHealthData <- function(Female=1, write_rda=TRUE) {
   warning("This function is deprecated. Use readMGH() or readWGH() instead.")
-  check_getFiles()
-  inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
-  outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
-  dat <- haven::read_dta(inFile) %>%
-    rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
-  dat <- mutate(dat, 
-    Year = as.integer(format(dat$VisitDate, "%Y")),
-    IIntID = as.integer(IIntID),
-    Female = Female)
-  if (write_rda) saveRDS(dat, file=outFile) 
-  dat
+  # check_getFiles()
+  # inFile <- ifelse(Female==0, getFiles()$mghfile, getFiles()$wghfile)
+  # outFile <- ifelse(Female==0, getFiles()$mgh_rda, getFiles()$wgh_rda)
+  # dat <- haven::read_dta(inFile) %>%
+  #   rename(IIntID=IIntId, BSIntID=ResidenceBSIntId, Age=AgeAtVisit)
+  # dat <- mutate(dat, 
+  #   Year = as.integer(format(dat$VisitDate, "%Y")),
+  #   IIntID = as.integer(IIntID),
+  #   Female = Female)
+  # if (write_rda) saveRDS(dat, file=outFile) 
+  # dat
 }
 
 #' @title readMGH

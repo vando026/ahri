@@ -26,3 +26,4 @@ ART coverage. More work needed on an appropriate measure.)
 calcARTCov(Formula = "EverART ~ Year + Female + AgeCat")
 }
 }
+\keyword{internal}
