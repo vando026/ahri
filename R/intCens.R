@@ -244,9 +244,7 @@ uniReg <- function(xpath, InFile, OutFile, Model, ID=NULL, inf="Inf",
 #' 
 #' @return list
 #'
-#' @export 
-#' @examples
-#' # See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+#' @keywords internal 
 runUniReg <- function(Vars, Name) {
   unireg(
     input=file.path(derived, paste0(Name,".txt")), 
@@ -265,7 +263,6 @@ runUniReg <- function(Vars, Name) {
 #' @export
 #' @keywords internal
 #' @examples 
-#' # See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 #' \donttest{uniRegOne(c("Age0", "Age2"), Name="icens_mal")}
 uniRegOne <- function(Vars, Name) {
   dat = list()

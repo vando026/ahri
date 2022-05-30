@@ -15,7 +15,6 @@ uniRegOne(Vars, Name)
 Run gModel on each variable and make table
 }
 \examples{
-# See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 \donttest{uniRegOne(c("Age0", "Age2"), Name="icens_mal")}
 }
 \keyword{internal}
