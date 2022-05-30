@@ -43,5 +43,22 @@ data.frame
 Uses the G-imputation method to impute the infection times.
 }
 \examples{
-## See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+# See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+\donttest{
+library(IntCens)
+data(gdat)
+home <- file.path('/home/alain/Seafile/AHRI_Data')
+write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+  row.names=FALSE, quote=FALSE)
+unireg(input = file.path(home, "intcens/input_data.txt"),
+  output = file.path(home, "intcens/res_dat.txt"),
+  model = "(Time, sero_event) = Age0 + Age2 + EverCircum",
+  subject_id = "IIntID", convergence_threshold=0.01, r = 1.0)
+ureg_res <- readUniRegResults(
+  File=file.path(home, "intcens/res_dat.txt"))
+Args <- setArgs(
+  Years=c(2005:2018), nSim=50,
+  Age=list(Mal=c(15, 54)))
+gdates <- gImpute(gdat, ureg_res, nSim=Args$nSim)
+}
 }

@@ -43,14 +43,7 @@ uniReg(
 }
 \description{
 Wrapper for Intcens executable by Zeng et al 2016. See
-http://dlin.web.unc.edu/software/intcens/ to download the program for Windows or Linux.
+http://dlin.web.unc.edu/software/intcens/ to download the intcens program
+for R.
 }
-\examples{
-\donttest{
-# Download unireg program and place in path
-xpath <- '/home/alain/Seafile/ahriproject/unireg'
-uniReg(xpath = xpath,
-InFile = file.path(output, "TestSim.txt"),
-OutFile = file.path(output, "TestSim_Out.txt"), r = 0.0,
-Model = "(time, d) = v1 + v2 + v3", ID = "id")}
-}
+\keyword{internal}

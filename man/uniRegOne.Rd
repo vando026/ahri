@@ -9,12 +9,13 @@ uniRegOne(Vars, Name)
 \arguments{
 \item{Vars}{Vector of RHS character varnames.}
 
-\item{Name}{File name of the gModel results from \code{\link{readUniRegResults}}.}
+\item{Name}{File name of the gModel results from \code{\link{readUniRegResults}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}.}
 }
 \description{
 Run gModel on each variable and make table
 }
 \examples{
+# See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 \donttest{uniRegOne(c("Age0", "Age2"), Name="icens_mal")}
 }
 \keyword{internal}

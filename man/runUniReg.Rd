@@ -15,5 +15,8 @@ runUniReg(Vars, Name)
 list
 }
 \description{
-Helper function to run \code{\link{uniReg}}.
+Helper function to run \code{\link{uniReg}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}.
+}
+\examples{
+# See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
 }

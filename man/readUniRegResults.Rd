@@ -11,5 +11,21 @@ readUniRegResults(File = NULL)
 }
 \description{
 Read the results from the \code{\link{uniReg}} model into .Rdata
-format.
+format. Download and install the IntCens library for R from
+\link{https://dlin.web.unc.edu/software/intcens/}.
+}
+\examples{
+\donttest{
+library(IntCens)
+data(gdat)
+home <- file.path('/home/alain/Seafile/AHRI_Data')
+write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+  row.names=FALSE, quote=FALSE)
+unireg(input = file.path(home, "intcens/input_data.txt"),
+  output = file.path(home, "intcens/res_dat.txt"),
+  model = "(Time, sero_event) = Age0 + Age2 + EverCircum",
+  subject_id = "IIntID", convergence_threshold=0.01, r = 1.0)
+ureg_res <- readUniRegResults(
+  File=file.path(home, "intcens/res_dat.txt"))
+}
 }
