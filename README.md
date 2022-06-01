@@ -6,7 +6,7 @@ analyzing the [Africa Health Research Institute
 These functions can read in the AHRI datasets, write them to .Rda
 format, accept a list of arguments to standardize the analyses, subset
 and set the data, create or get variables, and calculate trends in HIV
-incidence and other epidemiological measures.
+incidence.
 
 The wiki help pages serve as a short introduction to the `ahri` library.
 These can be found in the links below. The help files are organised as
@@ -22,7 +22,7 @@ follows:
     <https://github.com/vando026/ahri/wiki/2-Read-functions>
 
 -   Set functions, which describes a range of functions for processing
-    the data, subsetting the data, and other data tasks.
+    the data, subsetting the data, and other data transformations.
     <https://github.com/vando026/ahri/wiki/3-Set-functions>
 
 -   Make and get variables, which describes a range of functions for
@@ -48,6 +48,10 @@ There are other sources of help:
 -   Please consult the issues page on this Github site for more
     information and for answers to questions someone before you may have
     already asked.
+
+-   There is a `Python` version of this
+    [library](https://github.com/vando026/ahri_py) that focuses on
+    speading up the HIV incidence estimations.
 
 ## Screen shots
 
