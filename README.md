@@ -25,9 +25,8 @@ follows:
     the data, subsetting the data, and other data transformations.
     <https://github.com/vando026/ahri/wiki/3-Set-functions>
 
--   Make and get variables, which describes a range of functions for
-    performing these operations.
-    <https://github.com/vando026/ahri/wiki/4-Make-and-get-variables>
+-   Utility functions commonly used with HIV incidnece analyses.
+    <https://github.com/vando026/ahri/wiki/4-Utility-functions>
 
 -   Functions to make the HIV incidence datasets, impute the HIV dates,
     perform mid-point, end-point, or single random-point imputation, and
