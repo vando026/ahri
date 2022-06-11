@@ -1,6 +1,6 @@
 Package: ahri
 Title: R functions for estimating HIV incidence with AHRI data
-Version: 1.4.3
+Version: 1.4.4
 Authors@R: person("Alain", "Vandormael", email = "alaindotvandormael@uni-hedeilberg.de", role = c("aut", "cre"))
 Description: Functions for working with AHRI data.
 Depends: R (>= 4.0.0)
