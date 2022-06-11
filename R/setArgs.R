@@ -44,8 +44,10 @@ setArgs <- function(
   addVars = identity,
   MoreArgs = NULL) {
   #
-  if (is.null(AgeCat)) 
-    AgeCat = seq(15, 105, by = 5)
+  if (is.null(AgeCat)) {
+    AgeCat=seq(min(unlist(Age)),
+      max(unlist(Age)) + AgeBy, AgeBy)
+  }
   Sex <- ifelse(
     setequal(names(Age), c("Mal", "Fem")), 
     "All", names(Age))
