@@ -9,7 +9,7 @@ uniRegOne(Vars, Name)
 \arguments{
 \item{Vars}{Vector of RHS character varnames.}
 
-\item{Name}{File name of the gModel results from \code{\link{readUniRegResults}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}.}
+\item{Name}{File name of the gModel results from \code{\link{readUniRegResults}}.}
 }
 \description{
 Run gModel on each variable and make table

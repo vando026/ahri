@@ -1,15 +1,14 @@
 #' @title  Read the results from the unireg model into dataframe.
 #' @description  Read the results from the \code{\link{uniReg}} model into .Rdata
-#' format. Download and install the IntCens library for R from
-#' \link{https://dlin.web.unc.edu/software/intcens/}.
+#' format. 
 #' @param File File path to \code{\link{uniReg}} output.txt.
 #' @export
 #' @examples
-#' \donttest{
+#' # install.packages(system.file("IntCens_0.2.tar.gz", package = "ahri"), repos = NULL, type = 'source')
 #' library(IntCens)
-#' data(gdat)
+#' data(gdat_demo)
 #' home <- file.path('/home/alain/Seafile/AHRI_Data')
-#' write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+#' write.table(gdat_demo, file=file.path(home, "intcens/input_data.txt"),
 #'   row.names=FALSE, quote=FALSE)
 #' unireg(input = file.path(home, "intcens/input_data.txt"),
 #'   output = file.path(home, "intcens/res_dat.txt"),
@@ -17,7 +16,6 @@
 #'   subject_id = "IIntID", convergence_threshold=0.01, r = 1.0)
 #' ureg_res <- readUniRegResults(
 #'   File=file.path(home, "intcens/res_dat.txt"))
-#' }
 readUniRegResults <- function(File=NULL) {
 
   out <- readLines(File)
@@ -78,11 +76,11 @@ readUniRegResults <- function(File=NULL) {
 #' @export 
 #' @examples
 #' # See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
-#' \donttest{
+#' # install.packages(system.file("IntCens_0.2.tar.gz", package = "ahri"), repos = NULL, type = 'source')
 #' library(IntCens)
-#' data(gdat)
+#' data(gdat_demo)
 #' home <- file.path('/home/alain/Seafile/AHRI_Data')
-#' write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+#' write.table(gdat_demo, file=file.path(home, "intcens/input_data.txt"),
 #'   row.names=FALSE, quote=FALSE)
 #' unireg(input = file.path(home, "intcens/input_data.txt"),
 #'   output = file.path(home, "intcens/res_dat.txt"),
@@ -93,8 +91,7 @@ readUniRegResults <- function(File=NULL) {
 #' Args <- setArgs(
 #'   Years=c(2005:2018), nSim=50,
 #'   Age=list(Mal=c(15, 54)))
-#' gdates <- gImpute(gdat, ureg_res, nSim=Args$nSim)
-#' }
+#' gdates <- gImpute(gdat_demo, ureg_res, nSim=Args$nSim)
 
 gImpute <- function(dat, Results, nSim=1,
   start_date=NULL, tscale=1, trans_back=TRUE,
@@ -238,7 +235,7 @@ uniReg <- function(xpath, InFile, OutFile, Model, ID=NULL, inf="Inf",
 
 #' @title runUniReg
 #' 
-#' @description  Helper function to run \code{\link{uniReg}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}. 
+#' @description  Helper function to run \code{\link{uniReg}}.  
 #' @param  Vars Variables to feed into uniReg model.
 #' @param  Name Name of input txt file.
 #' 
@@ -259,7 +256,7 @@ runUniReg <- function(Vars, Name) {
 #' @description  Run gModel on each variable and make table
 #' 
 #' @param Vars Vector of RHS character varnames. 
-#' @param Name File name of the gModel results from \code{\link{readUniRegResults}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}.
+#' @param Name File name of the gModel results from \code{\link{readUniRegResults}}. 
 #' @export
 #' @keywords internal
 #' @examples 
@@ -288,13 +285,13 @@ uniRegOne <- function(Vars, Name) {
 #' @return data.frame
 #' @export 
 #' @examples
-#' \donttest{
 #' # See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+#' # install.packages(system.file("IntCens_0.2.tar.gz", package = "ahri"), repos = NULL, type = 'source')
 #' library(IntCens)
-#' data(gdat)
-#' data(rtdat)
+#' data(gdat_demo)
+#' data(rtdat_demo)
 #' home <- file.path('/home/alain/Seafile/AHRI_Data')
-#' write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+#' write.table(gdat_demo, file=file.path(home, "intcens/input_data.txt"),
 #'   row.names=FALSE, quote=FALSE)
 #' unireg(input = file.path(home, "intcens/input_data.txt"),
 #'   output = file.path(home, "intcens/res_dat.txt"),
@@ -305,10 +302,9 @@ uniRegOne <- function(Vars, Name) {
 #' Args <- setArgs(
 #'   Years=c(2005:2018), nSim=50,
 #'   Age=list(Mal=c(15, 54)))
-#' gdates <- gImpute(gdat, ureg_res, nSim=Args$nSim)
-#' gdat_ex <- getGImpute(rtdat, gdates, 1)
+#' gdates <- gImpute(gdat_demo, ureg_res, nSim=Args$nSim)
+#' gdat_ex <- getGImpute(rtdat_demo, gdates, 1)
 #' gdat_ex[gdat_ex$sero_event==1, ]
-#' }
 getGImpute <- function(rtdat, gdat, i) {
   gdat <- gdat[, c("IIntID", "start_date", paste0("g", i))]
   names(gdat) <- c("IIntID", "start_date", "sero_days")

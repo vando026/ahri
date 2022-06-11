@@ -21,13 +21,13 @@ Adds the ith column of imputed infection times from \code{\link{gImpute}} to an
 existing dataset.
 }
 \examples{
-\donttest{
 # See full examples at https://github.com/vando026/ahri/wiki/6-G-Imputation
+# install.packages(system.file("IntCens_0.2.tar.gz", package = "ahri"), repos = NULL, type = 'source')
 library(IntCens)
-data(gdat)
-data(rtdat)
+data(gdat_demo)
+data(rtdat_demo)
 home <- file.path('/home/alain/Seafile/AHRI_Data')
-write.table(gdat, file=file.path(home, "intcens/input_data.txt"),
+write.table(gdat_demo, file=file.path(home, "intcens/input_data.txt"),
   row.names=FALSE, quote=FALSE)
 unireg(input = file.path(home, "intcens/input_data.txt"),
   output = file.path(home, "intcens/res_dat.txt"),
@@ -38,8 +38,7 @@ ureg_res <- readUniRegResults(
 Args <- setArgs(
   Years=c(2005:2018), nSim=50,
   Age=list(Mal=c(15, 54)))
-gdates <- gImpute(gdat, ureg_res, nSim=Args$nSim)
-gdat_ex <- getGImpute(rtdat, gdates, 1)
+gdates <- gImpute(gdat_demo, ureg_res, nSim=Args$nSim)
+gdat_ex <- getGImpute(rtdat_demo, gdates, 1)
 gdat_ex[gdat_ex$sero_event==1, ]
-}
 }

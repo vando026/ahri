@@ -15,6 +15,6 @@ runUniReg(Vars, Name)
 list
 }
 \description{
-Helper function to run \code{\link{uniReg}}. Download and install the IntCens library for R from \link{https://dlin.web.unc.edu/software/intcens/}.
+Helper function to run \code{\link{uniReg}}.
 }
 \keyword{internal}
