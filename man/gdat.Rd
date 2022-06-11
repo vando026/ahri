@@ -3,7 +3,7 @@
 \docType{data}
 \name{gdat}
 \alias{gdat}
-\title{Example datasets for G-imputation: gdat}
+\title{Example datasets for G-imputation}
 \format{
 A data frame with 6042 rows and 6 variables:
 \describe{

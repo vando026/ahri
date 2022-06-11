@@ -20,9 +20,14 @@ getIncData <- function(rtdat, bdat = NULL, Args, func = identity) {
 }
 
 #' @title AggFunc
-#' @description  A function factory for creating specific AggByFuncs, see for example \code{\link{AggByYear}}.
+#' @description  A function factory for creating specific AggByFuncs, see for
+#' example \code{\link{AggByYear}}. This function is a closure and so returns
+#' another function.
 #' @param RHS The variable name as string that you want to aggregate by.
-#' @keywords internal 
+#' @return function
+#' @export
+#' @examples
+#' AggByYear <- AggFunc("Year")
 
 AggFunc <- function(RHS) {
   function(dat) {

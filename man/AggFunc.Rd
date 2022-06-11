@@ -9,7 +9,14 @@ AggFunc(RHS)
 \arguments{
 \item{RHS}{The variable name as string that you want to aggregate by.}
 }
-\description{
-A function factory for creating specific AggByFuncs, see for example \code{\link{AggByYear}}.
+\value{
+function
 }
-\keyword{internal}
+\description{
+A function factory for creating specific AggByFuncs, see for
+example \code{\link{AggByYear}}. This function is a closure and so returns
+another function.
+}
+\examples{
+AggByYear <- AggFunc("Year")
+}

@@ -3,7 +3,7 @@
 \docType{data}
 \name{rtdat}
 \alias{rtdat}
-\title{Example datasets for G-imputation: rtdat}
+\title{Example datasets for G-imputation}
 \format{
 A data frame with 1022 rows and 6 variables:
 \describe{
