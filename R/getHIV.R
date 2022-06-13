@@ -160,6 +160,7 @@ getDates <- function(f) {
 #' @param  Name new variable name.
 #' 
 #' @return data.frame
+#' @export
 
 getDatesMin <- getDates(min)
 
@@ -172,6 +173,7 @@ getDatesMin <- getDates(min)
 #' @param  Name new variable name.
 #' 
 #' @return data.frame
+#' @export
 getDatesMax <- getDates(max)
 
 

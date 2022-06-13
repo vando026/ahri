@@ -2,7 +2,7 @@
 % Please edit documentation in R/getIncidence.R
 \name{AggFunc}
 \alias{AggFunc}
-\title{AggFunc}
+\title{Function for making the AggByYear and AggByAge functions.}
 \usage{
 AggFunc(RHS)
 }

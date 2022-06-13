@@ -19,7 +19,7 @@ getIncData <- function(rtdat, bdat = NULL, Args, func = identity) {
   func(edat)
 }
 
-#' @title AggFunc
+#' @title Function for making the AggByYear and AggByAge functions.
 #' @description  A function factory for creating specific AggByFuncs, see for
 #' example \code{\link{AggByYear}}. This function is a closure and so returns
 #' another function.

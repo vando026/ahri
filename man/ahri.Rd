@@ -3,9 +3,10 @@
 \docType{package}
 \name{ahri}
 \alias{ahri}
-\title{ahri: R package for the AHRI datasets}
+\title{ahri: R package for estimating HIV incidence with the AHRI datasets}
 \description{
-The ahri package provides functions for analyzing the AHRI datasets.
+The ahri package provides functions for estimating the HIV incidence with
+AHRI datasets.
 }
 \section{Default .dta datasets}{
 

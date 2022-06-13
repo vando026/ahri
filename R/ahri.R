@@ -1,6 +1,7 @@
-#' ahri: R package for the AHRI datasets
+#' ahri: R package for estimating HIV incidence with the AHRI datasets
 #'
-#' The ahri package provides functions for analyzing the AHRI datasets.
+#' The ahri package provides functions for estimating the HIV incidence with
+#' AHRI datasets.
 #'
 #' @section Default .dta datasets:
 #' The ahri package uses the following default datasets as of 2020, which you
